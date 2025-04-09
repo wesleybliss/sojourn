@@ -6,6 +6,23 @@ import {
 } from '@/components/ui/navigation-menu'
 import ThemeToggle from '@/components/ThemeToggle'
 
+// @todo @debug
+import tripsRepo from '@/db/repositories/trips'
+
+const links = [
+    ['/', 'Home'],
+    ['/trips', 'Trips'],
+    ['#debug:dump', 'Debug/Dump', async e => {
+        e.preventDefault()
+        console.log('tripsRepo:dump', await tripsRepo.getAll())
+    }],
+    ['#debug:clear', 'Debug/Clear', e => {
+        e.preventDefault()
+        tripsRepo.clear()
+        window.location.replace('/')
+    }],
+]
+
 const Navbar = () => {
     
     return (
@@ -18,21 +35,16 @@ const Navbar = () => {
             
             <NavigationMenu>
                 <NavigationMenuList className="flex gap-4">
-                    <NavigationMenuItem>
-                        <NavigationMenuLink href="/" className="text-muted-foreground hover:text-foreground">
-                            Home
-                        </NavigationMenuLink>
-                    </NavigationMenuItem>
-                    <NavigationMenuItem>
-                        <NavigationMenuLink href="/about" className="text-muted-foreground hover:text-foreground">
-                            About
-                        </NavigationMenuLink>
-                    </NavigationMenuItem>
-                    <NavigationMenuItem>
-                        <NavigationMenuLink href="/contact" className="text-muted-foreground hover:text-foreground">
-                            Contact
-                        </NavigationMenuLink>
-                    </NavigationMenuItem>
+                    {links.map(([url, label, onClick]) => (
+                        <NavigationMenuItem key={`Navbar-${url}`}>
+                            <NavigationMenuLink
+                                className="text-muted-foreground hover:text-foreground" 
+                                href={url}
+                                onClick={onClick}>
+                                {label}
+                            </NavigationMenuLink>
+                        </NavigationMenuItem>
+                    ))}
                 </NavigationMenuList>
             </NavigationMenu>
             

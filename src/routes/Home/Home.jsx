@@ -1,10 +1,8 @@
-import useHomeViewModel from './HomeViewModel'
-import { Button } from '@/components/ui/button'
-import { FolderPlus, FolderMinus } from 'lucide-react'
+// import useHomeViewModel from './HomeViewModel'
 
 const Home = () => {
     
-    const vm = useHomeViewModel()
+    // const vm = useHomeViewModel()
     
     return (
         
@@ -17,27 +15,9 @@ const Home = () => {
             <div className="">
                 <header className="flex items-center justify-between">
                     <h2>
-                        Trips
+                        Home
                     </h2>
-                    <Button
-                        variant="outline"
-                        onClick={vm.createNewTrip}>
-                        <FolderPlus />
-                        New Trip
-                    </Button>
                 </header>
-                <ul>
-                    {vm.trips.map(it => (
-                        <li key={it.id} className="flex items-center gap-2">
-                            <span>{it.name}</span>
-                            <Button
-                                variant="destructive"
-                                onClick={() => vm.deleteTrip(it)}>
-                                <FolderMinus />
-                            </Button>
-                        </li>
-                    ))}
-                </ul>
             </div>
         
         </div>

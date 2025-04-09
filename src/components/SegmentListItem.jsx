@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import DatePicker from '@/components/DatePicker'
+import ConfirmDialog from '@/components/ConfirmDialog'
 import { MoveRight, MapPinX } from 'lucide-react'
 
 const SegmentListItem = ({
@@ -48,12 +49,26 @@ const SegmentListItem = ({
                             hover:no-underline hover:border-primary"
                         buttonVariant="link"
                         date={Date.now()} onSelect={date => console.log(date)} />
-                    <Button
+                    {/* <Button
                         className="text-destructive hover:bg-destructive/60 hover:text-primary-foreground"
                         variant="ghost"
                         onClick={deleteSegment(segment)}>
                         <MapPinX />
-                    </Button>
+                    </Button> */}
+                    <ConfirmDialog
+                        trigger={
+                            <Button
+                                className="text-destructive hover:bg-destructive/60 hover:text-primary-foreground"
+                                variant="ghost">
+                                <MapPinX />
+                            </Button>
+                        }
+                        title="Delete Segment"
+                        message="Are you sure you want to delete this segment?"
+                        cancelLabel="Cancel"
+                        onCancel={() => {}}
+                        confirmLabel="Delete"
+                        onConfirm={() => deleteSegment(segment.id)} />
                 </div>
             
             </div>

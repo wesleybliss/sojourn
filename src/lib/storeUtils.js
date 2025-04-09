@@ -35,7 +35,7 @@ export const updateItemObject = (wire, item) => {
 }
 
 export const updateItemArray = (wire, item) => {
-    
+    console.log('updateItemArray', wire, item)
     const prev = wire.getValue()
     
     wire.setValue(prev.map(it => it.id === item.id
