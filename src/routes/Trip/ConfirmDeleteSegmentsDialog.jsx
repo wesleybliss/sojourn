@@ -1,0 +1,55 @@
+import { useMemo } from 'react'
+import { cn, noop } from '@/lib/utils'
+import ConfirmDialog from '@/components/ConfirmDialog'
+import { Button } from '@/components/ui/button'
+import { MapPinX } from 'lucide-react'
+
+const ConfirmDeleteSegmentsDialog = ({
+    className,
+    isMultiple,
+    onConfirm,
+    ...props
+}) => {
+    
+    const title = useMemo(() => {
+        
+        const text = 'Delete Segment'
+        
+        return isMultiple ? `${text}s` : text
+        
+    }, [isMultiple])
+    
+    const message = useMemo(() => {
+        
+        const text = isMultiple ? 'these segments?' : 'this segment'
+        
+        return `Are you sure you want to delete ${text}?`
+        
+    })
+    
+    return (
+        
+        <ConfirmDialog
+            trigger={
+                <Button
+                    className={cn(
+                        'text-destructive hover:bg-destructive/60 ',
+                        'hover:text-primary-foreground',
+                        className)}
+                    variant="ghost"
+                    {...props}>
+                    <MapPinX />
+                </Button>
+            }
+            title={title}
+            message={message}
+            cancelLabel="Cancel"
+            onCancel={noop}
+            confirmLabel="Delete"
+            onConfirm={onConfirm} />
+        
+    )
+    
+}
+
+export default ConfirmDeleteSegmentsDialog

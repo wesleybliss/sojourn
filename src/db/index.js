@@ -1,6 +1,9 @@
 import Dexie from 'dexie'
+import relationships from 'dexie-relationships'
 
-const db = new Dexie('trip-planner-basic')
+const db = new Dexie('trip-planner-basic', {
+    addons: [relationships],
+})
 
 // Primary key and indexed props
 const table = (...columns) => [
@@ -18,7 +21,7 @@ const schema = {
         'endDate',
     ),
     segments: table(
-        'tripId',
+        'tripId -> trips.id',
         'name',
         'description',
         'startDate',

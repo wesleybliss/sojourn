@@ -1,5 +1,6 @@
 import useTripViewModel from './TripViewModel'
-import SegmentListItem from '@/components/SegmentListItem'
+import SegmentsTable from './SegmentsTable'
+import SegmentsGanttChart from '@/components/SegmentsGanttChart'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import DatePicker from '@/components/DatePicker'
@@ -19,6 +20,9 @@ const Trip = () => {
     const vm = useTripViewModel()
     
     const [isDebugOpen, setIsDebugOpen] = useState(false)
+    
+    if (!vm.currentTrip)
+        return <p>Loading...</p>
     
     return (
         
@@ -81,19 +85,18 @@ const Trip = () => {
             )}
             
             <div className="flex flex-col gap-2 w-fit">
-                {vm.segments?.map(it => (
-                    /* <SegmentCard
-                        key={it.id}
-                        segment={it}
+                {vm.segments?.length > 0 && (
+                    <SegmentsTable
+                        segments={vm.segments}
                         updateSegment={vm.updateSegment}
-                        deleteSegment={vm.updateSegment} /> */
-                    <SegmentListItem
-                        key={it.id}
-                        segment={it}
-                        updateSegment={vm.updateSegment}
-                        deleteSegment={vm.deleteSegment} />
-                ))}
+                        deleteSegments={vm.deleteSegments} />
+                )}
             </div>
+            
+            {vm.currentTrip && vm.segments?.length > 0 && (
+                <SegmentsGanttChart
+                    tripId={vm.currentTrip.id} />
+            )}
             
             <div className="flex-1">&nbsp;</div>
             

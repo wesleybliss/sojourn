@@ -1,5 +1,4 @@
 import useTripsViewModel from './TripsViewModel'
-import tripsRepo from '@/db/repositories/trips'
 import { Button } from '@/components/ui/button'
 import { MapPinPlus } from 'lucide-react'
 import TripCard from '@/components/TripCard'

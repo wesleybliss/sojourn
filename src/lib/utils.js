@@ -19,3 +19,7 @@ export const gridColumnsMap = {
 export function cn(...inputs) {
     return twMerge(clsx(inputs))
 }
+
+export const noop = () => {
+    // NOOP
+}

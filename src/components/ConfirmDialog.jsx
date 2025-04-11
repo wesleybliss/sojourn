@@ -18,13 +18,14 @@ const ConfirmDialog = ({
     onCancel = null,
     confirmLabel,
     onConfirm,
+    ...props
 } = {}) => (
     
     <Dialog>
         
         <DialogTrigger asChild>
             {typeof trigger === 'string'
-                ? <Button variant="outline">Delete </Button>
+                ? <Button variant="outline" {...props}>{trigger}</Button>
                 : trigger}
         </DialogTrigger>
         

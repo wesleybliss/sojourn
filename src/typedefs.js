@@ -21,10 +21,20 @@
  * @property {Date} startDate - The start date of the segment in ISO format.
  * @property {Date} endDate - The end date of the segment in ISO format.
  * @property {LatLng} location - The location of the segment.
+ * @property {string} color - Tailwind CSS color class
  */
 
 /**
  * @typedef {object} LatLng
  * @property {number} lat - The latitude of the location.
  * @property {number} lng - The longitude of the location.
+ */
+
+/**
+ * @typedef {object} GanttChartItem
+ * @property {string} id - The unique identifier for the segment.
+ * @property {string} name - The name of the segment.
+ * @property {Date} startDate - The start date of the segment in ISO format.
+ * @property {Date} endDate - The end date of the segment in ISO format.
+ * @property {string} color - Tailwind CSS color class
  */

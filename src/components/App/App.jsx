@@ -2,6 +2,7 @@ import { useWireValue } from '@forminator/react-wire'
 import * as store from '@/store'
 import useDebug from '@/hooks/useDebug'
 import useTheme from '@/hooks/useTheme'
+import useGlobalEvents from '@/hooks/useGlobalEvents'
 
 import Navbar from '@/components/Navbar'
 import Home from '@/routes/Home'
@@ -31,6 +32,7 @@ const App = () => {
     
     useDebug()
     useTheme()
+    useGlobalEvents()
     
     return (
         

@@ -11,6 +11,4 @@ export class TripsRepository extends Repository {
     
 }
 
-export default TripsRepository
-
-export const tripsRepo = new TripsRepository()
+export default new TripsRepository()

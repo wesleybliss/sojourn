@@ -8,13 +8,23 @@ import ThemeToggle from '@/components/ThemeToggle'
 
 // @todo @debug
 import tripsRepo from '@/db/repositories/trips'
+import segmentsRepo from '@/db/repositories/segments'
 
 const links = [
     ['/', 'Home'],
     ['/trips', 'Trips'],
     ['#debug:dump', 'Debug/Dump', async e => {
         e.preventDefault()
-        console.log('tripsRepo:dump', await tripsRepo.getAll())
+        
+        const trips = await tripsRepo.getAll()
+        const segments = await segmentsRepo.getAll()
+        
+        const data = {
+            trips,
+            segments,
+        }
+        
+        console.log('debug:dump', JSON.stringify(data, null, 2), data)
     }],
     ['#debug:clear', 'Debug/Clear', e => {
         e.preventDefault()

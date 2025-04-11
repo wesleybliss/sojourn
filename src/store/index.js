@@ -5,7 +5,8 @@ import { keys } from '@/constants'
 
 export const theme = createPersistedWire(keys.theme, 'dark')
 
+export const currentTripId = createWire(null)
+
 //
 
 export * from './dialogs'
-export * from './trips'

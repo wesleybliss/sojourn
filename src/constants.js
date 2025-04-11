@@ -18,3 +18,12 @@ export const themes = ['light', 'dark']
 const prefixedKeys = getPrefixedKeys(NS)
 
 export { prefixedKeys as keys }
+
+//
+
+// Globally selected organization has changed
+export const EVENT_CREATE_SEGMENT = 'EVENT_CREATE_SEGMENT'
+
+export const EVENTS = [
+    EVENT_CREATE_SEGMENT,
+]
