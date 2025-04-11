@@ -12,7 +12,9 @@ const SegmentsGanttChart = ({
         segmentsRepo.table
             .where('tripId')
             .equals(tripId)
-            .toArray()
+            // .reverse()
+            .sortBy('startDate')
+            // .toArray()
     ) : null, [tripId])
     
     /** @type GanttChartItem[] */
@@ -31,22 +33,13 @@ const SegmentsGanttChart = ({
         
     }, [tripId, segments])
     
-    if (!items?.length) return (
-        <div>
-            <p>Loading...</p>
-            <div><pre><code>{JSON.stringify({ segments, items }, null, 4)}</code></pre></div>
-        </div>
-    )
+    if (!items?.length) return null
     
     return (
         
-        <div className="border-2 border-red-500">
-            <div>
-                <p>SegmentsGanttChart:</p>
-                <pre><code>{JSON.stringify(items, null, 4)}</code></pre>
-            </div>
-            <GanttChart items={items} />
-        </div>
+        <GanttChart
+            items={items}
+            setItems={() => {}} />
         
     )
     

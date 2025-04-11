@@ -1,8 +1,8 @@
 import useTripViewModel from './TripViewModel'
 import SegmentsTable from './SegmentsTable'
 import SegmentsGanttChart from '@/components/SegmentsGanttChart'
+import EditableTextField from '@/components/EditableTextField'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import DatePicker from '@/components/DatePicker'
 import { FolderPen, MapPinPlus } from 'lucide-react'
 
@@ -31,25 +31,13 @@ const Trip = () => {
             <header className="flex flex-col gap-2">
                 <div className="flex items-center gap-12">
                     <div className="flex items-center justify-between group">
-                        {vm.isEditingName ? (
-                            <Input
-                                type="text"
-                                placeholder="New trip"
-                                value={vm.currentTrip?.name || ''}
-                                onChange={vm.updateTrip('name')} />
-                        ) : (
-                            <div className="flex items-center gap-4">
-                                <h1
-                                    className=""
-                                    onDoubleClick={() => vm.setIsEditingName(true)}
-                                    onBlur={() => vm.setIsEditingName(false)}
-                                    autoFocus>
-                                    {vm.currentTrip?.name || 'New Trip'}
-                                </h1>
-                                <FolderPen className="opacity-0 group-hover:opacity-20 hover:opacity-100
-                                    transition-opacity ease-in-out duration-300" />
-                            </div>
-                        )}
+                        <EditableTextField
+                            value={vm.currentTrip?.name || ''}
+                            placeholder="New trip"
+                            onChange={vm.updateTrip('name')}>
+                            <FolderPen className="opacity-0 group-hover:opacity-20 hover:opacity-100
+                                transition-opacity ease-in-out duration-300" />
+                        </EditableTextField>
                     </div>
                     <div className="flex items-center gap-2">
                         <DatePicker

@@ -1,7 +1,6 @@
-import { useState } from 'react'
 import useCheckItems from '@/hooks/useCheckItems'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
+import EditableTextField from '@/components/EditableTextField'
 import {
     Table,
     TableBody,
@@ -15,14 +14,13 @@ import DatePicker from '@/components/DatePicker'
 import TailwindPrimaryColorPicker from '@/components/TailwindPrimaryColorPicker'
 import ConfirmDeleteSegmentsDialog from './ConfirmDeleteSegmentsDialog'
 import { MoveRight } from 'lucide-react'
+import dayjs from 'dayjs'
 
 const SegmentsTable = ({
     segments,
     updateSegment,
     deleteSegments,
 }) => {
-    
-    const [editingSegmentNameId, setEditingSegmentNameId] = useState(false)
     
     const {
         checked,
@@ -61,7 +59,9 @@ const SegmentsTable = ({
             </TableHeader>
             <TableBody>
                 {segments.map(it => (
-                    <TableRow key={it.id}>
+                    <TableRow
+                        key={it.id}
+                        className={dayjs(it.startDate).isAfter(dayjs(it.endDate)) ? 'border border-red-500' : ''}>
                         
                         <TableCell className="w-5">
                             <Checkbox
@@ -70,23 +70,11 @@ const SegmentsTable = ({
                         </TableCell>
                         
                         <TableCell className="font-medium">
-                            {editingSegmentNameId === it.id ? (
-                                <Input
-                                    type="text"
-                                    placeholder="New segment"
-                                    value={it.name || ''}
-                                    onChange={updateSegment(it.id, 'name')}
-                                    onBlur={() => setEditingSegmentNameId(null)}
-                                    onFocus={e => e.target.select()}
-                                    onKeyUp={e => e.key === 'Enter' && setEditingSegmentNameId(null)}
-                                    autoFocus />
-                            ) : (
-                                <p
-                                    className="cursor-pointer"
-                                    onDoubleClick={() => setEditingSegmentNameId(it.id)}>
-                                    {it.name}
-                                </p>
-                            )}
+                            <EditableTextField
+                                value={it.name || ''}
+                                placeholder="New segment"
+                                as="h5"
+                                onChange={updateSegment(it.id, 'name')} />
                         </TableCell>
                         
                         <TableCell>

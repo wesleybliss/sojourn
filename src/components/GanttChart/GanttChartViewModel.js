@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { /* format, */ addDays, eachDayOfInterval, startOfDay, differenceInDays } from 'date-fns'
 
 /** @type GanttChartItem[] */
@@ -26,30 +26,28 @@ export const sampleItems = [
     },
 ]
 
-const GanttChartViewModel = ({
+const GanttChartViewModel = (
     items = [],
-} = {}) => {
+    setItems,
+) => {
     
     const timelineRef = useRef(null)
     
-    const [tasks, setTasks] = useState(items)
     const [draggedTask, setDraggedTask] = useState(null)
     const [resizeTask, setResizeTask] = useState(null)
     
     /* // Calculate date range for the chart
-    const startDate = new Date(Math.min(...tasks.map(task => getTime(task.startDate))))
-    const endDate = new Date(Math.max(...tasks.map(task => getTime(task.endDate))))
+    const startDate = new Date(Math.min(...items.map(task => getTime(task.startDate))))
+    const endDate = new Date(Math.max(...items.map(task => getTime(task.endDate))))
     const days = eachDayOfInterval({ start: startDate, end: endDate }) */
     
-    const startDate = tasks.length > 0
-        ? new Date(Math.min(...tasks.map(task => task.startDate.getTime())))
-        : new Date() // Default start date if no tasks
-    const endDate = tasks.length > 0
-        ? new Date(Math.max(...tasks.map(task => task.endDate.getTime())))
-        : addDays(startDate, 7) // Default end date if no tasks
-    const days = tasks.length > 0
-        ? eachDayOfInterval({ start: startDate, end: endDate })
-        : eachDayOfInterval({ start: startDate, end: endDate }) // Calculate days based on defaults if no tasks
+    const startDate = items.length > 0
+        ? new Date(Math.min(...items.map(it => it.startDate.getTime())))
+        : new Date() // Default start date if no items
+    const endDate = items.length > 0
+        ? new Date(Math.max(...items.map(it => it.endDate.getTime())))
+        : addDays(startDate, 7) // Default end date if no items
+    const days = eachDayOfInterval({ start: startDate, end: endDate })
     
     /**
      * Get the date from the mouse position
@@ -63,13 +61,20 @@ const GanttChartViewModel = ({
         
         const rect = timelineRef.current.getBoundingClientRect()
         const relativeX = clientX - rect.left
-        const dayWidth = rect.width / days.length
-        const dayIndex = Math.floor(relativeX / dayWidth)
+        const totalDays = differenceInDays(days[days.length - 1], days[0]) + 1
         
+        // Calculate exact position within the timeline as a percentage
+        const positionPercent = relativeX / rect.width
+        
+        // Get the day index by multiplying the percentage by total days
+        const exactDayIndex = positionPercent * (days.length - 1)
+        const dayIndex = Math.round(exactDayIndex)
+        
+        // Ensure we stay within bounds
         if (dayIndex >= 0 && dayIndex < days.length)
             return days[dayIndex]
         
-        return null
+        return days[Math.max(0, Math.min(dayIndex, days.length - 1))]
         
     }
     
@@ -77,11 +82,11 @@ const GanttChartViewModel = ({
      * Handle the drag start event
      * 
      * @param {React.DragEvent} e - The drag event
-     * @param {string} taskId - The ID of the task being dragged
+     * @param {string} itemId - The ID of the task being dragged
      */
-    const handleDragStart = (e, taskId) => {
+    const handleDragStart = (e, itemId) => {
         
-        setDraggedTask(taskId)
+        setDraggedTask(itemId)
         
     }
     
@@ -97,7 +102,7 @@ const GanttChartViewModel = ({
         
         if (!draggedTask && !resizeTask) return
         
-        const task = tasks.find(t => t.id === (draggedTask || resizeTask?.id))
+        const task = items.find(t => t.id === (draggedTask || resizeTask?.id))
         
         if (!task) return
         
@@ -107,11 +112,14 @@ const GanttChartViewModel = ({
         
         if (draggedTask) {
             
+            // Preserve the duration in days
             const duration = differenceInDays(task.endDate, task.startDate)
+            // Ensure we use start of day for consistent positioning
             const newStartDate = startOfDay(date)
+            // Calculate new end date based on the same duration
             const newEndDate = addDays(newStartDate, duration)
             
-            setTasks(tasks.map(t => {
+            setItems(items.map(t => {
                 
                 if (t.id === draggedTask)
                     return {
@@ -126,20 +134,33 @@ const GanttChartViewModel = ({
             
         } else if (resizeTask) {
             
-            setTasks(tasks.map(t => {
+            setItems(items.map(t => {
                 
-                if (t.id === resizeTask.id)
+                if (t.id === resizeTask.id) {
+                    // Handle resize from start edge
                     if (resizeTask.edge === 'start') {
+                        // Don't allow start date to be after end date
+                        if (date >= t.endDate) return t
+                        
                         return {
                             ...t,
-                            startDate: date < t.endDate ? startOfDay(date) : t.startDate,
+                            // Ensure we use start of day for consistent positioning
+                            startDate: startOfDay(date),
                         }
-                    } else {
+                    } 
+                    // Handle resize from end edge
+                    else {
+                        // Don't allow end date to be before start date
+                        if (date <= t.startDate) return t
+                        
                         return {
                             ...t,
-                            endDate: date > t.startDate ? startOfDay(date) : t.endDate,
+                            // When setting end date, use the end of day
+                            // to ensure the bar includes the full day
+                            endDate: startOfDay(date),
                         }
                     }
+                }
                 
                 return t
                 
@@ -156,26 +177,14 @@ const GanttChartViewModel = ({
         
     }
     
-    useEffect(() => {
-        
-        // Only update if the passed items are different from the current tasks
-        // This check might need refinement depending on how you want to handle updates
-        // (e.g., deep comparison if necessary, but often reference check is enough if items array is rebuilt)
-        // Also handle the case where items might become null/undefined after being populated
-        setTasks(items)
-        
-        console.log('gantt vm items update', items)
-        
-    }, [items])
-    
     return {
         
         // Refs
         timelineRef,
         
         // State
-        tasks,
-        setTasks,
+        items,
+        setItems,
         draggedTask,
         setDraggedTask,
         resizeTask,
