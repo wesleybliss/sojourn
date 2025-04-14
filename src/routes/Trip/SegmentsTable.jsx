@@ -20,6 +20,8 @@ const SegmentsTable = ({
     segments,
     updateSegment,
     deleteSegments,
+    getTotalDaysPerSegment,
+    getCumulativeDaysPerSegment,
 }) => {
     
     const {
@@ -47,7 +49,9 @@ const SegmentsTable = ({
                     <TableHead>Start Date</TableHead>
                     <TableHead>{/* Arrow */}</TableHead>
                     <TableHead>End Date</TableHead>
-                    <TableHead>{/* Color */}</TableHead>
+                    <TableHead>Color</TableHead>
+                    <TableHead>Days</TableHead>
+                    <TableHead>* Days</TableHead>
                     <TableHead>
                         <ConfirmDeleteSegmentsDialog
                             className={anyChecked ? '' : 'hidden'}
@@ -58,7 +62,7 @@ const SegmentsTable = ({
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {segments.map(it => (
+                {segments.map((it, i) => (
                     <TableRow
                         key={it.id}
                         className={dayjs(it.startDate).isAfter(dayjs(it.endDate)) ? 'border border-red-500' : ''}>
@@ -102,11 +106,19 @@ const SegmentsTable = ({
                         </TableCell>
                         
                         <TableCell>
-                            <div className="border border-secondary rounded-md">
+                            <div className="mx-auto border border-secondary rounded-md">
                                 <TailwindPrimaryColorPicker
                                     value={it.color}
                                     onChange={updateSegment(it.id, 'color')} />
                             </div>
+                        </TableCell>
+                        
+                        <TableCell className="text-center">
+                            {getTotalDaysPerSegment(it)}
+                        </TableCell>
+                        
+                        <TableCell className="text-center">
+                            {getCumulativeDaysPerSegment(i)}
                         </TableCell>
                         
                         <TableCell>

@@ -30,70 +30,70 @@ const GanttChart = ({
                     ))}
                 </div>
                 
-                {/* Tasks */}
-                {vm.items.map(it => {
-                    
-                    // Calculate the day index where this task starts
-                    const startDayIndex = Math.max(0, differenceInDays(it.startDate, vm.days[0]))
-                    // Calculate task duration in days
-                    const taskDuration = differenceInDays(it.endDate, it.startDate)
-                    
-                    // Calculate percentage values for positioning
-                    const taskStart = (startDayIndex / vm.days.length) * 100
-                    const taskWidth = Math.max(1, (taskDuration / vm.days.length) * 100)
-                    
-                    return (
+                <div ref={vm.timelineRef} onDragOver={vm.handleDragOver}>
+                    {/* Tasks */}
+                    {vm.items.map(it => {
                         
-                        <div key={it.id} className="flex items-center border-b">
+                        // Calculate the day index where this task starts
+                        const startDayIndex = Math.max(0, differenceInDays(it.startDate, vm.days[0]))
+                        // Calculate task duration in days
+                        const taskDuration = differenceInDays(it.endDate, it.startDate)
+                        
+                        // Calculate percentage values for positioning
+                        const taskStart = (startDayIndex / vm.days.length) * 100
+                        const taskWidth = Math.max(1, (taskDuration / vm.days.length) * 100)
+                        
+                        return (
                             
-                            <div className="w-48 flex-shrink-0 p-2 font-medium">
-                                {it.name}
-                            </div>
-                            
-                            <div
-                                ref={vm.timelineRef}
-                                className="flex-grow relative h-12 flex items-center"
-                                onDragOver={vm.handleDragOver}>
-                                {vm.days.map(day => (
-                                    <div
-                                        key={day.toISOString()}
-                                        className="flex-1 h-full border-l" />
-                                ))}
+                            <div key={it.id} className="flex items-center border-b">
+                                
+                                <div className="w-48 flex-shrink-0 p-2 font-medium">
+                                    {it.name}
+                                </div>
                                 
                                 <div
-                                    className={`absolute h-8 ${it.color} rounded-lg flex items-center cursor-move
-                                        ${vm.draggedTask === it.id ? 'opacity-50' : ''}`}
-                                    style={{
-                                        left: `${taskStart}%`,
-                                        width: `${taskWidth}%`,
-                                    }}
-                                    draggable
-                                    onDragStart={e => vm.handleDragStart(e, it.id)}
-                                    onDragEnd={vm.handleDragEnd}>
+                                    className="flex-grow relative h-12 flex items-center">
+                                    {vm.days.map(day => (
+                                        <div
+                                            key={day.toISOString()}
+                                            className="flex-1 h-full border-l" />
+                                    ))}
                                     
-                                    {/* Resize handles */}
                                     <div
-                                        className="absolute left-0 w-2 h-full cursor-ew-resize hover:bg-black/10"
-                                        onMouseDown={() => vm.setResizeTask({ id: it.id, edge: 'start' })} />
+                                        className={`absolute h-8 ${it.color} rounded-lg flex items-center cursor-move
+                                            ${vm.draggedTask === it.id ? 'opacity-50' : ''}`}
+                                        style={{
+                                            left: `${taskStart}%`,
+                                            width: `${taskWidth}%`,
+                                        }}
+                                        draggable
+                                        onDragStart={e => vm.handleDragStart(e, it.id)}
+                                        onDragEnd={vm.handleDragEnd}>
+                                        
+                                        {/* Resize handles */}
+                                        <div
+                                            className="absolute left-0 w-2 h-full cursor-ew-resize hover:bg-black/10"
+                                            onMouseDown={() => vm.setResizeTask({ id: it.id, edge: 'start' })} />
+                                        
+                                        <div className="flex-grow px-2 text-white text-sm truncate flex items-center">
+                                            <GripHorizontal className="w-4 h-4 mr-1" />
+                                            {it.name}
+                                        </div>
+                                        
+                                        <div
+                                            className="absolute right-0 w-2 h-full cursor-ew-resize hover:bg-black/10"
+                                            onMouseDown={() => vm.setResizeTask({ id: it.id, edge: 'end' })} />
                                     
-                                    <div className="flex-grow px-2 text-white text-sm truncate flex items-center">
-                                        <GripHorizontal className="w-4 h-4 mr-1" />
-                                        {it.name}
                                     </div>
-                                    
-                                    <div
-                                        className="absolute right-0 w-2 h-full cursor-ew-resize hover:bg-black/10"
-                                        onMouseDown={() => vm.setResizeTask({ id: it.id, edge: 'end' })} />
                                 
                                 </div>
                             
                             </div>
+                            
+                        )
                         
-                        </div>
-                        
-                    )
-                    
-                })}
+                    })}
+                </div>
             
             </div>
         

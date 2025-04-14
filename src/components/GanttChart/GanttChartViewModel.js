@@ -1,30 +1,5 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { /* format, */ addDays, eachDayOfInterval, startOfDay, differenceInDays } from 'date-fns'
-
-/** @type GanttChartItem[] */
-export const sampleItems = [
-    {
-        id: '1',
-        name: 'Project Planning',
-        startDate: new Date(2024, 2, 1),
-        endDate: new Date(2024, 2, 5),
-        color: 'bg-blue-500',
-    },
-    {
-        id: '2',
-        name: 'Design Phase',
-        startDate: new Date(2024, 2, 3),
-        endDate: new Date(2024, 2, 8),
-        color: 'bg-green-500',
-    },
-    {
-        id: '3',
-        name: 'Development',
-        startDate: new Date(2024, 2, 6),
-        endDate: new Date(2024, 2, 15),
-        color: 'bg-purple-500',
-    },
-]
 
 const GanttChartViewModel = (
     items = [],
@@ -97,77 +72,24 @@ const GanttChartViewModel = (
      * @returns 
      */
     const handleDragOver = e => {
-        
         e.preventDefault()
-        
-        if (!draggedTask && !resizeTask) return
-        
-        const task = items.find(t => t.id === (draggedTask || resizeTask?.id))
-        
+        if (!draggedTask) return
+
+        const task = items.find(t => t.id === draggedTask)
         if (!task) return
-        
+
         const date = getDateFromPosition(e.clientX)
-        
         if (!date) return
-        
-        if (draggedTask) {
-            
-            // Preserve the duration in days
-            const duration = differenceInDays(task.endDate, task.startDate)
-            // Ensure we use start of day for consistent positioning
-            const newStartDate = startOfDay(date)
-            // Calculate new end date based on the same duration
-            const newEndDate = addDays(newStartDate, duration)
-            
-            setItems(items.map(t => {
-                
-                if (t.id === draggedTask)
-                    return {
-                        ...t,
-                        startDate: newStartDate,
-                        endDate: newEndDate,
-                    }
-                
-                return t
-                
-            }))
-            
-        } else if (resizeTask) {
-            
-            setItems(items.map(t => {
-                
-                if (t.id === resizeTask.id) {
-                    // Handle resize from start edge
-                    if (resizeTask.edge === 'start') {
-                        // Don't allow start date to be after end date
-                        if (date >= t.endDate) return t
-                        
-                        return {
-                            ...t,
-                            // Ensure we use start of day for consistent positioning
-                            startDate: startOfDay(date),
-                        }
-                    } 
-                    // Handle resize from end edge
-                    else {
-                        // Don't allow end date to be before start date
-                        if (date <= t.startDate) return t
-                        
-                        return {
-                            ...t,
-                            // When setting end date, use the end of day
-                            // to ensure the bar includes the full day
-                            endDate: startOfDay(date),
-                        }
-                    }
-                }
-                
-                return t
-                
-            }))
-            
-        }
-        
+
+        const duration = differenceInDays(task.endDate, task.startDate)
+        const newStartDate = startOfDay(date)
+        const newEndDate = addDays(newStartDate, duration)
+
+        setItems(items.map(t =>
+            t.id === draggedTask
+                ? { ...t, startDate: newStartDate, endDate: newEndDate }
+                : t
+        ))
     }
     
     const handleDragEnd = () => {
@@ -176,6 +98,43 @@ const GanttChartViewModel = (
         setResizeTask(null)
         
     }
+    
+    useEffect(() => {
+        
+        if (!resizeTask) return
+        
+        const handleMouseMove = e => {
+            const date = getDateFromPosition(e.clientX)
+            if (!date) return
+            
+            setItems(prevItems =>
+                prevItems.map(t => {
+                    if (t.id === resizeTask.id) {
+                        if (resizeTask.edge === 'start') {
+                            if (date >= t.endDate) return t
+                            return { ...t, startDate: startOfDay(date) }
+                        } else {
+                            if (date <= t.startDate) return t
+                            return { ...t, endDate: startOfDay(date) }
+                        }
+                    }
+                    return t
+                })
+            )
+        }
+        
+        const handleMouseUp = () => {
+            setResizeTask(null)
+        }
+        
+        window.addEventListener('mousemove', handleMouseMove)
+        window.addEventListener('mouseup', handleMouseUp)
+        
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove)
+            window.removeEventListener('mouseup', handleMouseUp)
+        }
+    }, [resizeTask])
     
     return {
         

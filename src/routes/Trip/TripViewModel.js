@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { currentTripId } from '@/store'
 import { useLiveQuery } from 'dexie-react-hooks'
 import tripsRepo from '@/db/repositories/trips'
@@ -6,6 +6,8 @@ import segmentsRepo from '@/db/repositories/segments'
 import { useParams } from 'react-router-dom'
 import { postEvent } from '@/lib/eventBus'
 import { EVENT_CREATE_SEGMENT } from '@/constants'
+import * as actions from '@/actions'
+import dayjs from 'dayjs'
 import { toast } from 'sonner'
 
 const useTripViewModel = () => {
@@ -85,6 +87,32 @@ const useTripViewModel = () => {
         
     }, [])
     
+    const getTotalDaysPerSegment = segment => {
+        
+        const startDate = new Date(segment.startDate)
+        const endDate = new Date(segment.endDate)
+        const diffTime = Math.abs(endDate.getTime() - startDate.getTime())
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+        
+        return diffDays
+        
+    }
+    
+    const totalDaysPerSegmentByIndex = useMemo(() => segments
+        ?.map(it => getTotalDaysPerSegment(it)) || [], [segments])
+    
+    const getCumulativeDaysPerSegment = useCallback(index => (
+        totalDaysPerSegmentByIndex
+            .slice(0, index + 1)
+            .reduce((acc, it) => acc + it, 0)
+    ), [totalDaysPerSegmentByIndex])
+    
+    const backupTrip = useCallback(async () => {
+        
+        await actions.backupTrip(currentTrip)
+        
+    }, [currentTrip, segments])
+    
     useEffect(() => {
         
         currentTripId.setValue(tripId)
@@ -104,11 +132,17 @@ const useTripViewModel = () => {
         // setCurrentTrip,
         segments,
         
+        // Memos
+        totalDaysPerSegmentByIndex,
+        
         // Actions
         updateTrip,
         addSegment,
         updateSegment,
         deleteSegments,
+        getTotalDaysPerSegment,
+        getCumulativeDaysPerSegment,
+        backupTrip,
         
     }
     

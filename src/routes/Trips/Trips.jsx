@@ -1,8 +1,10 @@
 import useTripsViewModel from './TripsViewModel'
-import { Button } from '@/components/ui/button'
-import { MapPinPlus } from 'lucide-react'
 import TripCard from '@/components/TripCard'
+import { Button } from '@/components/ui/button'
+import { MapPinPlus, FolderUp } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import ConfirmDialog from '@/components/ConfirmDialog'
+import { noop } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 
 const Trips = () => {
@@ -22,6 +24,17 @@ const Trips = () => {
                         <MapPinPlus />
                         New Trip
                     </Button>
+                    <Button
+                        variant="secondary"
+                        onClick={vm.startRestoreTrip}>
+                        <FolderUp />
+                    </Button>
+                    <input
+                        ref={vm.restoreTripFileRef}
+                        className="hidden"
+                        type="file"
+                        accept=".json"
+                        onChange={vm.restoreTrip} />
                 </div>
             </header>
             
@@ -32,6 +45,18 @@ const Trips = () => {
                     </Link>
                 ))}
             </div>
+            
+            <ConfirmDialog
+                open={vm.overwriteTripDialogOpen}
+                title="Overwrite Trip"
+                message="Trip or segments already exist. Do you want to overwrite?"
+                cancelLabel="Cancel"
+                onCancel={() => {
+                    vm.setPendingImportData(null)
+                    vm.setOverwriteTripDialogOpen(false)
+                }}
+                confirmLabel="Delete"
+                onConfirm={vm.continueRestoreTrip} />
         
         </div>
         

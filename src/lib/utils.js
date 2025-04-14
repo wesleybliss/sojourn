@@ -23,3 +23,42 @@ export function cn(...inputs) {
 export const noop = () => {
     // NOOP
 }
+
+export const generateSlug = title => title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '') // Remove non-alphanumeric, non-space, non-hyphen chars
+    .replace(/\s+/g, '-')         // Replace spaces with hyphens
+    .replace(/-+/g, '-')         // Collapse multiple hyphens
+    .replace(/^-+|-+$/g, '')     // Trim leading/trailing hyphens
+
+/**
+ * Creates a synthetic download of a file
+ * 
+ * @see https://www.npmjs.com/package/file-saver#supported-browsers
+ * Related but overkill for our use case
+ * 
+ * @param {Blob} data - The data to download
+ * @param {string} type - The MIME type of the data
+ * @param {string} fileName - The name of the file to download
+ * @returns {void}
+ */
+export const createSyntheticDownload = (data, type, fileName) => {
+    
+    // Automatically wrap data as a blob, if it's not already
+    const blob = data instanceof Blob ? data : new Blob([data], { type })
+    
+    const url = window.URL.createObjectURL(blob)
+    
+    // eslint-disable-next-line no-restricted-globals
+    const link = document.createElement('a')
+    
+    link.href = url
+    link.setAttribute('download', fileName)
+    
+    // eslint-disable-next-line no-restricted-globals
+    document.body.appendChild(link)
+    link.click()
+    
+    link.parentNode.removeChild(link)
+    
+}

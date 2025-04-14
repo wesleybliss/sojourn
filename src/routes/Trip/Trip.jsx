@@ -1,10 +1,9 @@
 import useTripViewModel from './TripViewModel'
+import TripHeader from './TripHeader'
 import SegmentsTable from './SegmentsTable'
 import SegmentsGanttChart from '@/components/SegmentsGanttChart'
-import EditableTextField from '@/components/EditableTextField'
 import { Button } from '@/components/ui/button'
-import DatePicker from '@/components/DatePicker'
-import { FolderPen, MapPinPlus } from 'lucide-react'
+import { MapPinPlus } from 'lucide-react'
 
 // @todo @debug
 import { useState } from 'react'
@@ -28,32 +27,10 @@ const Trip = () => {
         
         <div className="Trip w-full flex flex-col flex-1 gap-4 p-4">
             
-            <header className="flex flex-col gap-2">
-                <div className="flex items-center gap-12">
-                    <div className="flex items-center justify-between group">
-                        <EditableTextField
-                            value={vm.currentTrip?.name || ''}
-                            placeholder="New trip"
-                            onChange={vm.updateTrip('name')}>
-                            <FolderPen className="opacity-0 group-hover:opacity-20 hover:opacity-100
-                                transition-opacity ease-in-out duration-300" />
-                        </EditableTextField>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <DatePicker
-                            date={vm.currentTrip?.startDate || Date.now()}
-                            onSelect={vm.updateTrip('startDate')} />
-                        <DatePicker
-                            date={vm.currentTrip?.endDate || Date.now()}
-                            onSelect={vm.updateTrip('endDate')} />
-                    </div>
-                </div>
-                <div className="">
-                    <p className="text-muted-foreground">
-                        {vm.currentTrip?.description || 'New trip description'}
-                    </p>
-                </div>
-            </header>
+            <TripHeader
+                currentTrip={vm.currentTrip}
+                updateTrip={vm.updateTrip}
+                backupTrip={vm.backupTrip} />
             
             <header className="flex items-center justify-between">
                 <h2>Segments</h2>
@@ -77,7 +54,9 @@ const Trip = () => {
                     <SegmentsTable
                         segments={vm.segments}
                         updateSegment={vm.updateSegment}
-                        deleteSegments={vm.deleteSegments} />
+                        deleteSegments={vm.deleteSegments}
+                        getTotalDaysPerSegment={vm.getTotalDaysPerSegment}
+                        getCumulativeDaysPerSegment={vm.getCumulativeDaysPerSegment} />
                 )}
             </div>
             

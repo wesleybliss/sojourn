@@ -11,7 +11,8 @@ import {
 } from '@/components/ui/dialog'
 
 const ConfirmDialog = ({
-    trigger,
+    open = false,
+    trigger = null,
     title,
     message,
     cancelLabel = 'Close',
@@ -19,42 +20,53 @@ const ConfirmDialog = ({
     confirmLabel,
     onConfirm,
     ...props
-} = {}) => (
+} = {}) => {
     
-    <Dialog>
+    const dialogProps = {}
+    
+    if (open === true || open === false)
+        dialogProps.open = open
+    
+    return (
         
-        <DialogTrigger asChild>
-            {typeof trigger === 'string'
-                ? <Button variant="outline" {...props}>{trigger}</Button>
-                : trigger}
-        </DialogTrigger>
-        
-        <DialogContent>
+        <Dialog {...dialogProps}>
             
-            <DialogHeader>
-                <DialogTitle>{title}</DialogTitle>
-                <DialogDescription>
-                    {message}
-                </DialogDescription>
-            </DialogHeader>
+            {trigger && (
+                <DialogTrigger asChild>
+                    {typeof trigger === 'string'
+                        ? <Button variant="outline" {...props}>{trigger}</Button>
+                        : trigger}
+                </DialogTrigger>
+            )}
             
-            <DialogFooter className="sm:justify-start">
-                {cancelLabel && onCancel && (
-                    <DialogClose asChild>
-                        <Button type="button" variant="secondary">
-                            {cancelLabel}
-                        </Button>
-                    </DialogClose>
-                )}
-                <Button onClick={onConfirm}>
-                    {confirmLabel}
-                </Button>
-            </DialogFooter>
+            <DialogContent>
+                
+                <DialogHeader>
+                    <DialogTitle>{title}</DialogTitle>
+                    <DialogDescription>
+                        {message}
+                    </DialogDescription>
+                </DialogHeader>
+                
+                <DialogFooter className="sm:justify-start">
+                    {onCancel && (
+                        <DialogClose asChild>
+                            <Button type="button" variant="secondary" onClick={onCancel}>
+                                {cancelLabel || 'Cancel'}
+                            </Button>
+                        </DialogClose>
+                    )}
+                    <Button onClick={onConfirm}>
+                        {confirmLabel}
+                    </Button>
+                </DialogFooter>
+            
+            </DialogContent>
         
-        </DialogContent>
+        </Dialog>
+        
+    )
     
-    </Dialog>
-    
-)
+}
 
 export default ConfirmDialog

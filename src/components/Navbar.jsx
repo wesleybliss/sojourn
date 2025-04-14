@@ -10,6 +10,7 @@ import ThemeToggle from '@/components/ThemeToggle'
 import tripsRepo from '@/db/repositories/trips'
 import segmentsRepo from '@/db/repositories/segments'
 import * as store from '@/store'
+import { backupAllTrips } from '@/actions'
 
 const debugSeedTripSegments = async () => {
     
@@ -64,6 +65,10 @@ const links = [
         e.preventDefault()
         tripsRepo.clear()
         window.location.replace('/')
+    }],
+    ['#debug:backup', 'Backup', async e => {
+        e.preventDefault()
+        await backupAllTrips()
     }],
 ]
 
