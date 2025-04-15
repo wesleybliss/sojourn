@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import { currentTripId } from '@/store'
 import { useLiveQuery } from 'dexie-react-hooks'
+import db from '@/db'
 import tripsRepo from '@/db/repositories/trips'
 import segmentsRepo from '@/db/repositories/segments'
 import { useParams } from 'react-router-dom'
@@ -31,10 +32,12 @@ const useTripViewModel = () => {
         
         if (!currentTrip) return
         
-        console.log('updateTrip', field, e?.target?.value || e)
+        const value = e?.target?.value ?? e // Use nullish coalescing
+        
+        console.log('updateTrip', field, value)
         
         await tripsRepo.update(currentTrip.id, {
-            [field]: e?.target?.value || e,
+            [field]: value,
         })
         
         toast('Trip updated')
@@ -62,15 +65,105 @@ const useTripViewModel = () => {
     
     const updateSegment = useCallback((id, field) => async e => {
         
-        if (!currentTrip) return
+        if (!currentTrip || !segments) return
         
-        console.log('updateSegment', field, e?.target?.value || e)
+        const value = e?.target?.value ?? e // Use nullish coalescing
         
-        await segmentsRepo.update(id, {
-            [field]: e?.target?.value || e,
-        })
+        console.log('updateSegment', field, value)
         
-        toast('Segment updated')
+        const segmentIndex = segments.findIndex(s => s.id === id)
+        
+        if (segmentIndex === -1) {
+            console.error('Segment not found for update:', id)
+            toast.error('Segment not found')
+            return
+        }
+        
+        // If the field is not a date, perform a simple update
+        if (field !== 'startDate' && field !== 'endDate') {
+            
+            try {
+                await segmentsRepo.update(id, { [field]: value })
+                toast('Segment updated')
+            } catch (error) {
+                console.error('Failed to update segment field:', error)
+                toast.error('Failed to update segment')
+            }
+            
+            return
+            
+        }
+        
+        // --- Handle Date Updates and Cascade ---
+        try {
+            
+            await db.transaction('rw', db.segments, async () => {
+                
+                const updates = [] // Array to hold updates for bulkPut
+                let currentSegment = segments[segmentIndex]
+                let previousEndDate = null
+                
+                // 1. Calculate changes for the target segment
+                let newStartDateStr, newEndDateStr
+                const originalDurationDays = dayjs(currentSegment.endDate)
+                    .diff(dayjs(currentSegment.startDate), 'day')
+                
+                if (field === 'startDate') {
+                    newStartDateStr = dayjs(value).toISOString()
+                    newEndDateStr = dayjs(value).add(originalDurationDays, 'day').toISOString()
+                } else { // field === 'endDate'
+                    newStartDateStr = dayjs(currentSegment.startDate).toISOString() // Keep original start date
+                    newEndDateStr = dayjs(value).toISOString()
+                    // Optional: Recalculate duration if endDate is manually changed and you want
+                    // subsequent segments to respect *that*
+                    // const newDurationDays = dayjs(newEndDateStr).diff(dayjs(newStartDateStr), 'day');
+                    // If duration must be preserved, the logic above for startDate change is sufficient.
+                    // If end date change *can* alter duration, use newDurationDays below.
+                    // For now, we preserve original duration.
+                }
+                
+                updates.push({
+                    ...currentSegment,
+                    startDate: newStartDateStr,
+                    endDate: newEndDateStr,
+                })
+                
+                previousEndDate = dayjs(newEndDateStr) // Use dayjs object for calculations
+                
+                // 2. Cascade changes to subsequent segments
+                for (let i = segmentIndex + 1; i < segments.length; i++) {
+                    
+                    const nextSegment = segments[i]
+                    const durationDays = dayjs(nextSegment.endDate)
+                        .diff(dayjs(nextSegment.startDate), 'day') // Preserve original duration
+                    
+                    const subsequentStartDate = previousEndDate
+                    const subsequentEndDate = subsequentStartDate.add(durationDays, 'day')
+                    
+                    updates.push({
+                        ...nextSegment,
+                        startDate: subsequentStartDate.toISOString(),
+                        endDate: subsequentEndDate.toISOString(),
+                    })
+                    
+                    previousEndDate = subsequentEndDate // Update for the next iteration
+                    
+                }
+                
+                // 3. Perform bulk update
+                if (updates.length > 0)
+                    await segmentsRepo.table.bulkPut(updates)
+                
+            }) // End transaction
+            
+            toast('Segment dates updated')
+            
+        } catch (e) {
+            
+            console.error('Failed to update segment dates:', e)
+            toast.error('Failed to update segment dates')
+            
+        }
         
     }, [currentTrip])
     

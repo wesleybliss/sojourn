@@ -37,6 +37,7 @@ const DatePicker = ({
             <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                     mode="single"
+                    month={date}
                     selected={date}
                     onSelect={onSelect}
                     initialFocus />

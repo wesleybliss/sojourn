@@ -62,3 +62,32 @@ export const createSyntheticDownload = (data, type, fileName) => {
     link.parentNode.removeChild(link)
     
 }
+
+export const getRandomUnsplashImageUrl = async topic => {
+    
+    // Only include alpha characters
+    const cleanTopic = topic.replace(/[^a-zA-Z]/g, '')
+    
+    const url = `https://api.unsplash.com/photos/random?orientation=landscape&query=${cleanTopic}`
+    
+    try {
+        
+        const res = await fetch(url, {
+            headers: {
+                Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`,
+            },
+        })
+        
+        const data = await res.json()
+        
+        return data.urls.regular
+        
+    } catch (e) {
+        
+        console.error('getRandomUnsplashImageUrl', e)
+        
+        return null
+        
+    }
+    
+}

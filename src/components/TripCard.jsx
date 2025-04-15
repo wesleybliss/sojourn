@@ -23,8 +23,12 @@ const TripCard = ({ trip }) => {
             </CardHeader>
             
             <CardContent>
-                {/* Placeholder for header graphic */}
-                <div className="bg-gray-200 h-32 w-full mb-4"></div>
+                {trip.coverImageUrl?.length > 0 ? (
+                    <img src={trip.coverImageUrl} />
+                ) : (
+                    /* Placeholder for header graphic */
+                    <div className="bg-gray-200 h-32 w-full mb-4"></div>
+                )}
                 <p className="text-sm">
                     <strong>Start Date:</strong> {dayjs(startDate).format('MMM DD, YYYY')}
                 </p>

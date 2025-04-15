@@ -1,6 +1,10 @@
 import tripsRepo from '@/db/repositories/trips'
 import segmentsRepo from '@/db/repositories/segments'
-import { generateSlug, createSyntheticDownload } from '@/lib/utils'
+import {
+    generateSlug,
+    createSyntheticDownload,
+    getRandomUnsplashImageUrl,
+} from '@/lib/utils'
 import dayjs from 'dayjs'
 
 export const backupTrip = async trip => {
@@ -73,6 +77,9 @@ export const restoreTrip = async (data, overwrite = false) => {
     
     if (existingSegments.length > 0)
         await Promise.all(existingSegments.map(it => segmentsRepo.delete(it.id)))
+    
+    if (!trip.coverImageUrl)
+        trip.coverImageUrl = await getRandomUnsplashImageUrl(trip.name)
     
     console.log('actions#restoreTrip creating trip')
     await tripsRepo.create(trip)
