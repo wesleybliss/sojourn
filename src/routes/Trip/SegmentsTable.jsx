@@ -15,7 +15,7 @@ import DatePicker from '@/components/DatePicker'
 import TailwindPrimaryColorPicker from '@/components/TailwindPrimaryColorPicker'
 import ConfirmDeleteSegmentsDialog from './ConfirmDeleteSegmentsDialog'
 import { MoveRight } from 'lucide-react'
-import cn from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import dayjs from 'dayjs'
 
 const SegmentsTable = ({

@@ -9,11 +9,11 @@ class Repository {
     
     async create(data) {
         
-        const id = data.id || crypto.randomUUID() // Use provided ID or generate
+        // const id = data.id || crypto.randomUUID() // Use provided ID or generate
         const now = new Date().toISOString()
         const record = {
             ...data,
-            id,
+            // id,
             createdAt: now,
             updatedAt: now,
         }
@@ -60,20 +60,6 @@ class Repository {
         }
         
         return false
-        
-    }
-    
-    async deleteQuiet(id) {
-        
-        try {
-            
-            return await this.delete(id)
-            
-        } catch (e) {
-            
-            // NOOP
-            
-        }
         
     }
     
