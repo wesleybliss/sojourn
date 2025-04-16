@@ -203,4 +203,33 @@ html, body {
     @apply bg-background text-foreground;
     }
 }
-  
+
+/* In your CSS file */
+
+.bg-rainbow-right {
+    background-image: linear-gradient(
+        to right,
+        theme(colors.red.500),
+        theme(colors.orange.500),
+        theme(colors.yellow.500),
+        theme(colors.green.500),
+        theme(colors.blue.500),
+        theme(colors.indigo.500),
+        theme(colors.purple.500)
+    );
+}
+
+.bg-rainbow-bottom {
+    background-image: linear-gradient(
+        to bottom,
+        theme(colors.red.500),
+        theme(colors.orange.500),
+        theme(colors.yellow.500),
+        theme(colors.green.500),
+        theme(colors.blue.500),
+        theme(colors.indigo.500),
+        theme(colors.purple.500)
+    );
+}
+
+/* Add other directions if needed */

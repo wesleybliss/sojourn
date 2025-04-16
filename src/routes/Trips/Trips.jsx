@@ -3,8 +3,6 @@ import TripCard from '@/components/TripCard'
 import { Button } from '@/components/ui/button'
 import { MapPinPlus, FolderUp } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import ConfirmDialog from '@/components/ConfirmDialog'
-import { noop } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 
 const Trips = () => {
@@ -26,7 +24,7 @@ const Trips = () => {
                     </Button>
                     <Button
                         variant="secondary"
-                        onClick={vm.startRestoreTrip}>
+                        onClick={() => vm.navigate('/import-trips')}>
                         <FolderUp />
                     </Button>
                     <input
@@ -45,18 +43,6 @@ const Trips = () => {
                     </Link>
                 ))}
             </div>
-            
-            <ConfirmDialog
-                open={vm.overwriteTripDialogOpen}
-                title="Overwrite Trip"
-                message="Trip or segments already exist. Do you want to overwrite?"
-                cancelLabel="Cancel"
-                onCancel={() => {
-                    vm.setPendingImportData(null)
-                    vm.setOverwriteTripDialogOpen(false)
-                }}
-                confirmLabel="Delete"
-                onConfirm={vm.continueRestoreTrip} />
         
         </div>
         

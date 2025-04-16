@@ -91,3 +91,94 @@ export const getRandomUnsplashImageUrl = async topic => {
     }
     
 }
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+
+export const geocodeNomatim = async locationName => {
+    
+    const endpoint = 'https://nominatim.openstreetmap.org/search'
+    const format = 'json'
+    const url = `${endpoint}?q=${encodeURIComponent(locationName)}&format=${format}&limit=1`
+    
+    // Don't get rate limited
+    await sleep(1500)
+    
+    try {
+        
+        const response = await fetch(url, {
+            headers: {
+                // IMPORTANT: Change this to something descriptive for your app
+                'User-Agent': 'TripPlannerBasic/1.0 (gammagammaco@gmail.com)',
+            },
+        })
+        
+        if (!response.ok)
+            throw new Error(`HTTP error status: ${response.status}`)
+        
+        const data = await response.json()
+        
+        if (data && data.length > 0) {
+            
+            const { lat, lon } = data[0]
+            
+            console.log(`Location: ${locationName}, Lat: ${lat}, Lon: ${lon}`)
+            
+            return {
+                lng: parseFloat(lon),
+                lat: parseFloat(lat),
+            }
+            
+        } else {
+            
+            console.warn(`No results found for ${locationName}`)
+            return null
+            
+        }
+        
+    } catch (e) {
+        
+        console.error('Geocoding failed:', e)
+        return null
+        
+    }
+    
+}
+
+export const geocodeGeoapify = async locationName => {
+    
+    const base = 'https://api.geoapify.com/v1/geocode/search'
+    const url = `${base}?text=${locationName}&apiKey=${process.env.GEOAPIFY_KEY}`
+    
+    // Don't get rate limited
+    await sleep(1500)
+    
+    try {
+        
+        const response = await fetch(url, {
+            headers: {
+                'User-Agent': 'TripPlannerBasic/1.0 (gammagammaco@gmail.com)',
+            },
+        })
+        
+        if (!response.ok)
+            throw new Error(`HTTP error status: ${response.status}`)
+        
+        const data = await response.json()
+        
+        const [lng, lat] = data.features[0].geometry.coordinates
+        
+        return {
+            lng: parseFloat(lng),
+            lat: parseFloat(lat),
+        }
+        
+    } catch (e) {
+        
+        console.error('Geocoding failed:', e)
+        return null
+        
+    }
+    
+}
+
+export const geocode = geocodeGeoapify

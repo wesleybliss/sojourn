@@ -2,6 +2,7 @@ import useTripViewModel from './TripViewModel'
 import TripHeader from './TripHeader'
 import SegmentsTable from './SegmentsTable'
 import SegmentsGanttChart from '@/components/SegmentsGanttChart'
+import MapLibreMap from '@/components/MapLibreMap'
 import { Button } from '@/components/ui/button'
 import { MapPinPlus } from 'lucide-react'
 
@@ -45,19 +46,22 @@ const Trip = () => {
                 </Button>
             </header>
             
-            {vm.currentTrip && vm.segments?.length <= 0 && (
-                <p>You have no segments yet.</p>
-            )}
-            
-            <div className="flex flex-col gap-2 w-fit">
-                {vm.segments?.length > 0 && (
-                    <SegmentsTable
-                        segments={vm.segments}
-                        updateSegment={vm.updateSegment}
-                        deleteSegments={vm.deleteSegments}
-                        getTotalDaysPerSegment={vm.getTotalDaysPerSegment}
-                        getCumulativeDaysPerSegment={vm.getCumulativeDaysPerSegment} />
-                )}
+            <div className="grid grid-cols-2 gap-2">
+                <div className="flex flex-col gap-2 w-fit">
+                    {vm.currentTrip && vm.segments?.length <= 0 && (
+                        <p>You have no segments yet.</p>
+                    )}
+                    {vm.segments?.length > 0 && (
+                        <SegmentsTable
+                            segments={vm.segments}
+                            updateSegment={vm.updateSegment}
+                            deleteSegments={vm.deleteSegments}
+                            getTotalDaysPerSegment={vm.getTotalDaysPerSegment}
+                            getCumulativeDaysPerSegment={vm.getCumulativeDaysPerSegment} />
+                    )}
+                </div>
+                {/* <LeafletMap /> */}
+                <MapLibreMap latLng={vm.focusedLatLng} />
             </div>
             
             {vm.currentTrip && vm.segments?.length > 0 && (

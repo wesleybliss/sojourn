@@ -8,6 +8,7 @@ import { useParams } from 'react-router-dom'
 import { postEvent } from '@/lib/eventBus'
 import { EVENT_CREATE_SEGMENT } from '@/constants'
 import * as actions from '@/actions'
+import { geocode } from '@/lib/utils'
 import dayjs from 'dayjs'
 import { toast } from 'sonner'
 
@@ -17,6 +18,7 @@ const useTripViewModel = () => {
     const tripId = params?.tripId
     
     const [isEditingName, setIsEditingName] = useState(false)
+    const [focusedLatLng, setFocusedLatLng] = useState(undefined)
     
     const currentTrip = useLiveQuery(() => tripId ? tripsRepo.getById(tripId) : null, [tripId])
     
@@ -47,19 +49,8 @@ const useTripViewModel = () => {
     const addSegment = useCallback(async () => {
         
         if (!currentTrip) return
-        console.log('addSegment trip vm')
-        /* const newSegment = await segmentsRepo.createWithNextDate({
-            tripId: currentTrip.id,
-            name: 'New segment',
-            description: 'New segment description',
-            color: 'bg-blue-500',
-        })
-        
-        console.log({ newSegment }) */
         
         postEvent(EVENT_CREATE_SEGMENT)
-        
-        toast('Segment created')
         
     }, [currentTrip, segments])
     
@@ -214,11 +205,26 @@ const useTripViewModel = () => {
         
     }, [tripId])
     
+    useEffect(() => {
+        
+        if (focusedLatLng) return
+        if (!segments?.length) return
+        
+        if (segments[0].coords) {
+            setFocusedLatLng(segments[0].coords)
+            console.log('Updated map ' + segments[0].coords)
+            toast(`Updated map ${segments[0].coords.lng},${segments[0].coords.lat}`)
+        }
+        
+    }, [focusedLatLng, segments])
+    
     return {
         
         // State
         isEditingName,
         setIsEditingName,
+        focusedLatLng,
+        setFocusedLatLng,
         
         // Global State
         currentTrip,

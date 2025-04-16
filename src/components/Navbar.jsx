@@ -1,3 +1,4 @@
+import { useState, useMemo } from 'react'
 import {
     NavigationMenu,
     NavigationMenuItem,
@@ -5,74 +6,56 @@ import {
     NavigationMenuList,
 } from '@/components/ui/navigation-menu'
 import ThemeToggle from '@/components/ThemeToggle'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 // @todo @debug
+import db from '@/db'
 import tripsRepo from '@/db/repositories/trips'
 import segmentsRepo from '@/db/repositories/segments'
-import * as store from '@/store'
 import { backupAllTrips } from '@/actions'
 
-const debugSeedTripSegments = async () => {
+const debugDumpData = async e => {
     
-    const tripId = store.currentTripId.getValue()
+    e.preventDefault()
     
-    if (!tripId) return console.error('No current trip ID')
+    const trips = await tripsRepo.getAll()
+    const segments = await segmentsRepo.getAll()
     
-    const segments = [
-        {
-            tripId,
-            name: 'Madrid',
-            description: 'New segment description',
-            color: 'bg-blue-500',
-            startDate: '2025-08-20T05:00:00.000Z',
-            endDate: '2025-09-09T05:00:00.000Z',
-            id: '87869b48-b348-482b-8363-a90aca3d8616',
-            createdAt: '2025-04-10T22:26:52.167Z',
-            updatedAt: '2025-04-10T22:27:25.531Z'
-        },
-        {
-            tripId,
-            name: 'Napoli',
-            description: 'New segment description',
-            color: 'bg-blue-500',
-            startDate: '2025-09-09T05:00:00.000Z',
-            endDate: '2025-04-19T05:00:00.000Z',
-            id: 'de58b90d-14c0-48eb-92e6-555b4d4a9475',
-            createdAt: '2025-04-10T22:27:28.541Z',
-            updatedAt: '2025-04-10T22:27:38.730Z'
-        }
-    ]
+    const data = {
+        trips,
+        segments,
+    }
+    
+    console.log('debug:dump', JSON.stringify(data, null, 2), data)
     
 }
 
-const links = [
-    ['/', 'Home'],
-    ['/trips', 'Trips'],
-    ['#debug:dump', 'Debug/Dump', async e => {
-        e.preventDefault()
-        
-        const trips = await tripsRepo.getAll()
-        const segments = await segmentsRepo.getAll()
-        
-        const data = {
-            trips,
-            segments,
-        }
-        
-        console.log('debug:dump', JSON.stringify(data, null, 2), data)
-    }],
-    ['#debug:clear', 'Debug/Clear', e => {
-        e.preventDefault()
-        tripsRepo.clear()
-        window.location.replace('/')
-    }],
-    ['#debug:backup', 'Backup', async e => {
-        e.preventDefault()
-        await backupAllTrips()
-    }],
-]
-
 const Navbar = () => {
+    
+    const [deleteDatabaseDialogOpen, setDeleteDatabaseDialogOpen] = useState(false)
+    
+    const links = useMemo(() => [
+        ['/', 'Home'],
+        ['/trips', 'Trips'],
+        ['#debug:dump', 'Debug/Dump', debugDumpData],
+        ['#debug:clear', 'Debug/Clear', e => {
+            e.preventDefault()
+            setDeleteDatabaseDialogOpen(true)
+        }],
+        ['#debug:backup', 'Backup', async e => {
+            e.preventDefault()
+            await backupAllTrips()
+        }],
+    ], [])
+    
+    const debugDeleteDatabase = async () => {
+        
+        await db.delete()
+        
+        setDeleteDatabaseDialogOpen(false)
+        window.location.replace('/trips')
+        
+    }
     
     return (
         
@@ -100,6 +83,15 @@ const Navbar = () => {
             <div className="flex gap-2">
                 <ThemeToggle />
             </div>
+            
+            <ConfirmDialog
+                open={deleteDatabaseDialogOpen}
+                title="Delete Database"
+                message="Are you sure you want to delete the entire database?"
+                cancelLabel="Cancel"
+                onCancel={() => setDeleteDatabaseDialogOpen(false)}
+                confirmLabel="Delete"
+                onConfirm={debugDeleteDatabase} />
         
         </nav>
         

@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import useCheckItems from '@/hooks/useCheckItems'
 import { Checkbox } from '@/components/ui/checkbox'
 import EditableTextField from '@/components/EditableTextField'
@@ -14,6 +15,7 @@ import DatePicker from '@/components/DatePicker'
 import TailwindPrimaryColorPicker from '@/components/TailwindPrimaryColorPicker'
 import ConfirmDeleteSegmentsDialog from './ConfirmDeleteSegmentsDialog'
 import { MoveRight } from 'lucide-react'
+import cn from '@/lib/utils'
 import dayjs from 'dayjs'
 
 const SegmentsTable = ({
@@ -34,6 +36,15 @@ const SegmentsTable = ({
         toggleAllChecked,
     } = useCheckItems(segments)
     
+    const updateCheckedSegments = useCallback(field => async e => {
+        
+        if (!anyChecked)
+            return console.warn('updateCheckedSegments called, but no segments checked')
+        
+        await Promise.all(checked.map(it => updateSegment(it, field)(e)))
+        
+    }, [checked, anyChecked, updateSegment])
+    
     return (
         
         <Table>
@@ -52,14 +63,36 @@ const SegmentsTable = ({
                     <TableHead>Color</TableHead>
                     <TableHead>Days</TableHead>
                     <TableHead>* Days</TableHead>
-                    <TableHead>
-                        <ConfirmDeleteSegmentsDialog
-                            className={anyChecked ? '' : 'hidden'}
-                            isMultiple={anyChecked}
-                            disabled={!anyChecked}
-                            onConfirm={() => deleteSegments(checked)} />
-                    </TableHead>
+                    <TableHead>&nbsp;</TableHead>
                 </TableRow>
+                {anyChecked && (
+                    <TableRow>
+                        <TableHead>&nbsp;</TableHead>
+                        <TableHead>&nbsp;</TableHead>
+                        <TableHead>&nbsp;</TableHead>
+                        <TableHead>&nbsp;</TableHead>
+                        <TableHead>&nbsp;</TableHead>
+                        <TableHead>
+                            <div className={cn(
+                                'flex flex-col items-center justify-center',
+                                'border border-secondary rounded-md',
+                            )}>
+                                <TailwindPrimaryColorPicker
+                                    value="bg-rainbow-right"
+                                    onChange={updateCheckedSegments('color')} />
+                            </div>
+                        </TableHead>
+                        <TableHead>&nbsp;</TableHead>
+                        <TableHead>&nbsp;</TableHead>
+                        <TableHead>
+                            <ConfirmDeleteSegmentsDialog
+                                className={anyChecked ? '' : 'hidden'}
+                                isMultiple={anyChecked}
+                                disabled={!anyChecked}
+                                onConfirm={() => deleteSegments(checked)} />
+                        </TableHead>
+                    </TableRow>
+                )}
             </TableHeader>
             <TableBody>
                 {segments.map((it, i) => (
@@ -106,7 +139,10 @@ const SegmentsTable = ({
                         </TableCell>
                         
                         <TableCell>
-                            <div className="mx-auto border border-secondary rounded-md">
+                            <div className={cn(
+                                'flex flex-col items-center justify-center',
+                                'border border-secondary rounded-md',
+                            )}>
                                 <TailwindPrimaryColorPicker
                                     value={it.color}
                                     onChange={updateSegment(it.id, 'color')} />

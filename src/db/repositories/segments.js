@@ -1,5 +1,6 @@
 import db from '@/db'
 import Repository from '@/db/repository'
+import { geocode } from '@/lib/utils'
 import dayjs from 'dayjs'
 
 export class SegmentsRepository extends Repository {
@@ -14,6 +15,9 @@ export class SegmentsRepository extends Repository {
         
         if (!data.tripId)
             throw new Error('Property "tripId" is required')
+        
+        if (!data.coords)
+            data.coords = await geocode(data.name)
         
         return await super.create(data)
         

@@ -63,6 +63,20 @@ class Repository {
         
     }
     
+    async deleteQuiet(id) {
+        
+        try {
+            
+            return await this.delete(id)
+            
+        } catch (e) {
+            
+            // NOOP
+            
+        }
+        
+    }
+    
     async exists(id) {
         
         return !!(await this.getById(id))

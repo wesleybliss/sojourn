@@ -1,3 +1,4 @@
+import * as store from '@/store'
 import tripsRepo from '@/db/repositories/trips'
 import segmentsRepo from '@/db/repositories/segments'
 import {
@@ -56,6 +57,12 @@ export const restoreTrip = async (data, overwrite = false) => {
     
     const { trip, segments } = data
     
+    store.importTripStatus.setValue(`Importing Trip: ${trip.name}`)
+    store.importTripProgressMax.setValue(segments.length + 1)
+    store.importTripProgressValue.setValue(0)
+    
+    console.log('restoreTrip: restoring trip', trip.name, 'with', segments.length, 'segments')
+    
     let shouldDeleteTrip = false
     
     const existingTrip = await tripsRepo.getById(trip.id)
@@ -75,17 +82,25 @@ export const restoreTrip = async (data, overwrite = false) => {
     if (shouldDeleteTrip)
         await tripsRepo.delete(trip.id)
     
+    // Extra check, but deleting the trip should have also deleted all related segments
     if (existingSegments.length > 0)
-        await Promise.all(existingSegments.map(it => segmentsRepo.delete(it.id)))
+        await Promise.all(existingSegments
+            .filter(it => Boolean(it?.id))
+            .map(it => segmentsRepo.delete(it.id)))
     
     if (!trip.coverImageUrl)
         trip.coverImageUrl = await getRandomUnsplashImageUrl(trip.name)
     
     console.log('actions#restoreTrip creating trip')
     await tripsRepo.create(trip)
+    store.importTripProgressValue.setValue(1)
     
     console.log('actions#restoreTrip creating segments')
-    await Promise.all(segments.map(it => segmentsRepo.create(it)))
+    await Promise.all(segments.map(async it => {
+        await segmentsRepo.create(it)
+        store.importTripProgressValue.setValue(
+            store.importTripProgressValue.getValue() + 1)
+    }))
     
 }
 

@@ -15,18 +15,20 @@ const table = (...columns) => [
 
 const schema = {
     trips: table(
-        'name',
+        '&name',
         'description',
         'startDate',
         'endDate',
     ),
     segments: table(
         'tripId -> trips.id',
-        'name',
+        '&name',
         'description',
         'startDate',
         'endDate',
         'location',
+        'coords.lat',
+        'coords.lng',
     ),
 }
 

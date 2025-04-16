@@ -1,0 +1,185 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "datasource": {
+                    "sourcename": "openstreetmap",
+                    "attribution": "© OpenStreetMap contributors",
+                    "license": "Open Database License",
+                    "url": "https://www.openstreetmap.org/copyright"
+                },
+                "country": "Spain",
+                "country_code": "es",
+                "state": "Community of Madrid",
+                "city": "Madrid",
+                "iso3166_2": "ES-MD",
+                "lon": -3.7035825,
+                "lat": 40.4167047,
+                "result_type": "city",
+                "formatted": "Madrid, Spain",
+                "address_line1": "Madrid",
+                "address_line2": "Spain",
+                "category": "administrative",
+                "timezone": {
+                    "name": "Europe/Madrid",
+                    "offset_STD": "+01:00",
+                    "offset_STD_seconds": 3600,
+                    "offset_DST": "+02:00",
+                    "offset_DST_seconds": 7200,
+                    "abbreviation_STD": "CET",
+                    "abbreviation_DST": "CEST"
+                },
+                "plus_code": "8CGRC78W+MH",
+                "plus_code_short": "8W+MH Madrid, Community of Madrid, Spain",
+                "rank": {
+                    "importance": 0.8580703794097986,
+                    "popularity": 9.978554650617907,
+                    "confidence": 1,
+                    "confidence_city_level": 1,
+                    "match_type": "full_match"
+                },
+                "place_id": "51a94d9cdcefa00dc059744b619456354440f00101f901c047510000000000c00208"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -3.7035825,
+                    40.4167047
+                ]
+            },
+            "bbox": [
+                -3.8889539,
+                40.3119774,
+                -3.5179163,
+                40.6437293
+            ]
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "datasource": {
+                    "sourcename": "openstreetmap",
+                    "attribution": "© OpenStreetMap contributors",
+                    "license": "Open Database License",
+                    "url": "https://www.openstreetmap.org/copyright"
+                },
+                "country": "Spain",
+                "country_code": "es",
+                "state": "Andalusia",
+                "county": "Valle del Almanzora",
+                "province": "Almeria",
+                "city": "Oria",
+                "hamlet": "Madrid",
+                "iso3166_2": "ES-AN",
+                "iso3166_2_sublevel": "ES-AL",
+                "lon": -2.2860371,
+                "lat": 37.4654755,
+                "result_type": "city",
+                "formatted": "Madrid (Oria), Andalusia, Spain",
+                "address_line1": "Madrid (Oria)",
+                "address_line2": "Andalusia, Spain",
+                "category": "populated_place",
+                "timezone": {
+                    "name": "Europe/Madrid",
+                    "offset_STD": "+01:00",
+                    "offset_STD_seconds": 3600,
+                    "offset_DST": "+02:00",
+                    "offset_DST_seconds": 7200,
+                    "abbreviation_STD": "CET",
+                    "abbreviation_DST": "CEST"
+                },
+                "plus_code": "8C9VFP87+5H",
+                "plus_code_short": "FP87+5H Oria, Valle del Almanzora, Spain",
+                "rank": {
+                    "importance": 0.23334333333333332,
+                    "popularity": 2.548860800907495,
+                    "confidence": 1,
+                    "confidence_city_level": 1,
+                    "match_type": "full_match"
+                },
+                "place_id": "519d8aafd1cd4902c0596ccb80b394bb4240f00103f90158e72ecb02000000c00208"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -2.2860371,
+                    37.4654755
+                ]
+            },
+            "bbox": [
+                -2.3060371,
+                37.4454755,
+                -2.2660371,
+                37.4854755
+            ]
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "datasource": {
+                    "sourcename": "openstreetmap",
+                    "attribution": "© OpenStreetMap contributors",
+                    "license": "Open Database License",
+                    "url": "https://www.openstreetmap.org/copyright"
+                },
+                "name": "Madrid",
+                "country": "Spain",
+                "country_code": "es",
+                "state": "Andalusia",
+                "county": "Costa del Sol Occidental",
+                "province": "Malaga",
+                "city": "Casares",
+                "iso3166_2": "ES-AN",
+                "iso3166_2_sublevel": "ES-MA",
+                "lon": -5.2404684,
+                "lat": 36.4809284,
+                "result_type": "amenity",
+                "formatted": "Madrid, Casares, Andalusia, Spain",
+                "address_line1": "Madrid",
+                "address_line2": "Casares, Andalusia, Spain",
+                "timezone": {
+                    "name": "Europe/Madrid",
+                    "offset_STD": "+01:00",
+                    "offset_STD_seconds": 3600,
+                    "offset_DST": "+02:00",
+                    "offset_DST_seconds": 7200,
+                    "abbreviation_STD": "CET",
+                    "abbreviation_DST": "CEST"
+                },
+                "plus_code": "8C8PFQJ5+9R",
+                "plus_code_short": "FQJ5+9R Casares, Costa del Sol Occidental, Spain",
+                "rank": {
+                    "importance": 0.16667666666666667,
+                    "popularity": 3.288257050457833,
+                    "confidence": 1,
+                    "confidence_city_level": 1,
+                    "match_type": "inner_part"
+                },
+                "place_id": "51c3e226593df614c059dbdbd20f8f3d4240f00103f901ee8a1b4a00000000c002019203064d6164726964"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -5.2404684,
+                    36.4809284
+                ]
+            },
+            "bbox": [
+                -5.2504684,
+                36.4709284,
+                -5.2304684,
+                36.4909284
+            ]
+        }
+    ],
+    "query": {
+        "text": "Madrid,ES",
+        "parsed": {
+            "city": "madrid",
+            "country": "es",
+            "expected_type": "city"
+        }
+    }
+}

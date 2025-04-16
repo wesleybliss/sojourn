@@ -8,6 +8,7 @@ import Navbar from '@/components/Navbar'
 import Home from '@/routes/Home'
 import Trips from '@/routes/Trips'
 import Trip from '@/routes/Trip'
+import ImportTrips from '@/routes/ImportTrips'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 const Content = () => (
@@ -19,6 +20,7 @@ const Content = () => (
             <Route exact path="/" element={<Home />} />
             <Route exact path="/trips" element={<Trips />} />
             <Route path="/trips/:tripId" element={<Trip />} />
+            <Route path="/import-trips" element={<ImportTrips />} />
         
         </Routes>
     
