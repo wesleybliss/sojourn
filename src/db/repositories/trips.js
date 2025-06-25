@@ -9,6 +9,14 @@ export class TripsRepository extends Repository {
         
     }
     
+    async getByName(name, ignoreCase = false) {
+        
+        const res = await this.getBy('name', name, ignoreCase)
+        
+        return res?.[0]
+        
+    }
+    
 }
 
 export default new TripsRepository()

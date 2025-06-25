@@ -1,34 +1,51 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
-import { currentTripId } from '@/store'
+import { useWireState } from '@forminator/react-wire'
+import * as store from '@/store'
 import { useLiveQuery } from 'dexie-react-hooks'
 import db from '@/db'
 import tripsRepo from '@/db/repositories/trips'
+import plansRepo from '@/db/repositories/plans'
 import segmentsRepo from '@/db/repositories/segments'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { postEvent } from '@/lib/eventBus'
 import { EVENT_CREATE_SEGMENT } from '@/constants'
 import * as actions from '@/actions'
-import { geocode } from '@/lib/utils'
 import dayjs from 'dayjs'
 import { toast } from 'sonner'
 
 const useTripViewModel = () => {
     
     const params = useParams()
-    const tripId = params?.tripId
+    const navigate = useNavigate()
+    
+    const tripId = params?.tripId || ''
+    const planId = params?.planId || ''
     
     const [isEditingName, setIsEditingName] = useState(false)
     const [focusedLatLng, setFocusedLatLng] = useState(undefined)
     
-    const currentTrip = useLiveQuery(() => tripId ? tripsRepo.getById(tripId) : null, [tripId])
+    const [currentTripId, setCurrentTripId] = useWireState(store.currentTripId)
+    const [currentPlanId, setCurrentPlanId] = useWireState(store.currentPlanId)
+    const [showMap, setShowMap] = useWireState(store.showMap)
     
-    const segments = useLiveQuery(() => tripId ? (
-        segmentsRepo.table
+    const currentTrip = useLiveQuery(() => tripId ? tripsRepo.getById(tripId) : null, [tripId])
+    const currentPlan = useLiveQuery(() => planId ? plansRepo.getById(planId) : null, [planId])
+    
+    const plans = useLiveQuery(() => tripId ? (
+        plansRepo.table
             .where('tripId')
             .equals(tripId)
             // .reverse()
-            .sortBy('startDate')
+            .sortBy('createdAt')
     ) : null, [tripId])
+    
+    const segments = useLiveQuery(() => tripId ? (
+        segmentsRepo.table
+            .where('planId')
+            .equals(planId)
+            // .reverse()
+            .sortBy('startDate')
+    ) : null, [planId])
     
     const updateTrip = useCallback(field => async e => {
         
@@ -75,6 +92,7 @@ const useTripViewModel = () => {
             
             try {
                 await segmentsRepo.update(id, { [field]: value })
+                console.log('updateSegment segment updated', id, 'field', field, 'value', value)
                 toast('Segment updated')
             } catch (error) {
                 console.error('Failed to update segment field:', error)
@@ -199,11 +217,27 @@ const useTripViewModel = () => {
     
     useEffect(() => {
         
-        currentTripId.setValue(tripId)
+        setCurrentTripId(tripId)
         
-        return () => currentTripId.setValue(null)
+        return () => setCurrentTripId(null)
         
     }, [tripId])
+    
+    useEffect(() => {
+        
+        // Default to the first plan, if none selected
+        if (!planId && tripId && plans?.length) {
+            console.log('Redirecting to plan:', plans[0].name)
+            setCurrentPlanId(plans[0].id)
+            setTimeout(() => navigate(`/trips/${tripId}/plans/${plans[0].id}`), 500)
+            return
+        }
+        
+        setCurrentPlanId(planId)
+        
+        return () => setCurrentPlanId(null)
+        
+    }, [tripId, planId, plans])
     
     useEffect(() => {
         
@@ -228,8 +262,15 @@ const useTripViewModel = () => {
         
         // Global State
         currentTrip,
+        currentTripId,
         // setCurrentTrip,
+        currentPlan,
+        currentPlanId,
+        // setCurrentPlanId,
+        plans,
         segments,
+        showMap,
+        setShowMap,
         
         // Memos
         totalDaysPerSegmentByIndex,

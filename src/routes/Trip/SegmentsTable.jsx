@@ -11,6 +11,7 @@ import {
     TableRow,
     TableCell,
 } from '@/components/ui/table'
+import { Switch } from '@/components/ui/switch'
 import DatePicker from '@/components/DatePicker'
 import TailwindPrimaryColorPicker from '@/components/TailwindPrimaryColorPicker'
 import ConfirmDeleteSegmentsDialog from './ConfirmDeleteSegmentsDialog'
@@ -63,6 +64,8 @@ const SegmentsTable = ({
                     <TableHead>Color</TableHead>
                     <TableHead>Days</TableHead>
                     <TableHead>* Days</TableHead>
+                    <TableHead>Flight</TableHead>
+                    <TableHead>Stay</TableHead>
                     <TableHead>&nbsp;</TableHead>
                 </TableRow>
                 {anyChecked && (
@@ -82,6 +85,8 @@ const SegmentsTable = ({
                                     onChange={updateCheckedSegments('color')} />
                             </div>
                         </TableHead>
+                        <TableHead>&nbsp;</TableHead>
+                        <TableHead>&nbsp;</TableHead>
                         <TableHead>&nbsp;</TableHead>
                         <TableHead>&nbsp;</TableHead>
                         <TableHead>
@@ -155,6 +160,18 @@ const SegmentsTable = ({
                         
                         <TableCell className="text-center">
                             {getCumulativeDaysPerSegment(i)}
+                        </TableCell>
+                        
+                        <TableCell>
+                            <Switch
+                                checked={it.flightBooked}
+                                onCheckedChange={updateSegment(it.id, 'flightBooked')} />
+                        </TableCell>
+                        
+                        <TableCell>
+                            <Switch
+                                checked={it.stayBooked}
+                                onCheckedChange={updateSegment(it.id, 'stayBooked')} />
                         </TableCell>
                         
                         <TableCell>

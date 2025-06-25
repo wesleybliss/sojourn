@@ -4,6 +4,8 @@ import SegmentsTable from './SegmentsTable'
 import SegmentsGanttChart from '@/components/SegmentsGanttChart'
 import MapLibreMap from '@/components/MapLibreMap'
 import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import { MapPinPlus } from 'lucide-react'
 
 // @todo @debug
@@ -30,20 +32,31 @@ const Trip = () => {
             
             <TripHeader
                 currentTrip={vm.currentTrip}
+                currentPlan={vm.currentPlan}
+                plans={vm.plans}
                 updateTrip={vm.updateTrip}
                 backupTrip={vm.backupTrip} />
             
             <header className="flex items-center justify-between">
-                <h2>Segments</h2>
-                <Button
-                    variant="outline"
-                    onClick={() => vm.addSegment(vm.currentTrip.id, {
-                        name: 'New segment',
-                        description: 'New segment description',
-                    })}>
-                    <MapPinPlus />
-                    New Segment
-                </Button>
+                <h3>Segments</h3>
+                <div className="flex items-center justify-end gap-4">
+                    <div className="flex items-center space-x-2">
+                        <Switch
+                            id="toggle-map"
+                            checked={vm.showMap}
+                            onCheckedChange={checked => vm.setShowMap(checked)} />
+                        <Label htmlFor="toggle-map">Show Map</Label>
+                    </div>
+                    <Button
+                        variant="outline"
+                        onClick={() => vm.addSegment(vm.currentTrip.id, {
+                            name: 'New segment',
+                            description: 'New segment description',
+                        })}>
+                        <MapPinPlus />
+                        New Segment
+                    </Button>
+                </div>
             </header>
             
             <div className="grid grid-cols-2 gap-2">
@@ -60,8 +73,7 @@ const Trip = () => {
                             getCumulativeDaysPerSegment={vm.getCumulativeDaysPerSegment} />
                     )}
                 </div>
-                {/* <LeafletMap /> */}
-                <MapLibreMap latLng={vm.focusedLatLng} />
+                {vm.showMap && <MapLibreMap latLng={vm.focusedLatLng} />}
             </div>
             
             {vm.currentTrip && vm.segments?.length > 0 && (

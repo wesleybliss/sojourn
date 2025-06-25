@@ -10,6 +10,14 @@ const db = new Dexie('trip-planner-basic', {
     ],
 })
 
+/*
+@     Dexie Cloud ?
+++	  Auto-incremented primary key
+&	  Unique
+*	  Multi-entry index
+[A+B] Compound index
+*/
+
 // Primary key and indexed props
 const table = (...columns) => [
     // '++id',
@@ -26,15 +34,23 @@ const schema = {
         'startDate',
         'endDate',
     ),
+    plans: table(
+        'tripId -> trips.id',
+        'name',
+        'description',
+    ),
     segments: table(
         'tripId -> trips.id',
-        '&name',
+        'planId -> plans.id',
+        'name',
         'description',
         'startDate',
         'endDate',
         'location',
         'coords.lat',
         'coords.lng',
+        'flightBooked',
+        'stayBooked',
     ),
 }
 

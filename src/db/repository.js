@@ -28,15 +28,23 @@ class Repository {
         
     }
     
+    async getBy(key, value, ignoreCase = false) {
+        
+        return ignoreCase
+            ? this.findWhere(table => table.where(key).equalsIgnoreCase(value))
+            : this.findWhere(table => table.where(key).equals(value))
+        
+    }
+    
     async getAll() {
         
         return this.table.toArray()
         
     }
     
-    async findWhere(conditions) {
+    async findWhere(tableFn) {
         
-        return this.table.where(conditions).toArray()
+        return tableFn(this.table).toArray()
         
     }
     

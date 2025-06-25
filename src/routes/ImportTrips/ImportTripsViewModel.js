@@ -9,6 +9,7 @@ const ImportTripsViewModel = () => {
     const fileInputRef = useRef()
     
     const [pendingImportData, setPendingImportData] = useState(null)
+    const [onConflictAction, setOnConflictAction] = useState('duplicate')
     const [overwriteTripDialogOpen, setOverwriteTripDialogOpen] = useState(false)
     
     const [importTripStatus, setImportTripStatus] = useWireState(store.importTripStatus)
@@ -32,24 +33,27 @@ const ImportTripsViewModel = () => {
         
     }
     
-    const restoreTripFromBackup = async (data, overwrite = false) => {
+    const restoreTripFromBackup = async (data, onConflictAction) => {
         
-        console.log('restoreTripFromBackup', { data, overwrite })
+        console.log('restoreTripFromBackup', { data, onConflictAction })
         
         try {
             
-            await actions.restoreTrip(data, overwrite)
+            await actions.restoreTrip(data, onConflictAction)
             
         } catch (e) {
             
-            if (/already exist/.test(e.message)) {
+            /* if (/already exist/.test(e.message)) {
                 console.log('Trip already exists, showing confirm dialog')
                 setPendingImportData(data)
                 setOverwriteTripDialogOpen(true)
             } else {
                 console.error(e)
                 toast(e.message)
-            }
+            } */
+            
+            console.error(e)
+            toast(e.message)
             
         }
         
@@ -59,13 +63,13 @@ const ImportTripsViewModel = () => {
         
     }
     
-    const restoreAllTripsFromBackup = async (data, overwrite = false) => {
+    const restoreAllTripsFromBackup = async (data, onConflictAction) => {
         
-        console.log('restoreAllTripsFromBackup', { data, overwrite })
+        console.log('restoreAllTripsFromBackup', { data, onConflictAction })
         
         try {
             
-            await actions.restoreAllTrips(data, overwrite)
+            await actions.restoreAllTrips(data, onConflictAction)
             
         } catch (e) {
             
@@ -81,15 +85,15 @@ const ImportTripsViewModel = () => {
         
     }
     
-    const restoreTripFromData = async (data, overwrite = false) => {
+    const restoreTripFromData = async data => {
         
-        console.log('restoreTripFromData', data, { overwrite })
+        console.log('restoreTripFromData', data, { onConflictAction })
         
         switch (data.type) {
             case 'single':
-                return await restoreTripFromBackup(data, overwrite)
+                return await restoreTripFromBackup(data, onConflictAction)
             case 'multiple':
-                return await restoreAllTripsFromBackup(data, overwrite)
+                return await restoreAllTripsFromBackup(data, onConflictAction)
             default:
                 console.error('Invalid backup type')
                 toast('Invalid backup type')
@@ -102,7 +106,7 @@ const ImportTripsViewModel = () => {
         
         setOverwriteTripDialogOpen(false)
         
-        await restoreTripFromData(pendingImportData, true)
+        await restoreTripFromData(pendingImportData)
         
         setPendingImportData(null)
         
@@ -130,6 +134,10 @@ const ImportTripsViewModel = () => {
                 console.error('Error parsing JSON:', e)
                 toast('Error parsing JSON')
                 
+            } finally {
+                
+                setOnConflictAction('duplicate')
+                
             }
             
         }
@@ -139,6 +147,7 @@ const ImportTripsViewModel = () => {
             toast('Error reading file')
         }
         
+        setOnConflictAction('duplicate')
         reader.readAsText(file)
         
     }
@@ -149,8 +158,12 @@ const ImportTripsViewModel = () => {
         fileInputRef,
         
         // State
-        pendingImportData, setPendingImportData,
-        overwriteTripDialogOpen, setOverwriteTripDialogOpen,
+        pendingImportData,
+        setPendingImportData,
+        onConflictAction,
+        setOnConflictAction,
+        overwriteTripDialogOpen,
+        setOverwriteTripDialogOpen,
         
         // Global State
         importTripStatus,

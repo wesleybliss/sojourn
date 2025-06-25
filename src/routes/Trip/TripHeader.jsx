@@ -1,10 +1,27 @@
 import EditableTextField from '@/components/EditableTextField'
 import { Button } from '@/components/ui/button'
 import DatePicker from '@/components/DatePicker'
-import { FolderPen, FolderDown } from 'lucide-react'
+import { FolderPen, FolderDown, BookPlus } from 'lucide-react'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuPortal,
+    DropdownMenuSeparator,
+    DropdownMenuShortcut,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 const TripHeader = ({
     currentTrip,
+    currentPlan,
+    plans,
     updateTrip,
     backupTrip,
 }) => {
@@ -33,10 +50,43 @@ const TripHeader = ({
                             onSelect={updateTrip('endDate')} />
                     </div>
                 </div>
-                <div className="">
-                    <p className="text-muted-foreground">
-                        {currentTrip?.description || 'New trip description'}
-                    </p>
+                <div className="flex items-center gap-12">
+                    <div className="">
+                        <p className="text-muted-foreground">
+                            {currentTrip?.description || 'New trip description'}
+                        </p>
+                    </div>
+                    <div className="">
+                        <Tabs defaultValue="">
+                            <TabsList>
+                                {plans?.map(it => (
+                                    <TabsTrigger key={it.id} value={it.id}>
+                                        {it.name}
+                                    </TabsTrigger>
+                                ))}
+                            </TabsList>
+                        </Tabs>
+                    </div>
+                    <div className="">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline">
+                                    <BookPlus />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56" align="start">
+                                <DropdownMenuLabel>Create a Plan</DropdownMenuLabel>
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem>
+                                        New
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        Clone Current Plan
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                 </div>
             </div>
             

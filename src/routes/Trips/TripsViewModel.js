@@ -25,6 +25,25 @@ const TripsViewModel = () => {
         
     }
     
+    const deleteTrip = async id => {
+        
+        await tripsRepo.delete(id)
+        
+    }
+    
+    const onDeleteTripClick = id => async e => {
+        
+        e.preventDefault()
+        e.stopPropagation()
+        
+        // @todo replace with real dialog
+        if (!confirm('Are you sure you want to delete this trip?'))
+            return
+        
+        return await deleteTrip(id)
+        
+    }
+    
     return {
         
         // Global State
@@ -35,6 +54,8 @@ const TripsViewModel = () => {
         
         // Actions
         createNewTrip,
+        deleteTrip,
+        onDeleteTripClick,
         
     }
     

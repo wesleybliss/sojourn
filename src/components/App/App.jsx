@@ -5,6 +5,7 @@ import useTheme from '@/hooks/useTheme'
 import useGlobalEvents from '@/hooks/useGlobalEvents'
 
 import Navbar from '@/components/Navbar'
+import Debug from '@/routes/Debug'
 import Home from '@/routes/Home'
 import Trips from '@/routes/Trips'
 import Trip from '@/routes/Trip'
@@ -17,9 +18,13 @@ const Content = () => (
         
         <Routes>
             
+            <Route exact path="/debug" element={<Debug />} />
+            
             <Route exact path="/" element={<Home />} />
             <Route exact path="/trips" element={<Trips />} />
             <Route path="/trips/:tripId" element={<Trip />} />
+            <Route path="/trips/:tripId/plans" element={<Trip />} />
+            <Route path="/trips/:tripId/plans/:planId" element={<Trip />} />
             <Route path="/import-trips" element={<ImportTrips />} />
         
         </Routes>

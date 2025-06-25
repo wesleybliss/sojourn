@@ -37,6 +37,7 @@ const Navbar = () => {
     const links = useMemo(() => [
         ['/', 'Home'],
         ['/trips', 'Trips'],
+        ['/debug', 'Debug', 'Debug'],
         ['#debug:dump', 'Debug/Dump', debugDumpData],
         ['#debug:clear', 'Debug/Clear', e => {
             e.preventDefault()
@@ -61,7 +62,7 @@ const Navbar = () => {
         
         <nav className="flex items-center justify-between px-4 py-2 bg-background border-b">
             
-            <div className="text-lg font-bold">
+            <div className="text-sm font-bold">
                 Trip Planner Basic
             </div>
             
@@ -70,7 +71,7 @@ const Navbar = () => {
                     {links.map(([url, label, onClick]) => (
                         <NavigationMenuItem key={`Navbar-${url}`}>
                             <NavigationMenuLink
-                                className="text-muted-foreground hover:text-foreground" 
+                                className="text-xs text-muted-foreground hover:text-foreground" 
                                 href={url}
                                 onClick={onClick}>
                                 {label}

@@ -7,15 +7,21 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { BookX } from 'lucide-react'
 import dayjs from 'dayjs'
 
-const TripCard = ({ trip }) => {
+const TripCard = ({
+    trip,
+    onClick,
+    onDeleteTripClick,
+}) => {
     
     const { name, description, startDate, endDate } = trip
     
     return (
         
-        <Card>
+        <Card className="cursor-pointer" onClick={onClick}>
             
             <CardHeader>
                 <CardTitle>{name}</CardTitle>
@@ -38,7 +44,11 @@ const TripCard = ({ trip }) => {
             </CardContent>
             
             <CardFooter>
-                {/* Add any actions or buttons here */}
+                <Button
+                    variant="outline"
+                    onClick={onDeleteTripClick}>
+                    <BookX />
+                </Button>
             </CardFooter>
         
         </Card>

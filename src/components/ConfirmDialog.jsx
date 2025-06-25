@@ -18,6 +18,7 @@ const ConfirmDialog = ({
     cancelLabel = 'Close',
     onCancel = null,
     confirmLabel,
+    confirmProps = {},
     onConfirm,
     ...props
 } = {}) => {
@@ -56,7 +57,7 @@ const ConfirmDialog = ({
                             </Button>
                         </DialogClose>
                     )}
-                    <Button onClick={onConfirm}>
+                    <Button onClick={onConfirm} {...confirmProps}>
                         {confirmLabel}
                     </Button>
                 </DialogFooter>

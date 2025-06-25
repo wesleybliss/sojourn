@@ -2,7 +2,6 @@ import useTripsViewModel from './TripsViewModel'
 import TripCard from '@/components/TripCard'
 import { Button } from '@/components/ui/button'
 import { MapPinPlus, FolderUp } from 'lucide-react'
-import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 
 const Trips = () => {
@@ -38,9 +37,11 @@ const Trips = () => {
             
             <div className={cn('grid gap-2 grid-cols-4')}>
                 {vm.trips?.map(it => (
-                    <Link key={it.id} to={`/trips/${it.id}`}>
-                        <TripCard trip={it} />
-                    </Link>
+                    <TripCard
+                        key={it.id}
+                        trip={it}
+                        onClick={() => vm.navigate(`/trips/${it.id}`)}
+                        onDeleteTripClick={vm.onDeleteTripClick(it.id)} />
                 ))}
             </div>
         

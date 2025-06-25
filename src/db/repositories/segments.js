@@ -19,7 +19,11 @@ export class SegmentsRepository extends Repository {
         if (!data.coords)
             data.coords = await geocode(data.name)
         
-        return await super.create(data)
+        return await super.create({
+            flightBooked: false,
+            stayBooked: false,
+            ...data,
+        })
         
     }
     
@@ -45,6 +49,18 @@ export class SegmentsRepository extends Repository {
             startDate: nextStartDate.toDate(),
             endDate: nextStartDate.add(1, 'week').toDate(),
         })
+        
+    }
+    
+    async findByTripId(tripId) {
+        
+        return await this.getBy('tripId', tripId)
+        
+    }
+    
+    async findByPlanId(planId) {
+        
+        return await this.getBy('planId', planId)
         
     }
     

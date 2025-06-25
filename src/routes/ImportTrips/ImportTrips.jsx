@@ -1,6 +1,5 @@
 import useImportTripsViewModel from './ImportTripsViewModel'
 import { Button } from '@/components/ui/button'
-import { Link } from 'react-router-dom'
 import {
     Card,
     CardContent,
@@ -8,11 +7,13 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card'
+import {
+    RadioGroup,
+    RadioGroupItem,
+} from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
-
-import ConfirmDialog from '@/components/ConfirmDialog'
 import { FolderUp } from 'lucide-react'
-import { cn } from '@/lib/utils'
 
 const ImportTrips = () => {
     
@@ -45,7 +46,36 @@ const ImportTrips = () => {
                             accept=".json"
                             onChange={vm.handleFileChange} />
                         
+                        <p>
+                            Conflict resolution strategy:
+                        </p>
+                        
+                        <div className="my-4">
+                            
+                            <RadioGroup defaultValue={vm.onConflictAction}>
+                                
+                                <div className="flex items-center gap-3">
+                                    <RadioGroupItem
+                                        id="r1"
+                                        value="duplicate"
+                                        onClick={() => vm.setOnConflictAction('duplicate')} />
+                                    <Label htmlFor="r1">Duplicate</Label>
+                                </div>
+                                
+                                <div className="flex items-center gap-3">
+                                    <RadioGroupItem
+                                        id="r2"
+                                        value="overwrite"
+                                        onClick={() => vm.setOnConflictAction('overwrite')} />
+                                    <Label htmlFor="r2">Overwrite</Label>
+                                </div>
+                            
+                            </RadioGroup>
+                        
+                        </div>
+                        
                         <Button
+                            className="mt-4"
                             variant="secondary"
                             disabled={vm.isImporting}
                             onClick={vm.startRestoreTrip}>
@@ -64,18 +94,6 @@ const ImportTrips = () => {
                 
                 </Card>
             </div>
-            
-            <ConfirmDialog
-                open={vm.overwriteTripDialogOpen}
-                title="Overwrite Trip"
-                message="Trip or segments already exist. Do you want to overwrite?"
-                cancelLabel="Cancel"
-                onCancel={() => {
-                    vm.setPendingImportData(null)
-                    vm.setOverwriteTripDialogOpen(false)
-                }}
-                confirmLabel="Overwrite"
-                onConfirm={vm.continueRestoreTrip} />
         
         </div>
         

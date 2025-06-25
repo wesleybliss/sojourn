@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 const EditableTextField = ({
     value = '',
     onChange,
-    as: Element = 'h1',
+    as: Element = 'h2',
     elementProps = {},
     children,
     ...props
