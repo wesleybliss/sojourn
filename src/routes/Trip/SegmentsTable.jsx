@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import useCheckItems from '@/hooks/useCheckItems'
 import { Checkbox } from '@/components/ui/checkbox'
 import EditableTextField from '@/components/EditableTextField'
+import { Button } from '@/components/ui/button'
 import {
     Table,
     TableBody,
@@ -15,7 +16,7 @@ import { Switch } from '@/components/ui/switch'
 import DatePicker from '@/components/DatePicker'
 import TailwindPrimaryColorPicker from '@/components/TailwindPrimaryColorPicker'
 import ConfirmDeleteSegmentsDialog from './ConfirmDeleteSegmentsDialog'
-import { MoveRight } from 'lucide-react'
+import { MoveRight, SquareArrowUp, SquareArrowDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import dayjs from 'dayjs'
 
@@ -178,6 +179,16 @@ const SegmentsTable = ({
                             <ConfirmDeleteSegmentsDialog
                                 isMultiple={someChecked}
                                 onConfirm={() => deleteSegments([it.id])} />
+                            <Button
+                                className="opacity-50 hover:opacity-100"
+                                variant="ghost">
+                                <SquareArrowUp />
+                            </Button>
+                            <Button
+                                className="opacity-50 hover:opacity-100"
+                                variant="ghost">
+                                <SquareArrowDown />
+                            </Button>
                         </TableCell>
                     
                     </TableRow>

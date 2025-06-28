@@ -33,7 +33,7 @@ const GanttChart = ({
                 <div ref={vm.timelineRef} onDragOver={vm.handleDragOver}>
                     {/* Tasks */}
                     {vm.items.map(it => {
-                        
+                        // console.log('gantt', it)
                         // Calculate the day index where this task starts
                         const startDayIndex = Math.max(0, differenceInDays(it.startDate, vm.days[0]))
                         // Calculate task duration in days

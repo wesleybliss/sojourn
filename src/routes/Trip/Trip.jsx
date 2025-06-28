@@ -30,12 +30,7 @@ const Trip = () => {
         
         <div className="Trip w-full flex flex-col flex-1 gap-4 p-4">
             
-            <TripHeader
-                currentTrip={vm.currentTrip}
-                currentPlan={vm.currentPlan}
-                plans={vm.plans}
-                updateTrip={vm.updateTrip}
-                backupTrip={vm.backupTrip} />
+            <TripHeader vm={vm} />
             
             <header className="flex items-center justify-between">
                 <h3>Segments</h3>
@@ -78,7 +73,7 @@ const Trip = () => {
             
             {vm.currentTrip && vm.segments?.length > 0 && (
                 <SegmentsGanttChart
-                    tripId={vm.currentTrip.id} />
+                    planId={vm.currentPlan?.id} />
             )}
             
             <div className="flex-1">&nbsp;</div>

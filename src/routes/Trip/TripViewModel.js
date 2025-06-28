@@ -1,15 +1,14 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import { useWireState } from '@forminator/react-wire'
 import * as store from '@/store'
+import * as actions from '@/actions'
 import { useLiveQuery } from 'dexie-react-hooks'
-import db from '@/db'
 import tripsRepo from '@/db/repositories/trips'
 import plansRepo from '@/db/repositories/plans'
 import segmentsRepo from '@/db/repositories/segments'
 import { useParams, useNavigate } from 'react-router-dom'
 import { postEvent } from '@/lib/eventBus'
 import { EVENT_CREATE_SEGMENT } from '@/constants'
-import * as actions from '@/actions'
 import dayjs from 'dayjs'
 import { toast } from 'sonner'
 
@@ -23,6 +22,8 @@ const useTripViewModel = () => {
     
     const [isEditingName, setIsEditingName] = useState(false)
     const [focusedLatLng, setFocusedLatLng] = useState(undefined)
+    const [shengenStartDate, setShengenStartDate] = useState(new Date()) // @todo refactor
+    const [shengenEndDate, setShengenEndDate] = useState(dayjs(new Date()).add(89, 'day').toDate()) // @todo refactor
     
     const [currentTripId, setCurrentTripId] = useWireState(store.currentTripId)
     const [currentPlanId, setCurrentPlanId] = useWireState(store.currentPlanId)
@@ -46,6 +47,15 @@ const useTripViewModel = () => {
             // .reverse()
             .sortBy('startDate')
     ) : null, [planId])
+    
+    const updateShengenStartDate = useCallback(newDate => {
+        
+        const value = dayjs(newDate)
+        
+        setShengenStartDate(value.toDate())
+        setShengenEndDate(value.add(89, 'day').toDate())
+        
+    }, [])
     
     const updateTrip = useCallback(field => async e => {
         
@@ -73,108 +83,17 @@ const useTripViewModel = () => {
     
     const updateSegment = useCallback((id, field) => async e => {
         
-        if (!currentTrip || !segments) return
+        console.log('updateSegment', { currentTrip, planId, segmentsLen: segments?.length })
+        
+        if (!currentTrip || !planId || !segments) return
         
         const value = e?.target?.value ?? e // Use nullish coalescing
         
         console.log('updateSegment', field, value)
         
-        const segmentIndex = segments.findIndex(s => s.id === id)
+        await actions.updateSegmentWithCascade(currentTrip, planId, id, field, value)
         
-        if (segmentIndex === -1) {
-            console.error('Segment not found for update:', id)
-            toast.error('Segment not found')
-            return
-        }
-        
-        // If the field is not a date, perform a simple update
-        if (field !== 'startDate' && field !== 'endDate') {
-            
-            try {
-                await segmentsRepo.update(id, { [field]: value })
-                console.log('updateSegment segment updated', id, 'field', field, 'value', value)
-                toast('Segment updated')
-            } catch (error) {
-                console.error('Failed to update segment field:', error)
-                toast.error('Failed to update segment')
-            }
-            
-            return
-            
-        }
-        
-        // --- Handle Date Updates and Cascade ---
-        try {
-            
-            await db.transaction('rw', db.segments, async () => {
-                
-                const updates = [] // Array to hold updates for bulkPut
-                let currentSegment = segments[segmentIndex]
-                let previousEndDate = null
-                
-                // 1. Calculate changes for the target segment
-                let newStartDateStr, newEndDateStr
-                const originalDurationDays = dayjs(currentSegment.endDate)
-                    .diff(dayjs(currentSegment.startDate), 'day')
-                
-                if (field === 'startDate') {
-                    newStartDateStr = dayjs(value).toISOString()
-                    newEndDateStr = dayjs(value).add(originalDurationDays, 'day').toISOString()
-                } else { // field === 'endDate'
-                    newStartDateStr = dayjs(currentSegment.startDate).toISOString() // Keep original start date
-                    newEndDateStr = dayjs(value).toISOString()
-                    // Optional: Recalculate duration if endDate is manually changed and you want
-                    // subsequent segments to respect *that*
-                    // const newDurationDays = dayjs(newEndDateStr).diff(dayjs(newStartDateStr), 'day');
-                    // If duration must be preserved, the logic above for startDate change is sufficient.
-                    // If end date change *can* alter duration, use newDurationDays below.
-                    // For now, we preserve original duration.
-                }
-                
-                updates.push({
-                    ...currentSegment,
-                    startDate: newStartDateStr,
-                    endDate: newEndDateStr,
-                })
-                
-                previousEndDate = dayjs(newEndDateStr) // Use dayjs object for calculations
-                
-                // 2. Cascade changes to subsequent segments
-                for (let i = segmentIndex + 1; i < segments.length; i++) {
-                    
-                    const nextSegment = segments[i]
-                    const durationDays = dayjs(nextSegment.endDate)
-                        .diff(dayjs(nextSegment.startDate), 'day') // Preserve original duration
-                    
-                    const subsequentStartDate = previousEndDate
-                    const subsequentEndDate = subsequentStartDate.add(durationDays, 'day')
-                    
-                    updates.push({
-                        ...nextSegment,
-                        startDate: subsequentStartDate.toISOString(),
-                        endDate: subsequentEndDate.toISOString(),
-                    })
-                    
-                    previousEndDate = subsequentEndDate // Update for the next iteration
-                    
-                }
-                
-                // 3. Perform bulk update
-                if (updates.length > 0)
-                    await segmentsRepo.table.bulkPut(updates)
-                
-            }) // End transaction
-            
-            toast('Segment dates updated')
-            
-        } catch (e) {
-            
-            console.error('Failed to update segment dates:', e)
-            toast.error('Failed to update segment dates')
-            
-        }
-        
-    }, [currentTrip])
+    }, [currentTrip, planId, segments])
     
     const deleteSegments = useCallback(async ids => {
         
@@ -187,7 +106,7 @@ const useTripViewModel = () => {
         
         toast(`Segment${ids.length > 0 ? 's' : ''} deleted`)
         
-    }, [])
+    }, [segmentsRepo])
     
     const getTotalDaysPerSegment = segment => {
         
@@ -214,6 +133,71 @@ const useTripViewModel = () => {
         await actions.backupTrip(currentTrip)
         
     }, [currentTrip, segments])
+    
+    const createPlan = useCallback(async () => {
+        
+        console.log('@todo')
+        
+    })
+    
+    const clonePlan = useCallback(async () => {
+        
+        if (!planId)
+            return toast('No current plan to clone')
+        
+        await actions.clonePlan(planId)
+        
+    }, [planId])
+    
+    const renamePlan = useCallback(async planId => {
+        
+        const newName = prompt('Enter a new plan name:')
+        
+        if (!newName?.trim()?.length)
+            return console.warn('renamePlan: no new name given')
+        
+        try {
+            await plansRepo.update(planId, { name: newName })
+            toast('Plan renamed')
+        } catch (e) {
+            console.error('renamePlan', e)
+            toast('Failed to rename plan')
+        }
+        
+    })
+    
+    const deletePlan = useCallback(async planId => {
+        
+        let plan = null
+        
+        try {
+            plan = await plansRepo.getById(planId)
+        } catch (e) {
+            console.error('deletePlan', e)
+            return toast('Failed to find plan')
+        }
+        
+        if (!plan)
+            return console.warn('deletePlan: no current plan')
+        
+        let conf = confirm(`Are you sure you want to delete plan "${plan.name}"?`)
+        
+        if (!conf) return
+        
+        conf = confirm('Are you really sure?')
+        
+        if (!conf) return
+        
+        try {
+            await actions.deletePlan(plan.id)
+            toast('Plan deleted')
+            setTimeout(() => navigate(`/trips/${tripId}`), 500)
+        } catch (e) {
+            console.error('deletePlan', e)
+            toast('Failed to delete plan')
+        }
+        
+    }, [])
     
     useEffect(() => {
         
@@ -260,6 +244,12 @@ const useTripViewModel = () => {
         focusedLatLng,
         setFocusedLatLng,
         
+        shengenStartDate,
+        setShengenStartDate,
+        updateShengenStartDate,
+        shengenEndDate,
+        setShengenEndDate,
+        
         // Global State
         currentTrip,
         currentTripId,
@@ -275,6 +265,9 @@ const useTripViewModel = () => {
         // Memos
         totalDaysPerSegmentByIndex,
         
+        // Hooks
+        navigate,
+        
         // Actions
         updateTrip,
         addSegment,
@@ -283,6 +276,9 @@ const useTripViewModel = () => {
         getTotalDaysPerSegment,
         getCumulativeDaysPerSegment,
         backupTrip,
+        clonePlan,
+        renamePlan,
+        deletePlan,
         
     }
     

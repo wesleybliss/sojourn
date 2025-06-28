@@ -2,6 +2,7 @@ import Dexie from 'dexie'
 import relationships from 'dexie-relationships'
 import dexieCloud from 'dexie-cloud-addon'
 import dexieCloudConfig from '../../dexie-cloud.json'
+import { deriveTableFields } from './dbUtils.js'
 
 const db = new Dexie('trip-planner-basic', {
     addons: [
@@ -19,7 +20,7 @@ const db = new Dexie('trip-planner-basic', {
 */
 
 // Primary key and indexed props
-const table = (...columns) => [
+const table = columns => [
     // '++id',
     '@id',
     'createdAt',
@@ -27,19 +28,19 @@ const table = (...columns) => [
     ...columns,
 ].join(', ')
 
-const schema = {
-    trips: table(
+export const schemas = {
+    trips: [
         '&name',
         'description',
         'startDate',
         'endDate',
-    ),
-    plans: table(
+    ],
+    plans: [
         'tripId -> trips.id',
         'name',
         'description',
-    ),
-    segments: table(
+    ],
+    segments: [
         'tripId -> trips.id',
         'planId -> plans.id',
         'name',
@@ -49,12 +50,23 @@ const schema = {
         'location',
         'coords.lat',
         'coords.lng',
+        'color',
         'flightBooked',
         'stayBooked',
-    ),
+    ],
+}
+
+const schema = {
+    trips: table(schemas.trips),
+    plans: table(schemas.plans),
+    segments: table(schemas.segments),
 }
 
 // console.log('dexie schema', schema)
+
+export const tableFields = deriveTableFields(schemas)
+
+// console.log('tableFields', tableFields)
 
 db.version(1).stores(schema)
 

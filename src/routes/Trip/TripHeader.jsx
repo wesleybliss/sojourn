@@ -1,7 +1,7 @@
 import EditableTextField from '@/components/EditableTextField'
 import { Button } from '@/components/ui/button'
 import DatePicker from '@/components/DatePicker'
-import { FolderPen, FolderDown, BookPlus } from 'lucide-react'
+import { FolderPen, FolderDown, BookPlus, X } from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
     DropdownMenu,
@@ -9,21 +9,13 @@ import {
     DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuPortal,
-    DropdownMenuSeparator,
-    DropdownMenuShortcut,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import dayjs from 'dayjs'
+import { toast } from 'sonner'
 
 const TripHeader = ({
-    currentTrip,
-    currentPlan,
-    plans,
-    updateTrip,
-    backupTrip,
+    vm,
 }) => {
     
     return (
@@ -34,34 +26,61 @@ const TripHeader = ({
                 <div className="flex items-center gap-12">
                     <div className="flex items-center justify-between group">
                         <EditableTextField
-                            value={currentTrip?.name || ''}
+                            value={vm.currentTrip?.name || ''}
                             placeholder="New trip"
-                            onChange={updateTrip('name')}>
+                            onChange={vm.updateTrip('name')}>
                             <FolderPen className="opacity-0 group-hover:opacity-20 hover:opacity-100
                                 transition-opacity ease-in-out duration-300" />
                         </EditableTextField>
                     </div>
                     <div className="flex items-center gap-2">
                         <DatePicker
-                            date={currentTrip?.startDate || Date.now()}
-                            onSelect={updateTrip('startDate')} />
+                            date={vm.currentTrip?.startDate || Date.now()}
+                            onSelect={vm.updateTrip('startDate')} />
                         <DatePicker
-                            date={currentTrip?.endDate || Date.now()}
-                            onSelect={updateTrip('endDate')} />
+                            date={vm.currentTrip?.endDate || Date.now()}
+                            onSelect={vm.updateTrip('endDate')} />
+                        <div className="border-r border-accent w-px h-full" />
+                        <div className="flex items-center gap-2">
+                            <div>Shengen Dates:</div>
+                            <DatePicker
+                                date={vm.shengenStartDate || Date.now()}
+                                onSelect={vm.updateShengenStartDate} />
+                            <div>&rarr;</div>
+                            <div>{dayjs(vm.shengenEndDate).format('MMM DD, YYYY')}</div>
+                        </div>
                     </div>
                 </div>
                 <div className="flex items-center gap-12">
                     <div className="">
                         <p className="text-muted-foreground">
-                            {currentTrip?.description || 'New trip description'}
+                            {vm.currentTrip?.description || 'New trip description'}
                         </p>
                     </div>
                     <div className="">
                         <Tabs defaultValue="">
                             <TabsList>
-                                {plans?.map(it => (
-                                    <TabsTrigger key={it.id} value={it.id}>
-                                        {it.name}
+                                {vm.plans?.map(it => (
+                                    <TabsTrigger
+                                        key={it.id}
+                                        value={it.id}
+                                        asChild>
+                                        <div className="flex items-center gap-2 cursor-pointer">
+                                            <div
+                                                className="hover:bg-accent hover:text-accent-foreground"
+                                                onClick={() => vm.navigate(
+                                                    `/trips/${vm.currentTrip.id}/plans/${it.id}`)}
+                                                onDoubleClick={() => vm.renamePlan(it.id)}>
+                                                {it.name}
+                                            </div>
+                                            <Button
+                                                title="Delete plan"
+                                                size="icon"
+                                                variant="ghost"
+                                                onClick={() => vm.deletePlan(it.id)}>
+                                                <X />
+                                            </Button>
+                                        </div>
                                     </TabsTrigger>
                                 ))}
                             </TabsList>
@@ -77,10 +96,10 @@ const TripHeader = ({
                             <DropdownMenuContent className="w-56" align="start">
                                 <DropdownMenuLabel>Create a Plan</DropdownMenuLabel>
                                 <DropdownMenuGroup>
-                                    <DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => toast('@todo')}>
                                         New
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem>
+                                    <DropdownMenuItem onClick={vm.clonePlan}>
                                         Clone Current Plan
                                     </DropdownMenuItem>
                                 </DropdownMenuGroup>
@@ -93,7 +112,7 @@ const TripHeader = ({
             <div className="flex items-center justify-end gap-2">
                 <Button
                     title="Backup trip"
-                    onClick={backupTrip}>
+                    onClick={vm.backupTrip}>
                     <FolderDown />
                 </Button>
             </div>

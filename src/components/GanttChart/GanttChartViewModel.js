@@ -74,7 +74,7 @@ const GanttChartViewModel = (
     const handleDragOver = e => {
         e.preventDefault()
         if (!draggedTask) return
-
+        
         const task = items.find(t => t.id === draggedTask)
         if (!task) return
 

@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { cn, noop } from '@/lib/utils'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { Button } from '@/components/ui/button'
@@ -10,6 +10,8 @@ const ConfirmDeleteSegmentsDialog = ({
     onConfirm,
     ...props
 }) => {
+    
+    const [open, setOpen] = useState(false)
     
     const title = useMemo(() => {
         
@@ -25,11 +27,12 @@ const ConfirmDeleteSegmentsDialog = ({
         
         return `Are you sure you want to delete ${text}?`
         
-    })
+    }, [isMultiple])
     
     return (
         
         <ConfirmDialog
+            open={open}
             trigger={
                 <Button
                     className={cn(
@@ -37,6 +40,7 @@ const ConfirmDeleteSegmentsDialog = ({
                         'hover:text-primary-foreground',
                         className)}
                     variant="ghost"
+                    onClick={() => setOpen(!open)}
                     {...props}>
                     <MapPinX />
                 </Button>

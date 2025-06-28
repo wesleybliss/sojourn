@@ -85,12 +85,12 @@ class Repository {
     
     async bulkCreate(records) {
         
-        const now = new Date().toISOString()
+        // const now = new Date().toISOString()
         const formatted = records.map(record => ({
             ...record,
-            id: record.id || crypto.randomUUID(),
+            /* id: record.id || crypto.randomUUID(),
             createdAt: now,
-            updatedAt: now,
+            updatedAt: now, */
         }))
         
         await this.table.bulkAdd(formatted)

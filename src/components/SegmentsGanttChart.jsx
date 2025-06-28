@@ -5,17 +5,17 @@ import GanttChart from '@/components/GanttChart'
 import dayjs from 'dayjs'
 
 const SegmentsGanttChart = ({
-    tripId,
+    planId,
 }) => {
     
-    const segments = useLiveQuery(() => tripId ? (
+    const segments = useLiveQuery(() => planId ? (
         segmentsRepo.table
-            .where('tripId')
-            .equals(tripId)
+            .where('planId')
+            .equals(planId)
             // .reverse()
             .sortBy('startDate')
             // .toArray()
-    ) : null, [tripId])
+    ) : null, [planId])
     
     /** @type GanttChartItem[] */
     const items = useMemo(() => {
@@ -31,7 +31,7 @@ const SegmentsGanttChart = ({
             color: it.color,
         }))
         
-    }, [tripId, segments])
+    }, [planId, segments])
     
     if (!items?.length) return null
     
