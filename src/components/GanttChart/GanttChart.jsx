@@ -52,7 +52,7 @@ const GanttChart = ({
                                 </div>
                                 
                                 <div
-                                    className="flex-grow relative h-12 flex items-center">
+                                    className="flex-grow relative h-10 flex items-center">
                                     {vm.days.map(day => (
                                         <div
                                             key={day.toISOString()}
@@ -60,7 +60,7 @@ const GanttChart = ({
                                     ))}
                                     
                                     <div
-                                        className={`absolute h-8 ${it.color} rounded-lg flex items-center cursor-move
+                                        className={`absolute h-8 ${it.color} rounded flex items-center cursor-move
                                             ${vm.draggedTask === it.id ? 'opacity-50' : ''}`}
                                         style={{
                                             left: `${taskStart}%`,
