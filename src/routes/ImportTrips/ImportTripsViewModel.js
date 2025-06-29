@@ -1,4 +1,5 @@
 import { useRef, useState, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useWireState } from '@forminator/react-wire'
 import * as store from '@/store'
 import * as actions from '@/actions'
@@ -7,6 +8,7 @@ import { toast } from 'sonner'
 const ImportTripsViewModel = () => {
     
     const fileInputRef = useRef()
+    const navigate = useNavigate()
     
     const [pendingImportData, setPendingImportData] = useState(null)
     const [overwriteTripDialogOpen, setOverwriteTripDialogOpen] = useState(false)
@@ -69,6 +71,8 @@ const ImportTripsViewModel = () => {
         try {
             
             await actions.restoreAllTrips(data)
+            
+            navigate('/trips')
             
         } catch (e) {
             

@@ -26,10 +26,10 @@ export const backupTrip = async trip => {
         .equals(trip.id)
         .sortBy('startDate')
     
-    await Promise.all(plans.map(async (it, i) => {
+    await Promise.all(plans.map(async (plan, i) => {
         plans[i].segments = await segmentsRepo.table
-            .where('tripId')
-            .equals(trip.id)
+            .where('planId')
+            .equals(plan.id)
             .sortBy('updatedAt')
     }))
     
@@ -59,10 +59,10 @@ export const backupAllTrips = async () => {
             .equals(trip.id)
             .sortBy('updatedAt')
         
-        await Promise.all(trips[i].plans.map(async (it, j) => {
+        await Promise.all(trips[i].plans.map(async (plan, j) => {
             trips[i].plans[j].segments = await segmentsRepo.table
-                .where('tripId')
-                .equals(trip.id)
+                .where('planId')
+                .equals(plan.id)
                 .sortBy('updatedAt')
         }))
         
@@ -242,7 +242,7 @@ export const restoreTripData = async data => {
     
     data = cloneRecord(data, tableFields.trips)
     
-    // console.log('restoreTripData', { data, existingTrip })
+    // return console.log('restoreTripData', { data, existingTrip })
     
     const newTripId = await tripsRepo.create(data)
     
@@ -302,21 +302,23 @@ export const restoreTrip = async data => {
         throw new Error('Invalid backup type')
     
     // Add some defaults to we don't need to use null checks
-    data.plans = data.plans || []
-    data.plans = data.plans.map(it => ({
+    data.trip.plans = data.trip.plans || []
+    data.trip.plans = data.trip.plans.map(it => ({
         ...it,
         segments: it.segments || [],
     }))
     
+    const plansCount = data.trip.plans.length
+    const segmentsCount = data.trip.plans.reduce((acc, it) => acc + it.segments.length, 0)
+    
     store.importTripStatus.setValue(`Importing Trip: ${data.trip.name}`)
-    store.importTripProgressMax.setValue(data.plans.length + data.segments.length + 1)
+    store.importTripProgressMax.setValue(plansCount + segmentsCount + 1)
     store.importTripProgressValue.setValue(0)
     
     const trip = await restoreTripData(data.trip)
     const tripName = trip.name === data.trip.name ? trip.name : `${data.trip.name} -> ${trip.name}`
     
-    console.log('restoreTrip: restoring trip', tripName, 'with',
-        data.plans.length, 'plans,', data.segments.length, 'segments')
+    console.log(`restoreTrip: ${tripName} with ${plansCount} plans, ${segmentsCount} segments`)
     
     if (!trip.coverImageUrl)
         trip.coverImageUrl = await getRandomUnsplashImageUrl(trip.name)
@@ -325,23 +327,23 @@ export const restoreTrip = async data => {
     
     try {
         
-        // Create the initial plan, if none exist in the import
-        if (!data.plans.length)
-            data.plans = [await plansRepo.create({
+        // Create the initial plan if none exist in the import
+        if (!data.trip.plans.length)
+            data.trip.plans = [await plansRepo.create({
                 tripId: trip.id,
                 name: '',
             })]
         
         console.log('actions#restoreTrip creating plans')
-        await Promise.all(data.plans.map(async it => {
+        await Promise.all(data.trip.plans.map(async planData => {
             
-            const plan = await restorePlanData(trip.id, it)
+            const plan = await restorePlanData(trip.id, planData)
             
             incrementImportProgress()
             
             console.log('actions#restoreTrip creating segments')
-            await Promise.all(data.segments.map(async it => {
-                await restoreSegmentData(trip.id, plan.id, it)
+            await Promise.all(planData.segments.map(async segmentData => {
+                await restoreSegmentData(trip.id, plan.id, segmentData)
                 incrementImportProgress()
             }))
             
@@ -358,22 +360,15 @@ export const restoreTrip = async data => {
     
 }
 
-export const restoreAllTrips = async (data, onConflictAction = 'duplicate') => {
+export const restoreAllTrips = async data => {
     
     if (data.type !== 'multiple')
         throw new Error('Invalid backup type')
     
-    const promises = data.trips.map(trip => {
-        
-        const segments = data.segments.filter(seg => seg.tripId === trip.id)
-        
-        return restoreTrip({
-            type: 'single',
-            trip,
-            segments,
-        }, onConflictAction)
-        
-    })
+    const promises = data.trips.map(trip => restoreTrip({
+        type: 'single',
+        trip,
+    }))
     
     await Promise.all(promises)
     
