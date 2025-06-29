@@ -1,14 +1,17 @@
 import { useState } from 'react'
 import useGanttChartViewModel from './GanttChartViewModel'
-import { format, getTime, differenceInDays } from 'date-fns'
+import { format, differenceInDays } from 'date-fns'
 import { GripHorizontal } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const GanttChart = ({
     items,
     setItems,
 }) => {
-    const [hoveredRow, setHoveredRow] = useState(null);
-    const [hoveredCol, setHoveredCol] = useState(null);
+    
+    const [hoveredRow, setHoveredRow] = useState(null)
+    const [hoveredCol, setHoveredCol] = useState(null)
+    
     const vm = useGanttChartViewModel(items, setItems)
     
     // Calculate the minimum width needed based on number of days
@@ -29,9 +32,10 @@ const GanttChart = ({
                     {vm.days.map((day, dayIndex) => (
                         <div
                             key={day.toISOString()}
-                            className={`flex-1 px-2 py-1 text-sm text-center border-l ${hoveredCol === dayIndex ? 'bg-gray-100' : ''}`}
-                            onMouseEnter={() => setHoveredCol(dayIndex)}
-                        >
+                            className={cn('flex-1 px-2 py-1 text-sm text-center border-l', {
+                                'bg-gray-100': hoveredCol === dayIndex,
+                            })}
+                            onMouseEnter={() => setHoveredCol(dayIndex)}>
                             {format(day, 'MMM d')}
                         </div>
                     ))}
@@ -52,9 +56,12 @@ const GanttChart = ({
                         
                         return (
                             
-                            <div key={it.id} className={`flex items-center border-b ${hoveredRow === itemIndex ? 'bg-gray-100' : ''}`}
-                                onMouseEnter={() => setHoveredRow(itemIndex)}
-                            >
+                            <div
+                                key={it.id}
+                                className={cn('flex items-center border-b', {
+                                    'bg-gray-100': hoveredRow === itemIndex,
+                                })}
+                                onMouseEnter={() => setHoveredRow(itemIndex)}>
                                 
                                 <div className="w-48 flex-shrink-0 p-2 font-medium">
                                     {it.name}
@@ -65,9 +72,10 @@ const GanttChart = ({
                                     {vm.days.map((day, dayIndex) => (
                                         <div
                                             key={day.toISOString()}
-                                            className={`flex-1 h-full border-l ${hoveredCol === dayIndex ? 'bg-gray-100' : ''}`}
-                                            onMouseEnter={() => setHoveredCol(dayIndex)}
-                                        />
+                                            className={cn('flex-1 h-full border-l', {
+                                                'bg-gray-100': hoveredCol === dayIndex,
+                                            })}
+                                            onMouseEnter={() => setHoveredCol(dayIndex)} />
                                     ))}
                                     
                                     <div
