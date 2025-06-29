@@ -37,7 +37,7 @@ const GanttChart = ({
                         // Calculate the day index where this task starts
                         const startDayIndex = Math.max(0, differenceInDays(it.startDate, vm.days[0]))
                         // Calculate task duration in days
-                        const taskDuration = differenceInDays(it.endDate, it.startDate)
+                        const taskDuration = differenceInDays(it.endDate, it.startDate) + 1
                         
                         // Calculate percentage values for positioning
                         const taskStart = (startDayIndex / vm.days.length) * 100
