@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import useGanttChartViewModel from './GanttChartViewModel'
 import { format, getTime, differenceInDays } from 'date-fns'
 import { GripHorizontal } from 'lucide-react'
@@ -6,7 +7,8 @@ const GanttChart = ({
     items,
     setItems,
 }) => {
-    
+    const [hoveredRow, setHoveredRow] = useState(null);
+    const [hoveredCol, setHoveredCol] = useState(null);
     const vm = useGanttChartViewModel(items, setItems)
     
     // Calculate the minimum width needed based on number of days
@@ -14,17 +16,22 @@ const GanttChart = ({
     
     return (
         
-        <div className="p-6 bg-white rounded-lg shadow-lg overflow-x-auto">
+        <div className="p-6 bg-white rounded-lg shadow-lg overflow-x-auto" onMouseLeave={() => {
+            setHoveredCol(null)
+            setHoveredRow(null)
+        }}>
             
             <div style={{ minWidth: `${minWidth}px` }}>
                 
                 {/* Header with dates */}
                 <div className="flex border-b">
                     <div className="w-48 flex-shrink-0" />
-                    {vm.days.map(day => (
+                    {vm.days.map((day, dayIndex) => (
                         <div
                             key={day.toISOString()}
-                            className="flex-1 px-2 py-1 text-sm text-center border-l">
+                            className={`flex-1 px-2 py-1 text-sm text-center border-l ${hoveredCol === dayIndex ? 'bg-gray-100' : ''}`}
+                            onMouseEnter={() => setHoveredCol(dayIndex)}
+                        >
                             {format(day, 'MMM d')}
                         </div>
                     ))}
@@ -32,7 +39,7 @@ const GanttChart = ({
                 
                 <div ref={vm.timelineRef} onDragOver={vm.handleDragOver}>
                     {/* Tasks */}
-                    {vm.items.map(it => {
+                    {vm.items.map((it, itemIndex) => {
                         // console.log('gantt', it)
                         // Calculate the day index where this task starts
                         const startDayIndex = Math.max(0, differenceInDays(it.startDate, vm.days[0]))
@@ -45,7 +52,9 @@ const GanttChart = ({
                         
                         return (
                             
-                            <div key={it.id} className="flex items-center border-b">
+                            <div key={it.id} className={`flex items-center border-b ${hoveredRow === itemIndex ? 'bg-gray-100' : ''}`}
+                                onMouseEnter={() => setHoveredRow(itemIndex)}
+                            >
                                 
                                 <div className="w-48 flex-shrink-0 p-2 font-medium">
                                     {it.name}
@@ -53,10 +62,12 @@ const GanttChart = ({
                                 
                                 <div
                                     className="flex-grow relative h-10 flex items-center">
-                                    {vm.days.map(day => (
+                                    {vm.days.map((day, dayIndex) => (
                                         <div
                                             key={day.toISOString()}
-                                            className="flex-1 h-full border-l" />
+                                            className={`flex-1 h-full border-l ${hoveredCol === dayIndex ? 'bg-gray-100' : ''}`}
+                                            onMouseEnter={() => setHoveredCol(dayIndex)}
+                                        />
                                     ))}
                                     
                                     <div
