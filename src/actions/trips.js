@@ -1,5 +1,5 @@
 import * as store from '@/store'
-import db from '@/db'
+import db, { tableFields } from '@/db'
 import tripsRepo from '@/db/repositories/trips'
 import plansRepo from '@/db/repositories/plans'
 import segmentsRepo from '@/db/repositories/segments'
@@ -8,20 +8,35 @@ import {
     createSyntheticDownload,
     getRandomUnsplashImageUrl,
 } from '@/lib/utils'
+import { cloneRecord } from '@/db/dbUtils'
 import dayjs from 'dayjs'
 import { toast } from 'sonner'
 
+export const incrementImportProgress = (amount = 1) => {
+    
+    store.importTripProgressValue.setValue(
+        store.importTripProgressValue.getValue() + amount)
+    
+}
+
 export const backupTrip = async trip => {
     
-    const segments = await segmentsRepo.table
+    const plans = await plansRepo.table
         .where('tripId')
         .equals(trip.id)
         .sortBy('startDate')
     
+    await Promise.all(plans.map(async (it, i) => {
+        plans[i].segments = await segmentsRepo.table
+            .where('tripId')
+            .equals(trip.id)
+            .sortBy('updatedAt')
+    }))
+    
     const data = {
         type: 'single',
-        trip,
-        segments,
+        ...trip,
+        plans,
     }
     
     const date = dayjs().format('YYYY-MM-DD_HH-mm-ss')
@@ -36,12 +51,26 @@ export const backupTrip = async trip => {
 export const backupAllTrips = async () => {
     
     const trips = await tripsRepo.getAll()
-    const segments = await segmentsRepo.getAll()
+    
+    await Promise.all(trips.map(async (trip, i) => {
+        
+        trips[i].plans = await plansRepo.table
+            .where('tripId')
+            .equals(trip.id)
+            .sortBy('updatedAt')
+        
+        await Promise.all(trips[i].plans.map(async (it, j) => {
+            trips[i].plans[j].segments = await segmentsRepo.table
+                .where('tripId')
+                .equals(trip.id)
+                .sortBy('updatedAt')
+        }))
+        
+    }))
     
     const data = {
         type: 'multiple',
         trips,
-        segments,
     }
     
     const date = dayjs().format('YYYY-MM-DD_HH-mm-ss')
@@ -108,18 +137,19 @@ export const restoreTrip1 = async (data, overwrite = false) => {
     
 }
 
-export const restoreTrip = async (data, onConflictAction = 'duplicate') => {
+export const restoreTrip2 = async (data, onConflictAction = 'duplicate') => {
     
-    return console.warn('need to implement plans restore')
+    // return console.warn('need to implement plans restore')
     
     console.log('restoreTrip', { onConflictAction })
     
     if (data.type !== 'single')
         throw new Error('Invalid backup type')
     
-    const { trip, segments } = data
+    const { trip, plans, segments } = data
     
     const existingTrip = await tripsRepo.getById(trip.id) || await tripsRepo.getByName(trip.name, true)
+    const existingPlans = await Promise.all(plans.map(it => plansRepo.getById(it.id)))
     const existingSegments = await Promise.all(segments.map(it => segmentsRepo.getById(it.id)))
     
     if (existingTrip?.id && onConflictAction === 'duplicate') {
@@ -195,6 +225,136 @@ export const restoreTrip = async (data, onConflictAction = 'duplicate') => {
         store.importTripProgressValue.setValue(
             store.importTripProgressValue.getValue() + 1)
     }))
+    
+}
+
+export const restoreTripData = async data => {
+    
+    // Sanity check
+    if (!data.id || !data.name)
+        throw new Error('Invalid or corrupt trip; missing ID or name')
+    
+    const existingTrip = await tripsRepo.getByName(data.name)
+    
+    // If the trip already exists, change it's name to import it as new
+    if (existingTrip?.name === data.name)
+        data.name = `${data.name} (Copy ${dayjs().format('YYYY-MMM-DD')})`
+    
+    data = cloneRecord(data, tableFields.trips)
+    
+    // console.log('restoreTripData', { data, existingTrip })
+    
+    const newTripId = await tripsRepo.create(data)
+    
+    return await tripsRepo.getById(newTripId)
+    
+}
+
+export const restorePlanData = async (tripId, data) => {
+    
+    if (!tripId)
+        throw new Error('Invalid tripId')
+    
+    if (!data.id || !data.tripId || !data.name)
+        throw new Error('Invalid or corrupt plan; missing ID or trip ID or name')
+    
+    data = {
+        ...cloneRecord(data, tableFields.plans),
+        tripId,
+    }
+    
+    const newPlanId = await plansRepo.create(data)
+    
+    return await plansRepo.getById(newPlanId)
+    
+}
+
+export const restoreSegmentData = async (tripId, planId, data) => {
+    
+    if (!tripId)
+        throw new Error('Invalid tripId')
+    
+    if (!planId)
+        throw new Error('Invalid planId')
+    
+    if (!data.id || !data.tripId || !data.name)
+        throw new Error('Invalid or corrupt segment; missing ID or trip ID or name')
+    
+    data = {
+        ...cloneRecord(data, tableFields.segments),
+        tripId,
+        planId,
+    }
+    
+    const newSegmentId = await segmentsRepo.create(data)
+    
+    return await segmentsRepo.getById(newSegmentId)
+    
+}
+
+export const restoreTrip = async data => {
+    
+    // return console.warn('need to implement plans restore')
+    
+    console.log('restoreTrip', { data })
+    
+    if (data.type !== 'single')
+        throw new Error('Invalid backup type')
+    
+    // Add some defaults to we don't need to use null checks
+    data.plans = data.plans || []
+    data.plans = data.plans.map(it => ({
+        ...it,
+        segments: it.segments || [],
+    }))
+    
+    store.importTripStatus.setValue(`Importing Trip: ${data.trip.name}`)
+    store.importTripProgressMax.setValue(data.plans.length + data.segments.length + 1)
+    store.importTripProgressValue.setValue(0)
+    
+    const trip = await restoreTripData(data.trip)
+    const tripName = trip.name === data.trip.name ? trip.name : `${data.trip.name} -> ${trip.name}`
+    
+    console.log('restoreTrip: restoring trip', tripName, 'with',
+        data.plans.length, 'plans,', data.segments.length, 'segments')
+    
+    if (!trip.coverImageUrl)
+        trip.coverImageUrl = await getRandomUnsplashImageUrl(trip.name)
+    
+    store.importTripProgressValue.setValue(1)
+    
+    try {
+        
+        // Create the initial plan, if none exist in the import
+        if (!data.plans.length)
+            data.plans = [await plansRepo.create({
+                tripId: trip.id,
+                name: '',
+            })]
+        
+        console.log('actions#restoreTrip creating plans')
+        await Promise.all(data.plans.map(async it => {
+            
+            const plan = await restorePlanData(trip.id, it)
+            
+            incrementImportProgress()
+            
+            console.log('actions#restoreTrip creating segments')
+            await Promise.all(data.segments.map(async it => {
+                await restoreSegmentData(trip.id, plan.id, it)
+                incrementImportProgress()
+            }))
+            
+        }))
+        
+    } catch (e) {
+        
+        // Delete the newly created trip on failure
+        await tripsRepo.delete(trip.id)
+        
+        throw e
+        
+    }
     
 }
 

@@ -9,7 +9,6 @@ const ImportTripsViewModel = () => {
     const fileInputRef = useRef()
     
     const [pendingImportData, setPendingImportData] = useState(null)
-    const [onConflictAction, setOnConflictAction] = useState('duplicate')
     const [overwriteTripDialogOpen, setOverwriteTripDialogOpen] = useState(false)
     
     const [importTripStatus, setImportTripStatus] = useWireState(store.importTripStatus)
@@ -33,13 +32,13 @@ const ImportTripsViewModel = () => {
         
     }
     
-    const restoreTripFromBackup = async (data, onConflictAction) => {
+    const restoreTripFromBackup = async data => {
         
-        console.log('restoreTripFromBackup', { data, onConflictAction })
+        console.log('restoreTripFromBackup', data)
         
         try {
             
-            await actions.restoreTrip(data, onConflictAction)
+            await actions.restoreTrip(data)
             
         } catch (e) {
             
@@ -63,13 +62,13 @@ const ImportTripsViewModel = () => {
         
     }
     
-    const restoreAllTripsFromBackup = async (data, onConflictAction) => {
+    const restoreAllTripsFromBackup = async data => {
         
-        console.log('restoreAllTripsFromBackup', { data, onConflictAction })
+        console.log('restoreAllTripsFromBackup', data)
         
         try {
             
-            await actions.restoreAllTrips(data, onConflictAction)
+            await actions.restoreAllTrips(data)
             
         } catch (e) {
             
@@ -87,13 +86,13 @@ const ImportTripsViewModel = () => {
     
     const restoreTripFromData = async data => {
         
-        console.log('restoreTripFromData', data, { onConflictAction })
+        console.log('restoreTripFromData', data)
         
         switch (data.type) {
             case 'single':
-                return await restoreTripFromBackup(data, onConflictAction)
+                return await restoreTripFromBackup(data)
             case 'multiple':
-                return await restoreAllTripsFromBackup(data, onConflictAction)
+                return await restoreAllTripsFromBackup(data)
             default:
                 console.error('Invalid backup type')
                 toast('Invalid backup type')
@@ -134,10 +133,6 @@ const ImportTripsViewModel = () => {
                 console.error('Error parsing JSON:', e)
                 toast('Error parsing JSON')
                 
-            } finally {
-                
-                setOnConflictAction('duplicate')
-                
             }
             
         }
@@ -147,7 +142,6 @@ const ImportTripsViewModel = () => {
             toast('Error reading file')
         }
         
-        setOnConflictAction('duplicate')
         reader.readAsText(file)
         
     }
@@ -160,8 +154,6 @@ const ImportTripsViewModel = () => {
         // State
         pendingImportData,
         setPendingImportData,
-        onConflictAction,
-        setOnConflictAction,
         overwriteTripDialogOpen,
         setOverwriteTripDialogOpen,
         

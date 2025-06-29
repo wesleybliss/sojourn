@@ -46,34 +46,6 @@ const ImportTrips = () => {
                             accept=".json"
                             onChange={vm.handleFileChange} />
                         
-                        <p>
-                            Conflict resolution strategy:
-                        </p>
-                        
-                        <div className="my-4">
-                            
-                            <RadioGroup defaultValue={vm.onConflictAction}>
-                                
-                                <div className="flex items-center gap-3">
-                                    <RadioGroupItem
-                                        id="r1"
-                                        value="duplicate"
-                                        onClick={() => vm.setOnConflictAction('duplicate')} />
-                                    <Label htmlFor="r1">Duplicate</Label>
-                                </div>
-                                
-                                <div className="flex items-center gap-3">
-                                    <RadioGroupItem
-                                        id="r2"
-                                        value="overwrite"
-                                        onClick={() => vm.setOnConflictAction('overwrite')} />
-                                    <Label htmlFor="r2">Overwrite</Label>
-                                </div>
-                            
-                            </RadioGroup>
-                        
-                        </div>
-                        
                         <Button
                             className="mt-4"
                             variant="secondary"

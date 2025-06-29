@@ -1,5 +1,15 @@
 
 /**
+ * Sanitizes a field name.
+ * @param {string} fieldName The field name to sanitize.
+ * Sanitizes a field name by keeping only alphanumeric characters.
+ * @param {string} rawFieldName The raw field name to sanitize.
+ * @returns {string} The sanitized field name.
+ */
+const sanitizeFieldName = rawFieldName =>
+    rawFieldName.replace(/[^a-zA-Z0-9]/g, '')
+
+/**
  * Creates an object where keys are table names and values are arrays
  * of normalized field names for that table.
  *
@@ -21,29 +31,27 @@ export const deriveTableFields = schemas => {
             
             for (const fieldDef of fieldDefinitions) {
                 
-                let fieldName = fieldDef
-                
-                // 1. Remove '&' for unique keys
-                if (fieldName.startsWith('&'))
-                    fieldName = fieldName.substring(1)
+                let fieldName = sanitizeFieldName(fieldDef)
                 
                 // 2. Handle '-> table.id' for foreign keys
                 // This regex matches " -> " followed by any characters until the end of the string.
                 const relationMatch = fieldName.match(/ -> .*$/)
                 
                 if (relationMatch)
-                    fieldName = fieldName.substring(0, relationMatch.index).trim()
+                    fieldName = fieldName.substring(0, relationMatch.index)
                 
                 // 3. Handle dot notation (e.g., 'coords.lat' -> 'coords.lat')
                 // No change needed for the *field name itself* if you want to keep 'coords.lat'
                 // as the field name. If you only want 'coords', you'd need another step.
                 // Based on your example, 'coords.lat' should remain 'coords.lat'.
                 
-                normalizedFields.push(fieldName)
+                normalizedFields.push(fieldName.trim())
                 
             }
             
             tableFields[tableName] = normalizedFields
+            
+            // console.log('normalized', tableName, 'fields', normalizedFields)
             
         }
         
@@ -73,12 +81,17 @@ export const getPlainRecord = (record, schemaFields) => {
     
 }
 
-export const cloneRecord = (record, schemaFields, omitId = true) => {
+export const cloneRecord = (record, schemaFields, omitId = true, omitTimestamps = true) => {
     
     const data = getPlainRecord(record, schemaFields)
     
     if (omitId)
         delete data.id
+    
+    if (omitTimestamps) {
+        delete data.createdAt
+        delete data.updatedAt
+    }
     
     return data
     

@@ -1,4 +1,4 @@
-import { schemas } from '@/db'
+import { tableFields } from '@/db'
 import plansRepo from '@/db/repositories/plans'
 import segmentsRepo from '@/db/repositories/segments'
 import { cloneRecord } from '@/db/dbUtils'
@@ -26,13 +26,13 @@ export const clonePlan = async planId => {
     const segments = await segmentsRepo.findByPlanId(planId)
     
     const newPlanId = await plansRepo.create({
-        ...cloneRecord(plan, schemas.plans),
+        ...cloneRecord(plan, tableFields.plans),
         name,
         tripId: plan.tripId,
     })
     
     const segmentsPayloads = segments.map(it => ({
-        ...cloneRecord(it, schemas.segments),
+        ...cloneRecord(it, tableFields.segments),
         tripId: plan.tripId,
         planId: newPlanId,
     }))
