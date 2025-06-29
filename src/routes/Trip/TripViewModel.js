@@ -40,7 +40,7 @@ const useTripViewModel = () => {
             .sortBy('createdAt')
     ) : null, [tripId])
     
-    const segments = useLiveQuery(() => tripId ? (
+    const segments = useLiveQuery(() => planId ? (
         segmentsRepo.table
             .where('planId')
             .equals(planId)
@@ -48,14 +48,24 @@ const useTripViewModel = () => {
             .sortBy('startDate')
     ) : null, [planId])
     
-    const updateShengenStartDate = useCallback(newDate => {
+    const shengenData = useMemo(() => {
         
-        const value = dayjs(newDate)
+        if (!segments?.length) return
         
-        setShengenStartDate(value.toDate())
-        setShengenEndDate(value.add(89, 'day').toDate())
+        const startDate =  dayjs(segments[0].startDate)
+        const endDate = startDate.add(89, 'day')
+        const totalDays = endDate.diff(startDate, 'day')
+        const remainingDays = 89 - totalDays
         
-    }, [])
+        return {
+            startDate,
+            endDate,
+            isOver: remainingDays < 0,
+            totalDays,
+            remainingDays,
+        }
+        
+    }, [segments])
     
     const updateTrip = useCallback(field => async e => {
         
@@ -209,6 +219,17 @@ const useTripViewModel = () => {
     
     useEffect(() => {
         
+        if (!segments?.length) return
+        
+        const value = dayjs(segments[0].startDate)
+        
+        setShengenStartDate(value.toDate())
+        setShengenEndDate(value.add(89, 'day').toDate())
+        
+    }, [segments])
+    
+    useEffect(() => {
+        
         // Default to the first plan, if none selected
         if (!planId && tripId && plans?.length) {
             console.log('Redirecting to plan:', plans[0].name)
@@ -245,10 +266,7 @@ const useTripViewModel = () => {
         setFocusedLatLng,
         
         shengenStartDate,
-        setShengenStartDate,
-        updateShengenStartDate,
         shengenEndDate,
-        setShengenEndDate,
         
         // Global State
         currentTrip,
@@ -263,6 +281,7 @@ const useTripViewModel = () => {
         setShowMap,
         
         // Memos
+        shengenData,
         totalDaysPerSegmentByIndex,
         
         // Hooks

@@ -1,6 +1,5 @@
 import EditableTextField from '@/components/EditableTextField'
 import { Button } from '@/components/ui/button'
-import DatePicker from '@/components/DatePicker'
 import { FolderPen, FolderDown, BookPlus, X } from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
@@ -11,7 +10,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import dayjs from 'dayjs'
+import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
 const TripHeader = ({
@@ -23,7 +22,7 @@ const TripHeader = ({
         <header className="flex items-center justify-between gap-4">
             
             <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-12">
+                <div className="flex items-center gap-5">
                     <div className="flex items-center justify-between group">
                         <EditableTextField
                             value={vm.currentTrip?.name || ''}
@@ -34,20 +33,15 @@ const TripHeader = ({
                         </EditableTextField>
                     </div>
                     <div className="flex items-center gap-2">
-                        <DatePicker
-                            date={vm.currentTrip?.startDate || Date.now()}
-                            onSelect={vm.updateTrip('startDate')} />
-                        <DatePicker
-                            date={vm.currentTrip?.endDate || Date.now()}
-                            onSelect={vm.updateTrip('endDate')} />
-                        <div className="border-r border-accent w-px h-full" />
-                        <div className="flex items-center gap-2">
-                            <div>Shengen Dates:</div>
-                            <DatePicker
-                                date={vm.shengenStartDate || Date.now()}
-                                onSelect={vm.updateShengenStartDate} />
-                            <div>&rarr;</div>
-                            <div>{dayjs(vm.shengenEndDate).format('MMM DD, YYYY')}</div>
+                        <div>{vm.shengenData?.startDate?.format('MMM DD, YYYY')}</div>
+                        <div>&rarr;</div>
+                        <div className={cn({
+                            'text-red-500': vm.shengenData?.isOver === true,
+                        })}>
+                            {vm.shengenData?.endDate?.format('MMM DD, YYYY')}
+                        </div>
+                        <div className="italic text-sm">
+                            {vm.shengenData?.totalDays || '0'} days, {vm.shengenData?.remainingDays || '0'} remaining
                         </div>
                     </div>
                 </div>
