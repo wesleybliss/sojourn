@@ -69,6 +69,14 @@ const useTripViewModel = () => {
         
     }, [segments])
     
+    const summaryTripText = useMemo(() => {
+        
+        if (!currentTrip || !currentPlan || !segments?.length) return ''
+        
+        return segments.map(it => `${it.name} from ${it.startDate} to ${it.endDate}`).join('\n')
+        
+    }, [currentTrip, currentPlan, segments])
+    
     const updateTrip = useCallback(field => async e => {
         
         if (!currentTrip) return
@@ -292,6 +300,7 @@ const useTripViewModel = () => {
         
         // Memos
         shengenData,
+        summaryTripText,
         totalDaysPerSegmentByIndex,
         
         // Hooks

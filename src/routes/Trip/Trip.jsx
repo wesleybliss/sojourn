@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { MapPinPlus } from 'lucide-react'
+// import AISummary from '@/components/AISummary'
 
 // @todo @debug
 import { useState } from 'react'
@@ -77,6 +78,13 @@ const Trip = () => {
                 </div>
                 {vm.showMap && <MapLibreMap latLng={vm.focusedLatLng} />}
             </div>
+            
+            {/* <div className="my-3">
+                <AISummary
+                    context="Summarize the segments of this multi-city trip, accounting for
+                        Shengen zone allowance, gaps in time, and how I might improve planning"
+                    text={vm.summaryTripText} />
+            </div> */}
             
             {vm.currentTrip && vm.segments?.length > 0 && (
                 <SegmentsGanttChart
