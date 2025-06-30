@@ -10,6 +10,7 @@ key('theme')
 
 key('trips')
 key('currentTrip')
+key('cascadeEnabled')
 key('showMap')
 
 //

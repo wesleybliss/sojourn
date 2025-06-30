@@ -33,8 +33,15 @@ const Trip = () => {
             <TripHeader vm={vm} />
             
             <header className="flex items-center justify-between">
-                <h3>Segments</h3>
+                <h3>Segments: {vm.segments?.length || '0'}</h3>
                 <div className="flex items-center justify-end gap-4">
+                    <div className="flex items-center space-x-2">
+                        <Switch
+                            id="toggle-cascade"
+                            checked={vm.cascadeEnabled}
+                            onCheckedChange={checked => vm.setCascadeEnabled(checked)} />
+                        <Label htmlFor="toggle-cascade">Cascade</Label>
+                    </div>
                     <div className="flex items-center space-x-2">
                         <Switch
                             id="toggle-map"

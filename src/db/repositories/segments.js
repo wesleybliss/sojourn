@@ -16,6 +16,9 @@ export class SegmentsRepository extends Repository {
         if (!data.tripId)
             throw new Error('Property "tripId" is required')
         
+        if (!data.planId)
+            throw new Error('Property "planId" is required')
+        
         if (!data.coords)
             data.coords = await geocode(data.name)
         
@@ -32,9 +35,12 @@ export class SegmentsRepository extends Repository {
         if (!data.tripId)
             throw new Error('Property "tripId" is required')
         
+        if (!data.planId)
+            throw new Error('Property "planId" is required')
+        
         const segments = await this.table
-            .where('tripId')
-            .equals(data.tripId)
+            .where('planId')
+            .equals(data.planId)
             // .reverse()
             .sortBy('startDate')
         

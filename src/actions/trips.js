@@ -374,7 +374,7 @@ export const restoreAllTrips = async data => {
     
 }
 
-export const updateSegmentWithCascade = async (currentTrip, planId, segmentId, field, value) => {
+export const updateSegmentWithCascade = async (currentTrip, planId, segmentId, field, value, cascadeEnabled) => {
     
     const segments = await segmentsRepo.table
         .where('planId')
@@ -428,7 +428,7 @@ export const updateSegmentWithCascade = async (currentTrip, planId, segmentId, f
                 newEndDateStr = dayjs(value).toISOString()
                 // Optional: Recalculate duration if endDate is manually changed and you want
                 // subsequent segments to respect *that*
-                // const newDurationDays = dayjs(newEndDateStr).diff(dayjs(newStartDateStr), 'day');
+                // const newDurationDays = dayjs(newEndDateStr).diff(dayjs(newStartDateStr), 'day')
                 // If duration must be preserved, the logic above for startDate change is sufficient.
                 // If end date change *can* alter duration, use newDurationDays below.
                 // For now, we preserve original duration.
@@ -439,6 +439,16 @@ export const updateSegmentWithCascade = async (currentTrip, planId, segmentId, f
                 startDate: newStartDateStr,
                 endDate: newEndDateStr,
             })
+            
+            if (!cascadeEnabled) {
+                
+                console.log('updateSegment: cascade disabled, performing ', updates.length, 'bulk updates')
+                if (updates.length > 0)
+                    await segmentsRepo.table.bulkPut(updates)
+                
+                return
+                
+            }
             
             previousEndDate = dayjs(newEndDateStr) // Use dayjs object for calculations
             

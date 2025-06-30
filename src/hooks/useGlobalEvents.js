@@ -7,28 +7,27 @@ import segmentsRepo from '@/db/repositories/segments'
 import { EVENT_CREATE_SEGMENT } from '@/constants'
 import useEventSubscription from '@/hooks/useEventSubscription'
 import { toast } from 'sonner'
+import plansRepo from '@/db/repositories/plans.js'
 
 const useGlobalEvents = () => {
     
     const tripId = useWireValue(store.currentTripId)
+    const planId = useWireValue(store.currentPlanId)
     
     const currentTrip = useLiveQuery(() => tripId ? tripsRepo.getById(tripId) : null, [tripId])
-    
-    const segments = useLiveQuery(() => tripId ? (
-        segmentsRepo.table
-            .where('tripId')
-            .equals(tripId)
-            // .reverse()
-            .sortBy('startDate')
-    ) : null, [tripId])
+    const currentPlan = useLiveQuery(() => planId ? plansRepo.getById(planId) : null, [planId])
     
     const addSegment = useCallback(async () => {
-        console.log('addSegment')
+        
         if (!currentTrip)
             return console.warn('useGlobalEvents#addSegment: No current trip', { tripId })
         
+        if (!currentPlan)
+            return console.warn('useGlobalEvents#addSegment: No current plan', { planId })
+        
         const newSegment = await segmentsRepo.createWithNextDate({
             tripId: currentTrip.id,
+            planId: currentPlan.id,
             name: 'New segment',
             description: 'New segment description',
             color: 'bg-blue-500',
@@ -38,7 +37,7 @@ const useGlobalEvents = () => {
         
         toast('Segment created')
         
-    }, [currentTrip])
+    }, [tripId, planId, currentTrip, currentPlan])
     
     useEventSubscription(EVENT_CREATE_SEGMENT, addSegment)
     

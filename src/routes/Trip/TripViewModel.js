@@ -27,6 +27,7 @@ const useTripViewModel = () => {
     
     const [currentTripId, setCurrentTripId] = useWireState(store.currentTripId)
     const [currentPlanId, setCurrentPlanId] = useWireState(store.currentPlanId)
+    const [cascadeEnabled, setCascadeEnabled] = useWireState(store.cascadeEnabled)
     const [showMap, setShowMap] = useWireState(store.showMap)
     
     const currentTrip = useLiveQuery(() => tripId ? tripsRepo.getById(tripId) : null, [tripId])
@@ -53,7 +54,8 @@ const useTripViewModel = () => {
         if (!segments?.length) return
         
         const startDate =  dayjs(segments[0].startDate)
-        const endDate = startDate.add(89, 'day')
+        // const endDate = startDate.add(89, 'day')
+        const endDate = dayjs(segments[segments.length - 1].endDate)
         const totalDays = endDate.diff(startDate, 'day')
         const remainingDays = 89 - totalDays
         
@@ -101,9 +103,9 @@ const useTripViewModel = () => {
         
         console.log('updateSegment', field, value)
         
-        await actions.updateSegmentWithCascade(currentTrip, planId, id, field, value)
+        await actions.updateSegmentWithCascade(currentTrip, planId, id, field, value, cascadeEnabled)
         
-    }, [currentTrip, planId, segments])
+    }, [currentTrip, planId, segments, cascadeEnabled])
     
     const deleteSegments = useCallback(async ids => {
         
@@ -212,10 +214,14 @@ const useTripViewModel = () => {
     useEffect(() => {
         
         setCurrentTripId(tripId)
+        setCurrentPlanId(planId)
         
-        return () => setCurrentTripId(null)
+        return () => {
+            setCurrentTripId(null)
+            setCurrentPlanId(null)
+        }
         
-    }, [tripId])
+    }, [tripId, planId])
     
     useEffect(() => {
         
@@ -260,6 +266,8 @@ const useTripViewModel = () => {
     return {
         
         // State
+        tripId,
+        planId,
         isEditingName,
         setIsEditingName,
         focusedLatLng,
@@ -277,6 +285,8 @@ const useTripViewModel = () => {
         // setCurrentPlanId,
         plans,
         segments,
+        cascadeEnabled,
+        setCascadeEnabled,
         showMap,
         setShowMap,
         

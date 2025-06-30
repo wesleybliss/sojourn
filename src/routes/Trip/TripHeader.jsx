@@ -45,14 +45,14 @@ const TripHeader = ({
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center gap-12">
+                <div className="flex items-center gap-6">
                     <div className="">
                         <p className="text-muted-foreground">
                             {vm.currentTrip?.description || 'New trip description'}
                         </p>
                     </div>
                     <div className="">
-                        <Tabs defaultValue="">
+                        <Tabs value={vm.planId}>
                             <TabsList>
                                 {vm.plans?.map(it => (
                                     <TabsTrigger
@@ -83,7 +83,7 @@ const TripHeader = ({
                     <div className="">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="outline">
+                                <Button variant="outline" title="Manage Plans">
                                     <BookPlus />
                                 </Button>
                             </DropdownMenuTrigger>

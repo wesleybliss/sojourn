@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { format } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -34,7 +33,7 @@ const DatePicker = ({
                         buttonClassName,
                     )}>
                     <CalendarIcon />
-                    {date ? format(date, 'PPP') : <span>Pick a date</span>}
+                    {date ? dayjs(date).format( 'MMM DD, YYYY') : <span>Pick a date</span>}
                 </Button>
             </PopoverTrigger>
             

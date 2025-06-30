@@ -13,6 +13,7 @@ export const importTripStatus = createWire(null)
 export const importTripProgressMax = createWire(null)
 export const importTripProgressValue = createWire(null)
 
+export const cascadeEnabled = createPersistedWire(keys.cascadeEnabled, false)
 export const showMap = createPersistedWire(keys.showMap, false)
 
 //
