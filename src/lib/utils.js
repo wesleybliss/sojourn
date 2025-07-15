@@ -1,5 +1,6 @@
 import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import dayjs from 'dayjs'
 
 export const gridColumnsMap = {
     1: 'grid-cols-1',
@@ -182,3 +183,17 @@ export const geocodeGeoapify = async locationName => {
 }
 
 export const geocode = geocodeGeoapify
+
+export const calculateTotalDays = (initialStartDate, initialEndDate) => {
+    
+    const startDate =  dayjs(initialStartDate)
+    const endDate = dayjs(initialEndDate)
+    const totalDays = endDate.diff(startDate, 'day')
+    
+    return {
+        startDate,
+        endDate,
+        totalDays,
+    }
+    
+}

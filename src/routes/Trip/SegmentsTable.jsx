@@ -16,7 +16,7 @@ import { Switch } from '@/components/ui/switch'
 import DatePicker from '@/components/DatePicker'
 import TailwindPrimaryColorPicker from '@/components/TailwindPrimaryColorPicker'
 import ConfirmDeleteSegmentsDialog from './ConfirmDeleteSegmentsDialog'
-import { MoveRight, SquareArrowUp, SquareArrowDown } from 'lucide-react'
+import { MoveRight, SquareArrowUp, SquareArrowDown, Globe } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import dayjs from 'dayjs'
 
@@ -67,6 +67,11 @@ const SegmentsTable = ({
                     <TableHead>* Days</TableHead>
                     <TableHead>Flight</TableHead>
                     <TableHead>Stay</TableHead>
+                    <TableHead>
+                        <div className="" title="Shengen Region">
+                            <Globe />
+                        </div>
+                    </TableHead>
                     <TableHead>&nbsp;</TableHead>
                 </TableRow>
                 {anyChecked && (
@@ -173,6 +178,12 @@ const SegmentsTable = ({
                             <Switch
                                 checked={it.stayBooked}
                                 onCheckedChange={updateSegment(it.id, 'stayBooked')} />
+                        </TableCell>
+                        
+                        <TableCell>
+                            <Switch
+                                checked={it.isShengenRegion}
+                                onCheckedChange={updateSegment(it.id, 'isShengenRegion')} />
                         </TableCell>
                         
                         <TableCell>

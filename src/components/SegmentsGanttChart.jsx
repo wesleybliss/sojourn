@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import segmentsRepo from '@/db/repositories/segments'
 import GanttChart from '@/components/GanttChart'
+import { calculateTotalDays } from '@/lib/utils.js'
 import dayjs from 'dayjs'
 
 const SegmentsGanttChart = ({
@@ -29,17 +30,28 @@ const SegmentsGanttChart = ({
             startDate: dayjs(it.startDate).toDate(),
             endDate: dayjs(it.endDate).toDate(),
             color: it.color,
+            totalDays: calculateTotalDays(it.startDate, it.endDate).totalDays,
         }))
         
     }, [planId, segments])
     
     if (!items?.length) return null
     
+    /* <GanttChart
+            items={items}
+            setItems={() => {}}
+            onRenderName={(name, item) => `${name} (${item.totalDays})`}/> */
+    
     return (
         
         <GanttChart
             items={items}
-            setItems={() => {}} />
+            setItems={() => {}}
+            onRenderName={(name, item) => (
+                <span>
+                    {name} <span className="text-xs">({item.totalDays})</span>
+                </span>
+            )} />
         
     )
     

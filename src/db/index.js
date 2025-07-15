@@ -53,6 +53,7 @@ export const schemas = {
         'color',
         'flightBooked',
         'stayBooked',
+        'isShengenRegion',
     ],
 }
 

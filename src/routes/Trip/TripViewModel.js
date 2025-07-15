@@ -11,6 +11,7 @@ import { postEvent } from '@/lib/eventBus'
 import { EVENT_CREATE_SEGMENT } from '@/constants'
 import dayjs from 'dayjs'
 import { toast } from 'sonner'
+import { calculateTotalDays } from '@/lib/utils.js'
 
 const useTripViewModel = () => {
     
@@ -53,10 +54,12 @@ const useTripViewModel = () => {
         
         if (!segments?.length) return
         
-        const startDate =  dayjs(segments[0].startDate)
-        // const endDate = startDate.add(89, 'day')
-        const endDate = dayjs(segments[segments.length - 1].endDate)
-        const totalDays = endDate.diff(startDate, 'day')
+        const shengenSegments = segments.filter(it => it.isShengenRegion)
+        
+        const { startDate, endDate, totalDays } = calculateTotalDays(
+            shengenSegments[0].startDate,
+            shengenSegments[shengenSegments.length - 1].endDate)
+        
         const remainingDays = 89 - totalDays
         
         return {

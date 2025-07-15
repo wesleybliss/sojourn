@@ -33,12 +33,12 @@ const TripHeader = ({
                         </EditableTextField>
                     </div>
                     <div className="flex items-center gap-2">
-                        <div>{vm.shengenData?.startDate?.format('MMM DD, YYYY')}</div>
+                        <div>{vm.shengenData?.startDate?.format('MMM D, YYYY')}</div>
                         <div>&rarr;</div>
                         <div className={cn({
                             'text-red-500': vm.shengenData?.isOver === true,
                         })}>
-                            {vm.shengenData?.endDate?.format('MMM DD, YYYY')}
+                            {vm.shengenData?.endDate?.format('MMM D, YYYY')}
                         </div>
                         <div className="italic text-sm">
                             {vm.shengenData?.totalDays || '0'} days, {vm.shengenData?.remainingDays || '0'} remaining

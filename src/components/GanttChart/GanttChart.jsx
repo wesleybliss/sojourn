@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 const GanttChart = ({
     items,
     setItems,
+    onRenderName,
 }) => {
     
     const [hoveredRow, setHoveredRow] = useState(null)
@@ -96,7 +97,7 @@ const GanttChart = ({
                                         
                                         <div className="flex-grow px-2 text-white text-sm truncate flex items-center">
                                             <GripHorizontal className="w-4 h-4 mr-1" />
-                                            {it.name}
+                                            {onRenderName ? onRenderName(it.name, it) : it.name}
                                         </div>
                                         
                                         <div
