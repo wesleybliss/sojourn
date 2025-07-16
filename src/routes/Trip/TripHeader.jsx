@@ -59,7 +59,9 @@ const TripHeader = ({
                                         key={it.id}
                                         value={it.id}
                                         asChild>
-                                        <div className="flex items-center gap-2 cursor-pointer">
+                                        <div className={cn('flex items-center gap-2 cursor-pointer', {
+                                            '!bg-blue-100': it.id === vm.currentPlanId,
+                                        })}>
                                             <div
                                                 className="hover:bg-accent hover:text-accent-foreground"
                                                 onClick={() => vm.navigate(

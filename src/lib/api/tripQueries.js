@@ -1,6 +1,9 @@
 import db from '../../db2/index.js'
 import * as schemas from '../../db2/schema.js'
 import { eq, desc, asc } from 'drizzle-orm'
+import * as store from '@/store'
+
+const idToInt = obj => obj?.id ? parseInt(obj?.id, 10) : null
 
 // Get all trips
 export const getAllTrips = async () => {
@@ -18,12 +21,15 @@ export const getAllTrips = async () => {
 }
 
 // Get a single trip by ID
-export const getTripById = async id => {
+export const getTripById = async (id, updateStore = false) => {
     try {
         const [trip] = await db
             .select()
             .from(schemas.trips)
             .where(eq(schemas.trips.id, id))
+        
+        if (updateStore)
+            store.currentTripId.setValue(idToInt(trip))
         
         return trip || null
     } catch (error) {
@@ -48,6 +54,22 @@ export const getSegmentsByTripId = async tripId => {
     }
 }
 
+// Get segments for a specific plan
+export const getSegmentsByPlanId = async planId => {
+    try {
+        const segments = await db
+            .select()
+            .from(schemas.segments)
+            .where(eq(schemas.segments.planId, planId))
+            .orderBy(asc(schemas.segments.startDate))
+        
+        return segments
+    } catch (error) {
+        console.error(`Error fetching segments for plan ${planId}:`, error)
+        throw new Error('Failed to fetch segments')
+    }
+}
+
 // Get plans for a specific trip
 export const getPlansByTripId = async tripId => {
     try {
@@ -61,6 +83,98 @@ export const getPlansByTripId = async tripId => {
     } catch (error) {
         console.error(`Error fetching plans for trip ${tripId}:`, error)
         throw new Error('Failed to fetch plans')
+    }
+}
+
+// Get a single plan by ID
+export const getPlanById = async (id, updateStore = false) => {
+    try {
+        const [plan] = await db
+            .select()
+            .from(schemas.plans)
+            .where(eq(schemas.plans.id, id))
+        
+        if (updateStore)
+            store.currentPlanId.setValue(idToInt(plan))
+        
+        return plan || null
+    } catch (error) {
+        console.error(`Error fetching plan ${id}:`, error)
+        throw new Error('Failed to fetch plan')
+    }
+}
+
+// Update a plan
+export const updatePlan = async (id, planData) => {
+    try {
+        const [updatedPlan] = await db
+            .update(schemas.plans)
+            .set({
+                name: planData.name,
+                description: planData.description,
+            })
+            .where(eq(schemas.plans.id, id))
+            .returning()
+        
+        return updatedPlan
+    } catch (error) {
+        console.error(`Error updating plan ${id}:`, error)
+        throw new Error('Failed to update plan')
+    }
+}
+
+// Delete a plan
+export const deletePlan = async id => {
+    try {
+        await db
+            .delete(schemas.plans)
+            .where(eq(schemas.plans.id, id))
+        
+        return { success: true }
+    } catch (error) {
+        console.error(`Error deleting plan ${id}:`, error)
+        throw new Error('Failed to delete plan')
+    }
+}
+
+// Update a segment
+export const updateSegment = async (id, segmentData) => {
+    try {
+        const [updatedSegment] = await db
+            .update(schemas.segments)
+            .set({
+                name: segmentData.name,
+                description: segmentData.description,
+                startDate: segmentData.startDate,
+                endDate: segmentData.endDate,
+                coordsLat: segmentData.coordsLat,
+                coordsLng: segmentData.coordsLng,
+                color: segmentData.color,
+                flightBooked: segmentData.flightBooked,
+                stayBooked: segmentData.stayBooked,
+                isShengenRegion: segmentData.isShengenRegion,
+            })
+            .where(eq(schemas.segments.id, id))
+            .returning()
+        
+        return updatedSegment
+    } catch (error) {
+        console.error(`Error updating segment ${id}:`, error)
+        throw new Error('Failed to update segment')
+    }
+}
+
+// Delete segments
+export const deleteSegments = async ids => {
+    try {
+        await db
+            .delete(schemas.segments)
+            .where(schemas.segments.id.in(ids))
+        
+        return { success: true }
+    } catch (error) {
+        console.error('Error deleting segments:', error)
+        throw new Error('Failed to delete segments')
     }
 }
 

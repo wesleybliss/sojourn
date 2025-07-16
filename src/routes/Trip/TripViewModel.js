@@ -1,20 +1,27 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import { useWireState } from '@forminator/react-wire'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import * as store from '@/store'
 import * as actions from '@/actions'
-import { useLiveQuery } from 'dexie-react-hooks'
-import tripsRepo from '@/db/repositories/trips'
-import plansRepo from '@/db/repositories/plans'
-import segmentsRepo from '@/db/repositories/segments'
 import { useParams, useNavigate } from 'react-router-dom'
 import { postEvent } from '@/lib/eventBus'
 import { EVENT_CREATE_SEGMENT } from '@/constants'
 import dayjs from 'dayjs'
 import { toast } from 'sonner'
 import { calculateTotalDays } from '@/lib/utils.js'
+import {
+    getTripById,
+    getPlanById,
+    getPlansByTripId,
+    getSegmentsByPlanId,
+    updateTrip as updateTripApi,
+    updatePlan as updatePlanApi,
+    deleteSegments as deleteSegmentsApi,
+    deletePlan as deletePlanApi,
+} from '@/lib/api/tripQueries'
 
 const useTripViewModel = () => {
-    
+    const queryClient = useQueryClient()
     const params = useParams()
     const navigate = useNavigate()
     
@@ -31,30 +38,87 @@ const useTripViewModel = () => {
     const [cascadeEnabled, setCascadeEnabled] = useWireState(store.cascadeEnabled)
     const [showMap, setShowMap] = useWireState(store.showMap)
     
-    const currentTrip = useLiveQuery(() => tripId ? tripsRepo.getById(tripId) : null, [tripId])
-    const currentPlan = useLiveQuery(() => planId ? plansRepo.getById(planId) : null, [planId])
+    const { data: currentTrip } = useQuery({
+        queryKey: ['trip', tripId],
+        queryFn: () => tripId ? getTripById(parseInt(tripId, 10)) : null,
+        enabled: !!tripId,
+    })
     
-    const plans = useLiveQuery(() => tripId ? (
-        plansRepo.table
-            .where('tripId')
-            .equals(tripId)
-            // .reverse()
-            .sortBy('createdAt')
-    ) : null, [tripId])
+    const { data: currentPlan } = useQuery({
+        queryKey: ['plan', planId],
+        queryFn: () => planId ? getPlanById(parseInt(planId, 10)) : null,
+        enabled: !!planId,
+    })
     
-    const segments = useLiveQuery(() => planId ? (
-        segmentsRepo.table
-            .where('planId')
-            .equals(planId)
-            // .reverse()
-            .sortBy('startDate')
-    ) : null, [planId])
+    const { data: plans } = useQuery({
+        queryKey: ['plans', tripId],
+        queryFn: () => tripId ? getPlansByTripId(parseInt(tripId, 10)) : null,
+        enabled: !!tripId,
+    })
+    
+    const { data: segments } = useQuery({
+        queryKey: ['segments', planId],
+        queryFn: () => planId ? getSegmentsByPlanId(parseInt(planId, 10)) : null,
+        enabled: !!planId,
+    })
+    
+    // Mutations
+    const updateTripMutation = useMutation({
+        mutationFn: ({ id, data }) => updateTripApi(id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['trip', tripId] })
+            toast('Trip updated')
+        },
+        onError: error => {
+            console.error('Error updating trip:', error)
+            toast('Failed to update trip')
+        },
+    })
+    
+    const updatePlanMutation = useMutation({
+        mutationFn: ({ id, data }) => updatePlanApi(id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['plan', planId] })
+            queryClient.invalidateQueries({ queryKey: ['plans', tripId] })
+            toast('Plan updated')
+        },
+        onError: error => {
+            console.error('Error updating plan:', error)
+            toast('Failed to update plan')
+        },
+    })
+    
+    const deleteSegmentsMutation = useMutation({
+        mutationFn: ids => deleteSegmentsApi(ids),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['segments', planId] })
+            toast('Segments deleted')
+        },
+        onError: error => {
+            console.error('Error deleting segments:', error)
+            toast('Failed to delete segments')
+        },
+    })
+    
+    const deletePlanMutation = useMutation({
+        mutationFn: id => deletePlanApi(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['plans', tripId] })
+            toast('Plan deleted')
+            setTimeout(() => navigate(`/trips/${tripId}`), 500)
+        },
+        onError: error => {
+            console.error('Error deleting plan:', error)
+            toast('Failed to delete plan')
+        },
+    })
     
     const shengenData = useMemo(() => {
-        
         if (!segments?.length) return
         
         const shengenSegments = segments.filter(it => it.isShengenRegion)
+        
+        if (!shengenSegments.length) return
         
         const { startDate, endDate, totalDays } = calculateTotalDays(
             shengenSegments[0].startDate,
@@ -69,7 +133,6 @@ const useTripViewModel = () => {
             totalDays,
             remainingDays,
         }
-        
     }, [segments])
     
     const summaryTripText = useMemo(() => {
@@ -84,17 +147,16 @@ const useTripViewModel = () => {
         
         if (!currentTrip) return
         
-        const value = e?.target?.value ?? e // Use nullish coalescing
+        const value = e?.target?.value ?? e
         
         console.log('updateTrip', field, value)
         
-        await tripsRepo.update(currentTrip.id, {
-            [field]: value,
+        await updateTripMutation.mutateAsync({
+            id: currentTrip.id,
+            data: { [field]: value },
         })
         
-        toast('Trip updated')
-        
-    }, [currentTrip])
+    }, [currentTrip, updateTripMutation])
     
     const addSegment = useCallback(async () => {
         
@@ -102,15 +164,13 @@ const useTripViewModel = () => {
         
         postEvent(EVENT_CREATE_SEGMENT)
         
-    }, [currentTrip, segments])
+    }, [currentTrip])
     
     const updateSegment = useCallback((id, field) => async e => {
         
-        console.log('updateSegment', { currentTrip, planId, segmentsLen: segments?.length })
-        
         if (!currentTrip || !planId || !segments) return
         
-        const value = e?.target?.value ?? e // Use nullish coalescing
+        const value = e?.target?.value ?? e
         
         console.log('updateSegment', field, value)
         
@@ -119,27 +179,20 @@ const useTripViewModel = () => {
     }, [currentTrip, planId, segments, cascadeEnabled])
     
     const deleteSegments = useCallback(async ids => {
-        
         if (!Array.isArray(ids) || ids.length <= 0)
             throw new Error('Param "ids" must be an array')
         
         console.log('deleteSegments', ids)
-        
-        await Promise.all(ids.map(it => segmentsRepo.delete(it)))
-        
-        toast(`Segment${ids.length > 0 ? 's' : ''} deleted`)
-        
-    }, [segmentsRepo])
+        await deleteSegmentsMutation.mutateAsync(ids)
+    }, [deleteSegmentsMutation])
     
     const getTotalDaysPerSegment = segment => {
-        
         const startDate = new Date(segment.startDate)
         const endDate = new Date(segment.endDate)
         const diffTime = Math.abs(endDate.getTime() - startDate.getTime())
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
         
         return diffDays
-        
     }
     
     const totalDaysPerSegmentByIndex = useMemo(() => segments
@@ -152,49 +205,39 @@ const useTripViewModel = () => {
     ), [totalDaysPerSegmentByIndex])
     
     const backupTrip = useCallback(async () => {
-        
         await actions.backupTrip(currentTrip)
-        
     }, [currentTrip, segments])
     
-    const createPlan = useCallback(async () => {
-        
-        console.log('@todo')
-        
-    })
-    
     const clonePlan = useCallback(async () => {
-        
         if (!planId)
             return toast('No current plan to clone')
         
         await actions.clonePlan(planId)
-        
     }, [planId])
     
     const renamePlan = useCallback(async planId => {
-        
         const newName = prompt('Enter a new plan name:')
         
         if (!newName?.trim()?.length)
             return console.warn('renamePlan: no new name given')
         
         try {
-            await plansRepo.update(planId, { name: newName })
+            await updatePlanMutation.mutateAsync({
+                id: planId,
+                data: { name: newName },
+            })
             toast('Plan renamed')
         } catch (e) {
             console.error('renamePlan', e)
             toast('Failed to rename plan')
         }
-        
-    })
+    }, [updatePlanMutation])
     
     const deletePlan = useCallback(async planId => {
-        
         let plan = null
         
         try {
-            plan = await plansRepo.getById(planId)
+            plan = await getPlanById(planId)
         } catch (e) {
             console.error('deletePlan', e)
             return toast('Failed to find plan')
@@ -204,49 +247,34 @@ const useTripViewModel = () => {
             return console.warn('deletePlan: no current plan')
         
         let conf = confirm(`Are you sure you want to delete plan "${plan.name}"?`)
-        
         if (!conf) return
         
         conf = confirm('Are you really sure?')
-        
         if (!conf) return
         
-        try {
-            await actions.deletePlan(plan.id)
-            toast('Plan deleted')
-            setTimeout(() => navigate(`/trips/${tripId}`), 500)
-        } catch (e) {
-            console.error('deletePlan', e)
-            toast('Failed to delete plan')
-        }
-        
-    }, [])
+        await deletePlanMutation.mutateAsync(planId)
+    }, [deletePlanMutation])
     
     useEffect(() => {
         
-        setCurrentTripId(tripId)
-        setCurrentPlanId(planId)
+        setCurrentTripId(parseInt(tripId, 10))
+        setCurrentPlanId(parseInt(planId, 10))
         
         return () => {
             setCurrentTripId(null)
             setCurrentPlanId(null)
         }
-        
     }, [tripId, planId])
     
     useEffect(() => {
-        
         if (!segments?.length) return
         
         const value = dayjs(segments[0].startDate)
-        
         setShengenStartDate(value.toDate())
         setShengenEndDate(value.add(89, 'day').toDate())
-        
     }, [segments])
     
     useEffect(() => {
-        
         // Default to the first plan, if none selected
         if (!planId && tripId && plans?.length) {
             console.log('Redirecting to plan:', plans[0].name)
@@ -255,27 +283,24 @@ const useTripViewModel = () => {
             return
         }
         
-        setCurrentPlanId(planId)
+        setCurrentPlanId(parseInt(planId, 10))
         
         return () => setCurrentPlanId(null)
-        
     }, [tripId, planId, plans])
     
     useEffect(() => {
-        
         if (focusedLatLng) return
         if (!segments?.length) return
         
-        if (segments[0].coords) {
-            setFocusedLatLng(segments[0].coords)
-            console.log('Updated map ' + segments[0].coords)
-            toast(`Updated map ${segments[0].coords.lng},${segments[0].coords.lat}`)
+        if (segments[0].coordsLat && segments[0].coordsLng) {
+            const coords = { lat: segments[0].coordsLat, lng: segments[0].coordsLng }
+            setFocusedLatLng(coords)
+            console.log('Updated map ' + coords)
+            toast(`Updated map ${coords.lng},${coords.lat}`)
         }
-        
     }, [focusedLatLng, segments])
     
     return {
-        
         // State
         tripId,
         planId,
@@ -290,10 +315,8 @@ const useTripViewModel = () => {
         // Global State
         currentTrip,
         currentTripId,
-        // setCurrentTrip,
         currentPlan,
         currentPlanId,
-        // setCurrentPlanId,
         plans,
         segments,
         cascadeEnabled,
@@ -320,9 +343,7 @@ const useTripViewModel = () => {
         clonePlan,
         renamePlan,
         deletePlan,
-        
     }
-    
 }
 
 export default useTripViewModel
