@@ -4,11 +4,7 @@ import * as schemas from '../../db2/schema.js'
 
 const main = async () => {
     
-    const users = await db
-        .select()
-        .from(schemas.users)
     
-    console.table(users)
     
 }
 

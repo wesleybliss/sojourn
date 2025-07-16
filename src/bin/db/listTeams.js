@@ -4,11 +4,11 @@ import * as schemas from '../../db2/schema.js'
 
 const main = async () => {
     
-    const users = await db
+    const teams = await db
         .select()
-        .from(schemas.users)
+        .from(schemas.teams)
     
-    console.table(users)
+    console.table(teams)
     
 }
 

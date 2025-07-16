@@ -1,6 +1,7 @@
 import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import dayjs from 'dayjs'
+import bcrypt from 'bcryptjs'
 
 export const gridColumnsMap = {
     1: 'grid-cols-1',
@@ -195,5 +196,19 @@ export const calculateTotalDays = (initialStartDate, initialEndDate) => {
         endDate,
         totalDays,
     }
+    
+}
+
+export const hashPassword = async password => {
+    
+    const salt = await bcrypt.genSalt(10)
+    
+    return await bcrypt.hash(password, salt)
+    
+}
+
+export const checkPassword = async (hashedPassword, password) => {
+    
+    return await bcrypt.compare(hashedPassword, password)
     
 }
