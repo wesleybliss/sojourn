@@ -1,19 +1,17 @@
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { useLiveQuery } from 'dexie-react-hooks'
-import tripsRepo from '@/db/repositories/trips'
+import { getTrips, createTrip, deleteTrip } from '@/lib/api/serverFunctions'
 import dayjs from 'dayjs'
 
 const TripsViewModel = () => {
     
-    // const trips = useLiveQuery(() => tripsRepo.getAll())
     const {
-        data: trips,
+        data: tripsData,
         error: tripsError,
         isLoading: tripsLoading,
     } = useQuery({
         queryKey: ['trips'],
-        queryFn: 1,
+        queryFn: getTrips,
         enabled: true,
         retry: 0,
     })
@@ -24,21 +22,26 @@ const TripsViewModel = () => {
         
         const today = dayjs()
         
-        const newTripId = await tripsRepo.create({
+        const result = await createTrip({
             name: 'New Trip',
             description: '',
-            startDate: today.toDate(),
-            endDate: today.add(30, 'day').toDate(),
-            segments: [],
+            startDate: today.format('YYYY-MM-DD'),
+            endDate: today.add(30, 'day').format('YYYY-MM-DD'),
         })
         
-        navigate(`/trips/${newTripId}`)
+        if (result.success)
+            navigate(`/trips/${result.data.id}`)
+        else
+            console.error('Failed to create trip:', result.error)
         
     }
     
-    const deleteTrip = async id => {
+    const deleteTripHandler = async id => {
         
-        await tripsRepo.delete(id)
+        const result = await deleteTrip(id)
+        
+        if (!result.success)
+            console.error('Failed to delete trip:', result.error)
         
     }
     
@@ -51,21 +54,23 @@ const TripsViewModel = () => {
         if (!confirm('Are you sure you want to delete this trip?'))
             return
         
-        return await deleteTrip(id)
+        return await deleteTripHandler(id)
         
     }
     
     return {
         
         // Global State
-        trips,
+        trips: tripsData?.data || [],
+        tripsError,
+        tripsLoading,
         
         // Hooks
         navigate,
         
         // Actions
         createNewTrip,
-        deleteTrip,
+        deleteTrip: deleteTripHandler,
         onDeleteTripClick,
         
     }

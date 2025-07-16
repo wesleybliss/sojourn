@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 const Trips = () => {
     
     const vm = useTripsViewModel()
-    
+    console.log(vm.trips)
     return (
         
         <div className="flex flex-col gap-4 p-8">
