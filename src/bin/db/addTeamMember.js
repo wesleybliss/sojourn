@@ -34,6 +34,13 @@ const main = async () => {
     if (!user)
         throw new Error('User not found')
     
+    // Add user to team using the many-to-many relationship
+    await db.insert(schemas.userTeams).values({
+        userId: user[0].id,
+        teamId: team[0].id,
+    })
+    
+    console.log(`Successfully added user ${email} to team ${team[0].name}`)
     
 }
 
