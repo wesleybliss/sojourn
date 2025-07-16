@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
-import { useLiveQuery } from 'dexie-react-hooks'
-import segmentsRepo from '@/db/repositories/segments'
+import { useQuery } from '@tanstack/react-query'
+import { getSegmentsByPlanId } from '@/lib/api/tripQueries'
 import GanttChart from '@/components/GanttChart'
 import { calculateTotalDays } from '@/lib/utils.js'
 import dayjs from 'dayjs'
@@ -9,14 +9,11 @@ const SegmentsGanttChart = ({
     planId,
 }) => {
     
-    const segments = useLiveQuery(() => planId ? (
-        segmentsRepo.table
-            .where('planId')
-            .equals(planId)
-            // .reverse()
-            .sortBy('startDate')
-            // .toArray()
-    ) : null, [planId])
+    const { data: segments } = useQuery({
+        queryKey: ['segments', planId],
+        queryFn: () => planId ? getSegmentsByPlanId(planId) : Promise.resolve([]),
+        enabled: !!planId,
+    })
     
     /** @type GanttChartItem[] */
     const items = useMemo(() => {
