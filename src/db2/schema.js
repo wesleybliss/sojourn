@@ -4,6 +4,7 @@ import {
     primaryKey,
     text,
     integer,
+    real,
 } from 'drizzle-orm/sqlite-core'
 
 // Creates a default timestamp field
@@ -75,6 +76,21 @@ export const plans = table('plans', {
     tripId: integer('tripId').notNull().references(() => trips.id, { onDelete: 'cascade' }),
     name: text('name').notNull(),
     description: text('description'),
+})
+
+export const segments = table('segments', {
+    tripId: integer('tripId').notNull().references(() => trips.id, { onDelete: 'cascade' }),
+    planId: integer('planId').notNull().references(() => plans.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    description: text('description'),
+    startDate: integer('startDate', { mode: 'timestamp' }).notNull(),
+    endDate: integer('endDate', { mode: 'timestamp' }).notNull(),
+    coordsLat: real('coordsLat'),
+    coordsLng: real('coordsLng'),
+    color: text('color').notNull(),
+    flightBooked: integer('flightBooked', { mode: 'boolean' }).default(false).notNull(),
+    stayBooked: integer('stayBooked', { mode: 'boolean' }).default(false).notNull(),
+    isShengenRegion: integer('isShengenRegion', { mode: 'boolean' }).default(false).notNull(),
 })
 
 //
