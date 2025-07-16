@@ -1,86 +1,45 @@
 import { relations, sql } from 'drizzle-orm'
-import {
-    sqliteTable,
-    primaryKey,
-    text,
-    integer,
-    real,
-} from 'drizzle-orm/sqlite-core'
-
-// Creates a default timestamp field
-const ts = name => integer(name, { mode: 'timestamp' })
-    .default(sql`(unixepoch())`).notNull()
-
-const timestamps = {
-    updatedAt: ts('updatedAt'),
-    createdAt: ts('createdAt'),
-    // deletedAt: timestamp(),
-}
-
-const table = (name, props) => {
-    
-    if (!name?.length)
-        throw new Error('Table name required')
-    
-    if (!Object.keys(props).length)
-        throw new Error('Table properties required')
-    
-    const fields = {}
-    
-    if (props?.id === false)
-        delete props.id
-    else
-        fields.id = integer('id').primaryKey({ autoIncrement: true })
-    
-    return sqliteTable(name, {
-        ...fields,
-        ...timestamps,
-        ...props,
-    })
-    
-}
+import { primaryKey, uniqueIndex, text, integer, real } from 'drizzle-orm/sqlite-core'
+import { timestamps, table, lower, optsCascadeAll } from './dbUtils.js'
 
 export const users = table('users', {
     email: text('email').notNull(),
     password: text('password').notNull(),
-})
-
-export const teams = table('teams', {
-    name: text('name').notNull(),
-})
-
-// Junction table for many-to-many relationship between users and teams
-export const userTeams = table('userTeams', {
-    id: false,
-    userId: integer('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
-    teamId: integer('teamId').notNull().references(() => teams.id, { onDelete: 'cascade' }),
-    ...timestamps,
-}, table => ({
-    pk: primaryKey({
-        columns: [
-            table.userId,
-            table.teamId,
-        ],
-    }),
-}))
+}, table => [
+    uniqueIndex('emailUniqueIndex').on(lower(table.email)),
+])
 
 export const trips = table('trips', {
-    teamId: integer('teamId').notNull().references(() => teams.id, { onDelete: 'cascade' }),
     name: text('name').notNull(),
     description: text('description'),
     startDate: text('startDate'),
     endDate: text('endDate'),
 })
 
+// Junction table for many-to-many relationship between users and trips
+export const userTrips = table('userTrips', {
+    id: false,
+    userId: integer('userId').notNull().references(() => users.id, optsCascadeAll),
+    tripId: integer('tripId').notNull().references(() => trips.id, optsCascadeAll),
+    ...timestamps,
+}, table => ({
+    pk: primaryKey({
+        columns: [
+            table.userId,
+            table.tripId,
+        ],
+    }),
+}))
+
 export const plans = table('plans', {
-    tripId: integer('tripId').notNull().references(() => trips.id, { onDelete: 'cascade' }),
+    tripId: integer('tripId').notNull().references(() => trips.id, optsCascadeAll),
     name: text('name').notNull(),
     description: text('description'),
 })
 
 export const segments = table('segments', {
-    tripId: integer('tripId').notNull().references(() => trips.id, { onDelete: 'cascade' }),
-    planId: integer('planId').notNull().references(() => plans.id, { onDelete: 'cascade' }),
+    tripId: integer('tripId').notNull().references(() => trips.id, optsCascadeAll),
+    planId: integer('planId').notNull().references(() => plans.id, optsCascadeAll),
     name: text('name').notNull(),
     description: text('description'),
     startDate: integer('startDate', { mode: 'timestamp' }).notNull(),
@@ -93,32 +52,47 @@ export const segments = table('segments', {
     isShengenRegion: integer('isShengenRegion', { mode: 'boolean' }).default(false).notNull(),
 })
 
-//
+// Relations
 
 export const usersRelations = relations(users, ({ many }) => ({
-    teams: many(userTeams),
+    trips: many(userTrips, { relationName: 'userTrips' }), // Enables someUser.trips
 }))
 
-export const teamsRelations = relations(teams, ({ many }) => ({
-    trips: many(trips),
-    users: many(userTeams),
+export const tripsRelations = relations(trips, ({ many }) => ({
+    members: many(userTrips, { relationName: 'userTrips' }), // Enables someTrip.members
+    plans: many(plans),
+    segments: many(segments),
 }))
 
-export const tripsRelations = relations(trips, ({ one }) => ({
-    team: one(teams, {
-        fields: [trips.teamId],
-        references: [teams.id],
-    }),
-}))
-
-export const userTeamsRelations = relations(userTeams, ({ one }) => ({
+export const userTripsRelations = relations(userTrips, ({ one }) => ({
     user: one(users, {
-        fields: [userTeams.userId],
+        fields: [userTrips.userId],
         references: [users.id],
+        relationName: 'userTrips',
     }),
-    team: one(teams, {
-        fields: [userTeams.teamId],
-        references: [teams.id],
+    trip: one(trips, {
+        fields: [userTrips.tripId],
+        references: [trips.id],
+        relationName: 'userTrips',
+    }),
+}))
+
+export const plansRelations = relations(plans, ({ one, many }) => ({
+    trip: one(trips, {
+        fields: [plans.tripId],
+        references: [trips.id],
+    }),
+    segments: many(segments),
+}))
+
+export const segmentsRelations = relations(segments, ({ one }) => ({
+    trip: one(trips, {
+        fields: [segments.tripId],
+        references: [trips.id],
+    }),
+    plan: one(plans, {
+        fields: [segments.planId],
+        references: [plans.id],
     }),
 }))
 
