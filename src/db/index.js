@@ -1,7 +1,7 @@
 import Dexie from 'dexie'
 import relationships from 'dexie-relationships'
 import dexieCloud from 'dexie-cloud-addon'
-import dexieCloudConfig from '../../dexie-cloud.json'
+import dexieCloudConfig from '../../dexie-cloud.json' with { type: 'json' }
 import { deriveTableFields } from './dbUtils.js'
 
 const db = new Dexie('trip-planner-basic', {
