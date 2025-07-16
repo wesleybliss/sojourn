@@ -1,11 +1,22 @@
 import { useNavigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { useLiveQuery } from 'dexie-react-hooks'
 import tripsRepo from '@/db/repositories/trips'
 import dayjs from 'dayjs'
 
 const TripsViewModel = () => {
     
-    const trips = useLiveQuery(() => tripsRepo.getAll())
+    // const trips = useLiveQuery(() => tripsRepo.getAll())
+    const {
+        data: trips,
+        error: tripsError,
+        isLoading: tripsLoading,
+    } = useQuery({
+        queryKey: ['trips'],
+        queryFn: 1,
+        enabled: true,
+        retry: 0,
+    })
     
     const navigate = useNavigate()
     

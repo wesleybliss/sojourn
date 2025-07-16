@@ -14,6 +14,7 @@ export const trips = table('trips', {
     description: text('description'),
     startDate: text('startDate'),
     endDate: text('endDate'),
+    coverImageUrl: text('coverImageUrl'),
 })
 
 // Junction table for many-to-many relationship between users and trips
