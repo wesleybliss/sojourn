@@ -46,17 +46,18 @@ export function getTurso() {
     return _turso
 }
 
-// For backwards compatibility, create the connection immediately
-// but wrap it in a try-catch to provide better error handling
+// Create database instances with error handling
+let db, turso
+
 try {
-    const db = getDb()
-    export { db }
-    export default db
-    export const turso = getTurso()
+    db = getDb()
+    turso = getTurso()
+    console.log('✅ Database exports initialized successfully')
 } catch (error) {
     console.error('❌ Failed to initialize database:', error.message)
-    // Don't throw here, let individual API calls handle it
-    export const db = null
-    export default null
-    export const turso = null
+    db = null
+    turso = null
 }
+
+export { db, turso }
+export default db
