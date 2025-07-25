@@ -9,26 +9,34 @@ import {
 } from '@/components/ui/navigation-menu'
 import ThemeToggle from '@/components/ThemeToggle'
 import ConfirmDialog from '@/components/ConfirmDialog'
+import { toast } from 'sonner'
 
-// @todo @debug
-import db from '@/db'
-import tripsRepo from '@/db/repositories/trips'
-import segmentsRepo from '@/db/repositories/segments'
-import { backupAllTrips } from '@/actions'
+// New Turso/Drizzle imports
+import {
+    getAllTrips,
+    getAllSegments,
+} from '@/lib/api/tripQueries.js'
 
 const debugDumpData = async e => {
     
     e.preventDefault()
     
-    const trips = await tripsRepo.getAll()
-    const segments = await segmentsRepo.getAll()
-    
-    const data = {
-        trips,
-        segments,
+    try {
+        const trips = await getAllTrips()
+        const segments = await getAllSegments()
+        
+        const data = {
+            trips,
+            segments,
+        }
+        
+        console.log('debug:dump', JSON.stringify(data, null, 2), data)
+        toast.success('Database data dumped to console')
+        
+    } catch (error) {
+        console.error('Error dumping data:', error)
+        toast.error('Failed to dump database data')
     }
-    
-    console.log('debug:dump', JSON.stringify(data, null, 2), data)
     
 }
 
@@ -47,16 +55,61 @@ const Navbar = () => {
         }],
         ['#debug:backup', 'Backup', async e => {
             e.preventDefault()
-            await backupAllTrips()
+            try {
+                const trips = await getAllTrips()
+                const segments = await getAllSegments()
+                
+                const backupData = {
+                    version: '1.0',
+                    exportDate: new Date().toISOString(),
+                    trips,
+                    segments,
+                }
+                
+                const blob = new Blob([JSON.stringify(backupData, null, 2)], {
+                    type: 'application/json'
+                })
+                const url = URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.href = url
+                a.download = `trip-planner-backup-${new Date().toISOString().split('T')[0]}.json`
+                document.body.appendChild(a)
+                a.click()
+                document.body.removeChild(a)
+                URL.revokeObjectURL(url)
+                
+                toast.success('Backup file downloaded')
+            } catch (error) {
+                console.error('Error creating backup:', error)
+                toast.error('Failed to create backup')
+            }
         }],
     ], [])
     
     const debugDeleteDatabase = async () => {
         
-        await db.delete()
-        
-        setDeleteDatabaseDialogOpen(false)
-        window.location.replace('/trips')
+        try {
+            // Since Turso is a remote database, we'll clear all data instead of deleting the DB
+            const response = await fetch('/api/debug/clear-all', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            
+            if (!response.ok) {
+                throw new Error('Failed to clear database')
+            }
+            
+            setDeleteDatabaseDialogOpen(false)
+            toast.success('Database cleared successfully')
+            window.location.replace('/trips')
+            
+        } catch (error) {
+            console.error('Error clearing database:', error)
+            toast.error('Failed to clear database')
+            setDeleteDatabaseDialogOpen(false)
+        }
         
     }
     

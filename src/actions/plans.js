@@ -1,7 +1,7 @@
 import { tableFields } from '@/db'
 import plansRepo from '@/db/repositories/plans'
 import segmentsRepo from '@/db/repositories/segments'
-import { cloneRecord } from '@/db/dbUtils'
+import { cloneRecord } from '@/db-legacy/dbUtils'
 
 export const createPlan = async () => {
     

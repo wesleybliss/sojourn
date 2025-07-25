@@ -280,3 +280,18 @@ export const getTripsWithSegmentCount = async () => {
         throw new Error('Failed to fetch trips with segment counts')
     }
 }
+
+// Get all segments from all trips
+export const getAllSegments = async () => {
+    try {
+        const segments = await db
+            .select()
+            .from(schemas.segments)
+            .orderBy(asc(schemas.segments.id))
+        
+        return segments
+    } catch (error) {
+        console.error('Error fetching all segments:', error)
+        throw new Error('Failed to fetch all segments')
+    }
+}

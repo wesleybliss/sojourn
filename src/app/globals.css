@@ -1,9 +1,6 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-/* Custom global styles moved from src/styles/index.css */
-@import "tw-animate-css";
-
 @custom-variant dark (&:is(.dark *));
 
 html, body {
