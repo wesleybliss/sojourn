@@ -76,19 +76,21 @@ const GanttChartViewModel = (
         if (!draggedTask) return
         
         const task = items.find(t => t.id === draggedTask)
+        
         if (!task) return
-
+        
         const date = getDateFromPosition(e.clientX)
+        
         if (!date) return
-
+        
         const duration = differenceInDays(task.endDate, task.startDate)
         const newStartDate = startOfDay(date)
         const newEndDate = addDays(newStartDate, duration)
-
+        
         setItems(items.map(t =>
             t.id === draggedTask
                 ? { ...t, startDate: newStartDate, endDate: newEndDate }
-                : t
+                : t,
         ))
     }
     
@@ -105,6 +107,7 @@ const GanttChartViewModel = (
         
         const handleMouseMove = e => {
             const date = getDateFromPosition(e.clientX)
+            
             if (!date) return
             
             setItems(prevItems =>
@@ -118,8 +121,9 @@ const GanttChartViewModel = (
                             return { ...t, endDate: startOfDay(date) }
                         }
                     }
+                    
                     return t
-                })
+                }),
             )
         }
         

@@ -1,15 +1,10 @@
-'use server'
-
-import { getTrips } from '@/lib/api/serverFunctions'
+import { getAllTrips } from '@/lib/api/tripQueries.js'
 import TripsList from '@/components/TripsList'
 
 export default async function HomePage() {
     
-    const result = await getTrips()
+    const trips = await getAllTrips()
     
-    if (!result.success)
-        throw new Error(result.error || 'Failed to load trips')
-    
-    return <TripsList trips={result.data} />
+    return <TripsList trips={trips} />
     
 }

@@ -1,33 +1,44 @@
-"use server"
+'use server'
+
 import {
-    getTrips as fetchTrips,
+    getAllTrips,
     createTrip as createTripQuery,
     deleteTrip as deleteTripQuery,
-} from '@/lib/api/serverFunctions'
+} from '@/lib/api/tripQueries.js'
 
 /**
  * Server action: fetch list of trips from the database.
- * @returns {Promise<import('@/lib/api/serverFunctions').Trip[]>}
+ * @returns {Promise<Trip[]>}
  */
 export async function getTrips() {
-    const result = await fetchTrips()
-    if (!result.success) {
-        throw new Error(result.error || 'Failed to load trips')
+    try {
+        const trips = await getAllTrips()
+        
+        return trips
+    } catch (error) {
+        throw new Error(error.message || 'Failed to load trips')
     }
-    return result.data
 }
 
 /**
  * Server action: create a new trip record.
- * @param {Omit<import('@/lib/api/serverFunctions').TripData, 'id'>} tripData
- * @returns {Promise<import('@/lib/api/serverFunctions').Trip>}
+ * @param {Object} tripData
+ * @returns {Promise<Trip>}
  */
 export async function createTrip(tripData) {
-    const result = await createTripQuery(tripData)
-    if (!result.success) {
-        throw new Error(result.error || 'Failed to create trip')
+    try {
+        const newTrip = await createTripQuery({
+            name: tripData.name || 'Untitled Trip',
+            description: tripData.description || '',
+            startDate: tripData.startDate || null,
+            endDate: tripData.endDate || null,
+            coverImageUrl: tripData.coverImageUrl || null,
+        })
+        
+        return newTrip
+    } catch (error) {
+        throw new Error(error.message || 'Failed to create trip')
     }
-    return result.data
 }
 
 /**
@@ -36,8 +47,9 @@ export async function createTrip(tripData) {
  * @returns {Promise<void>}
  */
 export async function deleteTrip(id) {
-    const result = await deleteTripQuery(id)
-    if (!result.success) {
-        throw new Error(result.error || 'Failed to delete trip')
+    try {
+        await deleteTripQuery(parseInt(id, 10))
+    } catch (error) {
+        throw new Error(error.message || 'Failed to delete trip')
     }
 }

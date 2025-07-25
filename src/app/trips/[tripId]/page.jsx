@@ -1,11 +1,14 @@
-'use server'
-import { getTripDetails } from '@/lib/api/serverFunctions'
-import TripCard from '@/components/TripCard'
+import { getTripWithDetails } from '@/lib/api/tripQueries.js'
+import TripDetailClient from './TripDetailClient'
 
 export default async function TripDetailPage({ params }) {
-    const result = await getTripDetails(params.tripId)
-    if (!result.success) {
-        throw new Error(result.error || 'Failed to load trip')
+    
+    const tripId = await params.tripId
+    const trip = await getTripWithDetails(parseInt(tripId, 10))
+    
+    if (!trip) {
+        throw new Error('Trip not found')
     }
-    return <TripCard trip={result.data} />
+    
+    return <TripDetailClient initialTrip={trip} />
 }

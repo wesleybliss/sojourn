@@ -1,0 +1,73 @@
+import { NextResponse } from 'next/server'
+import {
+    getAllTrips,
+    getSegmentsByTripId,
+} from '@/lib/api/tripQueries.js'
+import db from '@/db2/index.js'
+import * as schemas from '@/db2/schema.js'
+import { eq } from 'drizzle-orm'
+
+/**
+ * POST /api/migrate
+ * Migrates trips to plans - creates default plans for trips without them.
+ */
+export async function POST() {
+    try {
+        const trips = await getAllTrips()
+        const migrationResults = []
+        
+        for (const trip of trips) {
+            console.log('Migrating trip:', trip.name)
+            const segments = await getSegmentsByTripId(trip.id)
+            
+            let planId = null
+            let migratedSegments = 0
+            
+            for (const segment of segments) {
+                if (segment.planId) {
+                    continue
+                }
+                
+                if (!planId) {
+                    console.log('Creating plan for trip:', trip.name)
+                    const [newPlan] = await db
+                        .insert(schemas.plans)
+                        .values({
+                            tripId: trip.id,
+                            name: 'Plan #1',
+                        })
+                        .returning()
+                    
+                    planId = newPlan.id
+                }
+                
+                console.log('Updating segment with plan ID:', planId)
+                await db
+                    .update(schemas.segments)
+                    .set({ planId })
+                    .where(eq(schemas.segments.id, segment.id))
+                
+                migratedSegments++
+            }
+            
+            migrationResults.push({
+                tripId: trip.id,
+                tripName: trip.name,
+                planId,
+                migratedSegments,
+            })
+        }
+        
+        return NextResponse.json({
+            success: true,
+            data: migrationResults,
+            message: `Migration completed. ${migrationResults.length} trips processed.`,
+        })
+    } catch (error) {
+        console.error('Error during migration:', error)
+        return NextResponse.json(
+            { success: false, error: error.message },
+            { status: 500 },
+        )
+    }
+}

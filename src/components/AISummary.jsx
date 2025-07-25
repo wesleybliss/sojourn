@@ -14,11 +14,11 @@ const AISummary = ({
         
         if (!text?.length) return
         
-        // eslint-disable-next-line no-undef
+        
         if (!Summarizer)
             return console.warn('AISummary#hook summarizer Summarizer not found')
         
-        // eslint-disable-next-line no-undef
+        
         Summarizer.create({
             sharedContext: context,
             type: 'tldr',
