@@ -1,60 +1,33 @@
-import { 
-    getAllTrips, 
-    getSegmentsByTripId, 
-    updateSegment,
-} from '@/lib/api/tripQueries'
-import db from '@/db2/index.js'
-import * as schemas from '@/db2/schema.js'
+import { migrateTripsToPlans as serverMigrateTripsToPlans } from '@/lib/api/serverFunctions'
 
 const DebugViewModel = () => {
     
     const migrateTripsToPlans = async () => {
-        
-        const trips = await getAllTrips()
-        
-        for (const trip of trips) {
+        try {
+            const result = await serverMigrateTripsToPlans()
             
-            console.log('Migrating trip:', trip.name)
-            const segments = await getSegmentsByTripId(trip.id)
-            
-            let planId = null
-            
-            for (const segment of segments) {
-                
-                /* if (segment.planId) {
-                    await updateSegment(segment.id, {
-                        planId: null,
-                    })
-                    continue
-                } */
-                
-                if (segment.planId)
-                    continue
-                
-                if (!planId) {
-                    console.log('Creating plan')
-                    const [newPlan] = await db
-                        .insert(schemas.plans)
-                        .values({
-                            tripId: trip.id,
-                            name: 'Plan #1',
-                        })
-                        .returning()
-                    
-                    planId = newPlan.id
+            if (result.success) {
+                console.log('Migration completed:', result.message)
+                console.log('Migration results:', result.data)
+                return {
+                    success: true,
+                    message: result.message,
+                    data: result.data,
                 }
-                
-                console.log('Updating segment with plan ID:', planId)
-                await updateSegment(segment.id, {
-                    planId: planId,
-                })
-                
+            } else {
+                console.error('Migration failed:', result.error)
+                return {
+                    success: false,
+                    error: result.error,
+                }
             }
-            
+        } catch (error) {
+            console.error('Migration error:', error)
+            return {
+                success: false,
+                error: error.message,
+            }
         }
-        
-        // Note: No direct clear function available in tripQueries
-        // Would need to implement deleteAllPlans if needed
     }
     
     return {
