@@ -1,24 +1,28 @@
-import tripsRepo from '@/db/repositories/trips'
-import plansRepo from '@/db/repositories/plans'
-import segmentsRepo from '@/db/repositories/segments'
+import { 
+    getAllTrips, 
+    getSegmentsByTripId, 
+    updateSegment,
+} from '@/lib/api/tripQueries'
+import db from '@/db2/index.js'
+import * as schemas from '@/db2/schema.js'
 
 const DebugViewModel = () => {
     
     const migrateTripsToPlans = async () => {
         
-        const trips = await tripsRepo.getAll()
+        const trips = await getAllTrips()
         
         for (const trip of trips) {
             
             console.log('Migrating trip:', trip.name)
-            const segments = await segmentsRepo.findByTripId(trip.id)
+            const segments = await getSegmentsByTripId(trip.id)
             
             let planId = null
             
             for (const segment of segments) {
                 
                 /* if (segment.planId) {
-                    await segmentsRepo.update(segment.id, {
+                    await updateSegment(segment.id, {
                         planId: null,
                     })
                     continue
@@ -29,14 +33,19 @@ const DebugViewModel = () => {
                 
                 if (!planId) {
                     console.log('Creating plan')
-                    planId = await plansRepo.create({
-                        tripId: trip.id,
-                        name: 'Plan #1',
-                    })
+                    const [newPlan] = await db
+                        .insert(schemas.plans)
+                        .values({
+                            tripId: trip.id,
+                            name: 'Plan #1',
+                        })
+                        .returning()
+                    
+                    planId = newPlan.id
                 }
                 
                 console.log('Updating segment with plan ID:', planId)
-                await segmentsRepo.update(segment.id, {
+                await updateSegment(segment.id, {
                     planId: planId,
                 })
                 
@@ -44,8 +53,8 @@ const DebugViewModel = () => {
             
         }
         
-        // await plansRepo.clear()
-        
+        // Note: No direct clear function available in tripQueries
+        // Would need to implement deleteAllPlans if needed
     }
     
     return {
