@@ -27,3 +27,4 @@ dist-ssr
 .stylelintcache
 
 dexie-cloud.key
+tmp/
