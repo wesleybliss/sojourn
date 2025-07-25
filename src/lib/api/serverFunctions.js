@@ -9,8 +9,8 @@ import {
     getSegmentsByTripId,
     updateSegment as updateSegmentQuery,
 } from './tripQueries.js'
-import db from '../../db2/index.js'
-import * as schemas from '../../db2/schema.js'
+import db from '@/db2/index.js'
+import * as schemas from '@/db2/schema.js'
 import { eq } from 'drizzle-orm'
 
 // Server-side functions that can be called from the frontend

@@ -26,5 +26,14 @@ dist-ssr
 .env
 .stylelintcache
 
-dexie-cloud.key
-tmp/
+	dexie-cloud.key
+	tmp/
+
+# Ignore Dexie IndexedDB and WAL files
+auth
+auth-wal
+default
+default-wal
+.next/
+db
+db-wal

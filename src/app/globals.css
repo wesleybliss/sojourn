@@ -1,0 +1,36 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* Custom global styles moved from src/styles/index.css */
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+html, body {
+  font-family: Roboto, sans-serif;
+}
+
+.font-Roboto {
+  font-family: Roboto, sans-serif;
+}
+
+.scrollbar-minimal::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar-minimal::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 4px rgba(0 0 0 / 0.3);
+}
+
+.scrollbar-minimal::-webkit-scrollbar-thumb {
+  background-color: #a9a9a9;
+  outline: 1px solid #708090;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    /* ... other CSS variables ... */
+  }
+}

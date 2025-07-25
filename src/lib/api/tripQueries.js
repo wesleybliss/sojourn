@@ -1,5 +1,5 @@
-import db from '../../db2/index.js'
-import * as schemas from '../../db2/schema.js'
+import db from '@/db2/index.js'
+import * as schemas from '@/db2/schema.js'
 import { eq, desc, asc } from 'drizzle-orm'
 import * as store from '@/store'
 

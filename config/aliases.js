@@ -17,7 +17,7 @@ const aliases = [
     'messages',
 ].reduce((acc, it) => ({
     ...acc,
-    [`@${it}`]: `./src/${it}`,
+    [`@${it}`]: `./${it}`,
 }), initialAliases)
 
 export default aliases
