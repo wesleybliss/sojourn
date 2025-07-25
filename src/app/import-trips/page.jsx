@@ -27,8 +27,9 @@ export default function ImportTripsPage() {
         fileInputRef.current.click()
     }
     
-    const handleFileChange = async (event) => {
+    const handleFileChange = async event => {
         const file = event.target.files[0]
+        
         if (!file) return
         
         setIsImporting(true)
@@ -116,15 +117,13 @@ export default function ImportTripsPage() {
                             className="hidden"
                             type="file"
                             accept=".json"
-                            onChange={handleFileChange}
-                        />
+                            onChange={handleFileChange}/>
                         
                         <Button
                             className="mt-4"
                             variant="secondary"
                             disabled={isImporting}
-                            onClick={startRestoreTrip}
-                        >
+                            onClick={startRestoreTrip}>
                             <FolderUp />
                             Select Backup File
                         </Button>

@@ -6,9 +6,10 @@ import { Button } from '@/components/ui/button'
 export default function DebugPage() {
     const [isLoading, setIsLoading] = useState(false)
     const [result, setResult] = useState(null)
-
+    
     const migrateTripsToPlans = async () => {
         setIsLoading(true)
+        
         try {
             const response = await fetch('/api/migrate', {
                 method: 'POST',
@@ -18,6 +19,7 @@ export default function DebugPage() {
             })
             
             const result = await response.json()
+            
             setResult(result)
             
             if (result.success) {
@@ -49,8 +51,7 @@ export default function DebugPage() {
                     <Button
                         variant="outline"
                         disabled={isLoading}
-                        onClick={migrateTripsToPlans}
-                    >
+                        onClick={migrateTripsToPlans}>
                         {isLoading ? 'Migrating...' : 'Migrate Trips to Plans'}
                     </Button>
                 </div>

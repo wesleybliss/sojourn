@@ -12,9 +12,10 @@ export default function TripsPageClient({ initialTrips }) {
     const [trips, setTrips] = useState(initialTrips)
     const [isCreating, setIsCreating] = useState(false)
     const router = useRouter()
-
+    
     const createNewTrip = async () => {
         setIsCreating(true)
+        
         try {
             const newTrip = await createTrip({
                 name: 'New Trip',
@@ -31,14 +32,14 @@ export default function TripsPageClient({ initialTrips }) {
             setIsCreating(false)
         }
     }
-
-    const onDeleteTripClick = (id) => async (e) => {
+    
+    const onDeleteTripClick = id => async e => {
         e.preventDefault()
         e.stopPropagation()
-
+        
         if (!confirm('Are you sure you want to delete this trip?'))
             return
-
+        
         try {
             await deleteTrip(id)
             setTrips(prevTrips => prevTrips.filter(trip => trip.id !== id))
@@ -46,15 +47,15 @@ export default function TripsPageClient({ initialTrips }) {
             console.error('Error deleting trip:', error)
         }
     }
-
+    
     const navigateToImportTrips = () => {
         router.push('/import-trips')
     }
-
-    const handleTripClick = (tripId) => {
+    
+    const handleTripClick = tripId => {
         router.push(`/trips/${tripId}`)
     }
-
+    
     return (
         <div className="flex flex-col gap-4 p-8">
             <header className="flex items-center justify-between">
@@ -63,15 +64,13 @@ export default function TripsPageClient({ initialTrips }) {
                     <Button
                         variant="default"
                         disabled={isCreating}
-                        onClick={createNewTrip}
-                    >
+                        onClick={createNewTrip}>
                         <MapPinPlus />
                         {isCreating ? 'Creating...' : 'New Trip'}
                     </Button>
                     <Button
                         variant="secondary"
-                        onClick={navigateToImportTrips}
-                    >
+                        onClick={navigateToImportTrips}>
                         <FolderUp />
                         Import
                     </Button>
@@ -84,8 +83,7 @@ export default function TripsPageClient({ initialTrips }) {
                         key={trip.id}
                         trip={trip}
                         onClick={() => handleTripClick(trip.id)}
-                        onDeleteTripClick={onDeleteTripClick(trip.id)}
-                    />
+                        onDeleteTripClick={onDeleteTripClick(trip.id)}/>
                 ))}
             </div>
         </div>

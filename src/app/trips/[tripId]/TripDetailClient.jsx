@@ -13,16 +13,16 @@ export default function TripDetailClient({ initialTrip }) {
     const [trip] = useState(initialTrip)
     const [showMap, setShowMap] = useState(false)
     const [cascadeEnabled, setCascadeEnabled] = useState(false)
-    const [focusedLatLng, setFocusedLatLng] = useState(undefined)
-
+    const [focusedLatLng] = useState(undefined)
+    
     const addSegment = async () => {
         // This would need to be implemented with the segments API
         console.log('Add segment functionality needs to be implemented')
     }
-
+    
     // Simple segments display - in a real implementation, this would come from the segments API
     const segments = trip.segments || []
-
+    
     return (
         <div className="Trip w-full flex flex-col flex-1 gap-4 p-4">
             {/* Trip Header - Simplified */}
@@ -32,7 +32,7 @@ export default function TripDetailClient({ initialTrip }) {
                     <p className="text-muted-foreground">{trip.description}</p>
                 </div>
             </header>
-
+            
             {/* Segments Header */}
             <header className="flex items-center justify-between">
                 <h3>Segments: {segments?.length || '0'}</h3>
@@ -41,28 +41,25 @@ export default function TripDetailClient({ initialTrip }) {
                         <Switch
                             id="toggle-cascade"
                             checked={cascadeEnabled}
-                            onCheckedChange={setCascadeEnabled}
-                        />
+                            onCheckedChange={setCascadeEnabled}/>
                         <Label htmlFor="toggle-cascade">Cascade</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                         <Switch
                             id="toggle-map"
                             checked={showMap}
-                            onCheckedChange={setShowMap}
-                        />
+                            onCheckedChange={setShowMap}/>
                         <Label htmlFor="toggle-map">Show Map</Label>
                     </div>
                     <Button
                         variant="outline"
-                        onClick={addSegment}
-                    >
+                        onClick={addSegment}>
                         <MapPinPlus />
                         New Segment
                     </Button>
                 </div>
             </header>
-
+            
             {/* Main Content */}
             <div className="grid grid-cols-2 gap-2">
                 <div className="flex flex-col gap-2 w-fit">
@@ -78,7 +75,9 @@ export default function TripDetailClient({ initialTrip }) {
                                     {segment.startDate && (
                                         <p className="text-xs">
                                             {new Date(segment.startDate).toLocaleDateString()} - 
-                                            {segment.endDate ? new Date(segment.endDate).toLocaleDateString() : 'No end date'}
+                                            {segment.endDate ? 
+                                                new Date(segment.endDate).toLocaleDateString() : 
+                                                'No end date'}
                                         </p>
                                     )}
                                 </div>
@@ -88,14 +87,14 @@ export default function TripDetailClient({ initialTrip }) {
                 </div>
                 {showMap && <MapLibreMap latLng={focusedLatLng} />}
             </div>
-
+            
             {/* Gantt Chart */}
             {trip && segments?.length > 0 && (
                 <div className="mt-4">
                     <SegmentsGanttChart planId={trip.id} />
                 </div>
             )}
-
+            
             {/* Trip Card for additional details */}
             <div className="mt-4">
                 <h3 className="text-lg font-semibold mb-2">Trip Details</h3>
