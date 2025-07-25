@@ -46,18 +46,19 @@ export function getTurso() {
     return _turso
 }
 
-// Create database instances with error handling
-let db, turso
+// Export lazy-loaded database instances
+export const db = new Proxy({}, {
+    get(target, prop) {
+        const dbInstance = getDb()
+        return dbInstance[prop]
+    }
+})
 
-try {
-    db = getDb()
-    turso = getTurso()
-    console.log('✅ Database exports initialized successfully')
-} catch (error) {
-    console.error('❌ Failed to initialize database:', error.message)
-    db = null
-    turso = null
-}
+export const turso = new Proxy({}, {
+    get(target, prop) {
+        const tursoInstance = getTurso()
+        return tursoInstance[prop]
+    }
+})
 
-export { db, turso }
 export default db
