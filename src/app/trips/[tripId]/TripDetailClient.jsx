@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { useQuery } from '@tanstack/react-query'
+import useTripQuery from '@/lib/queries/trip'
 import TripHeader from '@/components/TripHeader'
 import SegmentsTable from '@/components/SegmentsTable'
 import SegmentsGanttChart from '@/components/SegmentsGanttChart'
@@ -31,33 +31,28 @@ export default function TripDetailClient() {
         data: trip,
         error: tripError,
         isLoading: tripIsLoading,
-    } = useQuery({
-        queryKey: ['trip'],
-        queryFn: () => fetch(`/api/trips/${tripId}?withDetails=true`),
-        enabled: !!tripId,
-        retry: 0,
-    })
+    } = useTripQuery(tripId)
     
     const [showMap, setShowMap] = useState(false)
     const [cascadeEnabled, setCascadeEnabled] = useState(false)
     const [focusedLatLng, setFocusedLatLng] = useState(undefined)
     const [isDebugOpen, setIsDebugOpen] = useState(false)
     
-    // For now, we'll use mock data - in a real implementation this would come from API/database
-    const [segments] = useState(trip?.segments || [])
-    const [plans] = useState([{ id: 1, name: 'Plan #1', tripId: trip?.id }])
+    const plans = useMemo(() => trip?.plans || [{ id: 1, name: 'Plan #1', tripId: trip?.id }])
     const currentPlan = plans[0]
+    const segments = useMemo(() => currentPlan?.segments || [], [currentPlan])
     
     // Schengen data calculation (from original ViewModel)
     const shengenData = useMemo(() => {
         if (!segments?.length) return null
         
         const shengenSegments = segments.filter(it => it.isShengenRegion)
+        
         if (!shengenSegments.length) return null
         
         const { startDate, endDate, totalDays } = calculateTotalDays(
             shengenSegments[0].startDate,
-            shengenSegments[shengenSegments.length - 1].endDate
+            shengenSegments[shengenSegments.length - 1].endDate,
         )
         
         const remainingDays = 89 - totalDays
@@ -78,8 +73,9 @@ export default function TripDetailClient() {
     }, [trip, currentPlan, segments])
     
     // Event handlers (simplified versions of original ViewModel methods)
-    const updateTrip = useCallback((field) => async (e) => {
+    const updateTrip = useCallback(field => async e => {
         const value = e?.target?.value ?? e
+        
         console.log('updateTrip', field, value)
         // TODO: Implement API call to update trip
         toast('Trip updated')
@@ -91,25 +87,26 @@ export default function TripDetailClient() {
         toast('Segment added')
     }, [])
     
-    const updateSegment = useCallback((segment, field) => async (e) => {
+    const updateSegment = useCallback((segment, field) => async e => {
         const value = e?.target?.value ?? e
+        
         console.log('updateSegment', segment.id, field, value)
         // TODO: Implement API call to update segment
         toast('Segment updated')
     }, [])
     
-    const deleteSegments = useCallback(async (segmentIds) => {
+    const deleteSegments = useCallback(async segmentIds => {
         console.log('Deleting segments:', segmentIds)
         // TODO: Implement API call to delete segments
         toast('Segments deleted')
     }, [])
     
-    const getTotalDaysPerSegment = useCallback((segment) => {
+    const getTotalDaysPerSegment = useCallback(segment => {
         if (!segment.startDate || !segment.endDate) return 0
         return dayjs(segment.endDate).diff(dayjs(segment.startDate), 'day')
     }, [])
     
-    const getCumulativeDaysPerSegment = useCallback((segment) => {
+    const getCumulativeDaysPerSegment = useCallback(segment => {
         // TODO: Implement cumulative days calculation
         return 0
     }, [])
@@ -119,16 +116,16 @@ export default function TripDetailClient() {
         toast('Trip backup created')
     }, [trip])
     
-    const navigate = useCallback((path) => {
+    const navigate = useCallback(path => {
         router.push(path)
     }, [router])
     
-    const renamePlan = useCallback((planId) => {
+    const renamePlan = useCallback(planId => {
         console.log('Renaming plan:', planId)
         toast('Plan rename not implemented')
     }, [])
     
-    const deletePlan = useCallback((planId) => {
+    const deletePlan = useCallback(planId => {
         console.log('Deleting plan:', planId)
         toast('Plan delete not implemented')
     }, [])
@@ -180,16 +177,14 @@ export default function TripDetailClient() {
                         <Switch
                             id="toggle-cascade"
                             checked={cascadeEnabled}
-                            onCheckedChange={setCascadeEnabled}
-                        />
+                            onCheckedChange={setCascadeEnabled}/>
                         <Label htmlFor="toggle-cascade">Cascade</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                         <Switch
                             id="toggle-map"
                             checked={showMap}
-                            onCheckedChange={setShowMap}
-                        />
+                            onCheckedChange={setShowMap}/>
                         <Label htmlFor="toggle-map">Show Map</Label>
                     </div>
                     <Button
@@ -197,8 +192,7 @@ export default function TripDetailClient() {
                         onClick={() => addSegment(trip.id, {
                             name: 'New segment',
                             description: 'New segment description',
-                        })}
-                    >
+                        })}>
                         <MapPinPlus />
                         New Segment
                     </Button>
@@ -216,8 +210,7 @@ export default function TripDetailClient() {
                             updateSegment={updateSegment}
                             deleteSegments={deleteSegments}
                             getTotalDaysPerSegment={getTotalDaysPerSegment}
-                            getCumulativeDaysPerSegment={getCumulativeDaysPerSegment}
-                        />
+                            getCumulativeDaysPerSegment={getCumulativeDaysPerSegment}/>
                     )}
                 </div>
                 {showMap && <MapLibreMap latLng={focusedLatLng} />}
@@ -226,7 +219,7 @@ export default function TripDetailClient() {
             {trip && segments?.length > 0 && (
                 <div className="mt-4">
                     <h3 className="text-lg font-semibold mb-2">Timeline</h3>
-                    <SegmentsGanttChart planId={currentPlan?.id} />
+                    <SegmentsGanttChart plan={currentPlan} />
                 </div>
             )}
             
@@ -247,8 +240,7 @@ export default function TripDetailClient() {
             <Collapsible
                 open={isDebugOpen}
                 onOpenChange={setIsDebugOpen}
-                className="w-full space-y-2"
-            >
+                className="w-full space-y-2">
                 <div className="w-[350px] flex items-center justify-between space-x-4 px-4">
                     <CollapsibleTrigger asChild>
                         <Button variant="ghost" size="sm">
@@ -262,7 +254,7 @@ export default function TripDetailClient() {
                     <div>
                         <pre>
                             <code className="text-sm">
-                                {JSON.stringify(trip, null, 4)}
+                                {JSON.stringify({ trip, segments }, null, 4)}
                             </code>
                         </pre>
                     </div>

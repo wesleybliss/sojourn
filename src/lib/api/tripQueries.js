@@ -73,13 +73,33 @@ export const getSegmentsByPlanId = async planId => {
 // Get plans for a specific trip
 export const getPlansByTripId = async tripId => {
     try {
-        const plans = await db
-            .select()
+        const plansWithSegments = await db
+            .select({
+                plan: schemas.plans,
+                segment: schemas.segments,
+            })
             .from(schemas.plans)
+            .leftJoin(schemas.segments, eq(schemas.segments.planId, schemas.plans.id))
             .where(eq(schemas.plans.tripId, tripId))
-            .orderBy(asc(schemas.plans.id))
+            .orderBy(asc(schemas.plans.id), asc(schemas.segments.startDate))
         
-        return plans
+        // Group segments by plan
+        const plansMap = new Map()
+        
+        plansWithSegments.forEach(({ plan, segment }) => {
+            if (!plansMap.has(plan.id)) {
+                plansMap.set(plan.id, {
+                    ...plan,
+                    segments: [],
+                })
+            }
+            
+            if (segment) {
+                plansMap.get(plan.id).segments.push(segment)
+            }
+        })
+        
+        return Array.from(plansMap.values())
     } catch (error) {
         console.error(`Error fetching plans for trip ${tripId}:`, error)
         throw new Error('Failed to fetch plans')
@@ -242,14 +262,10 @@ export const getTripWithDetails = async id => {
         
         if (!trip) return null
         
-        const [segments, plans] = await Promise.all([
-            getSegmentsByTripId(id),
-            getPlansByTripId(id),
-        ])
+        const plans = await getPlansByTripId(id)
         
         return {
             ...trip,
-            segments,
             plans,
         }
     } catch (error) {

@@ -13,6 +13,7 @@ import {
 export async function getTrips() {
     try {
         const trips = await getAllTrips()
+        
         return trips
     } catch (error) {
         throw new Error(error.message || 'Failed to load trips')
@@ -33,6 +34,7 @@ export async function createTrip(tripData) {
             endDate: tripData.endDate || null,
             coverImageUrl: tripData.coverImageUrl || null,
         })
+        
         return newTrip
     } catch (error) {
         throw new Error(error.message || 'Failed to create trip')

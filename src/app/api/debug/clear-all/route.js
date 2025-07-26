@@ -28,7 +28,7 @@ export async function POST() {
         console.error('❌ Error clearing database:', error)
         return NextResponse.json(
             { success: false, error: error.message },
-            { status: 500 }
+            { status: 500 },
         )
     }
 }

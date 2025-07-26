@@ -1,18 +1,13 @@
 import { useMemo } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import GanttChart from '@/components/GanttChart'
 import { calculateTotalDays } from '@/lib/utils.js'
 import dayjs from 'dayjs'
 
 const SegmentsGanttChart = ({
-    planId,
+    plan,
 }) => {
     
-    const { data: segments } = useQuery({
-        queryKey: ['segments', planId],
-        queryFn: () => planId ? fetch(`/plans/${planId}/segments`) : Promise.resolve([]),
-        enabled: !!planId,
-    })
+    const segments = useMemo(() => plan?.segments || [], [plan])
     
     /** @type GanttChartItem[] */
     const items = useMemo(() => {
@@ -29,7 +24,7 @@ const SegmentsGanttChart = ({
             totalDays: calculateTotalDays(it.startDate, it.endDate).totalDays,
         }))
         
-    }, [planId, segments])
+    }, [segments])
     
     if (!items?.length) return null
     
