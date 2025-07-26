@@ -1,64 +1,23 @@
+import 'dotenv/config'
+// import '../envConfig'
 import { createClient } from '@libsql/client'
 import { drizzle } from 'drizzle-orm/libsql'
 
-// Function to get database configuration
-function getDatabaseConfig() {
-    const url = process.env.TURSO_DATABASE_URL
-    const authToken = process.env.TURSO_AUTH_TOKEN
-    
-    console.log('🔍 Checking environment variables...')
-    console.log('TURSO_DATABASE_URL:', url ? '✅ SET' : '❌ NOT SET')
-    console.log('TURSO_AUTH_TOKEN:', authToken ? '✅ SET' : '❌ NOT SET')
-    
-    if (!url) {
-        console.error('❌ TURSO_DATABASE_URL is required')
-        console.error('Available env vars:', Object.keys(process.env).filter(k => k.includes('TURSO')))
-        throw new Error('TURSO_DATABASE_URL environment variable is not set')
-    }
-    
-    if (!authToken) {
-        console.error('❌ TURSO_AUTH_TOKEN is required')
-        throw new Error('TURSO_AUTH_TOKEN environment variable is not set')
-    }
-    
-    return { url, authToken }
+if (!process.env.TURSO_DATABASE_URL?.length) {
+    console.error('Missing TURSO_DATABASE_URL env var', JSON.stringify(process.env, null, 2))
+    throw new Error('Missing TURSO_DATABASE_URL env var')
 }
 
-// Create database connection lazily
-let _db = null
-let _turso = null
-
-export function getDb() {
-    if (!_db) {
-        const config = getDatabaseConfig()
-        console.log('✅ Creating database connection...')
-        _turso = createClient(config)
-        _db = drizzle(_turso)
-        console.log('✅ Database connection created successfully')
-    }
-    return _db
-}
-
-export function getTurso() {
-    if (!_turso) {
-        getDb() // This will initialize both
-    }
-    return _turso
-}
-
-// Export lazy-loaded database instances
-export const db = new Proxy({}, {
-    get(target, prop) {
-        const dbInstance = getDb()
-        return dbInstance[prop]
-    }
+export const turso = createClient({
+    url: process.env.TURSO_DATABASE_URL,
+    authToken: process.env.TURSO_AUTH_TOKEN,
 })
 
-export const turso = new Proxy({}, {
-    get(target, prop) {
-        const tursoInstance = getTurso()
-        return tursoInstance[prop]
-    }
+export const db = drizzle({
+    connection: {
+        url: process.env.TURSO_DATABASE_URL,
+        authToken: process.env.TURSO_AUTH_TOKEN,
+    },
 })
 
 export default db

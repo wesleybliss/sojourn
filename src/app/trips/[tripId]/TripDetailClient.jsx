@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { useQuery } from '@tanstack/react-query'
 import TripHeader from '@/components/TripHeader'
 import SegmentsTable from '@/components/SegmentsTable'
 import SegmentsGanttChart from '@/components/SegmentsGanttChart'
@@ -19,20 +20,32 @@ import { toast } from 'sonner'
 import { calculateTotalDays } from '@/lib/utils.js'
 import dayjs from 'dayjs'
 
-export default function TripDetailClient({ initialTrip }) {
+export default function TripDetailClient() {
+    
     const params = useParams()
     const router = useRouter()
     
-    // State management
-    const [trip] = useState(initialTrip)
+    const { tripId } = params
+    
+    const {
+        data: trip,
+        error: tripError,
+        isLoading: tripIsLoading,
+    } = useQuery({
+        queryKey: ['trip'],
+        queryFn: () => fetch(`/api/trips/${tripId}?withDetails=true`),
+        enabled: !!tripId,
+        retry: 0,
+    })
+    
     const [showMap, setShowMap] = useState(false)
     const [cascadeEnabled, setCascadeEnabled] = useState(false)
     const [focusedLatLng, setFocusedLatLng] = useState(undefined)
     const [isDebugOpen, setIsDebugOpen] = useState(false)
     
     // For now, we'll use mock data - in a real implementation this would come from API/database
-    const [segments] = useState(trip.segments || [])
-    const [plans] = useState([{ id: 1, name: 'Plan #1', tripId: trip.id }])
+    const [segments] = useState(trip?.segments || [])
+    const [plans] = useState([{ id: 1, name: 'Plan #1', tripId: trip?.id }])
     const currentPlan = plans[0]
     
     // Schengen data calculation (from original ViewModel)

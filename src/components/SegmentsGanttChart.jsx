@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { getSegmentsByPlanId } from '@/lib/api/tripQueries'
 import GanttChart from '@/components/GanttChart'
 import { calculateTotalDays } from '@/lib/utils.js'
 import dayjs from 'dayjs'
@@ -11,7 +10,7 @@ const SegmentsGanttChart = ({
     
     const { data: segments } = useQuery({
         queryKey: ['segments', planId],
-        queryFn: () => planId ? getSegmentsByPlanId(planId) : Promise.resolve([]),
+        queryFn: () => planId ? fetch(`/plans/${planId}/segments`) : Promise.resolve([]),
         enabled: !!planId,
     })
     

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import {
     NavigationMenu,
     NavigationMenuItem,
@@ -11,23 +12,13 @@ import ThemeToggle from '@/components/ThemeToggle'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { toast } from 'sonner'
 
-// New Turso/Drizzle imports
-import {
-    getAllTrips,
-    getAllSegments,
-} from '@/lib/api/tripQueries.js'
-
-const debugDumpData = async e => {
+const debugDumpData = async trips => e => {
     
     e.preventDefault()
     
     try {
-        const trips = await getAllTrips()
-        const segments = await getAllSegments()
-        
         const data = {
             trips,
-            segments,
         }
         
         console.log('debug:dump', JSON.stringify(data, null, 2), data)
@@ -42,39 +33,53 @@ const debugDumpData = async e => {
 
 const Navbar = () => {
     
+    const {
+        data: trips,
+        error: tripsError,
+        isLoading: tripsIsLoading,
+    } = useQuery({
+        queryKey: ['trips'],
+        queryFn: () => fetch('/api/trips'),
+        enabled: true,
+        retry: 0,
+    })
+    
     const [deleteDatabaseDialogOpen, setDeleteDatabaseDialogOpen] = useState(false)
     
     const links = useMemo(() => [
         ['/', 'Home'],
         ['/trips', 'Trips'],
         ['/debug', 'Debug', 'Debug'],
-        ['#debug:dump', 'Debug/Dump', debugDumpData],
+        ['#debug:dump', 'Debug/Dump', debugDumpData(trips)],
         ['#debug:clear', 'Debug/Clear', e => {
             e.preventDefault()
             setDeleteDatabaseDialogOpen(true)
         }],
         ['#debug:backup', 'Backup', async e => {
             e.preventDefault()
+            
             try {
-                const trips = await getAllTrips()
-                const segments = await getAllSegments()
                 
                 const backupData = {
                     version: '1.0',
                     exportDate: new Date().toISOString(),
                     trips,
-                    segments,
                 }
                 
                 const blob = new Blob([JSON.stringify(backupData, null, 2)], {
-                    type: 'application/json'
+                    type: 'application/json',
                 })
+                
                 const url = URL.createObjectURL(blob)
                 const a = document.createElement('a')
+                
                 a.href = url
                 a.download = `trip-planner-backup-${new Date().toISOString().split('T')[0]}.json`
+                
                 document.body.appendChild(a)
+                
                 a.click()
+                
                 document.body.removeChild(a)
                 URL.revokeObjectURL(url)
                 
@@ -84,7 +89,7 @@ const Navbar = () => {
                 toast.error('Failed to create backup')
             }
         }],
-    ], [])
+    ], [trips])
     
     const debugDeleteDatabase = async () => {
         

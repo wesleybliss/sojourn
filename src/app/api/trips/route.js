@@ -11,8 +11,6 @@ import {
  */
 export async function GET(request) {
     
-    console.log('GET api/trips')
-    
     try {
         
         const { searchParams } = new URL(request.url)
