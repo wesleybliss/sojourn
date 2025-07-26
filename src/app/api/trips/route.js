@@ -3,7 +3,7 @@ import {
     getAllTrips,
     createTrip as createTripQuery,
     getTripsWithSegmentCount,
-} from '@/lib/api/tripQueries.js'
+} from '@/db/repos/trips.js'
 
 /**
  * GET /api/trips

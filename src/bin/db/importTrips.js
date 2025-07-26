@@ -1,8 +1,8 @@
 import 'dotenv/config'
 import fs from 'node:fs'
 import path from 'node:path'
-import db from '../../db2/index.js'
-import * as schemas from '../../db2/schema.js'
+import db from '@/db/index.js'
+import * as schemas from '@/db/schema.js'
 import { eq } from 'drizzle-orm'
 
 const args = process.argv.slice(2)

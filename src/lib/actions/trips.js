@@ -4,7 +4,7 @@ import {
     getAllTrips,
     createTrip as createTripQuery,
     deleteTrip as deleteTripQuery,
-} from '@/lib/api/tripQueries.js'
+} from '@/db/repos/trips.js'
 
 /**
  * Server action: fetch list of trips from the database.

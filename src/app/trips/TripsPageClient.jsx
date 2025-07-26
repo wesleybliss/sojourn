@@ -6,18 +6,21 @@ import TripCard from '@/components/TripCard'
 import { Button } from '@/components/ui/button'
 import { MapPinPlus, FolderUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { createTrip, deleteTrip } from '@/lib/actions/trips'
+import { useCreateTripMutation, useDeleteTripMutation } from '@/lib/queries/trip'
 
-export default function TripsPageClient({ initialTrips }) {
+const TripsPageClient = ({ initialTrips }) => {
+    
     const [trips, setTrips] = useState(initialTrips)
-    const [isCreating, setIsCreating] = useState(false)
     const router = useRouter()
     
+    const createTripMutation = useCreateTripMutation()
+    const deleteTripMutation = useDeleteTripMutation()
+    
     const createNewTrip = async () => {
-        setIsCreating(true)
         
         try {
-            const newTrip = await createTrip({
+            
+            const newTrip = await createTripMutation.mutateAsync({
                 name: 'New Trip',
                 description: '',
                 startDate: new Date().toISOString().split('T')[0],
@@ -26,14 +29,17 @@ export default function TripsPageClient({ initialTrips }) {
             
             setTrips(prevTrips => [...prevTrips, newTrip])
             router.push(`/trips/${newTrip.id}`)
-        } catch (error) {
-            console.error('Error creating trip:', error)
-        } finally {
-            setIsCreating(false)
+            
+        } catch (e) {
+            
+            console.error('Error creating trip:', e)
+            
         }
+        
     }
     
     const onDeleteTripClick = id => async e => {
+        
         e.preventDefault()
         e.stopPropagation()
         
@@ -41,32 +47,33 @@ export default function TripsPageClient({ initialTrips }) {
             return
         
         try {
-            await deleteTrip(id)
+            await deleteTripMutation.mutateAsync(id)
             setTrips(prevTrips => prevTrips.filter(trip => trip.id !== id))
         } catch (error) {
             console.error('Error deleting trip:', error)
         }
+        
     }
     
-    const navigateToImportTrips = () => {
+    const navigateToImportTrips = () =>
         router.push('/import-trips')
-    }
     
-    const handleTripClick = tripId => {
+    const handleTripClick = tripId =>
         router.push(`/trips/${tripId}`)
-    }
     
     return (
+        
         <div className="flex flex-col gap-4 p-8">
+            
             <header className="flex items-center justify-between">
                 <h1>Trips</h1>
                 <div className="flex items-center justify-end gap-2">
                     <Button
                         variant="default"
-                        disabled={isCreating}
+                        disabled={createTripMutation.isLoading}
                         onClick={createNewTrip}>
                         <MapPinPlus />
-                        {isCreating ? 'Creating...' : 'New Trip'}
+                        {createTripMutation.isLoading ? 'Creating...' : 'New Trip'}
                     </Button>
                     <Button
                         variant="secondary"
@@ -86,6 +93,11 @@ export default function TripsPageClient({ initialTrips }) {
                         onDeleteTripClick={onDeleteTripClick(trip.id)}/>
                 ))}
             </div>
+        
         </div>
+        
     )
+    
 }
+
+export default TripsPageClient

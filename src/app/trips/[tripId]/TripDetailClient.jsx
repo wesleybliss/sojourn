@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import useTripQuery from '@/lib/queries/trip'
+import { useTripQuery } from '@/lib/queries/trip'
 import TripHeader from '@/components/TripHeader'
 import SegmentsTable from '@/components/SegmentsTable'
 import SegmentsGanttChart from '@/components/SegmentsGanttChart'

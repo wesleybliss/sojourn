@@ -1,5 +1,5 @@
-import { db } from '@/db2'
-import { plans, segments } from '@/db2/schema'
+import { db } from '@/db'
+import { plans, segments } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 
 export async function createPlan(data) {

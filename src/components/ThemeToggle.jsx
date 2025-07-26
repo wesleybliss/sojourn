@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect } from 'react'
 import { useWireState } from '@forminator/react-wire'
 import * as store from '@/store'

@@ -4,7 +4,7 @@ import {
     getTripWithDetails,
     updateTrip as updateTripQuery,
     deleteTrip as deleteTripQuery,
-} from '@/lib/api/tripQueries.js'
+} from '@/db/repos/trips.js'
 
 /**
  * GET /api/trips/[id]

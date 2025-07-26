@@ -1,6 +1,6 @@
 import 'dotenv/config'
-import db from '../../db2/index.js'
-import * as schemas from '../../db2/schema.js'
+import db from '@/db/index.js'
+import * as schemas from '@/db/schema.js'
 import { sql } from 'drizzle-orm'
 
 const main = async () => {
