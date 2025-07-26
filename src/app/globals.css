@@ -1,11 +1,9 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: light --default, dark --prefersdark;
+  themes: ["light", "dark"];
   root: ":root";
   logs: true;
 }
-
-@custom-variant dark (&:is(.dark *));
 
 html, body {
   font-family: Roboto, sans-serif;
@@ -29,9 +27,14 @@ html, body {
 }
 
 @layer base {
-  :root {
+  html[data-theme='light'] {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
+    /* ... other CSS variables ... */
+  }
+  html[data-theme='dark'] {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
     /* ... other CSS variables ... */
   }
 }

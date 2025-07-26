@@ -19,28 +19,24 @@ const ThemeToggle = () => {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
         const isDark = newTheme === 'dark' || (newTheme === 'system' && prefersDark)
         
-        // eslint-disable-next-line no-restricted-globals
-        document.documentElement.classList.toggle('dark', isDark)
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light')
         
     }
     
     const toggleTheme = newTheme => {
         
         setTheme(newTheme)
+        localStorage.setItem('theme', newTheme)
         applyTheme(newTheme)
         
     }
     
     useEffect(() => {
         
-        // Check system or saved preference
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-        const initialTheme = theme || (prefersDark ? 'dark' : 'light')
+        const savedTheme = localStorage.getItem('theme') || 'system'
+        setTheme(savedTheme)
+        applyTheme(savedTheme)
         
-        setTheme(initialTheme)
-        applyTheme(initialTheme)
-        
-        // Listen for system theme changes
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
         
         const handleChange = () => {
@@ -54,7 +50,7 @@ const ThemeToggle = () => {
         
         return () => mediaQuery.removeEventListener('change', handleChange)
         
-    }, [])
+    }, [theme])
     
     return (
         
