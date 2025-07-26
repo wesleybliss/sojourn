@@ -1,4 +1,5 @@
 import useTripViewModel from './TripViewModel'
+import LoadingSpinner from '@/components/LoadingSpinner.jsx'
 import TripHeader from './TripHeader'
 import SegmentsTable from './SegmentsTable'
 import SegmentsGanttChart from '@/components/SegmentsGanttChart'
@@ -25,7 +26,7 @@ const Trip = () => {
     const [isDebugOpen, setIsDebugOpen] = useState(false)
     
     if (!vm.currentTrip)
-        return <p>Loading...</p>
+        return <LoadingSpinner />
     
     return (
         

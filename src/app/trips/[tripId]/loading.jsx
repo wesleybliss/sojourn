@@ -1,3 +1,9 @@
-export default function Loading() {
-    return <p>Loading...</p>
+import LoadingSpinner from '@/components/LoadingSpinner.jsx'
+
+const Loading = () => {
+    
+    return <LoadingSpinner />
+    
 }
+
+export default Loading

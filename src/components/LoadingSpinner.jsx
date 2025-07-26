@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils'
 
 const LoadingSpinner = ({
     centered = true,
@@ -5,8 +6,12 @@ const LoadingSpinner = ({
     
     return (
         
-        <div className="flex justify-center items-center">
+        <div className={cn('flex justify-center items-center', {
+            'min-h-[50vh] w-full': centered,
+        })}>
+            
             <span className="loading loading-ring loading-xl" />
+        
         </div>
         
     )

@@ -19,6 +19,7 @@ import {
 import { toast } from 'sonner'
 import { calculateTotalDays } from '@/lib/utils.js'
 import dayjs from 'dayjs'
+import LoadingSpinner from '@/components/LoadingSpinner.jsx'
 
 export default function TripDetailClient() {
     
@@ -162,9 +163,8 @@ export default function TripDetailClient() {
         clonePlan,
     }
     
-    if (!trip) {
-        return <p>Loading...</p>
-    }
+    if (!trip)
+        return <LoadingSpinner />
     
     return (
         <div className="Trip w-full flex flex-col flex-1 gap-4 p-4">
