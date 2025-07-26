@@ -34,6 +34,7 @@ const ThemeToggle = () => {
     useEffect(() => {
         
         const savedTheme = localStorage.getItem('theme') || 'system'
+        
         setTheme(savedTheme)
         applyTheme(savedTheme)
         
