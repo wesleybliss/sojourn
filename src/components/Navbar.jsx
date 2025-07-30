@@ -71,15 +71,18 @@ const Navbar = () => {
                 })
                 
                 const url = URL.createObjectURL(blob)
+                // eslint-disable-next-line no-restricted-globals
                 const a = document.createElement('a')
                 
                 a.href = url
                 a.download = `trip-planner-backup-${new Date().toISOString().split('T')[0]}.json`
                 
+                // eslint-disable-next-line no-restricted-globals
                 document.body.appendChild(a)
                 
                 a.click()
                 
+                // eslint-disable-next-line no-restricted-globals
                 document.body.removeChild(a)
                 URL.revokeObjectURL(url)
                 

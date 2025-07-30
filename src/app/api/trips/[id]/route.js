@@ -10,7 +10,10 @@ import {
  * GET /api/trips/[id]
  * Returns a single trip by ID.
  */
-export async function GET(request, { params }) {
+export async function GET(request, opts) {
+    
+    const params = await opts.params
+    
     try {
         const { searchParams } = new URL(request.url)
         const withDetails = searchParams.get('withDetails') === 'true'
@@ -48,7 +51,10 @@ export async function GET(request, { params }) {
  * PUT /api/trips/[id]
  * Updates a trip by ID.
  */
-export async function PUT(request, { params }) {
+export async function PUT(request, opts) {
+    
+    const params = await opts.params
+    
     try {
         const tripData = await request.json()
         const id = parseInt(params.id, 10)
@@ -80,7 +86,10 @@ export async function PUT(request, { params }) {
  * DELETE /api/trips/[id]
  * Deletes a trip by ID.
  */
-export async function DELETE(request, { params }) {
+export async function DELETE(request, opts) {
+    
+    const params = await opts.params
+    
     try {
         const id = parseInt(params.id, 10)
         

@@ -1,6 +1,6 @@
 
 const initialAliases = {
-    '@': '.',
+    '@': './src',
 }
 
 const aliases = [

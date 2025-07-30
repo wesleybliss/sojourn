@@ -1,9 +1,9 @@
-
-import TripDetailClient from './TripDetailClient'
+import TripDetail from '@/components/TripDetail'
 
 export default async function TripDetailPage({ params }) {
     
     const { tripId } = await params
     
-    return <TripDetailClient tripId={tripId} />
+    return <TripDetail tripId={tripId} />
+    
 }

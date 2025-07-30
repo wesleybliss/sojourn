@@ -37,3 +37,4 @@ default-wal
 .next/
 db
 db-wal
+backups/

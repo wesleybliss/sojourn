@@ -7,7 +7,10 @@ import { eq } from 'drizzle-orm'
  * PUT /api/segments/[id]
  * Updates a segment by ID.
  */
-export async function PUT(request, { params }) {
+export async function PUT(request, opts) {
+    
+    const params = await opts.params
+    
     try {
         const segmentData = await request.json()
         const id = parseInt(params.id, 10)
