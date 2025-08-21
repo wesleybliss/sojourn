@@ -17,6 +17,47 @@ export const getAllTrips = async () => {
     }
 }
 
+// Get trips for a specific user
+export const getTripsByUserId = async (userId) => {
+    try {
+        const trips = await db
+            .select({
+                trip: schemas.trips,
+            })
+            .from(schemas.trips)
+            .where(eq(schemas.trips.userId, userId))
+            .orderBy(desc(schemas.trips.id))
+        
+        return trips.map(result => result.trip)
+    } catch (error) {
+        console.error(`Error fetching trips for user ${userId}:`, error)
+        throw new Error('Failed to fetch trips')
+    }
+}
+
+// Get trips with segment count for a specific user
+export const getTripsWithSegmentCountByUserId = async (userId) => {
+    try {
+        const trips = await getTripsByUserId(userId)
+        
+        const tripsWithCounts = await Promise.all(
+            trips.map(async trip => {
+                const segments = await getSegmentsByTripId(trip.id)
+                
+                return {
+                    ...trip,
+                    segmentCount: segments.length,
+                }
+            }),
+        )
+        
+        return tripsWithCounts
+    } catch (error) {
+        console.error(`Error fetching trips with segment counts for user ${userId}:`, error)
+        throw new Error('Failed to fetch trips with segment counts')
+    }
+}
+
 // Get a single trip by ID
 export const getTripById = async id => {
     try {
