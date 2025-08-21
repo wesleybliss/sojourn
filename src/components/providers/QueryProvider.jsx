@@ -4,7 +4,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useState } from 'react'
 
+const reactQueryDevEnabled = false
+
 export default function QueryProvider({ children }) {
+    
     const [queryClient] = useState(() => new QueryClient({
         defaultOptions: {
             queries: {
@@ -15,9 +18,12 @@ export default function QueryProvider({ children }) {
     }))
     
     return (
+        
         <QueryClientProvider client={queryClient}>
             {children}
-            <ReactQueryDevtools initialIsOpen={false} />
+            {reactQueryDevEnabled && <ReactQueryDevtools initialIsOpen={false} />}
         </QueryClientProvider>
+        
     )
+    
 }

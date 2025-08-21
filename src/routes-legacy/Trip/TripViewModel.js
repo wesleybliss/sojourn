@@ -155,13 +155,7 @@ const useTripViewModel = () => {
         
         await actions.backupTrip(currentTrip)
         
-    }, [currentTrip, segments])
-    
-    const createPlan = useCallback(async () => {
-        
-        console.log('@todo')
-        
-    })
+    }, [currentTrip])
     
     const clonePlan = useCallback(async () => {
         

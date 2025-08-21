@@ -18,7 +18,7 @@ import LoadingSpinner from '@/components/LoadingSpinner.jsx'
 import useTripDetailViewModel from '@/components/TripDetail/useTripDetailViewModel.js'
 import CollapsibleTree from '@/components/CollapsibleTree.jsx'
 
-export default function TripDetail() {
+const TripDetail = () => {
     
     const vm = useTripDetailViewModel()
     const [isDebugOpen, setIsDebugOpen] = useState(false)
@@ -33,7 +33,9 @@ export default function TripDetail() {
         return <LoadingSpinner />
     
     return (
+        
         <div className="Trip w-full flex flex-col flex-1 gap-4 p-4">
+            
             <TripHeader vm={vm} />
             
             <header className="flex items-center justify-between">
@@ -128,6 +130,11 @@ export default function TripDetail() {
                     </div>
                 </CollapsibleContent>
             </Collapsible>
+        
         </div>
+        
     )
+    
 }
+
+export default TripDetail

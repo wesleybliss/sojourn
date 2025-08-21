@@ -1,19 +1,15 @@
-import { useQuery } from '@tanstack/react-query'
-import TripsList from '@/components/TripsList'
+'use client'
 
-export default async function HomePage() {
+import { useQuery } from '@tanstack/react-query'
+import TripsPage from '@/app/trips/TripsPage.jsx'
+import ProtectedRoute from '@/components/ProtectedRoute'
+
+export default function HomePage() {
     
-    const {
-        data: trips,
-        error: tripsError,
-        isLoading: tripsIsLoading,
-    } = useQuery({
-        queryKey: ['trips'],
-        queryFn: () => fetch('/api/trips'),
-        enabled: true,
-        retry: 0,
-    })
-    
-    return <TripsList trips={trips} />
+    return (
+        <ProtectedRoute>
+            <TripsPage />
+        </ProtectedRoute>
+    )
     
 }

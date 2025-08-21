@@ -36,7 +36,6 @@ const GanttChartViewModel = (
         
         const rect = timelineRef.current.getBoundingClientRect()
         const relativeX = clientX - rect.left
-        const totalDays = differenceInDays(days[days.length - 1], days[0]) + 1
         
         // Calculate exact position within the timeline as a percentage
         const positionPercent = relativeX / rect.width

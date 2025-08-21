@@ -1,9 +1,16 @@
 import TripDetail from '@/components/TripDetail'
+import ProtectedRoute from '@/components/ProtectedRoute'
 
-export default async function TripDetailPage({ params }) {
+export default async function TripPage({ params }) {
     
     const { tripId } = await params
     
-    return <TripDetail tripId={tripId} />
+    return (
+        
+        <ProtectedRoute>
+            <TripDetail tripId={tripId} />
+        </ProtectedRoute>
+        
+    )
     
 }

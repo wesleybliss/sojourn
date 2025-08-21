@@ -2,7 +2,6 @@ import { useState } from 'react'
 import {
     Card,
     CardContent,
-    CardDescription,
     CardFooter,
     CardHeader,
     CardTitle,
@@ -16,7 +15,6 @@ import { MapPinX } from 'lucide-react'
 const SegmentCard = ({
     segment,
     updateSegment,
-    deleteSegment,
 }) => {
     
     const [isEditingName, setIsEditingName] = useState(false)

@@ -25,16 +25,17 @@ export async function clonePlan(id) {
         throw new Error('Plan not found')
     }
     
-    const { id: planId, ...planData } = plan
+    delete plan.id
     
-    const [newPlan] = await db.insert(plans).values(planData).returning()
+    const [newPlan] = await db.insert(plans).values(plan).returning()
     
     if (plan.segments.length > 0) {
         const newSegments = plan.segments.map(segment => {
-            const { id: segmentId, planId: oldPlanId, ...segmentData } = segment
+            delete segment.id
+            delete segment.planId
             
             return {
-                ...segmentData,
+                ...segment,
                 planId: newPlan.id,
             }
         })

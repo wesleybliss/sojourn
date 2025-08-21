@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useTripsQuery } from '@/lib/queries/trips.js'
 import {
     NavigationMenu,
     NavigationMenuItem,
@@ -11,8 +11,10 @@ import {
 import ThemeToggle from '@/components/ThemeToggle'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { toast } from 'sonner'
+import { useAuth } from '@/contexts/AuthContext'
+import { Button } from '@/components/ui/button'
 
-const debugDumpData = async trips => e => {
+const debugDumpData = trips => e => {
     
     e.preventDefault()
     
@@ -33,66 +35,69 @@ const debugDumpData = async trips => e => {
 
 const Navbar = () => {
     
-    const {
-        data: trips,
-        error: tripsError,
-        isLoading: tripsIsLoading,
-    } = useQuery({
-        queryKey: ['trips'],
-        queryFn: () => fetch('/api/trips'),
-        enabled: true,
-        retry: 0,
-    })
+    const { user, logout } = useAuth()
+    
+    const { data: trips } = useTripsQuery()
     
     const [deleteDatabaseDialogOpen, setDeleteDatabaseDialogOpen] = useState(false)
     
-    const links = useMemo(() => [
-        ['/', 'Home'],
-        ['/trips', 'Trips'],
-        ['/debug', 'Debug', 'Debug'],
-        ['#debug:dump', 'Debug/Dump', debugDumpData(trips)],
-        ['#debug:clear', 'Debug/Clear', e => {
-            e.preventDefault()
-            setDeleteDatabaseDialogOpen(true)
-        }],
-        ['#debug:backup', 'Backup', async e => {
-            e.preventDefault()
-            
-            try {
+    const links = useMemo(() => {
+        
+        if (!user || !trips?.data)
+            return [
+                ['/', 'Home'],
+                ['/login', 'Login'],
+                ['/signup', 'Sign Up'],
+            ]
+        
+        return [
+            ['/', 'Home'],
+            ['/trips', 'Trips'],
+            ['/debug', 'Debug', 'Debug'],
+            ['#debug:dump', 'Debug/Dump', debugDumpData(trips?.data)],
+            ['#debug:clear', 'Debug/Clear', e => {
+                e.preventDefault()
+                setDeleteDatabaseDialogOpen(true)
+            }],
+            ['#debug:backup', 'Backup', async e => {
+                e.preventDefault()
                 
-                const backupData = {
-                    version: '1.0',
-                    exportDate: new Date().toISOString(),
-                    trips,
+                try {
+                    
+                    const backupData = {
+                        version: '1.0',
+                        exportDate: new Date().toISOString(),
+                        trips: trips.data,
+                    }
+                    
+                    const blob = new Blob([JSON.stringify(backupData, null, 2)], {
+                        type: 'application/json',
+                    })
+                    
+                    const url = URL.createObjectURL(blob)
+                    // eslint-disable-next-line no-restricted-globals
+                    const a = document.createElement('a')
+                    
+                    a.href = url
+                    a.download = `trip-planner-backup-${new Date().toISOString().split('T')[0]}.json`
+                    
+                    // eslint-disable-next-line no-restricted-globals
+                    document.body.appendChild(a)
+                    
+                    a.click()
+                    
+                    // eslint-disable-next-line no-restricted-globals
+                    document.body.removeChild(a)
+                    URL.revokeObjectURL(url)
+                    
+                    toast.success('Backup file downloaded')
+                } catch (error) {
+                    console.error('Error creating backup:', error)
+                    toast.error('Failed to create backup')
                 }
-                
-                const blob = new Blob([JSON.stringify(backupData, null, 2)], {
-                    type: 'application/json',
-                })
-                
-                const url = URL.createObjectURL(blob)
-                // eslint-disable-next-line no-restricted-globals
-                const a = document.createElement('a')
-                
-                a.href = url
-                a.download = `trip-planner-backup-${new Date().toISOString().split('T')[0]}.json`
-                
-                // eslint-disable-next-line no-restricted-globals
-                document.body.appendChild(a)
-                
-                a.click()
-                
-                // eslint-disable-next-line no-restricted-globals
-                document.body.removeChild(a)
-                URL.revokeObjectURL(url)
-                
-                toast.success('Backup file downloaded')
-            } catch (error) {
-                console.error('Error creating backup:', error)
-                toast.error('Failed to create backup')
-            }
-        }],
-    ], [trips])
+            }],
+        ]
+    }, [trips, user])
     
     const debugDeleteDatabase = async () => {
         
@@ -144,7 +149,21 @@ const Navbar = () => {
                 </NavigationMenuList>
             </NavigationMenu>
             
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
+                {user && (
+                    <span className="text-xs text-muted-foreground">
+                        {user.email}
+                    </span>
+                )}
+                {user ? (
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={logout}
+                        className="text-xs">
+                        Logout
+                    </Button>
+                ) : null}
                 <ThemeToggle />
             </div>
             
