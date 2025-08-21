@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import ProtectedRoute from '@/components/ProtectedRoute'
 import TripDetail from '@/components/TripDetail'
 
 export default async function PlanDetail({ params }) {
@@ -8,6 +9,12 @@ export default async function PlanDetail({ params }) {
     if (!tripId)
         redirect('/trips')
     
-    return <TripDetail tripId={tripId} planId={planId} />
+    return (
+        
+        <ProtectedRoute>
+            <TripDetail tripId={tripId} planId={planId} />
+        </ProtectedRoute>
+        
+    )
     
 }

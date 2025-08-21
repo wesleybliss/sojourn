@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
-import TripDetail from '@/components/TripDetail/TripDetail.jsx'
+import ProtectedRoute from '@/components/ProtectedRoute'
+import TripDetail from '@/components/TripDetail'
 
 export default async function Plans({ params }) {
     
@@ -10,6 +11,10 @@ export default async function Plans({ params }) {
         return null
     }
     
-    return <TripDetail tripId={tripId} planId={planId} />
+    return (
+        <ProtectedRoute>
+            <TripDetail tripId={tripId} planId={planId} />
+        </ProtectedRoute>
+    )
     
 }

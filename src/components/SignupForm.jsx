@@ -10,8 +10,10 @@ import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
 
 export default function SignupForm() {
+    
     const router = useRouter()
     const { login } = useAuth()
+    
     const [isLoading, setIsLoading] = useState(false)
     const [formData, setFormData] = useState({
         email: '',
@@ -20,19 +22,24 @@ export default function SignupForm() {
     })
     
     const handleChange = e => {
+        
         const { name, value } = e.target
         
         setFormData(prev => ({
             ...prev,
             [name]: value,
         }))
+        
     }
     
     const handleSubmit = async e => {
+        
         e.preventDefault()
+        
         setIsLoading(true)
         
         try {
+            
             const response = await fetch('/api/auth/signup', {
                 method: 'POST',
                 headers: {
@@ -41,10 +48,18 @@ export default function SignupForm() {
                 body: JSON.stringify(formData),
             })
             
+            // Handle HTTP errors
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}))
+                throw new Error(errorData.error || `HTTP error! status: ${response.status}`)
+            }
+            
             const result = await response.json()
             
             if (result.success) {
+                
                 toast.success('Account created successfully!')
+                
                 // Automatically log in the user after signup
                 const loginResponse = await fetch('/api/auth/login', {
                     method: 'POST',
@@ -65,23 +80,35 @@ export default function SignupForm() {
                 } else {
                     router.push('/login')
                 }
+                
             } else {
+                
                 toast.error(result.error || 'Failed to create account')
             }
+            
         } catch (error) {
+            
             console.error('Signup error:', error)
-            toast.error('An unexpected error occurred')
+            // Show toast with error message
+            toast.error(error.message || 'An unexpected error occurred')
+            
         } finally {
+            
             setIsLoading(false)
+            
         }
+        
     }
     
     return (
+        
         <Card className="w-full max-w-md">
+            
             <CardHeader>
                 <CardTitle>Sign Up</CardTitle>
                 <CardDescription>Create a new account with your email and password</CardDescription>
             </CardHeader>
+            
             <form onSubmit={handleSubmit}>
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
@@ -125,6 +152,9 @@ export default function SignupForm() {
                     </Button>
                 </CardFooter>
             </form>
+        
         </Card>
+        
     )
+    
 }

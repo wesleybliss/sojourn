@@ -18,6 +18,7 @@ export function AuthProvider({ children }) {
             try {
                 setUser(JSON.parse(storedUser))
             } catch (e) {
+                setUser(null)
                 console.error('Failed to parse user from localStorage', e)
             }
         }
@@ -33,7 +34,7 @@ export function AuthProvider({ children }) {
     const logout = () => {
         setUser(null)
         localStorage.removeItem('user')
-        router.push('/login')
+        router.replace('/login')
     }
     
     const value = {

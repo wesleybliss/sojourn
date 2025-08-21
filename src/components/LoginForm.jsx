@@ -10,8 +10,10 @@ import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
 
 export default function LoginForm() {
+    
     const router = useRouter()
     const { login } = useAuth()
+    
     const [isLoading, setIsLoading] = useState(false)
     const [formData, setFormData] = useState({
         email: '',
@@ -19,19 +21,24 @@ export default function LoginForm() {
     })
     
     const handleChange = e => {
+        
         const { name, value } = e.target
         
         setFormData(prev => ({
             ...prev,
             [name]: value,
         }))
+        
     }
     
     const handleSubmit = async e => {
+        
         e.preventDefault()
+        
         setIsLoading(true)
         
         try {
+            
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: {
@@ -49,20 +56,29 @@ export default function LoginForm() {
             } else {
                 toast.error(result.error || 'Failed to login')
             }
+            
         } catch (error) {
+            
             console.error('Login error:', error)
             toast.error('An unexpected error occurred')
+            
         } finally {
+            
             setIsLoading(false)
+            
         }
+        
     }
     
     return (
+        
         <Card className="w-full max-w-md">
+            
             <CardHeader>
                 <CardTitle>Login</CardTitle>
                 <CardDescription>Sign in to your account</CardDescription>
             </CardHeader>
+            
             <form onSubmit={handleSubmit}>
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
@@ -94,6 +110,9 @@ export default function LoginForm() {
                     </Button>
                 </CardFooter>
             </form>
+        
         </Card>
+        
     )
+    
 }

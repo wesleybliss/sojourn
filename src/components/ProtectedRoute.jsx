@@ -23,9 +23,15 @@ export default function ProtectedRoute({ children }) {
         </div>
     )
     
+    // If user is not authenticated, redirect to login page
     if (!user) {
-        console.warn('No user; not rendering anything', user)
+        
+        // In case useEffect hasn't triggered yet, we can also imperatively redirect
+        if (typeof window !== 'undefined')
+            router.push('/login')
+        
         return null
+        
     }
     
     return children
