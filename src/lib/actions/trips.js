@@ -1,55 +1,218 @@
-'use server'
-
+import * as store from '@/store'
+import tripsRepo from '@/db/repositories/trips'
+import plansRepo from '@/db/repositories/plans'
+import segmentsRepo from '@/db/repositories/segments'
 import {
-    getAllTrips,
-    createTrip as createTripQuery,
-    deleteTrip as deleteTripQuery,
-} from '@/db/repos/trips.js'
+    generateSlug,
+    createSyntheticDownload,
+    getRandomUnsplashImageUrl,
+} from '@/lib/utils'
+import dayjs from 'dayjs'
 
-/**
- * Server action: fetch list of trips from the database.
- * @returns {Promise<Trip[]>}
- */
-export async function getTrips() {
-    try {
-        const trips = await getAllTrips()
-        
-        return trips
-    } catch (error) {
-        throw new Error(error.message || 'Failed to load trips')
+export const backupTrip = async trip => {
+    
+    const segments = await segmentsRepo.table
+        .where('tripId')
+        .equals(trip.id)
+        .sortBy('startDate')
+    
+    const data = {
+        type: 'single',
+        trip,
+        segments,
     }
+    
+    const date = dayjs().format('YYYY-MM-DD_HH-mm-ss')
+    const jsonData = JSON.stringify(data, null, 4)
+    const fileType = 'application/json'
+    const fileName = `${generateSlug(trip.name)}-${date}.json`
+    
+    createSyntheticDownload(jsonData, fileType, fileName)
+    
 }
 
-/**
- * Server action: create a new trip record.
- * @param {Object} tripData
- * @returns {Promise<Trip>}
- */
-export async function createTrip(tripData) {
-    try {
-        const newTrip = await createTripQuery({
-            name: tripData.name || 'Untitled Trip',
-            description: tripData.description || '',
-            startDate: tripData.startDate || null,
-            endDate: tripData.endDate || null,
-            coverImageUrl: tripData.coverImageUrl || null,
-        })
-        
-        return newTrip
-    } catch (error) {
-        throw new Error(error.message || 'Failed to create trip')
+export const backupAllTrips = async () => {
+    
+    const trips = await tripsRepo.getAll()
+    const segments = await segmentsRepo.getAll()
+    
+    const data = {
+        type: 'multiple',
+        trips,
+        segments,
     }
+    
+    const date = dayjs().format('YYYY-MM-DD_HH-mm-ss')
+    const jsonData = JSON.stringify(data, null, 4)
+    const fileType = 'application/json'
+    const fileName = `trips-${date}.json`
+    
+    createSyntheticDownload(jsonData, fileType, fileName)
+    
 }
 
-/**
- * Server action: delete a trip by its ID.
- * @param {number|string} id
- * @returns {Promise<void>}
- */
-export async function deleteTrip(id) {
-    try {
-        await deleteTripQuery(parseInt(id, 10))
-    } catch (error) {
-        throw new Error(error.message || 'Failed to delete trip')
+// @todo was working but now with Dexie cloud, need to handle IDs
+export const restoreTrip1 = async (data, overwrite = false) => {
+    
+    if (data.type !== 'single')
+        throw new Error('Invalid backup type')
+    
+    const { trip, segments } = data
+    
+    store.importTripStatus.setValue(`Importing Trip: ${trip.name}`)
+    store.importTripProgressMax.setValue(segments.length + 1)
+    store.importTripProgressValue.setValue(0)
+    
+    console.log('restoreTrip: restoring trip', trip.name, 'with', segments.length, 'segments')
+    
+    let shouldDeleteTrip = false
+    
+    const existingTrip = await tripsRepo.getById(trip.id)
+    
+    if (existingTrip)
+        if (!overwrite)
+            throw new Error('Trip already exists')
+        else
+            shouldDeleteTrip = true
+    
+    const existingSegments = await Promise.all(segments.map(it => segmentsRepo.getById(it.id)))
+    
+    if (existingSegments.length > 0)
+        if (!overwrite)
+            throw new Error('Some segments already exist')
+    
+    if (shouldDeleteTrip)
+        await tripsRepo.delete(trip.id)
+    
+    // Extra check, but deleting the trip should have also deleted all related segments
+    if (existingSegments.length > 0)
+        await Promise.all(existingSegments
+            .filter(it => Boolean(it?.id))
+            .map(it => segmentsRepo.delete(it.id)))
+    
+    if (!trip.coverImageUrl)
+        trip.coverImageUrl = await getRandomUnsplashImageUrl(trip.name)
+    
+    console.log('actions#restoreTrip creating trip')
+    await tripsRepo.create(trip)
+    store.importTripProgressValue.setValue(1)
+    
+    console.log('actions#restoreTrip creating segments')
+    await Promise.all(segments.map(async it => {
+        await segmentsRepo.create(it)
+        store.importTripProgressValue.setValue(
+            store.importTripProgressValue.getValue() + 1)
+    }))
+    
+}
+
+export const restoreTrip = async (data, onConflictAction = 'duplicate') => {
+    
+    return console.warn('need to implement plans restore')
+    
+    console.log('restoreTrip', { onConflictAction })
+    
+    if (data.type !== 'single')
+        throw new Error('Invalid backup type')
+    
+    const { trip, segments } = data
+    
+    const existingTrip = await tripsRepo.getById(trip.id) || await tripsRepo.getByName(trip.name, true)
+    const existingSegments = await Promise.all(segments.map(it => segmentsRepo.getById(it.id)))
+    
+    if (existingTrip?.id && onConflictAction === 'duplicate') {
+        
+        delete trip.id
+        delete data.trip.id
+        
+        trip.name = `${trip.name} (Copy ${dayjs().format('YYYY-MMM-DD')})`
+        data.trip.name = trip.name
+        
+        for (let i = 0; i < segments.length; i++) {
+            
+            // Auto generated by the database
+            delete segments[i].id
+            delete data.segments[i].id
+            
+            // Assigned after new trip is created
+            delete segments[i].tripId
+            delete data.segments[i].tripId
+            
+        }
+        
     }
+    
+    // @todo @debug
+    const overwrite = onConflictAction === 'overwrite'
+    
+    store.importTripStatus.setValue(`Importing Trip: ${trip.name}`)
+    store.importTripProgressMax.setValue(segments.length + 1)
+    store.importTripProgressValue.setValue(0)
+    
+    console.log('restoreTrip: restoring trip', trip.name, 'with', segments.length, 'segments')
+    
+    if (existingTrip && overwrite)
+        await tripsRepo.delete(trip.id)
+    
+    // Extra check, but deleting the trip should have also deleted all related segments
+    if (existingSegments.length > 0 && overwrite)
+        await Promise.all(existingSegments
+            .filter(it => Boolean(it?.id))
+            .map(it => segmentsRepo.delete(it.id)))
+    
+    if (!trip.coverImageUrl)
+        trip.coverImageUrl = await getRandomUnsplashImageUrl(trip.name)
+    
+    const dbgAllTrips = await tripsRepo.getAll()
+    const dbgAllSegments = await segmentsRepo.getAll()
+    
+    if (overwrite) {
+        await Promise.all(dbgAllSegments.map(it => segmentsRepo.delete(it.id)))
+        await Promise.all(dbgAllTrips.map(it => tripsRepo.delete(it.id)))
+    }
+    
+    console.log('actions#restoreTrip creating trip', {
+        dbgAllTrips,
+        dbgAllSegments,
+    })
+    
+    delete trip.id
+    
+    const newTripId = await tripsRepo.create(trip)
+    
+    store.importTripProgressValue.setValue(1)
+    
+    segments.forEach((_, i) => {
+        delete segments[i].id
+        segments[i].tripId = newTripId
+    })
+    
+    console.log('actions#restoreTrip creating segments')
+    await Promise.all(segments.map(async it => {
+        await segmentsRepo.create(it)
+        store.importTripProgressValue.setValue(
+            store.importTripProgressValue.getValue() + 1)
+    }))
+    
+}
+
+export const restoreAllTrips = async (data, onConflictAction = 'duplicate') => {
+    
+    if (data.type !== 'multiple')
+        throw new Error('Invalid backup type')
+    
+    const promises = data.trips.map(trip => {
+        
+        const segments = data.segments.filter(seg => seg.tripId === trip.id)
+        
+        return restoreTrip({
+            type: 'single',
+            trip,
+            segments,
+        }, onConflictAction)
+        
+    })
+    
+    await Promise.all(promises)
+    
 }

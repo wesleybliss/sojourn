@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { useTripsQuery } from '@/lib/queries/trips.js'
+import { backupAllTrips } from '@/lib/actions/trips'
 import {
     NavigationMenu,
     NavigationMenuItem,
@@ -60,7 +61,7 @@ const Navbar = () => {
                 e.preventDefault()
                 setDeleteDatabaseDialogOpen(true)
             }],
-            ['#debug:backup', 'Backup', async e => {
+            /* ['#debug:backup', 'Backup', async e => {
                 e.preventDefault()
                 
                 try {
@@ -96,6 +97,10 @@ const Navbar = () => {
                     console.error('Error creating backup:', error)
                     toast.error('Failed to create backup')
                 }
+            }], */
+            ['#debug:backup', 'Backup', async e => {
+                e.preventDefault()
+                await backupAllTrips()
             }],
         ]
     }, [trips, user])
