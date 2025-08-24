@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { getToken } from 'next-auth/jwt'
 import {
     getTripsByUserId,
     getTripsWithSegmentCountByUserId,
@@ -13,22 +14,16 @@ export async function GET(request) {
     
     try {
         
-        const userIdHeader = request.headers.get('x-user-id')
-        
-        if (!userIdHeader) {
-            return NextResponse.json(
-                { success: false, error: 'Unauthorized' },
-                { status: 401 },
-            )
+        const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
+
+        if (!token || !token.sub) {
+            return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
         }
-        
-        const userId = parseInt(userIdHeader, 10)
-        
-        if (isNaN(userId)) {
-            return NextResponse.json(
-                { success: false, error: 'Invalid user ID' },
-                { status: 400 },
-            )
+
+        const userId = parseInt(String(token.sub), 10)
+
+        if (Number.isNaN(userId)) {
+            return NextResponse.json({ success: false, error: 'Invalid user ID' }, { status: 400 })
         }
         
         const { searchParams } = new URL(request.url)
@@ -58,9 +53,22 @@ export async function GET(request) {
  */
 export async function POST(request) {
     try {
+        const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
+
+        if (!token || !token.sub) {
+            return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+        }
+
+        const userId = parseInt(String(token.sub), 10)
+
+        if (Number.isNaN(userId)) {
+            return NextResponse.json({ success: false, error: 'Invalid user ID' }, { status: 400 })
+        }
+
         const tripData = await request.json()
-        
+
         const newTrip = await createTripQuery({
+            userId,
             name: tripData.name || 'Untitled Trip',
             description: tripData.description || '',
             startDate: tripData.startDate || null,

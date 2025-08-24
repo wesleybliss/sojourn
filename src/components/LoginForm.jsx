@@ -108,7 +108,7 @@ export default function LoginForm() {
                         <Label htmlFor="show-password">Show password</Label>
                     </div>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="mt-4">
                     <Button className="w-full" type="submit" disabled={isLoading}>
                         {isLoading ? 'Signing in...' : 'Login'}
                     </Button>
