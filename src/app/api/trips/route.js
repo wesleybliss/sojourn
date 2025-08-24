@@ -14,17 +14,18 @@ export async function GET(request) {
     
     try {
         
-        const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
-
-        if (!token || !token.sub) {
+        const token = await getToken({
+            req: request,
+            secret: process.env.NEXTAUTH_SECRET,
+        })
+        
+        if (!token || !token.sub)
             return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
-        }
-
+        
         const userId = parseInt(String(token.sub), 10)
-
-        if (Number.isNaN(userId)) {
+        
+        if (Number.isNaN(userId))
             return NextResponse.json({ success: false, error: 'Invalid user ID' }, { status: 400 })
-        }
         
         const { searchParams } = new URL(request.url)
         const withCounts = searchParams.get('withCounts') === 'true'
@@ -38,13 +39,17 @@ export async function GET(request) {
             data: trips,
             count: trips.length,
         })
-    } catch (error) {
-        console.error('Error getting trips:', error)
+        
+    } catch (e) {
+        
+        console.error('Error getting trips:', e)
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: e.message },
             { status: 500 },
         )
+        
     }
+    
 }
 
 /**
@@ -52,21 +57,24 @@ export async function GET(request) {
  * Creates a new trip.
  */
 export async function POST(request) {
+    
     try {
-        const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
-
-        if (!token || !token.sub) {
+        
+        const token = await getToken({
+            req: request,
+            secret: process.env.NEXTAUTH_SECRET,
+        })
+        
+        if (!token || !token.sub)
             return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
-        }
-
+        
         const userId = parseInt(String(token.sub), 10)
-
-        if (Number.isNaN(userId)) {
+        
+        if (Number.isNaN(userId))
             return NextResponse.json({ success: false, error: 'Invalid user ID' }, { status: 400 })
-        }
-
+        
         const tripData = await request.json()
-
+        
         const newTrip = await createTripQuery({
             userId,
             name: tripData.name || 'Untitled Trip',
@@ -84,11 +92,15 @@ export async function POST(request) {
             },
             { status: 201 },
         )
-    } catch (error) {
-        console.error('Error creating trip:', error)
+        
+    } catch (e) {
+        
+        console.error('Error creating trip:', e)
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: e.message },
             { status: 500 },
         )
+        
     }
+    
 }
