@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
 import {
-    getAllTrips,
+    getTripsByUserId,
+    getTripsWithSegmentCountByUserId,
     createTrip as createTripQuery,
-    getTripsWithSegmentCount,
 } from '@/db/repos/trips.js'
 
 /**
@@ -13,16 +13,30 @@ export async function GET(request) {
     
     try {
         
+        const userIdHeader = request.headers.get('x-user-id')
+        
+        if (!userIdHeader) {
+            return NextResponse.json(
+                { success: false, error: 'Unauthorized' },
+                { status: 401 },
+            )
+        }
+        
+        const userId = parseInt(userIdHeader, 10)
+        
+        if (isNaN(userId)) {
+            return NextResponse.json(
+                { success: false, error: 'Invalid user ID' },
+                { status: 400 },
+            )
+        }
+        
         const { searchParams } = new URL(request.url)
         const withCounts = searchParams.get('withCounts') === 'true'
         
-        let trips
-        
-        if (withCounts) {
-            trips = await getTripsWithSegmentCount()
-        } else {
-            trips = await getAllTrips()
-        }
+        const trips = withCounts
+            ? await getTripsWithSegmentCountByUserId(userId)
+            : await getTripsByUserId(userId)
         
         return NextResponse.json({
             success: true,

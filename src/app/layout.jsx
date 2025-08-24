@@ -3,7 +3,7 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import Navbar from '@/components/Navbar.jsx'
 import QueryProvider from '@/components/providers/QueryProvider'
-import { AuthProvider } from '@/contexts/AuthContext'
+import NextAuthProvider from '@/components/providers/NextAuthProvider.jsx'
 import { Toaster } from 'sonner'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -15,13 +15,13 @@ export default function RootLayout({ children }) {
         <html lang="en" data-arp="">
             <body className={inter.className}>
                 
-                <AuthProvider>
+                <NextAuthProvider>
                     <QueryProvider>
                         <Navbar />
                         {children}
                         <Toaster />
                     </QueryProvider>
-                </AuthProvider>
+                </NextAuthProvider>
             
             </body>
         </html>

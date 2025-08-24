@@ -5,20 +5,22 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
-import { useAuth } from '@/contexts/AuthContext'
+import { signIn } from 'next-auth/react'
 
 export default function LoginForm() {
     
     const router = useRouter()
-    const { login } = useAuth()
+    
     
     const [isLoading, setIsLoading] = useState(false)
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     })
+    const [showPassword, setShowPassword] = useState(false)
     
     const handleChange = e => {
         
@@ -39,22 +41,17 @@ export default function LoginForm() {
         
         try {
             
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
+            const res = await signIn('credentials', {
+                redirect: false,
+                email: formData.email,
+                password: formData.password,
             })
             
-            const result = await response.json()
-            
-            if (result.success) {
+            if (res?.ok) {
                 toast.success('Login successful!')
-                login(result.data) // Store user in context and localStorage
                 router.push('/trips')
             } else {
-                toast.error(result.error || 'Failed to login')
+                toast.error(res?.error || 'Invalid credentials')
             }
             
         } catch (error) {
@@ -97,11 +94,18 @@ export default function LoginForm() {
                         <Input
                             id="password"
                             name="password"
-                            type="password"
+                            type={showPassword ? 'text' : 'password'}
                             placeholder="Your password"
                             value={formData.password}
                             onChange={handleChange}
                             required/>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                            id="show-password"
+                            checked={showPassword}
+                            onCheckedChange={setShowPassword} />
+                        <Label htmlFor="show-password">Show password</Label>
                     </div>
                 </CardContent>
                 <CardFooter>

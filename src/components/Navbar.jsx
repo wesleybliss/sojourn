@@ -11,7 +11,7 @@ import {
 import ThemeToggle from '@/components/ThemeToggle'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { toast } from 'sonner'
-import { useAuth } from '@/contexts/AuthContext'
+import { useSession, signOut } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 
 const debugDumpData = trips => e => {
@@ -35,7 +35,8 @@ const debugDumpData = trips => e => {
 
 const Navbar = () => {
     
-    const { user, logout } = useAuth()
+    const { data: session } = useSession()
+    const user = session?.user
     
     const { data: trips } = useTripsQuery()
     
@@ -155,15 +156,15 @@ const Navbar = () => {
                         {user.email}
                     </span>
                 )}
-                {user ? (
-                    <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={logout}
+                {user && (
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => signOut({ callbackUrl: '/login' })}
                         className="text-xs">
                         Logout
                     </Button>
-                ) : null}
+                )}
                 <ThemeToggle />
             </div>
             

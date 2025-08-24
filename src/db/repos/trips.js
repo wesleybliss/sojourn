@@ -18,14 +18,16 @@ export const getAllTrips = async () => {
 }
 
 // Get trips for a specific user
-export const getTripsByUserId = async (userId) => {
+export const getTripsByUserId = async userId => {
     try {
         const trips = await db
-            .select({
-                trip: schemas.trips,
-            })
+            .select({ trip: schemas.trips })
             .from(schemas.trips)
-            .where(eq(schemas.trips.userId, userId))
+            .innerJoin(
+                schemas.userTrips,
+                eq(schemas.userTrips.tripId, schemas.trips.id),
+            )
+            .where(eq(schemas.userTrips.userId, userId))
             .orderBy(desc(schemas.trips.id))
         
         return trips.map(result => result.trip)
@@ -36,7 +38,7 @@ export const getTripsByUserId = async (userId) => {
 }
 
 // Get trips with segment count for a specific user
-export const getTripsWithSegmentCountByUserId = async (userId) => {
+export const getTripsWithSegmentCountByUserId = async userId => {
     try {
         const trips = await getTripsByUserId(userId)
         

@@ -7,12 +7,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
-import { useAuth } from '@/contexts/AuthContext'
+import { signIn } from 'next-auth/react'
 
 export default function SignupForm() {
     
     const router = useRouter()
-    const { login } = useAuth()
     
     const [isLoading, setIsLoading] = useState(false)
     const [formData, setFormData] = useState({
@@ -51,6 +50,7 @@ export default function SignupForm() {
             // Handle HTTP errors
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}))
+                
                 throw new Error(errorData.error || `HTTP error! status: ${response.status}`)
             }
             
@@ -61,21 +61,13 @@ export default function SignupForm() {
                 toast.success('Account created successfully!')
                 
                 // Automatically log in the user after signup
-                const loginResponse = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        email: formData.email,
-                        password: formData.password,
-                    }),
+                const signInResult = await signIn('credentials', {
+                    redirect: false,
+                    email: formData.email,
+                    password: formData.password,
                 })
                 
-                const loginResult = await loginResponse.json()
-                
-                if (loginResult.success) {
-                    login(loginResult.data)
+                if (signInResult?.ok) {
                     router.push('/trips')
                 } else {
                     router.push('/login')

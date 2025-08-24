@@ -29,9 +29,11 @@ const ThemeToggle = () => {
     
     const toggleTheme = newTheme => {
         setTheme(newTheme)
+        
         if (typeof window !== 'undefined') {
             localStorage.setItem('theme', newTheme)
         }
+        
         applyTheme(newTheme)
     }
     
