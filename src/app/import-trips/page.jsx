@@ -13,6 +13,7 @@ import {
 import { Progress } from '@/components/ui/progress'
 import { FolderUp } from 'lucide-react'
 import { toast } from 'sonner'
+import { useRestoreTrips } from '@/lib/queries/backups'
 
 export default function ImportTripsPage() {
     const fileInputRef = useRef()
@@ -26,6 +27,8 @@ export default function ImportTripsPage() {
         fileInputRef.current.value = null
         fileInputRef.current.click()
     }
+
+    const restoreMutation = useRestoreTrips()
     
     const handleFileChange = async event => {
         const file = event.target.files[0]
@@ -40,48 +43,16 @@ export default function ImportTripsPage() {
             const text = await file.text()
             const data = JSON.parse(text)
             
-            setImportStatus('Processing trips...')
+            setImportStatus('Uploading backup...')
             setProgressPercent(30)
-            
-            // Import trips using the API
-            let importedCount = 0
-            const totalTrips = Array.isArray(data) ? data.length : (data.trips ? data.trips.length : 1)
-            
-            const tripsToImport = Array.isArray(data) ? data : (data.trips ? data.trips : [data])
-            
-            for (const tripData of tripsToImport) {
-                setImportStatus(`Importing trip: ${tripData.name || 'Unnamed'}`)
-                
-                const response = await fetch('/api/trips', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: tripData.name || 'Imported Trip',
-                        description: tripData.description || '',
-                        startDate: tripData.startDate || null,
-                        endDate: tripData.endDate || null,
-                        coverImageUrl: tripData.coverImageUrl || null,
-                    }),
-                })
-                
-                if (!response.ok) {
-                    throw new Error(`Failed to import trip: ${tripData.name}`)
-                }
-                
-                importedCount++
-                setProgressPercent(30 + (importedCount / totalTrips) * 60)
-            }
-            
+
+            await restoreMutation.mutateAsync(data)
+
             setImportStatus('Import completed!')
             setProgressPercent(100)
-            
-            toast.success(`Successfully imported ${importedCount} trip(s)`)
-            
-            setTimeout(() => {
-                router.push('/trips')
-            }, 2000)
+            toast.success('Backup restored successfully')
+
+            setTimeout(() => router.push('/trips'), 1500)
             
         } catch (error) {
             console.error('Import error:', error)

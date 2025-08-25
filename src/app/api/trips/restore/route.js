@@ -1,0 +1,103 @@
+import { NextResponse } from 'next/server'
+import { getToken } from 'next-auth/jwt'
+import db from '@/db/index.js'
+import * as schemas from '@/db/schema.js'
+import { eq } from 'drizzle-orm'
+import dayjs from 'dayjs'
+
+const toDate = v => (v == null ? null : new Date(v))
+
+export async function POST(request) {
+    try {
+        const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
+
+        if (!token || !token.sub)
+            return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+
+        const userId = parseInt(String(token.sub), 10)
+        if (Number.isNaN(userId))
+            return NextResponse.json({ success: false, error: 'Invalid user ID' }, { status: 400 })
+
+        const body = await request.json()
+        if (!body || !body.type || !body.trips)
+            return NextResponse.json({ success: false, error: 'Invalid backup payload' }, { status: 400 })
+
+        const onConflictAction = body.onConflictAction || 'duplicate'
+
+        const trips = Array.isArray(body.trips) ? body.trips : []
+
+        const results = []
+
+        // For each trip in backup, create trip, plans and segments
+        for (const trip of trips) {
+
+            let tripName = trip.name || 'Imported Trip'
+
+            if (onConflictAction === 'duplicate') {
+                tripName = `${tripName} (Copy ${dayjs().format('YYYY-MMM-DD')})`
+            }
+
+            const insertedTrips = await db
+                .insert(schemas.trips)
+                .values({
+                    name: tripName,
+                    description: trip.description || null,
+                    startDate: toDate(trip.startDate),
+                    endDate: toDate(trip.endDate),
+                    coverImageUrl: trip.coverImageUrl || null,
+                })
+                .returning({ id: schemas.trips.id })
+
+            const newTrip = insertedTrips[0]
+
+            // link user to trip via userTrips
+            await db.insert(schemas.userTrips).values({ userId, tripId: newTrip.id })
+
+            const planIdMap = new Map()
+
+            if (Array.isArray(trip.plans)) {
+                for (const plan of trip.plans) {
+                    const insertedPlans = await db
+                        .insert(schemas.plans)
+                        .values({
+                            tripId: newTrip.id,
+                            name: plan.name,
+                            description: plan.description || null,
+                        })
+                        .returning({ id: schemas.plans.id })
+
+                    const newPlan = insertedPlans[0]
+                    if (plan.id) planIdMap.set(String(plan.id), newPlan.id)
+
+                    // insert segments for this plan
+                    if (Array.isArray(plan.segments)) {
+                        for (const seg of plan.segments) {
+                            await db.insert(schemas.segments).values({
+                                tripId: newTrip.id,
+                                planId: newPlan.id,
+                                name: seg.name || 'Imported Segment',
+                                description: seg.description || null,
+                                startDate: toDate(seg.startDate),
+                                endDate: toDate(seg.endDate),
+                                coordsLat: seg.coords?.lat ?? null,
+                                coordsLng: seg.coords?.lng ?? null,
+                                color: seg.color || 'bg-blue-500',
+                                flightBooked: seg.flightBooked ? 1 : 0,
+                                stayBooked: seg.stayBooked ? 1 : 0,
+                                isShengenRegion: seg.isShengenRegion ? 1 : 0,
+                            })
+                        }
+                    }
+                }
+            }
+
+            results.push({ importedTripId: newTrip.id, name: tripName })
+        }
+
+        return NextResponse.json({ success: true, data: results })
+
+    } catch (e) {
+        console.error('Error restoring backup:', e)
+        return NextResponse.json({ success: false, error: e.message }, { status: 500 })
+    }
+}
