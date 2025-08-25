@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react'
 import { useTripsQuery } from '@/lib/queries/trips.js'
-import { backupAllTrips } from '@/lib/actions/trips'
 import {
     NavigationMenu,
     NavigationMenuItem,
@@ -100,7 +99,7 @@ const Navbar = () => {
             }], */
             ['#debug:backup', 'Backup', async e => {
                 e.preventDefault()
-                await backupAllTrips()
+                // TODO call api endpoint to trigger backup
             }],
         ]
     }, [trips, user])
