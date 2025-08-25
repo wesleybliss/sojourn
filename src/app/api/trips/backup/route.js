@@ -14,14 +14,12 @@ const transformSegment = seg => ({
     id: String(seg.id),
     name: seg.name,
     color: seg.color,
-    owner: null,
     coords: {
         lat: seg.coordsLat === null ? null : Number(seg.coordsLat),
         lng: seg.coordsLng === null ? null : Number(seg.coordsLng),
     },
     tripId: String(seg.tripId),
     planId: seg.planId ? String(seg.planId) : undefined,
-    realmId: null,
     createdAt: toIso(seg.createdAt),
     updatedAt: toIso(seg.updatedAt),
     startDate: toIso(seg.startDate),
@@ -34,20 +32,16 @@ const transformSegment = seg => ({
 const transformPlan = plan => ({
     id: plan.id ? String(plan.id) : undefined,
     name: plan.name,
-    owner: null,
     tripId: plan.tripId ? String(plan.tripId) : undefined,
-    realmId: null,
     createdAt: toIso(plan.createdAt),
     updatedAt: toIso(plan.updatedAt),
     segments: Array.isArray(plan.segments) ? plan.segments.map(transformSegment) : [],
 })
 
-const transformTrip = (trip, ownerEmail = null) => ({
+const transformTrip = trip => ({
     id: String(trip.id),
     name: trip.name,
-    owner: ownerEmail,
     endDate: toIso(trip.endDate),
-    realmId: ownerEmail,
     segments: Array.isArray(trip.segments) ? trip.segments.map(transformSegment) : [],
     createdAt: toIso(trip.createdAt),
     startDate: toIso(trip.startDate),
@@ -80,7 +74,10 @@ export async function POST(request, opts) {
             const tripId = body.tripId
             
             if (!tripId)
-                return NextResponse.json({ success: false, error: 'tripId required for single backup' }, { status: 400 })
+                return NextResponse.json({
+                    success: false,
+                    error: 'tripId required for single backup',
+                }, { status: 400 })
             
             const trip = await getTripWithDetails(Number(tripId))
             
@@ -90,7 +87,7 @@ export async function POST(request, opts) {
             if (Number(trip.userId) !== userId)
                 return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
             
-            trips = [transformTrip(trip, token.email || null)]
+            trips = [transformTrip(trip)]
         } else {
             // multiple
             const requestedIds = Array.isArray(body?.tripIds) ? body.tripIds.map(id => Number(id)) : null
@@ -102,16 +99,19 @@ export async function POST(request, opts) {
             const detailsPromises = filtered.map(t => getTripWithDetails(Number(t.id)))
             const details = await Promise.all(detailsPromises)
             
-            trips = details.filter(Boolean).map(t => transformTrip(t, token.email || null))
+            trips = details.filter(Boolean).map(t => transformTrip(t))
         }
         
         const data = { type: 'multiple', trips }
         
         const valid = validate(data)
         
-        if (!valid) {
-            return NextResponse.json({ success: false, error: 'Validation failed', details: validate.errors }, { status: 400 })
-        }
+        if (!valid)
+            return NextResponse.json({
+                success: false,
+                error: 'Validation failed',
+                details: validate.errors,
+            }, { status: 400 })
         
         const fileName = `trips-backup-${new Date().toISOString().replace(/[:.]/g, '-')}.json`
         

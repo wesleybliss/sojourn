@@ -1,0 +1,1464 @@
+{
+    "type": "multiple",
+    "trips": [
+        {
+            "id": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+            "name": "Europe 2025",
+            "owner": "wesley.bliss@gmail.com",
+            "endDate": "2025-05-08T18:28:02.711Z",
+            "realmId": "wesley.bliss@gmail.com",
+            "segments": [],
+            "createdAt": "2025-06-23T18:25:08.677Z",
+            "startDate": "2025-04-08T18:28:02.711Z",
+            "updatedAt": "2025-06-23T18:25:29.814Z",
+            "description": "",
+            "coverImageUrl": "https://images.unsplash.com/photo-1556755658-871cbaa86a3f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Mzg0OTF8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NDUwODk2NDJ8&ixlib=rb-4.0.3&q=80&w=1080",
+            "plans": [
+                {
+                    "id": "pln0PU_kzueYWfRwRihXzfno2k_com",
+                    "name": "Late August",
+                    "owner": "wesley.bliss@gmail.com",
+                    "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                    "realmId": "wesley.bliss@gmail.com",
+                    "createdAt": "2025-06-25T01:42:11.304Z",
+                    "updatedAt": "2025-06-25T22:55:27.723Z",
+                    "segments": [
+                        {
+                            "id": "sgm0PUU2N97cbexZ9VLq3cGpk5Pcom",
+                            "name": "Madrid, ES",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 40.4167047,
+                                "lng": -3.7035825
+                            },
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-08-23T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-23T18:25:08.679Z",
+                            "startDate": "2025-08-20T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T01:42:11.312Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false,
+                            "planId": "pln0PU_kzueYWfRwRihXzfno2k_com"
+                        },
+                        {
+                            "id": "sgm0PUU2N98c79p_EyPO3Sbsq0Lcom",
+                            "name": "Milano, IT",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 45.4641943,
+                                "lng": 9.1896346
+                            },
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-08-27T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-23T18:25:08.679Z",
+                            "startDate": "2025-08-23T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T01:42:11.328Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false,
+                            "planId": "pln0PU_kzueYWfRwRihXzfno2k_com"
+                        },
+                        {
+                            "id": "sgm0PUU2N998oAK2gw3RjLH3nwqcom",
+                            "name": "Palermo, SA",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": -34.5803362,
+                                "lng": -58.4245236
+                            },
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-08-31T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-23T18:25:08.680Z",
+                            "startDate": "2025-08-27T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T01:42:11.331Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false,
+                            "planId": "pln0PU_kzueYWfRwRihXzfno2k_com"
+                        },
+                        {
+                            "id": "sgm0PUU2N9AlA1Zylnx3Rxsbmtecom",
+                            "name": "Cefalu, SA",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 38.034957,
+                                "lng": 14.0244562
+                            },
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-09-02T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-23T18:25:08.680Z",
+                            "startDate": "2025-08-31T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T01:42:11.335Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false,
+                            "planId": "pln0PU_kzueYWfRwRihXzfno2k_com"
+                        },
+                        {
+                            "id": "sgm0PUU2N9BS|kGlMujVmg1RqH1com",
+                            "name": "Siacca, SA",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 34.040526,
+                                "lng": 108.630496
+                            },
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-09-05T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-23T18:25:08.680Z",
+                            "startDate": "2025-09-02T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T01:42:11.338Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false,
+                            "planId": "pln0PU_kzueYWfRwRihXzfno2k_com"
+                        },
+                        {
+                            "id": "sgm0PUU2N9CS4bmHfDK|Q3Zgbo|com",
+                            "name": "Ragusa, SA",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 36.9256833,
+                                "lng": 14.7307456
+                            },
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-09-08T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-23T18:25:08.681Z",
+                            "startDate": "2025-09-05T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T01:42:11.342Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false,
+                            "planId": "pln0PU_kzueYWfRwRihXzfno2k_com"
+                        },
+                        {
+                            "id": "sgm0PUU2N9DPOdboElmsQg0CBxucom",
+                            "name": "Malta, MT",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 48.3596948,
+                                "lng": -107.8726879
+                            },
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-09-14T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-23T18:25:08.681Z",
+                            "startDate": "2025-09-08T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T01:42:11.345Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false,
+                            "planId": "pln0PU_kzueYWfRwRihXzfno2k_com"
+                        },
+                        {
+                            "id": "sgm0PUU2N9EK7dT4BxQVLCOoVJrcom",
+                            "name": "Marzamemi, SA",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 34.040526,
+                                "lng": 108.630496
+                            },
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-09-18T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-23T18:25:08.681Z",
+                            "startDate": "2025-09-14T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T01:42:11.348Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false,
+                            "planId": "pln0PU_kzueYWfRwRihXzfno2k_com"
+                        },
+                        {
+                            "id": "sgm0PUU2N9Fb6TLa2YYt0D1l5B7com",
+                            "name": "Siracusa, SA",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 45.8681473,
+                                "lng": 13.6236464
+                            },
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-09-22T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-23T18:25:08.681Z",
+                            "startDate": "2025-09-18T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T01:42:11.352Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false,
+                            "planId": "pln0PU_kzueYWfRwRihXzfno2k_com"
+                        },
+                        {
+                            "id": "sgm0PUU2N9GlN7r5sr9T7ZLcPSDcom",
+                            "name": "Taormina, SA",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 37.8512218,
+                                "lng": 15.2830191
+                            },
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-09-27T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-23T18:25:08.682Z",
+                            "startDate": "2025-09-22T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T01:42:11.356Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false,
+                            "planId": "pln0PU_kzueYWfRwRihXzfno2k_com"
+                        },
+                        {
+                            "id": "sgm0PUU2N9H|oUh4UimCeb_3bmycom",
+                            "name": "Milazzo, SA",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 38.2208049,
+                                "lng": 15.2415129
+                            },
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-09-28T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-23T18:25:08.682Z",
+                            "startDate": "2025-09-27T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T01:42:11.359Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false,
+                            "planId": "pln0PU_kzueYWfRwRihXzfno2k_com"
+                        },
+                        {
+                            "id": "sgm0PUU2N9IF5||x86YQeW0RRpqcom",
+                            "name": "Stromboli, SA",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 52.3905493,
+                                "lng": 9.7535805
+                            },
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-09-30T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-23T18:25:08.682Z",
+                            "startDate": "2025-09-28T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T01:42:11.362Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false,
+                            "planId": "pln0PU_kzueYWfRwRihXzfno2k_com"
+                        },
+                        {
+                            "id": "sgm0PUU2N9JEJ37rLyRyVRQn40ucom",
+                            "name": "Napoli, IT",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 40.8358846,
+                                "lng": 14.2487679
+                            },
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-10-04T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-23T18:25:08.682Z",
+                            "startDate": "2025-09-30T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T01:42:11.367Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false,
+                            "planId": "pln0PU_kzueYWfRwRihXzfno2k_com"
+                        },
+                        {
+                            "id": "sgm0PUU2N9K0FZn8GnVZY3r8LT3com",
+                            "name": "Ischia, IT",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 40.734205,
+                                "lng": 13.947125
+                            },
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-10-13T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-23T18:25:08.683Z",
+                            "startDate": "2025-10-04T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T01:42:11.373Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false,
+                            "planId": "pln0PU_kzueYWfRwRihXzfno2k_com"
+                        },
+                        {
+                            "id": "sgm0PUU2N9Llbc7asLc1RVtB_4ncom",
+                            "name": "Capri, IT",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 40.549303,
+                                "lng": 14.243534
+                            },
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-10-20T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-23T18:25:08.683Z",
+                            "startDate": "2025-10-13T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T01:42:11.376Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false,
+                            "planId": "pln0PU_kzueYWfRwRihXzfno2k_com"
+                        },
+                        {
+                            "id": "sgm0PUU2N9M|DEGfigK1MrPdNNCcom",
+                            "name": "Morocco, MA",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 42.358752,
+                                "lng": -71.531484
+                            },
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-11-25T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-23T18:25:08.683Z",
+                            "startDate": "2025-10-20T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T01:42:11.379Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false,
+                            "planId": "pln0PU_kzueYWfRwRihXzfno2k_com"
+                        },
+                        {
+                            "id": "sgm0PUU2N9N7nGcOE1_awuL6VPpcom",
+                            "name": "Cypress, CY",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 34.7055462,
+                                "lng": 33.095475609478854
+                            },
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-12-21T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-23T18:25:08.683Z",
+                            "startDate": "2025-11-25T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T01:42:11.382Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false,
+                            "planId": "pln0PU_kzueYWfRwRihXzfno2k_com"
+                        },
+                        {
+                            "id": "sgm0PUU2N9OrFZdYlSGbljWMFYwcom",
+                            "name": "Hamburg, DE",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 53.550341,
+                                "lng": 10.000654
+                            },
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-12-28T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-23T18:25:08.684Z",
+                            "startDate": "2025-12-21T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T01:42:11.385Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false,
+                            "planId": "pln0PU_kzueYWfRwRihXzfno2k_com"
+                        },
+                        {
+                            "id": "sgm0PUU2N9Pg3ZSB3GzlbqlFIBecom",
+                            "name": "Paris, FR",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 48.8534951,
+                                "lng": 2.3483915
+                            },
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2026-01-05T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-23T18:25:08.684Z",
+                            "startDate": "2025-12-28T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T01:42:11.387Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false,
+                            "planId": "pln0PU_kzueYWfRwRihXzfno2k_com"
+                        }
+                    ]
+                },
+                {
+                    "name": "Early October",
+                    "createdAt": "2025-06-25T22:59:49.833Z",
+                    "updatedAt": "2025-06-26T00:02:52.943Z",
+                    "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                    "id": "pln0PUeKQN9grSfw9DghqQiX9R|com",
+                    "owner": "wesley.bliss@gmail.com",
+                    "realmId": "wesley.bliss@gmail.com",
+                    "segments": [
+                        {
+                            "id": "sgm0PUeKR0N6leAnF0rvZXApLV3com",
+                            "name": "Taormina, SA",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 37.8512218,
+                                "lng": 15.2830191
+                            },
+                            "planId": "pln0PUeKQN9grSfw9DghqQiX9R|com",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-11-28T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-25T22:59:52.471Z",
+                            "startDate": "2025-11-23T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T22:59:52.471Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false
+                        },
+                        {
+                            "id": "sgm0PUeKR19xl1fff|e8cBfuM4Jcom",
+                            "name": "Cefalu, SA",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 38.034957,
+                                "lng": 14.0244562
+                            },
+                            "planId": "pln0PUeKQN9grSfw9DghqQiX9R|com",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-11-04T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-25T22:59:52.521Z",
+                            "startDate": "2025-11-02T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T22:59:52.521Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false
+                        },
+                        {
+                            "id": "sgm0PUeKR20bLWu2oZVyxiFagZlcom",
+                            "name": "Milazzo, SA",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 38.2208049,
+                                "lng": 15.2415129
+                            },
+                            "planId": "pln0PUeKQN9grSfw9DghqQiX9R|com",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-11-29T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-25T22:59:52.576Z",
+                            "startDate": "2025-11-28T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T22:59:52.576Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false
+                        },
+                        {
+                            "id": "sgm0PUeKR2k9GqylwXEAw4boZbXcom",
+                            "name": "Malta, MT",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 48.3596948,
+                                "lng": -107.8726879
+                            },
+                            "planId": "pln0PUeKQN9grSfw9DghqQiX9R|com",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-11-15T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-25T22:59:52.622Z",
+                            "startDate": "2025-11-09T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T22:59:52.622Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false
+                        },
+                        {
+                            "id": "sgm0PUeKR4cYkj23UBcZYcbeWw5com",
+                            "name": "Paris, FR",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 48.8534951,
+                                "lng": 2.3483915
+                            },
+                            "planId": "pln0PUeKQN9grSfw9DghqQiX9R|com",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2026-01-04T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-25T22:59:52.743Z",
+                            "startDate": "2025-12-31T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T22:59:52.743Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false
+                        },
+                        {
+                            "id": "sgm0PUeKR5XLOO09IeosTraiIhNcom",
+                            "name": "Hamburg, DE",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 53.550341,
+                                "lng": 10.000654
+                            },
+                            "planId": "pln0PUeKQN9grSfw9DghqQiX9R|com",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-12-31T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-25T22:59:52.801Z",
+                            "startDate": "2025-12-24T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T22:59:52.801Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false
+                        },
+                        {
+                            "id": "sgm0PUeKR6OsyPd91jdReFyeIHmcom",
+                            "name": "Siacca, SA",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 34.040526,
+                                "lng": 108.630496
+                            },
+                            "planId": "pln0PUeKQN9grSfw9DghqQiX9R|com",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-11-07T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-25T22:59:52.855Z",
+                            "startDate": "2025-11-04T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T22:59:52.855Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false
+                        },
+                        {
+                            "id": "sgm0PUeKR6RSOzq_o9poxr94D2dcom",
+                            "name": "Stromboli, SA",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 47.281949,
+                                "lng": -2.397144788864655
+                            },
+                            "planId": "pln0PUeKQN9grSfw9DghqQiX9R|com",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-12-01T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-25T22:59:52.858Z",
+                            "startDate": "2025-11-29T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T22:59:52.858Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false
+                        },
+                        {
+                            "id": "sgm0PUeKR8anjxBHPb56chM06YScom",
+                            "name": "Marzamemi, SA",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 34.040526,
+                                "lng": 108.630496
+                            },
+                            "planId": "pln0PUeKQN9grSfw9DghqQiX9R|com",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-11-19T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-25T22:59:52.997Z",
+                            "startDate": "2025-11-15T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T22:59:52.997Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false
+                        },
+                        {
+                            "id": "sgm0PUeKRAKWTUHET0JikztI4q7com",
+                            "name": "Palermo, SA",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": -34.5803362,
+                                "lng": -58.4245236
+                            },
+                            "planId": "pln0PUeKQN9grSfw9DghqQiX9R|com",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-11-02T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-25T22:59:53.108Z",
+                            "startDate": "2025-10-29T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T22:59:53.108Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false
+                        },
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "name": "Ragusa, SA",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-11-09T05:00:00.000Z",
+                            "createdAt": "2025-06-25T22:59:53.403Z",
+                            "startDate": "2025-11-07T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T22:59:53.403Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PUeKQN9grSfw9DghqQiX9R|com",
+                            "coords": {
+                                "lng": 108.630496,
+                                "lat": 34.040526
+                            },
+                            "id": "sgm0PUeKREwV1GvjHoHvLtqMKTXcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "name": "Siracusa, SA",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-11-23T05:00:00.000Z",
+                            "createdAt": "2025-06-25T22:59:54.642Z",
+                            "startDate": "2025-11-19T05:00:00.000Z",
+                            "updatedAt": "2025-06-25T22:59:54.642Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PUeKQN9grSfw9DghqQiX9R|com",
+                            "coords": {
+                                "lng": -60.64632185,
+                                "lat": -33.0177622
+                            },
+                            "id": "sgm0PUeKRYJF|C13tGbG_jQ6eSTcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "id": "sgm0PUeKQ||BD6j9FJ6s31OIMrWcom",
+                            "name": "Madrid, ES",
+                            "color": "bg-rose-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 40.4167047,
+                                "lng": -3.7035825
+                            },
+                            "planId": "pln0PUeKQN9grSfw9DghqQiX9R|com",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-10-10T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-25T22:59:52.446Z",
+                            "startDate": "2025-10-07T05:00:00.000Z",
+                            "updatedAt": "2025-06-28T01:53:24.374Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false
+                        },
+                        {
+                            "id": "sgm0PUeKRBIbLfhRLVDykA6x9o6com",
+                            "name": "Napoli, IT",
+                            "color": "bg-rose-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 40.8358846,
+                                "lng": 14.2487679
+                            },
+                            "planId": "pln0PUeKQN9grSfw9DghqQiX9R|com",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-10-25T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-25T22:59:53.170Z",
+                            "startDate": "2025-10-20T05:00:00.000Z",
+                            "updatedAt": "2025-06-28T01:53:26.490Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false
+                        },
+                        {
+                            "id": "sgm0PUeKR2AmowSS3ZvEHGxI3s6com",
+                            "name": "Ischia, IT",
+                            "color": "bg-rose-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 40.734205,
+                                "lng": 13.947125
+                            },
+                            "planId": "pln0PUeKQN9grSfw9DghqQiX9R|com",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-10-13T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-25T22:59:52.586Z",
+                            "startDate": "2025-10-10T05:00:00.000Z",
+                            "updatedAt": "2025-06-28T01:53:28.926Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false
+                        },
+                        {
+                            "id": "sgm0PUeKR9WMPJ8amXNh1JEhQ3jcom",
+                            "name": "Capri, IT",
+                            "color": "bg-rose-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 40.549303,
+                                "lng": 14.243534
+                            },
+                            "planId": "pln0PUeKQN9grSfw9DghqQiX9R|com",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-10-20T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-25T22:59:53.056Z",
+                            "startDate": "2025-10-13T05:00:00.000Z",
+                            "updatedAt": "2025-06-28T01:53:34.316Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false
+                        },
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PUeKQN9grSfw9DghqQiX9R|com",
+                            "name": "Milan, IT",
+                            "description": "New segment description",
+                            "color": "bg-blue-500",
+                            "startDate": "2025-10-25T05:00:00.000Z",
+                            "endDate": "2025-10-29T05:00:00.000Z",
+                            "coords": {
+                                "lng": 0.090534,
+                                "lat": 47.022928
+                            },
+                            "createdAt": "2025-06-29T22:49:57.751Z",
+                            "updatedAt": "2025-06-29T22:50:07.145Z",
+                            "id": "sgm0PUytWosEHX4o_Gyqs|ZKCldcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "id": "sgm0PUeKR6QjDk3Idnc7rdi8zqxcom",
+                            "name": "TODO",
+                            "color": "bg-blue-500",
+                            "owner": "wesley.bliss@gmail.com",
+                            "coords": {
+                                "lat": 34.902112,
+                                "lng": 32.838455
+                            },
+                            "planId": "pln0PUeKQN9grSfw9DghqQiX9R|com",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "endDate": "2025-12-24T05:00:00.000Z",
+                            "realmId": "wesley.bliss@gmail.com",
+                            "createdAt": "2025-06-25T22:59:52.858Z",
+                            "startDate": "2025-12-01T05:00:00.000Z",
+                            "updatedAt": "2025-06-29T23:01:04.463Z",
+                            "stayBooked": false,
+                            "description": "New segment description",
+                            "flightBooked": false
+                        }
+                    ]
+                },
+                {
+                    "name": "Early October v2",
+                    "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                    "createdAt": "2025-07-14T22:38:46.340Z",
+                    "updatedAt": "2025-07-14T22:38:59.157Z",
+                    "id": "pln0PWB5o96sCFk75kipCM|D2U7com",
+                    "owner": "wesley.bliss@gmail.com",
+                    "realmId": "wesley.bliss@gmail.com",
+                    "segments": [
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "name": "Taormina, SA",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-11-18T05:00:00.000Z",
+                            "startDate": "2025-11-13T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWB5o96sCFk75kipCM|D2U7com",
+                            "coords": {
+                                "lng": 15.2830191,
+                                "lat": 37.8512218
+                            },
+                            "createdAt": "2025-07-14T22:38:48.697Z",
+                            "updatedAt": "2025-07-14T22:38:48.697Z",
+                            "id": "sgm0PWB5oivP0RkxOOz5Brfl_Wzcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "name": "Cefalu, SA",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-10-31T05:00:00.000Z",
+                            "startDate": "2025-10-29T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWB5o96sCFk75kipCM|D2U7com",
+                            "coords": {
+                                "lng": 14.0244562,
+                                "lat": 38.034957
+                            },
+                            "createdAt": "2025-07-14T22:38:48.743Z",
+                            "updatedAt": "2025-07-14T22:38:48.743Z",
+                            "id": "sgm0PWB5ojd6hgvN|yBD8KuOSyecom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "name": "Milazzo, SA",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-11-19T05:00:00.000Z",
+                            "startDate": "2025-11-18T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWB5o96sCFk75kipCM|D2U7com",
+                            "coords": {
+                                "lng": 15.2415129,
+                                "lat": 38.2208049
+                            },
+                            "createdAt": "2025-07-14T22:38:48.805Z",
+                            "updatedAt": "2025-07-14T22:38:48.805Z",
+                            "id": "sgm0PWB5okaaA1bHKXyQCzKAPlFcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "name": "Ischia, IT",
+                            "color": "bg-rose-500",
+                            "endDate": "2025-10-13T05:00:00.000Z",
+                            "startDate": "2025-10-10T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWB5o96sCFk75kipCM|D2U7com",
+                            "coords": {
+                                "lng": 13.947125,
+                                "lat": 40.734205
+                            },
+                            "createdAt": "2025-07-14T22:38:48.806Z",
+                            "updatedAt": "2025-07-14T22:38:48.806Z",
+                            "id": "sgm0PWB5okb7dvglIuygSHFcFsfcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "name": "Madrid, ES",
+                            "color": "bg-rose-500",
+                            "endDate": "2025-10-10T05:00:00.000Z",
+                            "startDate": "2025-10-07T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWB5o96sCFk75kipCM|D2U7com",
+                            "coords": {
+                                "lng": -3.7035825,
+                                "lat": 40.4167047
+                            },
+                            "createdAt": "2025-07-14T22:38:48.806Z",
+                            "updatedAt": "2025-07-14T22:38:48.806Z",
+                            "id": "sgm0PWB5okcbssZ5u9ivb0y6KoDcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "name": "Hamburg, DE",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-12-21T05:00:00.000Z",
+                            "startDate": "2025-12-14T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWB5o96sCFk75kipCM|D2U7com",
+                            "coords": {
+                                "lng": 10.000654,
+                                "lat": 53.550341
+                            },
+                            "createdAt": "2025-07-14T22:38:48.891Z",
+                            "updatedAt": "2025-07-14T22:38:48.891Z",
+                            "id": "sgm0PWB5olw8g17tyNXYt8mYkOrcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "name": "TODO",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-12-14T05:00:00.000Z",
+                            "startDate": "2025-11-21T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWB5o96sCFk75kipCM|D2U7com",
+                            "coords": {
+                                "lng": 2.1243698,
+                                "lat": 7.1583693
+                            },
+                            "createdAt": "2025-07-14T22:38:48.971Z",
+                            "updatedAt": "2025-07-14T22:38:48.971Z",
+                            "id": "sgm0PWB5onBDVLC0COu3d9X8a8|com",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "name": "Paris, FR",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-12-25T05:00:00.000Z",
+                            "startDate": "2025-12-21T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWB5o96sCFk75kipCM|D2U7com",
+                            "coords": {
+                                "lng": 2.3483915,
+                                "lat": 48.8534951
+                            },
+                            "createdAt": "2025-07-14T22:38:49.056Z",
+                            "updatedAt": "2025-07-14T22:38:49.056Z",
+                            "id": "sgm0PWB5ooWVrMFFSGzZnhPZabTcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "name": "Stromboli, SA",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-11-21T05:00:00.000Z",
+                            "startDate": "2025-11-19T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWB5o96sCFk75kipCM|D2U7com",
+                            "coords": {
+                                "lng": -2.397144788864655,
+                                "lat": 47.281949
+                            },
+                            "createdAt": "2025-07-14T22:38:49.189Z",
+                            "updatedAt": "2025-07-14T22:38:49.189Z",
+                            "id": "sgm0PWB5oqbORTyzEeeBaio9axscom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "name": "Capri, IT",
+                            "color": "bg-rose-500",
+                            "endDate": "2025-10-20T05:00:00.000Z",
+                            "startDate": "2025-10-13T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWB5o96sCFk75kipCM|D2U7com",
+                            "coords": {
+                                "lng": 14.243534,
+                                "lat": 40.549303
+                            },
+                            "createdAt": "2025-07-14T22:38:49.190Z",
+                            "updatedAt": "2025-07-14T22:38:49.190Z",
+                            "id": "sgm0PWB5oqcC|VEBgH8kVRJ4pVWcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "name": "Palermo, SA",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-10-29T05:00:00.000Z",
+                            "startDate": "2025-10-25T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWB5o96sCFk75kipCM|D2U7com",
+                            "coords": {
+                                "lng": -58.4245236,
+                                "lat": -34.5803362
+                            },
+                            "createdAt": "2025-07-14T22:38:49.305Z",
+                            "updatedAt": "2025-07-14T22:38:49.305Z",
+                            "id": "sgm0PWB5osSz10dqOj5kmwZBng4com",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "name": "Napoli, IT",
+                            "color": "bg-rose-500",
+                            "endDate": "2025-10-25T05:00:00.000Z",
+                            "startDate": "2025-10-20T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWB5o96sCFk75kipCM|D2U7com",
+                            "coords": {
+                                "lng": 14.2487679,
+                                "lat": 40.8358846
+                            },
+                            "createdAt": "2025-07-14T22:38:49.309Z",
+                            "updatedAt": "2025-07-14T22:38:49.309Z",
+                            "id": "sgm0PWB5osT6tqjojm3DsbHRCCScom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "name": "Siacca, SA",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-11-03T05:00:00.000Z",
+                            "startDate": "2025-10-31T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWB5o96sCFk75kipCM|D2U7com",
+                            "coords": {
+                                "lng": 108.630496,
+                                "lat": 34.040526
+                            },
+                            "createdAt": "2025-07-14T22:38:49.481Z",
+                            "updatedAt": "2025-07-14T22:38:49.481Z",
+                            "id": "sgm0PWB5ov9zFeD8yLpyjdKCIxXcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "name": "Marzamemi, SA",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-11-09T05:00:00.000Z",
+                            "startDate": "2025-11-05T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWB5o96sCFk75kipCM|D2U7com",
+                            "coords": {
+                                "lng": 108.630496,
+                                "lat": 34.040526
+                            },
+                            "createdAt": "2025-07-14T22:38:49.481Z",
+                            "updatedAt": "2025-07-14T22:38:49.481Z",
+                            "id": "sgm0PWB5ovAo29dJRp4SOEBeye0com",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "name": "Ragusa, SA",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-11-05T05:00:00.000Z",
+                            "startDate": "2025-11-03T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWB5o96sCFk75kipCM|D2U7com",
+                            "coords": {
+                                "lng": 14.7307456,
+                                "lat": 36.9256833
+                            },
+                            "createdAt": "2025-07-14T22:38:50.329Z",
+                            "updatedAt": "2025-07-14T22:38:50.329Z",
+                            "id": "sgm0PWB5p7Q9gNi|39am2wsZvOecom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "name": "Siracusa, SA",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-11-13T05:00:00.000Z",
+                            "startDate": "2025-11-09T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWB5o96sCFk75kipCM|D2U7com",
+                            "coords": {
+                                "lng": 108.630496,
+                                "lat": 34.040526
+                            },
+                            "createdAt": "2025-07-14T22:38:50.552Z",
+                            "updatedAt": "2025-07-14T22:38:50.552Z",
+                            "id": "sgm0PWB5pAuT4|BVNY|YRdSuWM7com",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        }
+                    ]
+                },
+                {
+                    "name": "Early October v3",
+                    "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                    "createdAt": "2025-07-14T23:04:50.981Z",
+                    "updatedAt": "2025-07-14T23:05:02.514Z",
+                    "id": "pln0PWBBm8aZnM6K8k_8TrQIrSkcom",
+                    "owner": "wesley.bliss@gmail.com",
+                    "realmId": "wesley.bliss@gmail.com",
+                    "segments": [
+                        {
+                            "flightBooked": true,
+                            "stayBooked": false,
+                            "name": "Madrid, ES",
+                            "color": "bg-rose-500",
+                            "endDate": "2025-10-10T05:00:00.000Z",
+                            "startDate": "2025-10-07T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWBBm8aZnM6K8k_8TrQIrSkcom",
+                            "coords": {
+                                "lng": -3.7035825,
+                                "lat": 40.4167047
+                            },
+                            "createdAt": "2025-07-14T23:04:53.239Z",
+                            "updatedAt": "2025-07-15T00:22:58.925Z",
+                            "id": "sgm0PWBBmgsj3GTALNTAfkkGpvycom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": true,
+                            "stayBooked": false,
+                            "name": "Ischia, IT",
+                            "color": "bg-rose-500",
+                            "endDate": "2025-10-13T05:00:00.000Z",
+                            "startDate": "2025-10-10T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWBBm8aZnM6K8k_8TrQIrSkcom",
+                            "coords": {
+                                "lng": 13.947125,
+                                "lat": 40.734205
+                            },
+                            "createdAt": "2025-07-14T23:04:53.157Z",
+                            "updatedAt": "2025-07-15T00:23:01.699Z",
+                            "id": "sgm0PWBBmfbTAHzZD6A2pmg8llUcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": true,
+                            "stayBooked": false,
+                            "name": "Capri, IT",
+                            "color": "bg-rose-500",
+                            "endDate": "2025-10-20T05:00:00.000Z",
+                            "startDate": "2025-10-13T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWBBm8aZnM6K8k_8TrQIrSkcom",
+                            "coords": {
+                                "lng": 14.243534,
+                                "lat": 40.549303
+                            },
+                            "createdAt": "2025-07-14T23:04:53.380Z",
+                            "updatedAt": "2025-07-15T00:23:02.441Z",
+                            "id": "sgm0PWBBmj599avsgE1nIMTpz|0com",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": true,
+                            "stayBooked": false,
+                            "name": "Napoli, IT",
+                            "color": "bg-rose-500",
+                            "endDate": "2025-10-25T05:00:00.000Z",
+                            "startDate": "2025-10-20T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWBBm8aZnM6K8k_8TrQIrSkcom",
+                            "coords": {
+                                "lng": 14.2487679,
+                                "lat": 40.8358846
+                            },
+                            "createdAt": "2025-07-14T23:04:53.897Z",
+                            "updatedAt": "2025-07-15T00:23:03.356Z",
+                            "id": "sgm0PWBBmr9ZmtZ85_ibFaF8l1Ecom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": true,
+                            "stayBooked": false,
+                            "name": "Palermo, SA",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-10-29T05:00:00.000Z",
+                            "startDate": "2025-10-25T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWBBm8aZnM6K8k_8TrQIrSkcom",
+                            "coords": {
+                                "lng": -58.4245236,
+                                "lat": -34.5803362
+                            },
+                            "createdAt": "2025-07-14T23:04:53.543Z",
+                            "updatedAt": "2025-07-15T00:23:04.210Z",
+                            "id": "sgm0PWBBmldDk42NnOlyYDrunvtcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": true,
+                            "stayBooked": false,
+                            "name": "Cefalu, SA",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-10-31T05:00:00.000Z",
+                            "startDate": "2025-10-29T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWBBm8aZnM6K8k_8TrQIrSkcom",
+                            "coords": {
+                                "lng": 14.0244562,
+                                "lat": 38.034957
+                            },
+                            "createdAt": "2025-07-14T23:04:53.073Z",
+                            "updatedAt": "2025-07-15T00:23:05.008Z",
+                            "id": "sgm0PWBBmeIbrRlhPLymwrAj4vgcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": true,
+                            "stayBooked": false,
+                            "name": "Taormina, SA",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-11-08T05:00:00.000Z",
+                            "startDate": "2025-10-31T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWBBm8aZnM6K8k_8TrQIrSkcom",
+                            "coords": {
+                                "lng": 15.2830191,
+                                "lat": 37.8512218
+                            },
+                            "createdAt": "2025-07-14T23:04:53.144Z",
+                            "updatedAt": "2025-07-15T00:23:05.877Z",
+                            "id": "sgm0PWBBmfP56PMfbC5V|xZiUhrcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": true,
+                            "stayBooked": false,
+                            "name": "Siracusa, SA",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-11-12T05:00:00.000Z",
+                            "startDate": "2025-11-08T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWBBm8aZnM6K8k_8TrQIrSkcom",
+                            "coords": {
+                                "lng": 108.630496,
+                                "lat": 34.040526
+                            },
+                            "createdAt": "2025-07-14T23:04:54.914Z",
+                            "updatedAt": "2025-07-15T00:23:06.588Z",
+                            "id": "sgm0PWBBn62sB8XarHaKEmIDSq1com",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": true,
+                            "stayBooked": false,
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWBBm8aZnM6K8k_8TrQIrSkcom",
+                            "name": "Noto, IT (Maybe)",
+                            "description": "New segment description",
+                            "color": "bg-blue-500",
+                            "startDate": "2025-11-12T05:00:00.000Z",
+                            "endDate": "2025-11-14T05:00:00.000Z",
+                            "coords": {
+                                "lng": 0.090534,
+                                "lat": 47.022928
+                            },
+                            "createdAt": "2025-07-14T23:08:59.291Z",
+                            "updatedAt": "2025-07-15T00:23:07.271Z",
+                            "id": "sgm0PWBCilSOIjGMP05Q3rZh1LLcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": true,
+                            "stayBooked": false,
+                            "name": "Marzamemi, SA",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-11-25T05:00:00.000Z",
+                            "startDate": "2025-11-14T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWBBm8aZnM6K8k_8TrQIrSkcom",
+                            "coords": {
+                                "lng": 108.630496,
+                                "lat": 34.040526
+                            },
+                            "createdAt": "2025-07-14T23:04:54.196Z",
+                            "updatedAt": "2025-07-15T00:23:07.879Z",
+                            "id": "sgm0PWBBmvpKmoEeuD7n6y|lGj9com",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": true,
+                            "stayBooked": false,
+                            "name": "Siacca, SA",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-11-28T05:00:00.000Z",
+                            "startDate": "2025-11-25T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWBBm8aZnM6K8k_8TrQIrSkcom",
+                            "coords": {
+                                "lng": 108.630496,
+                                "lat": 34.040526
+                            },
+                            "createdAt": "2025-07-14T23:04:53.440Z",
+                            "updatedAt": "2025-07-15T00:23:09.859Z",
+                            "id": "sgm0PWBBmk0UuHlMdIpna3avUe9com",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": true,
+                            "stayBooked": false,
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWBBm8aZnM6K8k_8TrQIrSkcom",
+                            "name": "Palermo (Exit Flight)",
+                            "description": "New segment description",
+                            "color": "bg-blue-500",
+                            "startDate": "2025-11-28T05:00:00.000Z",
+                            "endDate": "2025-11-29T05:00:00.000Z",
+                            "coords": {
+                                "lng": 0.090534,
+                                "lat": 47.022928
+                            },
+                            "createdAt": "2025-07-14T23:41:45.504Z",
+                            "updatedAt": "2025-07-15T00:23:10.745Z",
+                            "id": "sgm0PWBKDnWY6HCPqePXA8d_ONrcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": true,
+                            "stayBooked": false,
+                            "name": "Sardegna, IT",
+                            "color": "bg-purple-500",
+                            "endDate": "2025-12-10T05:00:00.000Z",
+                            "startDate": "2025-11-29T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWBBm8aZnM6K8k_8TrQIrSkcom",
+                            "coords": {
+                                "lng": 2.1243698,
+                                "lat": 7.1583693
+                            },
+                            "createdAt": "2025-07-14T23:04:53.381Z",
+                            "updatedAt": "2025-07-15T00:23:11.922Z",
+                            "id": "sgm0PWBBmj6ffqx|dl8VoVMGOHhcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": false,
+                            "stayBooked": false,
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWBBm8aZnM6K8k_8TrQIrSkcom",
+                            "name": "Cartagena, CO",
+                            "description": "New segment description",
+                            "color": "bg-blue-500",
+                            "startDate": "2026-01-04T05:00:00.000Z",
+                            "endDate": "2026-01-05T05:00:00.000Z",
+                            "coords": {
+                                "lng": 0.090534,
+                                "lat": 47.022928
+                            },
+                            "createdAt": "2025-07-15T00:23:32.409Z",
+                            "updatedAt": "2025-07-15T00:23:44.120Z",
+                            "id": "sgm0PWBTmpvWDsv3bz3XmGO6CtFcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": true,
+                            "stayBooked": false,
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWBBm8aZnM6K8k_8TrQIrSkcom",
+                            "name": "Milan",
+                            "description": "New segment description",
+                            "color": "bg-pink-500",
+                            "startDate": "2025-12-10T05:00:00.000Z",
+                            "endDate": "2025-12-21T05:00:00.000Z",
+                            "coords": {
+                                "lng": 0.090534,
+                                "lat": 47.022928
+                            },
+                            "createdAt": "2025-07-14T23:27:17.707Z",
+                            "updatedAt": "2025-07-15T00:32:25.232Z",
+                            "id": "sgm0PWBGuwC|cpQya4YdUv12jEDcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": true,
+                            "stayBooked": false,
+                            "name": "Hamburg, DE",
+                            "color": "bg-blue-500",
+                            "endDate": "2025-12-28T05:00:00.000Z",
+                            "startDate": "2025-12-21T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWBBm8aZnM6K8k_8TrQIrSkcom",
+                            "coords": {
+                                "lng": 10.000654,
+                                "lat": 53.550341
+                            },
+                            "createdAt": "2025-07-14T23:04:53.237Z",
+                            "updatedAt": "2025-07-15T01:43:11.244Z",
+                            "id": "sgm0PWBBmgrqsB3G4b58rqAwPDlcom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        },
+                        {
+                            "flightBooked": true,
+                            "stayBooked": false,
+                            "name": "Paris, FR",
+                            "color": "bg-blue-500",
+                            "endDate": "2026-01-04T05:00:00.000Z",
+                            "startDate": "2025-12-28T05:00:00.000Z",
+                            "description": "New segment description",
+                            "tripId": "trp0PUU2N95glOsXbLvaItpN_dFcom",
+                            "planId": "pln0PWBBm8aZnM6K8k_8TrQIrSkcom",
+                            "coords": {
+                                "lng": 2.3483915,
+                                "lat": 48.8534951
+                            },
+                            "createdAt": "2025-07-14T23:04:53.085Z",
+                            "updatedAt": "2025-07-15T01:43:12.196Z",
+                            "id": "sgm0PWBBmeT6LFqCFglNPjGHvCncom",
+                            "owner": "wesley.bliss@gmail.com",
+                            "realmId": "wesley.bliss@gmail.com"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

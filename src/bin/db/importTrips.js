@@ -49,18 +49,33 @@ const importTrip = async data => {
     
     const {
         name,
-        owner: email,
+        owner,
         description,
         coverImageUrl,
         plans,
     } = data
-    
+
+    let email = owner
+
+    if (!email) {
+        const allUsers = await db.select().from(schemas.users)
+        if (allUsers.length === 1) {
+            email = allUsers[0].email
+            console.log('No owner specified in trip; using only user in DB:', email)
+        } else if (process.env.IMPORT_OWNER_EMAIL) {
+            email = process.env.IMPORT_OWNER_EMAIL
+            console.log('No owner specified in trip; using IMPORT_OWNER_EMAIL:', email)
+        } else {
+            throw new Error('No owner specified in trip and unable to infer user. Set IMPORT_OWNER_EMAIL or include owner in the trip data')
+        }
+    }
+
     const user = await db
         .select()
         .from(schemas.users)
         .where(eq(schemas.users.email, email))
-    
-    if (!user)
+
+    if (!user || user.length === 0)
         throw new Error(`User not found with email "${email}"`)
     
     console.log('Creating trip', name)

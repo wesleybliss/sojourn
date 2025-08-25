@@ -13,6 +13,7 @@ import ConfirmDialog from '@/components/ConfirmDialog'
 import { toast } from 'sonner'
 import { useSession, signOut } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
+import { useBackupTrips } from '@/lib/queries/backups'
 
 const debugDumpData = trips => e => {
     
@@ -41,6 +42,8 @@ const Navbar = () => {
     const { data: trips } = useTripsQuery()
     
     const [deleteDatabaseDialogOpen, setDeleteDatabaseDialogOpen] = useState(false)
+
+    const backupMutation = useBackupTrips()
     
     const links = useMemo(() => {
         
@@ -99,10 +102,17 @@ const Navbar = () => {
             }], */
             ['#debug:backup', 'Backup', async e => {
                 e.preventDefault()
-                // TODO call api endpoint to trigger backup
+                
+                try {
+                    await backupMutation.mutateAsync({ type: 'multiple' })
+                    toast.success('Backup file downloaded')
+                } catch (error) {
+                    console.error('Error creating backup:', error)
+                    toast.error('Failed to create backup')
+                }
             }],
         ]
-    }, [trips, user])
+    }, [trips, user, backupMutation])
     
     const debugDeleteDatabase = async () => {
         
