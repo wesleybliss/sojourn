@@ -31,7 +31,7 @@ const TripDetail = () => {
     
     if (!vm.trip)
         return <LoadingSpinner />
-    
+    console.log('rendering trip detail')
     return (
         
         <div className="Trip w-full flex flex-col flex-1 gap-4 p-4">

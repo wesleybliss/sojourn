@@ -11,22 +11,23 @@ export default function ProtectedRoute({ children }) {
     const router = useRouter()
     
     useEffect(() => {
+        
         if (status === 'unauthenticated') {
+            console.warn('ProtectedRoute#hook redirecting to login')
             router.push('/login')
         }
+        
     }, [status, router])
     
-    if (status === 'loading') {
+    if (status === 'loading')
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <LoadingSpinner />
             </div>
         )
-    }
     
-    if (status === 'unauthenticated') {
+    if (status === 'unauthenticated')
         return null
-    }
     
     return children
     

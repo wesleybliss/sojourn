@@ -40,10 +40,11 @@ export async function POST(request) {
             const insertedTrips = await db
                 .insert(schemas.trips)
                 .values({
+                    userId,
                     name: tripName,
                     description: trip.description || null,
-                    startDate: toDate(trip.startDate),
-                    endDate: toDate(trip.endDate),
+                    startDate: trip.startDate || null,
+                    endDate: trip.endDate || null,
                     coverImageUrl: trip.coverImageUrl || null,
                 })
                 .returning({ id: schemas.trips.id })
