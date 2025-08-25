@@ -87,10 +87,10 @@ const Trip = () => {
                     text={vm.summaryTripText} />
             </div> */}
             
-            {vm.currentTrip && vm.segments?.length > 0 && (
+            {/* {vm.currentTrip && vm.segments?.length > 0 && (
                 <SegmentsGanttChart
                     planId={vm.currentPlan?.id} />
-            )}
+            )} */}
             
             <div className="flex-1">&nbsp;</div>
             

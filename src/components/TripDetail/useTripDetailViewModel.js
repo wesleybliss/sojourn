@@ -38,6 +38,7 @@ const useTripDetailViewModel = () => {
     const [focusedLatLng, setFocusedLatLng] = useState(undefined)
     const [showMap, setShowMap] = useState(false)
     const [cascadeEnabled, setCascadeEnabled] = useState(false)
+    const [hasRedirectedToPlan, setHasRedirectedToPlan] = useState(false)
     
     const plans = useMemo(() => trip?.plans || [], [trip])
     const currentPlan = useMemo(() => {
@@ -178,10 +179,11 @@ const useTripDetailViewModel = () => {
     }, [deletePlanMutation, queryClient, tripId, router])
     
     useEffect(() => {
-        if (!planId && tripId && plans?.length) {
+        if (!planId && tripId && plans?.length && !hasRedirectedToPlan) {
+            setHasRedirectedToPlan(true)
             router.replace(`/trips/${tripId}/plans/${plans[0].id}`)
         }
-    }, [tripId, planId, plans, router])
+    }, [tripId, planId, plans, router, hasRedirectedToPlan])
     
     return {
         // State

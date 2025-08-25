@@ -81,7 +81,7 @@ const TripDetail = () => {
                 {vm.showMap && <MapLibreMap latLng={vm.focusedLatLng} />}
             </div>
             
-            {vm.trip && vm.segments?.length > 0 && (
+            {vm.trip && vm.segments?.length > 0 && console.log('wtf', vm.trip, vm.segments) || (
                 <div className="mt-4">
                     <h3 className="text-lg font-semibold mb-2">Timeline</h3>
                     <SegmentsGanttChart plan={vm.currentPlan} />
