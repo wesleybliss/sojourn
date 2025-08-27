@@ -2,6 +2,17 @@ import db from '@/db/index.js'
 import * as schemas from '@/db/schema.js'
 import { eq, desc, asc } from 'drizzle-orm'
 
+const normalizeDateValue = v => {
+    if (v == null) return null
+    if (typeof v === 'string') return v
+    if (v instanceof Date) return v.getTime()
+    if (typeof v === 'number') {
+        return v < 1e12 ? v * 1000 : v
+    }
+    return v
+}
+
+
 // Get all trips
 export const getAllTrips = async () => {
     try {
@@ -84,7 +95,11 @@ export const getSegmentsByTripId = async tripId => {
             .where(eq(schemas.segments.tripId, tripId))
             .orderBy(asc(schemas.segments.startDate))
         
-        return segments
+        return segments.map(s => ({
+            ...s,
+            startDate: normalizeDateValue(s.startDate),
+            endDate: normalizeDateValue(s.endDate),
+        }))
     } catch (error) {
         console.error(`Error fetching segments for trip ${tripId}:`, error)
         throw new Error('Failed to fetch segments')
@@ -100,7 +115,11 @@ export const getSegmentsByPlanId = async planId => {
             .where(eq(schemas.segments.planId, planId))
             .orderBy(asc(schemas.segments.startDate))
         
-        return segments
+        return segments.map(s => ({
+            ...s,
+            startDate: normalizeDateValue(s.startDate),
+            endDate: normalizeDateValue(s.endDate),
+        }))
     } catch (error) {
         console.error(`Error fetching segments for plan ${planId}:`, error)
         throw new Error('Failed to fetch segments')
@@ -132,7 +151,11 @@ export const getPlansByTripId = async tripId => {
             }
             
             if (segment) {
-                plansMap.get(plan.id).segments.push(segment)
+                plansMap.get(plan.id).segments.push({
+                    ...segment,
+                    startDate: normalizeDateValue(segment.startDate),
+                    endDate: normalizeDateValue(segment.endDate),
+                })
             }
         })
         
@@ -339,7 +362,11 @@ export const getAllSegments = async () => {
             .from(schemas.segments)
             .orderBy(asc(schemas.segments.id))
         
-        return segments
+        return segments.map(s => ({
+            ...s,
+            startDate: normalizeDateValue(s.startDate),
+            endDate: normalizeDateValue(s.endDate),
+        }))
     } catch (error) {
         console.error('Error fetching all segments:', error)
         throw new Error('Failed to fetch all segments')
