@@ -16,7 +16,9 @@ const GanttChart = ({
     const vm = useGanttChartViewModel(items, setItems)
     
     // Calculate the minimum width needed based on number of days
-    const minWidth = Math.max(800, vm.days.length * 50) // Ensure at least 50px per day
+    // Cap per-day width so super long timelines don't produce extreme widths
+    const perDayPx = Math.min(50, Math.max(10, 800 / Math.max(1, vm.days.length)))
+    const minWidth = Math.max(800, vm.days.length * perDayPx)
     
     return (
         

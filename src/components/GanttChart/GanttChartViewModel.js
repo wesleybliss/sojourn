@@ -16,13 +16,32 @@ const GanttChartViewModel = (
     const endDate = new Date(Math.max(...items.map(task => getTime(task.endDate))))
     const days = eachDayOfInterval({ start: startDate, end: endDate }) */
     
-    const startDate = items.length > 0
-        ? new Date(Math.min(...items.map(it => it.startDate.getTime())))
-        : new Date() // Default start date if no items
-    const endDate = items.length > 0
-        ? new Date(Math.max(...items.map(it => it.endDate.getTime())))
-        : addDays(startDate, 7) // Default end date if no items
-    const days = eachDayOfInterval({ start: startDate, end: endDate })
+    // Ensure we only use valid dates and guard against extremely large ranges
+    const validStartDates = items
+        .map(it => (it?.startDate instanceof Date ? it.startDate : new Date(it?.startDate)))
+        .filter(d => d && !Number.isNaN(d.getTime()))
+    const validEndDates = items
+        .map(it => (it?.endDate instanceof Date ? it.endDate : new Date(it?.endDate)))
+        .filter(d => d && !Number.isNaN(d.getTime()))
+
+    const startDate = validStartDates.length > 0
+        ? new Date(Math.min(...validStartDates.map(d => d.getTime())))
+        : new Date()
+    const endDate = validEndDates.length > 0
+        ? new Date(Math.max(...validEndDates.map(d => d.getTime())))
+        : addDays(startDate, 7)
+
+    // Cap the number of days to avoid rendering an enormous grid (e.g., malformed data)
+    const maxDays = 365 * 5 // 5 years max
+    const spanDays = Math.max(0, differenceInDays(endDate, startDate))
+    const cappedEndDate = spanDays > maxDays ? addDays(startDate, maxDays) : endDate
+    let days = []
+    try {
+        days = eachDayOfInterval({ start: startDate, end: cappedEndDate })
+    } catch (err) {
+        // Fallback to a short range if something goes wrong
+        days = eachDayOfInterval({ start: new Date(), end: addDays(new Date(), 7) })
+    }
     
     /**
      * Get the date from the mouse position
