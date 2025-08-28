@@ -5,38 +5,40 @@ import * as schemas from '@/db/schema.js'
 import { eq } from 'drizzle-orm'
 import dayjs from 'dayjs'
 
-const toDate = v => (v == null ? null : new Date(v))
+const toDate = v => (!v ? null : new Date(v))
 
 export async function POST(request) {
     try {
         const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
-
+        
         if (!token || !token.sub)
             return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
-
+        
         const userId = parseInt(String(token.sub), 10)
+        
         if (Number.isNaN(userId))
             return NextResponse.json({ success: false, error: 'Invalid user ID' }, { status: 400 })
-
+        
         const body = await request.json()
+        
         if (!body || !body.type || !body.trips)
             return NextResponse.json({ success: false, error: 'Invalid backup payload' }, { status: 400 })
-
+        
         const onConflictAction = body.onConflictAction || 'duplicate'
-
+        
         const trips = Array.isArray(body.trips) ? body.trips : []
-
+        
         const results = []
-
+        
         // For each trip in backup, create trip, plans and segments
         for (const trip of trips) {
-
+            
             let tripName = trip.name || 'Imported Trip'
-
+            
             if (onConflictAction === 'duplicate') {
                 tripName = `${tripName} (Copy ${dayjs().format('YYYY-MMM-DD')})`
             }
-
+            
             const insertedTrips = await db
                 .insert(schemas.trips)
                 .values({
@@ -48,14 +50,14 @@ export async function POST(request) {
                     coverImageUrl: trip.coverImageUrl || null,
                 })
                 .returning({ id: schemas.trips.id })
-
+            
             const newTrip = insertedTrips[0]
-
+            
             // link user to trip via userTrips
             await db.insert(schemas.userTrips).values({ userId, tripId: newTrip.id })
-
+            
             const planIdMap = new Map()
-
+            
             if (Array.isArray(trip.plans)) {
                 for (const plan of trip.plans) {
                     const insertedPlans = await db
@@ -66,10 +68,11 @@ export async function POST(request) {
                             description: plan.description || null,
                         })
                         .returning({ id: schemas.plans.id })
-
+                    
                     const newPlan = insertedPlans[0]
+                    
                     if (plan.id) planIdMap.set(String(plan.id), newPlan.id)
-
+                    
                     // insert segments for this plan
                     if (Array.isArray(plan.segments)) {
                         for (const seg of plan.segments) {
@@ -91,12 +94,12 @@ export async function POST(request) {
                     }
                 }
             }
-
+            
             results.push({ importedTripId: newTrip.id, name: tripName })
         }
-
+        
         return NextResponse.json({ success: true, data: results })
-
+        
     } catch (e) {
         console.error('Error restoring backup:', e)
         return NextResponse.json({ success: false, error: e.message }, { status: 500 })
