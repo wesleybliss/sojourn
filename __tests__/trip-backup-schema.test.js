@@ -1,10 +1,10 @@
 import fs from 'fs'
 import path from 'path'
 import Ajv from 'ajv'
-import schema from '../trip-backup.jsonschema.js'
+import schema from '../src/lib/json-schemas/trip-backup.jsonschema.js'
 
 test('sample backup JSON validates against schema', () => {
-    const samplePath = path.resolve(__dirname, '../trip-backup-schema-sample.json')
+    const samplePath = path.resolve(__dirname, '../src/lib/json-schemas/trip-backup-schema-sample.json')
     const raw = fs.readFileSync(samplePath, 'utf8')
     const data = JSON.parse(raw)
 
