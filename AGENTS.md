@@ -1,6 +1,10 @@
 # AGENTS.md
 Agent guidelines for automated agents in this repo.
 
+## General Rules
+- Do not make any Git commits
+- Use modern ES7 syntax with no semicolons, brackets, or unnecessary parens or punctuation
+
 ## Commands
 - Dev: `pnpm dev`; Build: `pnpm build`; Serve: `pnpm serve`
 - Lint JS: `pnpm lint:js` & fix: `pnpm lint:js:fix`; Lint CSS: `pnpm lint:css` & fix: `pnpm lint:css:fix`

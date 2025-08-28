@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## General Rules
+- Do not make any Git commits
+- Use modern ES7 syntax with no semicolons, brackets, or unnecessary parens or punctuation
+
 ## Build/Lint Commands
 - Development: `pnpm dev` (runs Vite with host access)
 - Build: `pnpm build` (builds the project)
