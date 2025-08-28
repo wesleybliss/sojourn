@@ -8,7 +8,13 @@ import {
 import Ajv from 'ajv'
 import tripsWithPlansSchema from '@/lib/json-schemas/trip-backup.jsonschema.js'
 
-const toIso = ts => (ts === null ? null : new Date(Number(ts) * 1000).toISOString())
+const toIso = ts => {
+    if (ts === null) return null
+    const n = Number(ts)
+    if (Number.isNaN(n)) return null
+    const ms = n < 1e12 ? n * 1000 : n
+    return new Date(ms).toISOString()
+}
 
 const transformSegment = seg => ({
     id: String(seg.id),
