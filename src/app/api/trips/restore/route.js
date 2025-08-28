@@ -2,13 +2,41 @@ import { NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 import db from '@/db/index.js'
 import * as schemas from '@/db/schema.js'
-import { eq } from 'drizzle-orm'
 import dayjs from 'dayjs'
 
-const toDate = v => (!v ? null : new Date(v))
+const toDate = v => {
+    
+    const value = dayjs(v).toDate()
+    
+    const year = value.getFullYear()
+    const month = value.getMonth() + 1  // Months are zero-indexed, so add 1
+    const day = value.getDate()
+    const hour = value.getHours()
+    const minutes = value.getMinutes()
+    const seconds = value.getSeconds()
+    
+    console.log(year, month, day, hour, minutes, seconds)
+    
+    return value
+    
+}
+
+const toUnixTs = (v) => {
+    
+    console.log('Converting:', v, typeof v)
+    const parsed = dayjs(v)
+    if (!parsed.isValid()) {
+        throw new Error(`Invalid date: ${v}`)
+    }
+    const result = parsed.unix()
+    console.log('Result:', result)
+    return result;
+}
 
 export async function POST(request) {
+    
     try {
+        
         const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
         
         if (!token || !token.sub)
@@ -35,9 +63,10 @@ export async function POST(request) {
             
             let tripName = trip.name || 'Imported Trip'
             
-            if (onConflictAction === 'duplicate') {
+            if (onConflictAction === 'duplicate')
                 tripName = `${tripName} (Copy ${dayjs().format('YYYY-MMM-DD')})`
-            }
+            
+            console.log('Importing trip', tripName)
             
             const insertedTrips = await db
                 .insert(schemas.trips)
@@ -59,7 +88,11 @@ export async function POST(request) {
             const planIdMap = new Map()
             
             if (Array.isArray(trip.plans)) {
+                
                 for (const plan of trip.plans) {
+                    
+                    console.log('Inserting plan', plan.name)
+                    
                     const insertedPlans = await db
                         .insert(schemas.plans)
                         .values({
@@ -75,6 +108,9 @@ export async function POST(request) {
                     
                     // insert segments for this plan
                     if (Array.isArray(plan.segments)) {
+                        
+                        console.log('Importing', plan.segments.length, 'segments for plan', plan.name)
+                        
                         for (const seg of plan.segments) {
                             await db.insert(schemas.segments).values({
                                 tripId: newTrip.id,
@@ -91,17 +127,24 @@ export async function POST(request) {
                                 isShengenRegion: seg.isShengenRegion ? 1 : 0,
                             })
                         }
+                        
                     }
+                    
                 }
+                
             }
             
             results.push({ importedTripId: newTrip.id, name: tripName })
+            
         }
         
         return NextResponse.json({ success: true, data: results })
         
     } catch (e) {
+        
         console.error('Error restoring backup:', e)
         return NextResponse.json({ success: false, error: e.message }, { status: 500 })
+        
     }
+    
 }

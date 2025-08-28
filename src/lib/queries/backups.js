@@ -51,7 +51,7 @@ export const useBackupTrips = () => {
 
 export const useRestoreTrips = () => {
     const queryClient = useQueryClient()
-
+    
     return useMutation({
         mutationFn: async backupData => {
             const res = await fetch('/api/trips/restore', {
@@ -59,12 +59,13 @@ export const useRestoreTrips = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(backupData),
             })
-
+            
             if (!res.ok) {
                 const json = await res.json().catch(() => null)
+                
                 throw new Error(json?.error || 'Failed to restore backup')
             }
-
+            
             return res.json()
         },
         onSuccess: () => {

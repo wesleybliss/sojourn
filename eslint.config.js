@@ -45,6 +45,7 @@ export default [
             },
             globals: {
                 ...globals.browser,
+                ...globals.jest,
                 process: 'readonly',
                 Logger: 'readonly',
             },
