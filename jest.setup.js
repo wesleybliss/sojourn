@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom/extend-expect'
+import '@testing-library/jest-dom'
 
 // Stub next/link for React Testing Library
 jest.mock('next/link', () => {
