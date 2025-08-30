@@ -34,11 +34,16 @@ const useTripDetailViewModel = () => {
     const renamePlanMutation = useRenamePlan()
     const deletePlanMutation = useDeletePlan()
     
+    const [isLoadingInitial, setIsLoadingInitial] = useState(true)
     const [isEditingName, setIsEditingName] = useState(false)
     const [focusedLatLng, setFocusedLatLng] = useState(undefined)
     const [showMap, setShowMap] = useState(false)
     const [cascadeEnabled, setCascadeEnabled] = useState(false)
     const [hasRedirectedToPlan, setHasRedirectedToPlan] = useState(false)
+    
+    const isLoading = useMemo(() => (
+        isLoadingInitial || tripIsLoading
+    ), [isLoadingInitial, tripIsLoading])
     
     const plans = useMemo(() => trip?.plans || [], [trip])
     const currentPlan = useMemo(() => {
@@ -187,14 +192,23 @@ const useTripDetailViewModel = () => {
     }, [deletePlanMutation, queryClient, tripId, router])
     
     useEffect(() => {
+        
+        setIsLoadingInitial(true)
+        
         if (!planId && tripId && plans?.length && !hasRedirectedToPlan) {
             setHasRedirectedToPlan(true)
             router.replace(`/trips/${tripId}/plans/${plans[0].id}`)
+        } else {
+            setIsLoadingInitial(false)
         }
+        
     }, [tripId, planId, plans, router, hasRedirectedToPlan])
     
     return {
+        
         // State
+        isLoadingInitial,
+        setIsLoadingInitial,
         tripId,
         planId,
         isEditingName,
@@ -234,7 +248,7 @@ const useTripDetailViewModel = () => {
         deletePlan,
         
         // Loading/error states
-        isLoading: tripIsLoading,
+        isLoading,
         error: tripError,
     }
 }
