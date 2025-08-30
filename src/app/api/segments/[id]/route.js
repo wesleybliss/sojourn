@@ -23,19 +23,15 @@ export async function PUT(request, opts) {
         const segment = await getSegmentById(id)
         
         let payload = getUpdatePayload(segment, segmentData, ['tripId', 'planId'])
-        console.log('//////// update1', payload)
-        payload = convertStringDates(payload, ['startDate', 'endDate'])
-        console.log('//////// update2', payload)
         
-        /* console.log('wtfffffffffffff', id, segment.startDate, '-->', segmentData.startDate, payload)
-        throw new Error('testing') */
+        payload = convertStringDates(payload, ['startDate', 'endDate'])
         
         const [updatedSegment] = await db
             .update(schemas.segments)
             .set(payload)
             .where(eq(schemas.segments.id, id))
             .returning()
-        console.log('//////// update', updatedSegment)
+        
         if (!updatedSegment)
             return NextResponse.json(
                 { success: false, error: 'Segment not found' },
