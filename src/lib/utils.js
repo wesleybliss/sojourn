@@ -2,6 +2,7 @@ import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import dayjs from 'dayjs'
 import bcrypt from 'bcryptjs'
+import { keys } from '@/constants.js'
 
 export const gridColumnsMap = {
     1: 'grid-cols-1',
@@ -210,5 +211,63 @@ export const hashPassword = async password => {
 export const checkPassword = async (password, hashedPassword) => {
     
     return await bcrypt.compare(password, hashedPassword)
+    
+}
+
+export const omit = (obj, keys = []) => {
+    
+    return Object.keys(obj).reduce((acc, it) => {
+        
+        if (!keys.includes(it))
+            acc[it] = obj[it]
+        
+        return acc
+        
+    }, {})
+    
+}
+
+export const keep = (obj, keys = []) => {
+    
+    return Object.keys(obj).reduce((acc, it) => {
+        
+        if (keys.includes(it))
+            acc[it] = obj[it]
+        
+        return acc
+        
+    }, {})
+    
+}
+
+export const getUpdatePayload = (control, data, omitKeys = []) => {
+    
+    const keys = Object.keys(omit(control, omitKeys))
+    const payload = keep(data, keys)
+    
+    return payload
+    
+}
+
+export const convertStringDates = (obj, keys = []) => {
+    
+    const clone = { ...obj }
+    
+    keys.forEach(key => {
+        
+        if (clone[key]) {
+            
+            const date = dayjs(clone[key])
+            
+            if (date.isValid())
+                clone[key] = date.toDate()
+            else
+                throw new Error(`convertStringDates: Invalid date format for key ${key}`)
+            
+        }
+        
+    })
+    
+    return clone
     
 }

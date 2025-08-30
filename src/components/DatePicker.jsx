@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { CalendarIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -17,12 +17,14 @@ const DatePicker = ({
     onSelect,
 } = {}) => {
     
+    const [open, setOpen] = useState(false)
+    
     const value = useMemo(() => date ? dayjs(date) : undefined, [date])
     const month = useMemo(() => value ? new Date(value.year(), value.month()) : undefined, [value])
     
     return (
         
-        <Popover>
+        <Popover open={open} onOpenChange={setOpen}>
             
             <PopoverTrigger asChild>
                 <Button
@@ -40,9 +42,13 @@ const DatePicker = ({
             <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                     mode="single"
+                    captionLayout="dropdown"
                     defaultMonth={month}
                     selected={value ? value.toDate() : undefined}
-                    onSelect={(...args) => console.log('DatePicker#onSelect', args) || onSelect(...args)}
+                    onSelect={(...args) => {
+                        onSelect(...args)
+                        setOpen(false)
+                    }}
                     initialFocus />
             </PopoverContent>
         

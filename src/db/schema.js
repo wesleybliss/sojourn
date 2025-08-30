@@ -1,6 +1,6 @@
 import { relations, sql } from 'drizzle-orm'
 import { primaryKey, uniqueIndex, text, integer, real } from 'drizzle-orm/sqlite-core'
-import { timestamps, table, lower, optsCascadeAll } from './dbUtils.js'
+import { timestamps, table, lower, optsCascadeAll, timestampSeconds } from './dbUtils.js'
 
 export const users = table('users', {
     email: text('email').notNull(),
@@ -13,8 +13,6 @@ export const trips = table('trips', {
     userId: integer('userId').notNull().references(() => users.id, optsCascadeAll),
     name: text('name').notNull(),
     description: text('description'),
-    startDate: text('startDate'),
-    endDate: text('endDate'),
     coverImageUrl: text('coverImageUrl'),
 })
 
@@ -44,8 +42,8 @@ export const segments = table('segments', {
     planId: integer('planId').notNull().references(() => plans.id, optsCascadeAll),
     name: text('name').notNull(),
     description: text('description'),
-    startDate: integer('startDate', { mode: 'timestamp' }).notNull(),
-    endDate: integer('endDate', { mode: 'timestamp' }).notNull(),
+    startDate: timestampSeconds('startDate').notNull(),
+    endDate: timestampSeconds('endDate').notNull(),
     coordsLat: real('coordsLat'),
     coordsLng: real('coordsLng'),
     color: text('color').notNull(),

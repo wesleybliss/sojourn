@@ -7,13 +7,19 @@ import {
 } from '@/db/repos/trips.js'
 import Ajv from 'ajv'
 import tripsWithPlansSchema from '@/lib/json-schemas/trip-backup.jsonschema.js'
+import dayjs from 'dayjs'
 
-const toIso = ts => {
-    if (ts === null) return null
-    const n = Number(ts)
-    if (Number.isNaN(n)) return null
-    const ms = n < 1e12 ? n * 1000 : n
-    return new Date(ms).toISOString()
+const ajvDebug = true
+
+const dateToString = (date, name = '') => {
+    
+    const val = dayjs(date).format()
+    
+    if (name)
+        console.log('dateToString', name, date, val)
+    
+    return val
+    
 }
 
 const transformSegment = seg => ({
@@ -26,10 +32,10 @@ const transformSegment = seg => ({
     },
     tripId: String(seg.tripId),
     planId: seg.planId ? String(seg.planId) : undefined,
-    createdAt: toIso(seg.createdAt),
-    updatedAt: toIso(seg.updatedAt),
-    startDate: toIso(seg.startDate),
-    endDate: toIso(seg.endDate),
+    createdAt: dateToString(seg.createdAt, 'seg/createdAt'),
+    updatedAt: dateToString(seg.updatedAt, 'seg/updatedAt'),
+    startDate: dateToString(seg.startDate, 'seg/startDate'),
+    endDate: dateToString(seg.endDate, 'seg/endDate'),
     stayBooked: Boolean(seg.stayBooked),
     flightBooked: Boolean(seg.flightBooked),
     description: seg.description || '',
@@ -39,26 +45,26 @@ const transformPlan = plan => ({
     id: plan.id ? String(plan.id) : undefined,
     name: plan.name,
     tripId: plan.tripId ? String(plan.tripId) : undefined,
-    createdAt: toIso(plan.createdAt),
-    updatedAt: toIso(plan.updatedAt),
+    createdAt: dateToString(plan.createdAt, 'plan/createdAt'),
+    updatedAt: dateToString(plan.updatedAt, 'plan/updatedAt'),
     segments: Array.isArray(plan.segments) ? plan.segments.map(transformSegment) : [],
 })
 
 const transformTrip = trip => ({
     id: String(trip.id),
+    createdAt: dateToString(trip.createdAt, 'trip/createdAt'),
+    updatedAt: dateToString(trip.updatedAt, 'trip/updatedAt'),
     name: trip.name,
-    endDate: toIso(trip.endDate),
-    segments: Array.isArray(trip.segments) ? trip.segments.map(transformSegment) : [],
-    createdAt: toIso(trip.createdAt),
-    startDate: toIso(trip.startDate),
-    updatedAt: toIso(trip.updatedAt),
     description: trip.description || '',
     coverImageUrl: trip.coverImageUrl || null,
     plans: Array.isArray(trip.plans) ? trip.plans.map(transformPlan) : [],
+    segments: Array.isArray(trip.segments) ? trip.segments.map(transformSegment) : [],
 })
 
 export async function POST(request, opts) {
+    
     try {
+        
         const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
         
         if (!token || !token.sub)
@@ -71,12 +77,15 @@ export async function POST(request, opts) {
         
         const body = await request.json()
         
-        const ajv = new Ajv()
+        const ajvProps = ajvDebug ? { allErrors: true, verbose: true } : {}
+        
+        const ajv = new Ajv(ajvProps)
         const validate = ajv.compile(tripsWithPlansSchema)
         
         let trips = []
         
         if (body?.type === 'single') {
+            
             const tripId = body.tripId
             
             if (!tripId)
@@ -94,7 +103,9 @@ export async function POST(request, opts) {
                 return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
             
             trips = [transformTrip(trip)]
+            
         } else {
+            
             // multiple
             const requestedIds = Array.isArray(body?.tripIds) ? body.tripIds.map(id => Number(id)) : null
             
@@ -106,22 +117,25 @@ export async function POST(request, opts) {
             const details = await Promise.all(detailsPromises)
             
             trips = details.filter(Boolean).map(t => transformTrip(t))
+            
         }
         
-        const data = { type: 'multiple', trips }
+        let data = { type: 'multiple', trips }
         
         const valid = validate(data)
         
-        if (!valid)
+        if (!valid || !data.trips[0].plans[0].segments[0].startDate.startsWith('2025'))
             return NextResponse.json({
                 success: false,
                 error: 'Validation failed',
                 details: validate.errors,
             }, { status: 400 })
         
+        data = JSON.stringify(data, null, 4)
+        
         const fileName = `trips-backup-${new Date().toISOString().replace(/[:.]/g, '-')}.json`
         
-        return NextResponse.json(data, {
+        return new Response(data, {
             status: 200,
             headers: {
                 'Content-Type': 'application/json',
@@ -130,8 +144,10 @@ export async function POST(request, opts) {
         })
         
     } catch (e) {
+        
         console.error('Error creating backup:', e)
         return NextResponse.json({ success: false, error: e.message }, { status: 500 })
+        
     }
     
 }

@@ -16,11 +16,19 @@ const GanttChartViewModel = (
     const endDate = new Date(Math.max(...items.map(task => getTime(task.endDate))))
     const days = eachDayOfInterval({ start: startDate, end: endDate }) */
     
+    const toMs = v => {
+        if (v == null) return null
+        if (v instanceof Date) return v.getTime()
+        if (typeof v === 'number') return v < 1e12 ? v * 1000 : v
+        const parsed = new Date(v)
+        return isNaN(parsed.getTime()) ? null : parsed.getTime()
+    }
+
     const startDate = items.length > 0
-        ? new Date(Math.min(...items.map(it => it.startDate.getTime())))
+        ? new Date(Math.min(...items.map(it => toMs(it.startDate))))
         : new Date() // Default start date if no items
     const endDate = items.length > 0
-        ? new Date(Math.max(...items.map(it => it.endDate.getTime())))
+        ? new Date(Math.max(...items.map(it => toMs(it.endDate))))
         : addDays(startDate, 7) // Default end date if no items
     const days = eachDayOfInterval({ start: startDate, end: endDate })
     
@@ -82,7 +90,7 @@ const GanttChartViewModel = (
         
         if (!date) return
         
-        const duration = differenceInDays(task.endDate, task.startDate)
+        const duration = differenceInDays(new Date(toMs(task.endDate)), new Date(toMs(task.startDate)))
         const newStartDate = startOfDay(date)
         const newEndDate = addDays(newStartDate, duration)
         
@@ -113,10 +121,10 @@ const GanttChartViewModel = (
                 prevItems.map(t => {
                     if (t.id === resizeTask.id) {
                         if (resizeTask.edge === 'start') {
-                            if (date >= t.endDate) return t
+                            if (date >= new Date(toMs(t.endDate))) return t
                             return { ...t, startDate: startOfDay(date) }
                         } else {
-                            if (date <= t.startDate) return t
+                            if (date <= new Date(toMs(t.startDate))) return t
                             return { ...t, endDate: startOfDay(date) }
                         }
                     }

@@ -20,7 +20,8 @@
     "lint:css": "stylelint --rd --risd --cache 'src/**/*.css'",
     "lint:css:fix": "stylelint --rd --risd --cache --fix 'src/**/*.css'",
     "db:dump": "turso db shell trip-planner .dump > backups/dump_`ts`.sql",
-    "db:restore": "echo 'turso db shell trip-planner < backups/dump-.sql'"
+    "db:restore": "echo 'turso db shell trip-planner < backups/dump-.sql'",
+    "db:seed": "turso db shell trip-planner < backups/seed.sql"
   },
   "dependencies": {
     "@babel/runtime": "^7.28.2",

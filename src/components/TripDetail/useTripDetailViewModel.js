@@ -42,7 +42,7 @@ const useTripDetailViewModel = () => {
     
     const plans = useMemo(() => trip?.plans || [], [trip])
     const currentPlan = useMemo(() => {
-        console.log('currentPlan', { plans, planId, trip })
+        // console.log('currentPlan', { plans, planId, trip })
         if (planId) return plans.find(p => p.id.toString() === planId)
         return plans?.[0]
     }, [plans, planId])
@@ -104,7 +104,15 @@ const useTripDetailViewModel = () => {
     }, [currentPlan, addSegmentMutation, queryClient, tripId])
     
     const updateSegment = useCallback((id, field) => async e => {
-        const value = e?.target?.value ?? e
+        
+        console.log('updateSegment', { trip, planId, segmentsLen: segments?.length })
+        
+        if (!trip || !planId || !segments)
+            return console.warn('updateSegment: no current trip or plan')
+        
+        const value = e?.target?.value ?? e // Use nullish coalescing
+        
+        console.log('updateSegment', { planId, id, field, value, cascadeEnabled })
         
         updateSegmentMutation.mutate({ segmentId: id, [field]: value }, {
             onSuccess: () => {
@@ -112,7 +120,7 @@ const useTripDetailViewModel = () => {
                 queryClient.invalidateQueries(['trip', tripId])
             },
         })
-    }, [updateSegmentMutation, queryClient, tripId])
+    }, [trip, tripId, planId, segments, updateSegmentMutation, queryClient])
     
     const deleteSegments = useCallback(async ids => {
         deleteSegmentsMutation.mutate(ids, {

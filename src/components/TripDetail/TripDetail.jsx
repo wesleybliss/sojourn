@@ -31,7 +31,7 @@ const TripDetail = () => {
     
     if (!vm.trip)
         return <LoadingSpinner />
-    console.log('rendering trip detail')
+    
     return (
         
         <div className="Trip w-full flex flex-col flex-1 gap-4 p-4">
@@ -75,16 +75,16 @@ const TripDetail = () => {
                             updateSegment={vm.updateSegment}
                             deleteSegments={vm.deleteSegments}
                             getTotalDaysPerSegment={vm.getTotalDaysPerSegment}
-                            getCumulativeDaysPerSegment={vm.getCumulativeDaysPerSegment}/>
+                            getCumulativeDaysPerSegment={vm.getCumulativeDaysPerSegment} />
                     )}
                 </div>
                 {vm.showMap && <MapLibreMap latLng={vm.focusedLatLng} />}
             </div>
             
-            {vm.trip && vm.segments?.length > 0 && console.log('wtf', vm.trip, vm.segments) || (
+            {vm.trip && vm.segments?.length > 0 && (
                 <div className="mt-4">
                     <h3 className="text-lg font-semibold mb-2">Timeline</h3>
-                    <SegmentsGanttChart plan={vm.currentPlan} />
+                    {/* <SegmentsGanttChart plan={vm.currentPlan} /> */}
                 </div>
             )}
             

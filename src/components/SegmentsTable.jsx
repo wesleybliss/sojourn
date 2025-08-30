@@ -109,6 +109,7 @@ const SegmentsTable = ({
                 {segments.map((it, i) => (
                     <TableRow
                         key={it.id}
+                        data-id={it?.id}
                         className={dayjs(it.startDate).isAfter(dayjs(it.endDate)) ? 'border border-red-500' : ''}>
                         
                         <TableCell className="w-5">

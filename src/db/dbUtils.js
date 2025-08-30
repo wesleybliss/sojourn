@@ -1,11 +1,49 @@
 import { sql } from 'drizzle-orm'
-import {
-    sqliteTable,
-    integer,
-} from 'drizzle-orm/sqlite-core'
+import { sqliteTable, integer, customType } from 'drizzle-orm/sqlite-core'
+import dayjs from 'dayjs'
+
+export const timestampSeconds = name => customType({
+    dataType() {
+        return 'integer'
+    },
+    toDriver(value) {
+        
+        console.log('toDriver input:', value, (value instanceof Date) ? 'date' : typeof value)
+        const seconds = dayjs(value).unix()
+        
+        if (value instanceof Date) {
+            console.log('toDriver output (Date):', seconds, '->', lendbg(seconds))
+            return seconds
+        }
+        
+        if (typeof value === 'number') {
+            console.log('toDriver output (number):', seconds, '->', lendbg(seconds))
+            return seconds
+        }
+        
+        if (typeof value === 'string') {
+            console.log('toDriver output (string):', seconds, '->', lendbg(seconds))
+            return seconds
+        }
+        
+        console.warn('toDriver unexpected input:', value)
+        return value
+        
+    },
+    fromDriver(value) {
+        
+        console.log('fromDriver input:', value, (value instanceof Date) ? 'date' : typeof value)
+        const date = dayjs.unix(value).toDate()
+        
+        console.log('fromDriver output:', date)
+        
+        return date
+        
+    },
+})(name)
 
 // Creates a default timestamp field
-export const ts = name => integer(name, { mode: 'timestamp' })
+export const ts = name => timestampSeconds(name)
     .default(sql`(unixepoch())`).notNull()
 
 export const timestamps = {
@@ -43,3 +81,5 @@ export const optsCascadeAll = {
     onUpdate: 'cascade',
     onDelete: 'cascade',
 }
+
+const lendbg = v => `lendbg: ${'1767502800'.length} vs ${v.toString().length}`

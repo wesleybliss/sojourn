@@ -21,7 +21,10 @@ const TripCard = ({
     
     return (
         
-        <Card className="cursor-pointer" onClick={onClick}>
+        <Card
+            className="cursor-pointer"
+            data-id={trip.id}
+            onClick={onClick}>
             
             <CardHeader>
                 <CardTitle>{name}</CardTitle>
