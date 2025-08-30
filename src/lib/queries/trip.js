@@ -95,6 +95,7 @@ export const useAddSegment = () => {
 }
 
 export const useUpdateSegment = () => {
+    
     const queryClient = useQueryClient()
     
     return useMutation({
@@ -112,6 +113,7 @@ export const useUpdateSegment = () => {
             queryClient.invalidateQueries(['trip', data.tripId])
         },
     })
+    
 }
 
 export const useDeleteSegments = () => {

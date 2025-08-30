@@ -46,6 +46,7 @@ const useTripDetailViewModel = () => {
     ), [isLoadingInitial, tripIsLoading])
     
     const plans = useMemo(() => trip?.plans || [], [trip])
+    
     const currentPlan = useMemo(() => {
         // console.log('currentPlan', { plans, planId, trip })
         if (planId) return plans.find(p => p.id.toString() === planId)
@@ -55,7 +56,9 @@ const useTripDetailViewModel = () => {
     const segments = useMemo(() => currentPlan?.segments || [], [currentPlan])
     
     const shengenData = useMemo(() => {
+        
         if (!segments?.length) return null
+        
         const shengenSegments = segments.filter(it => it.isShengenRegion)
         
         if (!shengenSegments.length) return null
@@ -64,6 +67,7 @@ const useTripDetailViewModel = () => {
             shengenSegments[0].startDate,
             shengenSegments[shengenSegments.length - 1].endDate,
         )
+        
         const remainingDays = 89 - totalDays
         
         return {
@@ -73,14 +77,21 @@ const useTripDetailViewModel = () => {
             totalDays,
             remainingDays,
         }
+        
     }, [segments])
     
     const summaryTripText = useMemo(() => {
+        
         if (!trip || !currentPlan || !segments?.length) return ''
-        return segments.map(it => `${it.name} from ${it.startDate} to ${it.endDate}`).join('\n')
+        
+        return segments
+            .map(it => `${it.name} from ${it.startDate} to ${it.endDate}`)
+            .join('\n')
+        
     }, [trip, currentPlan, segments])
     
     const updateTrip = useCallback(field => async e => {
+        
         const value = e?.target?.value ?? e
         
         updateTripMutation.mutate({ tripId, [field]: value }, {
@@ -89,10 +100,13 @@ const useTripDetailViewModel = () => {
                 queryClient.invalidateQueries(['trip', tripId])
             },
         })
+        
     }, [tripId, updateTripMutation, queryClient])
     
     const addSegment = useCallback(async () => {
+        
         if (!currentPlan) return
+        
         const newSegment = {
             planId: currentPlan.id,
             name: 'New Segment',
@@ -106,6 +120,7 @@ const useTripDetailViewModel = () => {
                 queryClient.invalidateQueries(['trip', tripId])
             },
         })
+        
     }, [currentPlan, addSegmentMutation, queryClient, tripId])
     
     const updateSegment = useCallback((id, field) => async e => {
@@ -119,26 +134,37 @@ const useTripDetailViewModel = () => {
         
         console.log('updateSegment', { planId, id, field, value, cascadeEnabled })
         
-        updateSegmentMutation.mutate({ segmentId: id, [field]: value }, {
+        const payload = {
+            segmentId: id, [field]: value,
+            cascadeEnabled,
+        }
+        
+        updateSegmentMutation.mutate(payload, {
             onSuccess: () => {
                 toast('Segment updated')
                 queryClient.invalidateQueries(['trip', tripId])
             },
         })
-    }, [trip, tripId, planId, segments, updateSegmentMutation, queryClient])
+        
+    }, [trip, tripId, planId, segments, updateSegmentMutation, queryClient, cascadeEnabled])
     
     const deleteSegments = useCallback(async ids => {
+        
         deleteSegmentsMutation.mutate(ids, {
             onSuccess: () => {
                 toast(`Segment${ids.length > 1 ? 's' : ''} deleted`)
                 queryClient.invalidateQueries(['trip', tripId])
             },
         })
+        
     }, [deleteSegmentsMutation, queryClient, tripId])
     
     const getTotalDaysPerSegment = segment => {
+        
         if (!segment.startDate || !segment.endDate) return 0
+        
         return dayjs(segment.endDate).diff(dayjs(segment.startDate), 'day')
+        
     }
     
     const totalDaysPerSegmentByIndex = useMemo(() => segments
@@ -151,13 +177,17 @@ const useTripDetailViewModel = () => {
     ), [totalDaysPerSegmentByIndex])
     
     const backupTrip = useCallback(async () => {
+        
         // This should probably be a mutation as well
         console.log('backupTrip')
         toast('Backup not implemented yet')
+        
     }, [trip])
     
     const clonePlan = useCallback(async () => {
+        
         if (!currentPlan) return toast.error('No plan selected to clone')
+        
         clonePlanMutation.mutate({ planId: currentPlan.id }, {
             onSuccess: newPlan => {
                 toast('Plan cloned')
@@ -165,30 +195,37 @@ const useTripDetailViewModel = () => {
                 router.push(`/trips/${tripId}/plans/${newPlan.id}`)
             },
         })
+        
     }, [clonePlanMutation, currentPlan, queryClient, tripId, router])
     
     const renamePlan = useCallback(async planId => {
+        
         const newName = prompt('Enter a new plan name:')
         
         if (!newName?.trim()) return
+        
         renamePlanMutation.mutate({ planId, name: newName }, {
             onSuccess: () => {
                 toast('Plan renamed')
                 queryClient.invalidateQueries(['trip', tripId])
             },
         })
+        
     }, [renamePlanMutation, queryClient, tripId])
     
     const deletePlan = useCallback(async planId => {
-        if (confirm('Are you sure you want to delete this plan?')) {
-            deletePlanMutation.mutate({ planId }, {
-                onSuccess: () => {
-                    toast('Plan deleted')
-                    queryClient.invalidateQueries(['trip', tripId])
-                    router.push(`/trips/${tripId}`)
-                },
-            })
-        }
+        
+        if (!confirm('Are you sure you want to delete this plan?'))
+            return
+        
+        deletePlanMutation.mutate({ planId }, {
+            onSuccess: () => {
+                toast('Plan deleted')
+                queryClient.invalidateQueries(['trip', tripId])
+                router.push(`/trips/${tripId}`)
+            },
+        })
+        
     }, [deletePlanMutation, queryClient, tripId, router])
     
     useEffect(() => {

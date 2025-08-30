@@ -14,15 +14,20 @@ export async function PUT(request, opts) {
     const params = await opts.params
     
     try {
-        const segmentData = await request.json()
+        
         const id = parseInt(params.id, 10)
-        
-        
-        //
-        
         const segment = await getSegmentById(id)
         
-        let payload = getUpdatePayload(segment, segmentData, ['tripId', 'planId'])
+        if (segment?.id !== id)
+            return NextResponse.json(
+                { success: false, error: 'Segment not found' },
+                { status: 404 },
+            )
+        
+        const segmentData = await request.json()
+        const { cascadeEnabled } = segmentData
+        
+        let payload = getUpdatePayload(segment, segmentData, ['tripId', 'planId', 'cascadeEnabled'])
         
         payload = convertStringDates(payload, ['startDate', 'endDate'])
         
