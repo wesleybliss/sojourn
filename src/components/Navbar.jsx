@@ -42,7 +42,7 @@ const Navbar = () => {
     const { data: trips } = useTripsQuery()
     
     const [deleteDatabaseDialogOpen, setDeleteDatabaseDialogOpen] = useState(false)
-
+    
     const backupMutation = useBackupTrips()
     
     const links = useMemo(() => {

@@ -21,9 +21,10 @@ const GanttChartViewModel = (
         if (v instanceof Date) return v.getTime()
         if (typeof v === 'number') return v < 1e12 ? v * 1000 : v
         const parsed = new Date(v)
+        
         return isNaN(parsed.getTime()) ? null : parsed.getTime()
     }
-
+    
     const startDate = items.length > 0
         ? new Date(Math.min(...items.map(it => toMs(it.startDate))))
         : new Date() // Default start date if no items

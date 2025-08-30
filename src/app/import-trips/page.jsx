@@ -27,7 +27,7 @@ export default function ImportTripsPage() {
         fileInputRef.current.value = null
         fileInputRef.current.click()
     }
-
+    
     const restoreMutation = useRestoreTrips()
     
     const handleFileChange = async event => {
@@ -45,13 +45,13 @@ export default function ImportTripsPage() {
             
             setImportStatus('Uploading backup...')
             setProgressPercent(30)
-
+            
             await restoreMutation.mutateAsync(data)
-
+            
             setImportStatus('Import completed!')
             setProgressPercent(100)
             toast.success('Backup restored successfully')
-
+            
             setTimeout(() => router.push('/trips'), 1500)
             
         } catch (error) {

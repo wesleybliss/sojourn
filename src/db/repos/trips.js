@@ -6,9 +6,11 @@ const normalizeDateValue = v => {
     if (v == null) return null
     if (typeof v === 'string') return v
     if (v instanceof Date) return v.getTime()
+    
     if (typeof v === 'number') {
         return v < 1e12 ? v * 1000 : v
     }
+    
     return v
 }
 

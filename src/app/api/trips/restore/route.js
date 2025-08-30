@@ -21,16 +21,19 @@ const toDate = v => {
     
 }
 
-const toUnixTs = (v) => {
+const toUnixTs = v => {
     
     console.log('Converting:', v, typeof v)
     const parsed = dayjs(v)
+    
     if (!parsed.isValid()) {
         throw new Error(`Invalid date: ${v}`)
     }
+    
     const result = parsed.unix()
+    
     console.log('Result:', result)
-    return result;
+    return result
 }
 
 export async function POST(request) {

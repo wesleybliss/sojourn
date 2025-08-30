@@ -6,9 +6,11 @@ const normalizeDateValue = v => {
     if (v == null) return null
     if (typeof v === 'string') return v
     if (v instanceof Date) return v.getTime()
+    
     if (typeof v === 'number') {
         return v < 1e12 ? v * 1000 : v
     }
+    
     return v
 }
 
@@ -69,7 +71,7 @@ export const getPlanById = async id => {
 }
 
 // Create a new plan
-export const createPlan = async (planData) => {
+export const createPlan = async planData => {
     try {
         const [newPlan] = await db
             .insert(schemas.plans)
