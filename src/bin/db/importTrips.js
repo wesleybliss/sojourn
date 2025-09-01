@@ -67,7 +67,8 @@ const importTrip = async data => {
             email = process.env.IMPORT_OWNER_EMAIL
             console.log('No owner specified in trip; using IMPORT_OWNER_EMAIL:', email)
         } else {
-            throw new Error('No owner specified in trip and unable to infer user. Set IMPORT_OWNER_EMAIL or include owner in the trip data')
+            throw new Error('No owner specified in trip and unable to infer user. ' +
+                'Set IMPORT_OWNER_EMAIL or include owner in the trip data')
         }
     }
     

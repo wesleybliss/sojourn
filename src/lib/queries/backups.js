@@ -32,12 +32,17 @@ export const useBackupTrips = () => {
             const filename = (m && m[1]) ? m[1] : `trips-backup-${new Date().toISOString().replace(/[:.]/g, '-')}.json`
             
             const url = URL.createObjectURL(blob)
+            // eslint-disable-next-line no-restricted-globals
             const a = document.createElement('a')
             
             a.href = url
             a.download = filename
+            
+            // eslint-disable-next-line no-restricted-globals
             document.body.appendChild(a)
             a.click()
+            
+            // eslint-disable-next-line no-restricted-globals
             document.body.removeChild(a)
             URL.revokeObjectURL(url)
             

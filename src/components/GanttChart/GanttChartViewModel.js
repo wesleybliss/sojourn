@@ -17,7 +17,7 @@ const GanttChartViewModel = (
     const days = eachDayOfInterval({ start: startDate, end: endDate }) */
     
     const toMs = v => {
-        if (v == null) return null
+        if (!v) return null
         if (v instanceof Date) return v.getTime()
         if (typeof v === 'number') return v < 1e12 ? v * 1000 : v
         const parsed = new Date(v)

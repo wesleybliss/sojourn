@@ -23,6 +23,7 @@ const ThemeToggle = () => {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
         const isDark = newTheme === 'dark' || (newTheme === 'system' && prefersDark)
         
+        // eslint-disable-next-line no-restricted-globals
         document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light')
         
     }

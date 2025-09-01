@@ -84,7 +84,7 @@ const TripDetail = () => {
             {vm.trip && vm.segments?.length > 0 && (
                 <div className="mt-4">
                     <h3 className="text-lg font-semibold mb-2">Timeline</h3>
-                    {/* <SegmentsGanttChart plan={vm.currentPlan} /> */}
+                    <SegmentsGanttChart plan={vm.currentPlan} />
                 </div>
             )}
             

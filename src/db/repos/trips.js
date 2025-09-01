@@ -3,7 +3,7 @@ import * as schemas from '@/db/schema.js'
 import { eq, desc, asc } from 'drizzle-orm'
 
 const normalizeDateValue = v => {
-    if (v == null) return null
+    if (!v) return null
     if (typeof v === 'string') return v
     if (v instanceof Date) return v.getTime()
     

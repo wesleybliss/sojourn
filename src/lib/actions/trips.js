@@ -1,6 +1,5 @@
 import * as store from '@/store'
 import tripsRepo from '@/db/repositories/trips'
-import plansRepo from '@/db/repositories/plans'
 import segmentsRepo from '@/db/repositories/segments'
 import {
     generateSlug,
@@ -108,7 +107,8 @@ export const restoreTrip1 = async (data, overwrite = false) => {
 
 export const restoreTrip = async (data, onConflictAction = 'duplicate') => {
     
-    return console.warn('need to implement plans restore')
+    if (process.env.NODE_ENV)
+        return console.warn('need to implement plans restore')
     
     console.log('restoreTrip', { onConflictAction })
     

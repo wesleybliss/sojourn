@@ -27,7 +27,7 @@ const useEventSubscription = (eventName, callback, dependencies = []) => {
             
         }
         
-        //eslint-disable-next-line react-compiler/react-compiler
+        // eslint-disable-next-line react-compiler/react-compiler
     }, [eventName, callback].concat(dependencies)))
     
 }

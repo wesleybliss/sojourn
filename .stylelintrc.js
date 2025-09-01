@@ -29,6 +29,8 @@ export default {
                     'screen',
                     'reference',
                     'plugin',
+                    'theme',
+                    'custom-variant',
                 ],
             },
         ],
@@ -47,6 +49,11 @@ export default {
                 ],
             },
         ],
+        
+        'color-function-alias-notation': null,
+        
+        'lightness-notation': null,
+        'hue-degree-notation': null,
         
         'import-notation': 'string',
         

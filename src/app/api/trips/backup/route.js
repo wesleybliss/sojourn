@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 import {
-    getTripById,
     getTripWithDetails,
     getTripsByUserId,
 } from '@/db/repos/trips.js'
@@ -61,7 +60,7 @@ const transformTrip = trip => ({
     segments: Array.isArray(trip.segments) ? trip.segments.map(transformSegment) : [],
 })
 
-export async function POST(request, opts) {
+export async function POST(request/* , opts */) {
     
     try {
         
