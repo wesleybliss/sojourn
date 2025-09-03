@@ -12,6 +12,8 @@ import {
  */
 export async function GET(request) {
     
+    console.log('NEXTAUTH_URL:', process.env.NEXTAUTH_URL)
+    
     try {
         
         const token = await getToken({
