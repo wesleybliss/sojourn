@@ -30,8 +30,6 @@ dexie-cloud.key
 tmp/
 
 # Ignore Dexie IndexedDB and WAL files
-auth
-auth-wal
 default
 default-wal
 .next/
