@@ -11,9 +11,10 @@ import {
     useDeletePlan,
 } from '@/lib/queries/trip.js'
 import { useQueryClient } from '@tanstack/react-query'
+import { useBackupTrips } from '@/lib/queries/backups'
 import { toast } from 'sonner'
 import dayjs from 'dayjs'
-import { calculateTotalDays } from '@/lib/utils.js'
+import { sortArrByUpdatedAt, calculateTotalDays } from '@/lib/utils.js'
 
 const useTripDetailViewModel = () => {
     
@@ -27,6 +28,7 @@ const useTripDetailViewModel = () => {
     
     // Mutations
     const updateTripMutation = useUpdateTrip()
+    const backupMutation = useBackupTrips()
     const addSegmentMutation = useAddSegment()
     const updateSegmentMutation = useUpdateSegment()
     const deleteSegmentsMutation = useDeleteSegments()
@@ -178,11 +180,15 @@ const useTripDetailViewModel = () => {
     
     const backupTrip = useCallback(async () => {
         
-        // This should probably be a mutation as well
-        console.log('backupTrip')
-        toast('Backup not implemented yet')
+        try {
+            await backupMutation.mutateAsync({ type: 'single', tripId: [tripId] })
+            toast.success('Backup file downloaded')
+        } catch (error) {
+            console.error('Error creating backup:', error)
+            toast.error('Failed to create backup')
+        }
         
-    }, [trip])
+    }, [tripId])
     
     const clonePlan = useCallback(async () => {
         
@@ -233,10 +239,16 @@ const useTripDetailViewModel = () => {
         setIsLoadingInitial(true)
         
         if (!planId && tripId && plans?.length && !hasRedirectedToPlan) {
+            
+            const latestPlan = sortArrByUpdatedAt(plans)?.[0] || plans[0]
+            
             setHasRedirectedToPlan(true)
-            router.replace(`/trips/${tripId}/plans/${plans[0].id}`)
+            router.replace(`/trips/${tripId}/plans/${latestPlan.id}`)
+            
         } else {
+            
             setIsLoadingInitial(false)
+            
         }
         
     }, [tripId, planId, plans, router, hasRedirectedToPlan])

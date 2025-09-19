@@ -7,6 +7,7 @@ export const theme = createPersistedWire(keys.theme, 'dark')
 
 export const currentTripId = createWire(null)
 
+
 export const currentPlanId = createWire(null)
 
 export const importTripStatus = createWire(null)

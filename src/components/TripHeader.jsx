@@ -52,7 +52,7 @@ const TripHeader = ({
                         </p>
                     </div>
                     <div className="">
-                        <Tabs value={vm.planId}>
+                        <Tabs value={parseInt(vm.planId || '0', 10)}>
                             <TabsList>
                                 {vm.plans?.map(it => (
                                     <TabsTrigger
@@ -61,7 +61,6 @@ const TripHeader = ({
                                         asChild>
                                         <div className="flex items-center gap-2 cursor-pointer">
                                             <div
-                                                className="hover:bg-accent hover:text-accent-foreground"
                                                 onClick={() => vm.navigate(
                                                     `/trips/${vm.currentTrip.id}/plans/${it.id}`)}
                                                 onDoubleClick={() => vm.renamePlan(it.id)}>

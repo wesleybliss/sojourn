@@ -8,7 +8,7 @@ import MapLibreMap from '@/components/MapLibreMap.jsx'
 import { Button } from '@/components/ui/button.jsx'
 import { Label } from '@/components/ui/label.jsx'
 import { Switch } from '@/components/ui/switch.jsx'
-import { MapPinPlus, ChevronsUpDown } from 'lucide-react'
+import { MapPinPlus, ChevronsUpDown, ClipboardPenLine } from 'lucide-react'
 import {
     Collapsible,
     CollapsibleContent,
@@ -17,6 +17,8 @@ import {
 import LoadingSpinner from '@/components/LoadingSpinner.jsx'
 import useTripDetailViewModel from '@/components/TripDetail/useTripDetailViewModel.js'
 import CollapsibleTree from '@/components/CollapsibleTree.jsx'
+import { getTripSegmentNames } from '@/lib/utils.js'
+import { toast } from 'sonner'
 
 const TripDetail = () => {
     
@@ -60,6 +62,17 @@ const TripDetail = () => {
                         onClick={vm.addSegment}>
                         <MapPinPlus />
                         New Segment
+                    </Button>
+                    <Button
+                        variant="outline"
+                        onClick={() => {
+                            if (!vm.currentTrip)
+                                return alert('No trip selected')
+                            
+                            getTripSegmentNames(vm.currentPlan)
+                            toast.success('Segment names copied to clipboard')
+                        }}>
+                        <ClipboardPenLine />
                     </Button>
                 </div>
             </header>

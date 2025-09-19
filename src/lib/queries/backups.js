@@ -6,13 +6,15 @@ export const useBackupTrips = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ type = 'multiple', tripIds = null } = {}) => {
+        mutationFn: async ({ type = 'multiple', tripId = null, tripIds = null } = {}) => {
             const body = { type }
             
             if (Array.isArray(tripIds))
                 body.tripIds = tripIds
                     .map(id => (typeof id === 'object' ? idToInt(id) : parseInt(id, 10)))
                     .filter(Boolean)
+            else
+                body.tripId = tripId
             
             const res = await fetch('/api/trips/backup', {
                 method: 'POST',

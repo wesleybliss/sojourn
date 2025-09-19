@@ -270,3 +270,115 @@ export const convertStringDates = (obj, keys = []) => {
     return clone
     
 }
+
+export const copyToClipboard = async text => {
+    
+    if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text)
+        return
+    }
+    
+    // Fallback for older browsers
+    // eslint-disable-next-line no-restricted-globals
+    const textarea = document.createElement('textarea')
+    
+    textarea.value = text
+    
+    // eslint-disable-next-line no-restricted-globals
+    document.body.appendChild(textarea)
+    textarea.select()
+    
+    // eslint-disable-next-line no-restricted-globals
+    document.execCommand('copy')
+    
+    // eslint-disable-next-line no-restricted-globals
+    document.body.removeChild(textarea)
+    
+}
+
+export const sortArrByUpdatedAt = (arr, ascending = false) => [...arr]
+    .sort((a, b) => ascending
+        ? dayjs(a.updatedAt).valueOf() - dayjs(b.updatedAt).valueOf()
+        : dayjs(b.updatedAt).valueOf() - dayjs(a.updatedAt).valueOf())
+
+export const getTripSegmentNames = async plan => {
+    
+    if (!plan?.segments?.length)
+        return alert('No segments found or no plan selected')
+    
+    const names = plan.segments.map(it => it.name)
+    
+    await copyToClipboard(names.join('\n'))
+    
+}
+
+/**
+ * Asynchronously loads an image from a given URL.
+ *
+ * @async
+ * @function loadImageAsync
+ * @param {string} url - The URL of the image to load.
+ * @param {Object} [headers={}] - An optional object containing any headers to include with the request.
+ * Defaults to an empty object.
+ * @param {boolean} [anonymousCors=true] - An optional boolean indicating whether to set the crossOrigin property
+ * of the image to 'Anonymous'. Defaults to true.
+ * @throws {Error} Will throw an error if the image fails to load.
+ * @returns {Promise<{blob: Blob, dataUrl: string}>} Returns a promise that resolves to an
+ * object containing the loaded image's blob and data URL.
+ */
+export const loadImageAsync = async (url, headers = {}, anonymousCors = true) => {
+    
+    const img = new Image()
+    
+    if (anonymousCors)
+        img.crossOrigin = 'Anonymous'
+    
+    const opts = {
+        headers,
+    }
+    
+    const res = await fetch(url, opts)
+    
+    if (!res.ok)
+        throw new Error('Failed to load image')
+    
+    const blob = await res.blob()
+    
+    return {
+        blob,
+        dataUrl: URL.createObjectURL(blob),
+    }
+    
+}
+
+export const setAbortableTimeout = (callback, delayInMilliseconds, customAbortController) => {
+    
+    const controller = customAbortController || new AbortController()
+    const signal = controller.signal
+    
+    const internalCallback = () => {
+        signal.removeEventListener('abort', handleAbort)
+        callback()
+    }
+    
+    // Set up our internal timer that we can clear-on-abort.
+    const t = setTimeout(internalCallback, delayInMilliseconds)
+    
+    const handleAbort = () => {
+        // console.warn('Canceling timer (%s) via signal abort.', t)
+        clearTimeout(t)
+    }
+    
+    // When the calling context triggers an abort, we need to listen to for it so
+    // that we can turn around and clear the internal timer.
+    // --
+    // NOTE: We're creating a proxy callback to remove this event-listener once
+    // the timer executes. This way, our event-handler never gets invoked if
+    // there's nothing for it to actually do. Also note that the 'abort' event
+    // will only ever get emitted once, regardless of how many times the calling
+    // context tries to invoke .abort() on its AbortController.
+    signal.addEventListener('abort', handleAbort)
+    
+    return controller
+    
+}
