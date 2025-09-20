@@ -8,6 +8,29 @@ export async function createPlan(data) {
     return newPlan
 }
 
+/*
+export const useUpdatePlan = () => {
+    const queryClient = useQueryClient()
+    
+    return useMutation({
+        mutationFn: async ({ planId, ...planData }) => {
+            const res = await fetch(`/api/plans/${planId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(planData),
+            })
+            
+            if (!res.ok) throw new Error('Failed to update plan')
+            return res.json()
+        },
+        onSuccess: (data, variables) => {
+            queryClient.invalidateQueries(['plan', variables.planId])
+            queryClient.invalidateQueries(['plans'])
+        },
+    })
+}
+ */
+
 export async function deletePlan(id) {
     await db.delete(segments).where(eq(segments.planId, id))
     await db.delete(plans).where(eq(plans.id, id))

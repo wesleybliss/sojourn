@@ -10,7 +10,6 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
 const TripHeader = ({
@@ -31,18 +30,6 @@ const TripHeader = ({
                             <FolderPen className="opacity-0 group-hover:opacity-20 hover:opacity-100
                                 transition-opacity ease-in-out duration-300" />
                         </EditableTextField>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div>{vm.shengenData?.startDate?.format('MMM D, YYYY')}</div>
-                        <div>&rarr;</div>
-                        <div className={cn({
-                            'text-red-500': vm.shengenData?.isOver === true,
-                        })}>
-                            {vm.shengenData?.endDate?.format('MMM D, YYYY')}
-                        </div>
-                        <div className="italic text-sm">
-                            {vm.shengenData?.totalDays || '0'} days, {vm.shengenData?.remainingDays || '0'} remaining
-                        </div>
                     </div>
                 </div>
                 <div className="flex items-center gap-6">

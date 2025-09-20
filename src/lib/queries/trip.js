@@ -1,9 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import * as store from '@/store'
+import { updateItemArray } from '@/lib/storeUtils.js'
 
 const idToInt = obj => obj?.id ? parseInt(obj?.id, 10) : null
 
-export const useTripQuery = (tripId, updateStore = false) => useQuery({
+export const useTripQuery = tripId => useQuery({
     queryKey: ['trip', tripId],
     queryFn: async () => {
         
@@ -12,8 +13,9 @@ export const useTripQuery = (tripId, updateStore = false) => useQuery({
             const res = await fetch(`/api/trips/${tripId}?withDetails=true`)
             const { data } = await res.json()
             
-            if (updateStore)
-                store.currentTripId.setValue(idToInt(data))
+            updateItemArray(store.trips, data)
+            // store.currentTripId.setValue(idToInt(data))
+            store.currentTripId.setValue(data.id)
             
             return data
             

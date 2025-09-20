@@ -1,4 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useWire, useWireValue } from '@forminator/react-wire'
+import * as store from '@/store'
 import { useParams, useRouter } from 'next/navigation'
 import {
     useTripQuery,
@@ -14,7 +16,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useBackupTrips } from '@/lib/queries/backups'
 import { toast } from 'sonner'
 import dayjs from 'dayjs'
-import { sortArrByUpdatedAt, calculateTotalDays } from '@/lib/utils.js'
+import { sortArrByUpdatedAt } from '@/lib/utils.js'
 
 const useTripDetailViewModel = () => {
     
@@ -47,40 +49,11 @@ const useTripDetailViewModel = () => {
         isLoadingInitial || tripIsLoading
     ), [isLoadingInitial, tripIsLoading])
     
-    const plans = useMemo(() => trip?.plans || [], [trip])
-    
-    const currentPlan = useMemo(() => {
-        // console.log('currentPlan', { plans, planId, trip })
-        if (planId) return plans.find(p => p.id.toString() === planId)
-        return plans?.[0]
-    }, [plans, planId])
-    
-    const segments = useMemo(() => currentPlan?.segments || [], [currentPlan])
-    
-    const shengenData = useMemo(() => {
-        
-        if (!segments?.length) return null
-        
-        const shengenSegments = segments.filter(it => it.isShengenRegion)
-        
-        if (!shengenSegments.length) return null
-        
-        const { startDate, endDate, totalDays } = calculateTotalDays(
-            shengenSegments[0].startDate,
-            shengenSegments[shengenSegments.length - 1].endDate,
-        )
-        
-        const remainingDays = 89 - totalDays
-        
-        return {
-            startDate,
-            endDate,
-            isOver: remainingDays < 0,
-            totalDays,
-            remainingDays,
-        }
-        
-    }, [segments])
+    const plans = useWireValue(store.currentPlans)
+    const currentPlanId = useWire(store.currentPlanId)
+    const currentPlan = useWireValue(store.currentPlan)
+    const segments = useWireValue(store.currentSegments)
+    const shengenData = useWireValue(store.shengenData)
     
     const summaryTripText = useMemo(() => {
         
@@ -252,6 +225,17 @@ const useTripDetailViewModel = () => {
         }
         
     }, [tripId, planId, plans, router, hasRedirectedToPlan])
+    
+    useEffect(() => {
+        
+        const value = planId
+            ? plans.find(p => p.id.toString() === planId)
+            : plans?.[0]
+        
+        if (value)
+            currentPlanId.setValue(value.id)
+        
+    }, [plans, planId])
     
     return {
         

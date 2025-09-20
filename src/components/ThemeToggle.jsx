@@ -12,7 +12,9 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-const ThemeToggle = () => {
+const ThemeToggle = ({
+    variant = 'outline',
+} = {}) => {
     
     const [theme, setTheme] = useWireState(store.theme)
     const [isMounted, setIsMounted] = useState(false)
@@ -85,7 +87,7 @@ const ThemeToggle = () => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon">
+                <Button variant={variant} size="icon">
                     {theme === 'light' ? (
                         <Sun className="h-5 w-5" />
                     ) : (

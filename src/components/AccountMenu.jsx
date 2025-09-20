@@ -10,11 +10,12 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import ConfirmDialog from '@/components/ConfirmDialog'
-import { useSession } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import { useTripsQuery } from '@/lib/queries/trips.js'
 import { useState } from 'react'
 import { useBackupTrips } from '@/lib/queries/backups.js'
 import { toast } from 'sonner'
+import ThemeToggle from '@/components/ThemeToggle.jsx'
 
 const debugDumpData = trips => e => {
     
@@ -95,6 +96,18 @@ const AccountMenu = () => {
                         <DropdownMenuItem>{label}</DropdownMenuItem>
                     </Link>
                 ))}
+                
+                <DropdownMenuSeparator />
+                
+                <Link
+                    href="#"
+                    onClick={e => {
+                        e.preventDefault()
+                        signOut({ callbackUrl: '/login' })
+                            .catch(console.error)
+                    }}>
+                    <DropdownMenuItem>Logout</DropdownMenuItem>
+                </Link>
             
             </DropdownMenuContent>
         
