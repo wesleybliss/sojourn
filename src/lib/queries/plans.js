@@ -1,70 +1,118 @@
-import { db } from '@/db'
-import { plans, segments } from '@/db/schema'
-import { eq } from 'drizzle-orm'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import * as store from '@/store'
+import { updateItemArray } from '@/lib/storeUtils.js'
 
-export async function createPlan(data) {
-    const [newPlan] = await db.insert(plans).values(data).returning()
-    
-    return newPlan
-}
+const plansQueryKey = (tripId, exclusive = false) =>
+    exclusive ? [tripId] : ['trips', tripId, 'plans']
 
-/*
-export const useUpdatePlan = () => {
+export const usePlansQuery = (tripId, opts = {}) => useQuery({
+    queryKey: plansQueryKey(tripId),
+    queryFn: async () => {
+        const response = await fetch(`/api/trips/${tripId}/plans`)
+        
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({}))
+            
+            throw new Error(error.message || 'Failed to fetch plans')
+        }
+        
+        return response.json()
+    },
+    enabled: !!tripId,
+    ...opts,
+})
+
+export const usePlanQuery = (planId, opts = {}) => useQuery({
+    queryKey: ['plans', planId],
+    queryFn: async () => {
+        const response = await fetch(`/api/plans/${planId}`)
+        
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({}))
+            
+            throw new Error(error.message || 'Failed to fetch plan')
+        }
+        
+        return response.json()
+    },
+    enabled: !!planId,
+    ...opts,
+})
+
+export const useCreatePlan = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ planId, ...planData }) => {
-            const res = await fetch(`/api/plans/${planId}`, {
-                method: 'PUT',
+        mutationFn: async ({ tripId, ...planData }) => {
+            const response = await fetch(`/api/trips/${tripId}/plans`, {
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(planData),
             })
             
-            if (!res.ok) throw new Error('Failed to update plan')
-            return res.json()
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}))
+                
+                throw new Error(error.message || 'Failed to create plan')
+            }
+            
+            return response.json()
         },
         onSuccess: (data, variables) => {
-            queryClient.invalidateQueries(['plan', variables.planId])
-            queryClient.invalidateQueries(['plans'])
+            queryClient.invalidateQueries({ queryKey: plansQueryKey(variables.tripId) })
+            queryClient.invalidateQueries({ queryKey: ['trips', variables.tripId] })
         },
     })
 }
- */
 
-export async function deletePlan(id) {
-    await db.delete(segments).where(eq(segments.planId, id))
-    await db.delete(plans).where(eq(plans.id, id))
-}
-
-export async function clonePlan(id) {
-    const plan = await db.query.plans.findFirst({
-        where: eq(plans.id, id),
-        with: {
-            segments: true,
-        },
-    })
+export const useUpdatePlan = () => {
+    const queryClient = useQueryClient()
     
-    if (!plan) {
-        throw new Error('Plan not found')
-    }
-    
-    delete plan.id
-    
-    const [newPlan] = await db.insert(plans).values(plan).returning()
-    
-    if (plan.segments.length > 0) {
-        const newSegments = plan.segments.map(segment => {
-            delete segment.id
-            delete segment.planId
+    return useMutation({
+        mutationFn: async plan => {
+            const response = await fetch(`/api/plans/${plan.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(plan),
+            })
             
-            return {
-                ...segment,
-                planId: newPlan.id,
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}))
+                
+                throw new Error(error.message || 'Failed to update plan')
             }
-        })
-        
-        await db.insert(segments).values(newSegments)
-    }
+            
+            return response.json()
+        },
+        onSuccess: (data, variables) => {
+            queryClient.invalidateQueries({ queryKey: plansQueryKey(variables.tripId, true) })
+            /* queryClient.invalidateQueries({ queryKey: ['plans', variables.id] })
+            queryClient.invalidateQueries({ queryKey: ['trips', variables.tripId] }) */
+        },
+    })
+}
+
+export const useDeletePlan = () => {
+    const queryClient = useQueryClient()
     
-    return newPlan
+    return useMutation({
+        mutationFn: async plan => {
+            const response = await fetch(`/api/plans/${plan.id}`, {
+                method: 'DELETE',
+            })
+            
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}))
+                
+                throw new Error(error.message || 'Failed to delete plan')
+            }
+            
+            return plan
+        },
+        onSuccess: (data, variables) => {
+            queryClient.invalidateQueries({ queryKey: plansQueryKey(variables.tripId) })
+            queryClient.invalidateQueries({ queryKey: ['plans', variables.id] })
+            queryClient.invalidateQueries({ queryKey: ['trips', variables.tripId] })
+        },
+    })
 }

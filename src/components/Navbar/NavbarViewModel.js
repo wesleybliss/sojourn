@@ -24,7 +24,8 @@ const NavbarViewModel = () => {
     const queryClient = useQueryClient()
     const updateTripMutation = useUpdateTrip()
     const backupMutation = useBackupTrips()
-    const renamePlanMutation = useRenamePlan()
+    // const renamePlanMutation = useRenamePlan()
+    const updatePlanMutation = useUpdatePlan()
     const clonePlanMutation = useClonePlan()
     
     const updateTrip = useCallback(field => async e => {
