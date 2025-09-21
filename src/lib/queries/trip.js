@@ -138,22 +138,6 @@ export const useDeleteSegments = () => {
     })
 }
 
-export const useClonePlan = () => {
-    const queryClient = useQueryClient()
-    
-    return useMutation({
-        mutationFn: async ({ planId }) => {
-            const res = await fetch(`/api/plans/${planId}/clone`, { method: 'POST' })
-            
-            if (!res.ok) throw new Error('Failed to clone plan')
-            return res.json()
-        },
-        onSuccess: data => {
-            queryClient.invalidateQueries(['trip', data.tripId])
-        },
-    })
-}
-
 /**
  * @deprecated
  * @returns {UseMutationResult<any, DefaultError, {readonly planId?: *, readonly name?: *}, unknown>}

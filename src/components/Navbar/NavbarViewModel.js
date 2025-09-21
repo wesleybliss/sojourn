@@ -4,8 +4,8 @@ import { useSession } from 'next-auth/react'
 import useDebug from '@/hooks/useDebug'
 import { useCallback } from 'react'
 import { toast } from 'sonner'
-import { useClonePlan, useUpdateTrip } from '@/lib/queries/trip'
-import { useUpdatePlan } from '@/lib/queries/plans'
+import { useDeletePlan, useUpdateTrip } from '@/lib/queries/trip'
+import { useUpdatePlan, useClonePlan } from '@/lib/queries/plans'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { useBackupTrips } from '@/lib/queries/backups'
@@ -26,6 +26,7 @@ const NavbarViewModel = () => {
     const updateTripMutation = useUpdateTrip()
     const backupMutation = useBackupTrips()
     const updatePlanMutation = useUpdatePlan()
+    const deletePlanMutation = useDeletePlan()
     const clonePlanMutation = useClonePlan()
     
     const updateTrip = useCallback(field => async e => {
@@ -79,15 +80,36 @@ const NavbarViewModel = () => {
         
     }, [updatePlanMutation, queryClient, currentTrip, currentPlan])
     
+    const deletePlan = useCallback(async () => {
+        
+        if (!currentTrip)
+            return console.warn('NavbarViewModel#deletePlan no trip selected')
+        
+        if (!currentPlan)
+            return console.warn('NavbarViewModel#deletePlan no plan selected')
+        
+        if (!confirm('Are you sure you want to delete this plan?'))
+            return
+        
+        deletePlanMutation.mutate({ planId: currentPlan.id }, {
+            onSuccess: () => {
+                toast('Plan deleted')
+                // queryClient.invalidateQueries(['trip', currentTrip.id])
+                router.push(`/trips/${currentTrip.id}`)
+            },
+        })
+        
+    }, [deletePlanMutation, queryClient, currentTrip, currentPlan, router])
+    
     const clonePlan = useCallback(async () => {
         
-        if (!currentTrip || !currentPlan) return toast.error('No plan selected to clone')
+        if (!currentTrip || !currentPlan) return toast.error('No trip or plan selected to clone')
         
         clonePlanMutation.mutate({ planId: currentPlan.id }, {
-            onSuccess: newPlan => {
+            onSuccess: clonedPlan => {
                 toast('Plan cloned')
-                queryClient.invalidateQueries(['trip', currentTrip.id])
-                router.push(`/trips/${currentTrip.id}/plans/${newPlan.id}`)
+                // queryClient.invalidateQueries(['trip', currentTrip.id])
+                router.push(`/trips/${currentTrip.id}/plans/${clonedPlan.data.id}`)
             },
         })
         
@@ -117,6 +139,7 @@ const NavbarViewModel = () => {
         // Methods
         updateTrip,
         updatePlan,
+        deletePlan,
         clonePlan,
         
     }

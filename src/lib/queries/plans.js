@@ -16,7 +16,7 @@ export const usePlansQuery = (tripId, opts = {}) => useQuery({
             throw new Error(error.message || 'Failed to fetch plans')
         }
         
-        return response.json()
+        return await response.json()
     },
     enabled: !!tripId,
     ...opts,
@@ -33,7 +33,7 @@ export const usePlanQuery = (planId, opts = {}) => useQuery({
             throw new Error(error.message || 'Failed to fetch plan')
         }
         
-        return response.json()
+        return await response.json()
     },
     enabled: !!planId,
     ...opts,
@@ -56,7 +56,7 @@ export const useCreatePlan = () => {
                 throw new Error(error.message || 'Failed to create plan')
             }
             
-            return response.json()
+            return await response.json()
         },
         onSuccess: (data, variables) => {
             queryClient.invalidateQueries({ queryKey: plansQueryKey(variables.tripId) })
@@ -82,7 +82,7 @@ export const useUpdatePlan = () => {
                 throw new Error(error.message || 'Failed to update plan')
             }
             
-            return response.json()
+            return await response.json()
         },
         onSuccess: (data, variables) => {
             try {
@@ -103,12 +103,12 @@ export const useDeletePlan = () => {
     
     return useMutation({
         mutationFn: async plan => {
-            const response = await fetch(`/api/plans/${plan.id}`, {
+            const res = await fetch(`/api/plans/${plan.id}`, {
                 method: 'DELETE',
             })
             
-            if (!response.ok) {
-                const error = await response.json().catch(() => ({}))
+            if (!res.ok) {
+                const error = await res.json().catch(console.error)
                 
                 throw new Error(error.message || 'Failed to delete plan')
             }
@@ -119,6 +119,24 @@ export const useDeletePlan = () => {
             queryClient.invalidateQueries({ queryKey: plansQueryKey(variables.tripId) })
             queryClient.invalidateQueries({ queryKey: ['plans', variables.id] })
             queryClient.invalidateQueries({ queryKey: ['trips', variables.tripId] })
+        },
+    })
+}
+
+export const useClonePlan = () => {
+    const queryClient = useQueryClient()
+    
+    return useMutation({
+        mutationFn: async ({ planId }) => {
+            
+            const res = await fetch(`/api/plans/${planId}/clone`, { method: 'POST' })
+            
+            if (!res.ok) throw new Error('Failed to clone plan')
+            
+            return await res.json()
+        },
+        onSuccess: data => {
+            queryClient.invalidateQueries(['trip', data.tripId])
         },
     })
 }

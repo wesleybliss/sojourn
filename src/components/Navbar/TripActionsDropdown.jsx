@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Ellipsis } from 'lucide-react'
 import InputDialog from '@/components/InputDialog.jsx'
+import { toast } from 'sonner'
 
 const TripActionsDropdown = ({
     trip,
@@ -18,6 +19,8 @@ const TripActionsDropdown = ({
     onRenameTrip,
     onBackupTrip,
     onRenamePlan,
+    onDeletePlan,
+    onClonePlan,
 } = {}) => {
     
     const [newTripName, setNewTripName] = useState('')
@@ -56,8 +59,17 @@ const TripActionsDropdown = ({
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel className="opacity-60">Plans</DropdownMenuLabel>
                 <DropdownMenuGroup>
+                    <DropdownMenuItem onClick={() => toast('@todo')}>
+                        New Plan
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setRenamePlanDialogOpen(true)}>
                         Rename Plan
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={onDeletePlan}>
+                        Delete Plan
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={onClonePlan}>
+                        Clone Plan
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
             </DropdownMenuContent>

@@ -8,7 +8,6 @@ import {
     useAddSegment,
     useUpdateSegment,
     useDeleteSegments,
-    useClonePlan,
     useRenamePlan,
     useDeletePlan,
 } from '@/lib/queries/trip.js'
@@ -34,7 +33,6 @@ const useTripDetailViewModel = () => {
     const addSegmentMutation = useAddSegment()
     const updateSegmentMutation = useUpdateSegment()
     const deleteSegmentsMutation = useDeleteSegments()
-    const clonePlanMutation = useClonePlan()
     const renamePlanMutation = useRenamePlan()
     const deletePlanMutation = useDeletePlan()
     
@@ -163,20 +161,6 @@ const useTripDetailViewModel = () => {
         
     }, [tripId])
     
-    const clonePlan = useCallback(async () => {
-        
-        if (!currentPlan) return toast.error('No plan selected to clone')
-        
-        clonePlanMutation.mutate({ planId: currentPlan.id }, {
-            onSuccess: newPlan => {
-                toast('Plan cloned')
-                queryClient.invalidateQueries(['trip', tripId])
-                router.push(`/trips/${tripId}/plans/${newPlan.id}`)
-            },
-        })
-        
-    }, [clonePlanMutation, currentPlan, queryClient, tripId, router])
-    
     const renamePlan = useCallback(async planId => {
         
         const newName = prompt('Enter a new plan name:')
@@ -276,7 +260,6 @@ const useTripDetailViewModel = () => {
         getTotalDaysPerSegment,
         getCumulativeDaysPerSegment,
         backupTrip,
-        clonePlan,
         renamePlan,
         deletePlan,
         

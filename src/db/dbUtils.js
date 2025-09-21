@@ -8,21 +8,21 @@ export const timestampSeconds = name => customType({
     },
     toDriver(value) {
         
-        console.log('toDriver input:', value, (value instanceof Date) ? 'date' : typeof value)
+        // console.log('toDriver input:', value, (value instanceof Date) ? 'date' : typeof value)
         const seconds = dayjs(value).unix()
         
         if (value instanceof Date) {
-            console.log('toDriver output (Date):', seconds, '->', lendbg(seconds))
+            // console.log('toDriver output (Date):', seconds, '->', lendbg(seconds))
             return seconds
         }
         
         if (typeof value === 'number') {
-            console.log('toDriver output (number):', seconds, '->', lendbg(seconds))
+            // console.log('toDriver output (number):', seconds, '->', lendbg(seconds))
             return seconds
         }
         
         if (typeof value === 'string') {
-            console.log('toDriver output (string):', seconds, '->', lendbg(seconds))
+            // console.log('toDriver output (string):', seconds, '->', lendbg(seconds))
             return seconds
         }
         
@@ -32,10 +32,10 @@ export const timestampSeconds = name => customType({
     },
     fromDriver(value) {
         
-        console.log('fromDriver input:', value, (value instanceof Date) ? 'date' : typeof value)
+        // console.log('fromDriver input:', value, (value instanceof Date) ? 'date' : typeof value)
         const date = dayjs.unix(value).toDate()
         
-        console.log('fromDriver output:', date)
+        // console.log('fromDriver output:', date)
         
         return date
         

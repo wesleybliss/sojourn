@@ -96,7 +96,9 @@ const Navbar = () => {
                         plan={vm.currentPlan}
                         onRenameTrip={vm.updateTrip('name')}
                         onBackupTrip={vm.backupTrip}
-                        onRenamePlan={vm.updatePlan('name')} />
+                        onRenamePlan={vm.updatePlan('name')}
+                        onDeletePlan={vm.deletePlan}
+                        onClonePlan={vm.clonePlan} />
                 )}
                 <ThemeToggle variant="ghost" />
                 {vm.user && <AccountMenu user={vm.user} />}
