@@ -221,6 +221,27 @@ const useTripDetailViewModel = () => {
         
     }, [plans, planId])
     
+    useEffect(() => {
+        
+        if (focusedLatLng) return
+        if (!segments?.length) return
+        
+        if (segments[0].coordsLat && segments[0].coordsLat) {
+            
+            const coords = {
+                lat: segments[0].coordsLat,
+                lng: segments[0].coordsLng,
+            }
+            
+            setFocusedLatLng(coords)
+            
+            console.log('Updated map ' + coords)
+            toast(`Updated map ${coords.lng},${coords.lat}`)
+            
+        }
+        
+    }, [focusedLatLng, segments])
+    
     return {
         
         // State

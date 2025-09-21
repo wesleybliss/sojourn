@@ -90,7 +90,7 @@ const TripDetail = () => {
                             getCumulativeDaysPerSegment={vm.getCumulativeDaysPerSegment} />
                     )}
                 </div>
-                {vm.showMap && <MapLibreMap latLng={vm.focusedLatLng} />}
+                {vm.showMap && <MapLibreMap latLng={console.log('latln', vm.focusedLatLng)||vm.focusedLatLng} />}
             </div>
             
             {vm.trip && vm.segments?.length > 0 && (

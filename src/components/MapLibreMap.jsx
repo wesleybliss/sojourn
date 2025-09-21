@@ -5,7 +5,7 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 const tileUrls = {
     demo: 'https://demotiles.maplibre.org/style.json',
     openMapTilesBright: 'https://openmaptiles.github.io/osm-bright-gl-style/style-cdn.json',
-    mapTilerBasic: `https://api.maptiler.com/maps/basic-v2/style.json?key=${process.env.MAP_TILER_KEY}`,
+    mapTilerBasic: `https://api.maptiler.com/maps/basic-v2/style.json?key=${process.env.NEXT_PUBLIC_MAP_TILER_KEY}`,
 }
 
 const MapLibreMap = ({
