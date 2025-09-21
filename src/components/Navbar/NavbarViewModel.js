@@ -4,7 +4,8 @@ import { useSession } from 'next-auth/react'
 import useDebug from '@/hooks/useDebug'
 import { useCallback } from 'react'
 import { toast } from 'sonner'
-import { useClonePlan, useRenamePlan, useUpdateTrip } from '@/lib/queries/trip'
+import { useClonePlan, useUpdateTrip } from '@/lib/queries/trip'
+import { useUpdatePlan } from '@/lib/queries/plans'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { useBackupTrips } from '@/lib/queries/backups'
@@ -32,14 +33,16 @@ const NavbarViewModel = () => {
         
         if (!currentTrip) return
         
-        const value = e?.target?.value ?? e
+        const value = (e?.target?.value ?? e).trim()
+        
+        if (!value?.length) return console.warn('updateTrip empty name')
         
         updateTripMutation.mutate({ tripId: currentTrip.id, [field]: value }, {
             onSuccess: () => {
                 toast('Trip updated')
                 
                 // @todo THIS makes bad refresh flicker
-                queryClient.invalidateQueries(['trip', currentTrip.id])
+                // queryClient.invalidateQueries(['trip', currentTrip.id])
             },
         })
         
@@ -59,22 +62,23 @@ const NavbarViewModel = () => {
         
     }, [currentTrip])
     
-    const renamePlan = useCallback(async planId => {
+    const updatePlan = useCallback(field => async e => {
         
         if (!currentTrip) return
+        if (!currentPlan) return
         
-        const newName = prompt('Enter a new plan name:')
+        const value = (e?.target?.value ?? e).trim()
         
-        if (!newName?.trim()) return
+        if (!value?.length) return console.warn('updatePlan empty name')
         
-        renamePlanMutation.mutate({ planId, name: newName }, {
+        updatePlanMutation.mutate({ planId: currentPlan.id, [field]: value }, {
             onSuccess: () => {
                 toast('Plan renamed')
-                queryClient.invalidateQueries(['trip', currentTrip.id])
+                // queryClient.invalidateQueries(['trip', currentTrip.id])
             },
         })
         
-    }, [renamePlanMutation, queryClient, currentTrip])
+    }, [updatePlanMutation, queryClient, currentTrip, currentPlan])
     
     const clonePlan = useCallback(async () => {
         
@@ -113,7 +117,7 @@ const NavbarViewModel = () => {
         
         // Methods
         updateTrip,
-        renamePlan,
+        updatePlan,
         clonePlan,
         
     }

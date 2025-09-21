@@ -71,7 +71,7 @@ export const useUpdateTrip = () => {
         },
         onSuccess: (data, variables) => {
             queryClient.invalidateQueries(['trip', variables.tripId])
-            queryClient.invalidateQueries(['trips'])
+            // queryClient.invalidateQueries(['trips'])
         },
     })
 }
@@ -154,6 +154,10 @@ export const useClonePlan = () => {
     })
 }
 
+/**
+ * @deprecated
+ * @returns {UseMutationResult<any, DefaultError, {readonly planId?: *, readonly name?: *}, unknown>}
+ */
 export const useRenamePlan = () => {
     const queryClient = useQueryClient()
     

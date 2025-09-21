@@ -69,11 +69,11 @@ export const useUpdatePlan = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async plan => {
-            const response = await fetch(`/api/plans/${plan.id}`, {
+        mutationFn: async ({ planId, ...planData }) => {
+            const response = await fetch(`/api/plans/${planId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(plan),
+                body: JSON.stringify(planData),
             })
             
             if (!response.ok) {

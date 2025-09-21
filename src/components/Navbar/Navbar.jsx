@@ -2,11 +2,11 @@
 
 import useNavbarViewModel from './NavbarViewModel'
 import ThemeToggle from '@/components/ThemeToggle'
-import { signOut } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import AccountMenu from '@/components/AccountMenu.jsx'
 import CurrentPlanSelector from '@/components/CurrentPlanSelector.jsx'
 import { cn } from '@/lib/utils.js'
+import Link from 'next/link'
 import EditableTextField from '@/components/EditableTextField.jsx'
 import { BookPlus, FolderPen } from 'lucide-react'
 import { toast } from 'sonner'
@@ -30,47 +30,47 @@ const Navbar = () => {
             
             <div className="flex items-center">
                 
-                <div className="text-sm font-bold">
-                    Trip Planner
+                <div className="text-sm font-bold opacity-70">
+                    <Link href="/">
+                        Trip Planner
+                    </Link>
                 </div>
                 
                 {vm.currentTrip && (<>
-                    <div className="mx-2">/</div>
-                    <div className="flex items-center justify-between group">
-                        <EditableTextField
-                            value={vm.currentTrip?.name || ''}
-                            placeholder="New trip"
-                            onChange={vm.updateTrip('name')}>
-                            <FolderPen className="opacity-0 group-hover:opacity-20 hover:opacity-100
-                                transition-opacity ease-in-out duration-300" />
-                        </EditableTextField>
+                    
+                    <div className="mx-2 text-sm">/</div>
+                    <div className="flex items-center justify-between group text-sm">
+                        <Link href={`/trips/${vm.currentTrip?.id}`}>
+                            {vm.currentTrip?.name || ''}
+                        </Link>
                     </div>
+                    
+                    <div className="ml-4">
+                        <CurrentPlanSelector />
+                    </div>
+                    
+                    <div className="ml-2">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline" title="Manage Plans">
+                                    <BookPlus />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56" align="start">
+                                <DropdownMenuLabel>Create a Plan</DropdownMenuLabel>
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem onClick={() => toast('@todo')}>
+                                        New
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={vm.clonePlan}>
+                                        Clone Current Plan
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                
                 </>)}
-                
-                <div className="ml-4">
-                    <CurrentPlanSelector />
-                </div>
-                
-                <div className="ml-2">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline" title="Manage Plans">
-                                <BookPlus />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-56" align="start">
-                            <DropdownMenuLabel>Create a Plan</DropdownMenuLabel>
-                            <DropdownMenuGroup>
-                                <DropdownMenuItem onClick={() => toast('@todo')}>
-                                    New
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={vm.clonePlan}>
-                                    Clone Current Plan
-                                </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
                 
                 {vm.shengenData && (
                     <div className="flex items-center gap-2 ml-4 text-sm">
@@ -95,7 +95,7 @@ const Navbar = () => {
                         trip={vm.currentTrip}
                         onRenameTrip={newTripName => vm.updateTrip('name')(newTripName)}
                         onBackupTrip={vm.backupTrip}
-                        onRenamePlan={newPlanName => vm.renamePlan(vm.currentPlan.id)}/>
+                        onRenamePlan={newPlanName => vm.updatePlan('name')(newPlanName)}/>
                 )}
                 <ThemeToggle variant="ghost" />
                 {vm.user && <AccountMenu user={vm.user} />}
