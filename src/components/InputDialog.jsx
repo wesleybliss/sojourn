@@ -27,10 +27,12 @@ const InputDialog = ({
     
     useEffect(() => {
         
-        if (initialValue?.length && !value.length)
+        if (!open)
+            setValue('')
+        else if (initialValue?.length && !value.length)
             setValue(initialValue)
         
-    }, [initialValue, value])
+    }, [open, initialValue, value])
     
     return (
         

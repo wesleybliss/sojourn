@@ -93,9 +93,10 @@ const Navbar = () => {
                 {vm.currentTrip && (
                     <TripActionsDropdown
                         trip={vm.currentTrip}
-                        onRenameTrip={newTripName => vm.updateTrip('name')(newTripName)}
+                        plan={vm.currentPlan}
+                        onRenameTrip={vm.updateTrip('name')}
                         onBackupTrip={vm.backupTrip}
-                        onRenamePlan={newPlanName => vm.updatePlan('name')(newPlanName)}/>
+                        onRenamePlan={vm.updatePlan('name')} />
                 )}
                 <ThemeToggle variant="ghost" />
                 {vm.user && <AccountMenu user={vm.user} />}

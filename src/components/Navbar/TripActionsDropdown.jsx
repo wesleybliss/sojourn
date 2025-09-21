@@ -56,7 +56,7 @@ const TripActionsDropdown = ({
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel className="opacity-60">Plans</DropdownMenuLabel>
                 <DropdownMenuGroup>
-                    <DropdownMenuItem onClick={onRenamePlan}>
+                    <DropdownMenuItem onClick={() => setRenamePlanDialogOpen(true)}>
                         Rename Plan
                     </DropdownMenuItem>
                 </DropdownMenuGroup>

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import db from '@/db/index.js'
-import { plans } from '@/db/schema.js'
+import db from '@/db/index'
+import * as schemas from '@/db/schema'
 import { eq } from 'drizzle-orm'
 
 /**
@@ -15,7 +15,7 @@ export async function GET(request, { params }) {
             return NextResponse.json({ success: false, error: 'Invalid plan ID' }, { status: 400 })
         }
         
-        const [plan] = await db.select().from(plans).where(eq(plans.id, parseInt(planId, 10)))
+        const [plan] = await db.select().from(schemas.plans).where(eq(schemas.plans.id, parseInt(planId, 10)))
         
         if (!plan)
             return NextResponse.json({ success: false, error: 'Plan not found' }, { status: 404 })
@@ -32,20 +32,28 @@ export async function GET(request, { params }) {
  * Updates a plan.
  */
 export async function PUT(request, { params }) {
+    
     try {
+        
         const { planId } = params
         
-        if (isNaN(parseInt(planId, 10))) {
+        if (isNaN(parseInt(planId, 10)))
             return NextResponse.json({ success: false, error: 'Invalid plan ID' }, { status: 400 })
-        }
+        
+        const [plan] = await db.select().from(schemas.plans).where(eq(schemas.plans.id, parseInt(planId, 10)))
+        
+        if (!plan)
+            return NextResponse.json({ success: false, error: 'Plan not found' }, { status: 404 })
         
         const planData = await request.json()
-        const { id, tripId, ...updatableData } = planData
         
         const [updatedPlan] = await db
-            .update(plans)
-            .set(updatableData)
-            .where(eq(plans.id, parseInt(planId, 10)))
+            .update(schemas.plans)
+            .set({
+                name: planData.name,
+                description: planData.description,
+            })
+            .where(eq(schemas.plans.id, parseInt(planId, 10)))
             .returning()
         
         if (!updatedPlan) {
@@ -72,8 +80,8 @@ export async function DELETE(request, { params }) {
         }
         
         const [deletedPlan] = await db
-            .delete(plans)
-            .where(eq(plans.id, parseInt(planId, 10)))
+            .delete(schemas.plans)
+            .where(eq(schemas.plans.id, parseInt(planId, 10)))
             .returning()
         
         if (!deletedPlan) {
