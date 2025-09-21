@@ -25,7 +25,6 @@ const NavbarViewModel = () => {
     const queryClient = useQueryClient()
     const updateTripMutation = useUpdateTrip()
     const backupMutation = useBackupTrips()
-    // const renamePlanMutation = useRenamePlan()
     const updatePlanMutation = useUpdatePlan()
     const clonePlanMutation = useClonePlan()
     
@@ -71,7 +70,7 @@ const NavbarViewModel = () => {
         
         if (!value?.length) return console.warn('updatePlan empty name')
         
-        updatePlanMutation.mutate({ planId: currentPlan.id, [field]: value }, {
+        updatePlanMutation.mutate({ tripId: currentTrip.id, planId: currentPlan.id, [field]: value }, {
             onSuccess: () => {
                 toast('Plan renamed')
                 // queryClient.invalidateQueries(['trip', currentTrip.id])

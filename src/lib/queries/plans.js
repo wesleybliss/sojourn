@@ -69,7 +69,7 @@ export const useUpdatePlan = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ planId, ...planData }) => {
+        mutationFn: async ({ tripId, planId, ...planData }) => {
             const response = await fetch(`/api/plans/${planId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -85,7 +85,13 @@ export const useUpdatePlan = () => {
             return response.json()
         },
         onSuccess: (data, variables) => {
-            queryClient.invalidateQueries({ queryKey: plansQueryKey(variables.tripId, true) })
+            try {
+                console.log('invalidateQueries', { variables, queryKey: plansQueryKey(variables.tripId, true) })
+            } catch (e) {
+                console.error('ehh', e)
+            }
+            
+            queryClient.invalidateQueries(['trip', ...plansQueryKey(variables.tripId, true)])
             /* queryClient.invalidateQueries({ queryKey: ['plans', variables.id] })
             queryClient.invalidateQueries({ queryKey: ['trips', variables.tripId] }) */
         },
