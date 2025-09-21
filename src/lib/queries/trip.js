@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import * as store from '@/store'
 import { updateItemArray } from '@/lib/storeUtils.js'
 
-const idToInt = obj => obj?.id ? parseInt(obj?.id, 10) : null
+// const idToInt = obj => obj?.id ? parseInt(obj?.id, 10) : null
 
 export const useTripQuery = tripId => useQuery({
     queryKey: ['trip', tripId],

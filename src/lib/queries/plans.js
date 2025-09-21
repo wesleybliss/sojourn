@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import * as store from '@/store'
-import { updateItemArray } from '@/lib/storeUtils.js'
+/* import * as store from '@/store'
+import { updateItemArray } from '@/lib/storeUtils.js' */
 
 const plansQueryKey = (tripId, exclusive = false) =>
     exclusive ? [tripId] : ['trips', tripId, 'plans']
@@ -69,7 +69,7 @@ export const useUpdatePlan = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ tripId, planId, ...planData }) => {
+        mutationFn: async ({ /* tripId, */ planId, ...planData }) => {
             const response = await fetch(`/api/plans/${planId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },

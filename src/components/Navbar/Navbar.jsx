@@ -2,22 +2,10 @@
 
 import useNavbarViewModel from './NavbarViewModel'
 import ThemeToggle from '@/components/ThemeToggle'
-import { Button } from '@/components/ui/button'
 import AccountMenu from '@/components/AccountMenu.jsx'
 import CurrentPlanSelector from '@/components/CurrentPlanSelector.jsx'
 import { cn } from '@/lib/utils.js'
 import Link from 'next/link'
-import EditableTextField from '@/components/EditableTextField.jsx'
-import { BookPlus, FolderPen } from 'lucide-react'
-import { toast } from 'sonner'
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import TripActionsDropdown from '@/components/Navbar/TripActionsDropdown.jsx'
 
 const Navbar = () => {

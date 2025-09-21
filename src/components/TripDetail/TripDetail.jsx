@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import TripHeader from '@/components/TripHeader.jsx'
 import SegmentsTable from '@/components/SegmentsTable.jsx'
 import SegmentsGanttChart from '@/components/SegmentsGanttChart.jsx'
 import MapLibreMap from '@/components/MapLibreMap.jsx'
