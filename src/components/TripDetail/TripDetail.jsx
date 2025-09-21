@@ -38,7 +38,7 @@ const TripDetail = () => {
         
         <div className="Trip w-full flex flex-col flex-1 gap-4 p-4">
             
-            <TripHeader vm={vm} />
+            {/* <TripHeader vm={vm} /> */}
             
             <header className="flex items-center justify-between">
                 <h3>Segments: {vm.segments?.length || '0'}</h3>

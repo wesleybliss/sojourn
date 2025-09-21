@@ -48,27 +48,6 @@ const Navbar = () => {
                     <div className="ml-4">
                         <CurrentPlanSelector />
                     </div>
-                    
-                    <div className="ml-2">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" title="Manage Plans">
-                                    <BookPlus />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-56" align="start">
-                                <DropdownMenuLabel>Create a Plan</DropdownMenuLabel>
-                                <DropdownMenuGroup>
-                                    <DropdownMenuItem onClick={() => toast('@todo')}>
-                                        New
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={vm.clonePlan}>
-                                        Clone Current Plan
-                                    </DropdownMenuItem>
-                                </DropdownMenuGroup>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
                 
                 </>)}
                 
