@@ -9,9 +9,18 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu.jsx'
 import { Button } from '@/components/ui/button'
-import { Ellipsis } from 'lucide-react'
+import {
+    Ellipsis,
+    FolderPen,
+    FilePlus,
+    FolderDown,
+    FilePen,
+    FileX,
+    Files,
+    ClipboardCopy,
+    MapPinPlus,
+} from 'lucide-react'
 import InputDialog from '@/components/InputDialog.jsx'
-import { toast } from 'sonner'
 
 const TripActionsDropdown = ({
     trip,
@@ -22,6 +31,8 @@ const TripActionsDropdown = ({
     onRenamePlan,
     onDeletePlan,
     onClonePlan,
+    onAddSegment,
+    onCopySegmentNames,
 } = {}) => {
     
     const [newTripName, setNewTripName] = useState('')
@@ -48,13 +59,14 @@ const TripActionsDropdown = ({
             </DropdownMenuTrigger>
             
             <DropdownMenuContent align="end">
+                
                 <DropdownMenuLabel className="opacity-60">Trips</DropdownMenuLabel>
                 <DropdownMenuGroup>
                     <DropdownMenuItem onClick={() => setRenameTripDialogOpen(true)}>
-                        Rename Trip
+                        <FolderPen className="text-yellow-500" /> Rename Trip
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={onBackupTrip}>
-                        Backup Trip
+                        <FolderDown className="text-violet-500" /> Backup Trip
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 
@@ -62,18 +74,30 @@ const TripActionsDropdown = ({
                 <DropdownMenuLabel className="opacity-60">Plans</DropdownMenuLabel>
                 <DropdownMenuGroup>
                     <DropdownMenuItem onClick={() => setCreatePlanDialogOpen(true)}>
-                        New Plan
+                        <FilePlus className="text-green-500" /> New Plan
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setRenamePlanDialogOpen(true)}>
-                        Rename Plan
+                        <FilePen className="text-yellow-500" /> Rename Plan
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={onDeletePlan}>
-                        Delete Plan
+                        <FileX className="text-red-500" /> Delete Plan
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={onClonePlan}>
-                        Clone Plan
+                        <Files className="text-slate-500" /> Clone Plan
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
+                
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel className="opacity-60">Segments</DropdownMenuLabel>
+                <DropdownMenuGroup>
+                    <DropdownMenuItem onClick={onAddSegment}>
+                        <MapPinPlus className="text-green-500" /> New Segment
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={onCopySegmentNames}>
+                        <ClipboardCopy className="text-slate-500" /> Copy Segment Names
+                    </DropdownMenuItem>
+                </DropdownMenuGroup>
+            
             </DropdownMenuContent>
         
         </DropdownMenu>

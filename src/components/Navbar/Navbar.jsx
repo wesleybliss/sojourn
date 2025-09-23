@@ -66,7 +66,9 @@ const Navbar = () => {
                         onCreatePlan={vm.createPlan}
                         onRenamePlan={vm.updatePlan('name')}
                         onDeletePlan={vm.deletePlan}
-                        onClonePlan={vm.clonePlan} />
+                        onClonePlan={vm.clonePlan}
+                        onAddSegment={vm.addSegment}
+                        onCopySegmentNames={vm.copySegmentNamesToClipboard} />
                 )}
                 <ThemeToggle variant="ghost" />
                 {vm.user && <AccountMenu user={vm.user} />}

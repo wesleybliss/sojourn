@@ -56,23 +56,6 @@ const TripDetail = () => {
                             onCheckedChange={vm.setShowMap}/>
                         <Label htmlFor="toggle-map">Show Map</Label>
                     </div>
-                    <Button
-                        variant="outline"
-                        onClick={vm.addSegment}>
-                        <MapPinPlus />
-                        New Segment
-                    </Button>
-                    <Button
-                        variant="outline"
-                        onClick={() => {
-                            if (!vm.currentTrip)
-                                return alert('No trip selected')
-                            
-                            getTripSegmentNames(vm.currentPlan)
-                            toast.success('Segment names copied to clipboard')
-                        }}>
-                        <ClipboardPenLine />
-                    </Button>
                 </div>
             </header>
             

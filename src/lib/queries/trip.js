@@ -122,11 +122,11 @@ export const useDeleteSegments = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async segmentIds => {
+        mutationFn: async ({ tripId, planId, segmentIds }) => {
             const res = await fetch('/api/segments', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ids: segmentIds }),
+                body: JSON.stringify({ tripId, planId, segmentIds }),
             })
             
             if (!res.ok) throw new Error('Failed to delete segments')

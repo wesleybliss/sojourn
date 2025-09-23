@@ -123,14 +123,18 @@ const useTripDetailViewModel = () => {
     
     const deleteSegments = useCallback(async ids => {
         
-        deleteSegmentsMutation.mutate(ids, {
+        deleteSegmentsMutation.mutate({
+            tripId,
+            planId,
+            segmentIds: ids,
+        }, {
             onSuccess: () => {
                 toast(`Segment${ids.length > 1 ? 's' : ''} deleted`)
                 queryClient.invalidateQueries(['trip', tripId])
             },
         })
         
-    }, [deleteSegmentsMutation, queryClient, tripId])
+    }, [deleteSegmentsMutation, queryClient, tripId, planId])
     
     const getTotalDaysPerSegment = segment => {
         

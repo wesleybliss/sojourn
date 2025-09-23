@@ -4,11 +4,13 @@ import { useSession } from 'next-auth/react'
 import useDebug from '@/hooks/useDebug'
 import { useCallback } from 'react'
 import { toast } from 'sonner'
-import { useDeletePlan, useUpdateTrip } from '@/lib/queries/trip'
+import { useAddSegment, useDeletePlan, useUpdateTrip } from '@/lib/queries/trip'
 import { useUpdatePlan, useClonePlan, useCreatePlan } from '@/lib/queries/plans'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { useBackupTrips } from '@/lib/queries/backups'
+import dayjs from 'dayjs'
+import { getTripSegmentNames } from '@/lib/utils.js'
 
 const NavbarViewModel = () => {
     
@@ -29,6 +31,7 @@ const NavbarViewModel = () => {
     const updatePlanMutation = useUpdatePlan()
     const deletePlanMutation = useDeletePlan()
     const clonePlanMutation = useClonePlan()
+    const addSegmentMutation = useAddSegment()
     
     const updateTrip = useCallback(field => async e => {
         
@@ -132,6 +135,39 @@ const NavbarViewModel = () => {
         
     }, [clonePlanMutation, currentPlan, queryClient, currentTrip, router])
     
+    const addSegment = useCallback(async () => {
+        
+        if (!currentTrip || !currentPlan)
+            return console.warn('addSegment no trip or plan selected')
+        
+        const newSegment = {
+            tripId: currentTrip.id,
+            planId: currentPlan.id,
+            startDate: dayjs().format('YYYY-MM-DD'),
+            endDate: dayjs().add(1, 'day').format('YYYY-MM-DD'),
+            name: 'New Segment',
+            color: 'bg-blue-500',
+        }
+        
+        addSegmentMutation.mutate(newSegment, {
+            onSuccess: () => {
+                toast('Segment added')
+                // queryClient.invalidateQueries(['trip', currentTrip.id])
+            },
+        })
+        
+    }, [currentPlan, addSegmentMutation, queryClient, currentTrip])
+    
+    const copySegmentNamesToClipboard = useCallback(async () => {
+        
+        if (!currentTrip || !currentPlan)
+            return console.warn('copySegmentNamesToClipboard no trip or plan selected')
+        
+        await getTripSegmentNames(currentPlan)
+        toast.success('Segment names copied to clipboard')
+        
+    }, [currentTrip, currentPlan])
+    
     useDebug()
     
     return {
@@ -159,6 +195,8 @@ const NavbarViewModel = () => {
         updatePlan,
         deletePlan,
         clonePlan,
+        addSegment,
+        copySegmentNamesToClipboard,
         
     }
     
