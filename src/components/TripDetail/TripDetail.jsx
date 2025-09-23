@@ -5,9 +5,7 @@ import SegmentsTable from '@/components/SegmentsTable'
 import SegmentsGanttChart from '@/components/SegmentsGanttChart'
 import MapLibreMap from '@/components/MapLibreMap'
 import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
-import { MapPinPlus, ChevronsUpDown, ClipboardPenLine } from 'lucide-react'
+import { ChevronsUpDown } from 'lucide-react'
 import {
     Collapsible,
     CollapsibleContent,
@@ -16,8 +14,6 @@ import {
 import LoadingSpinner from '@/components/LoadingSpinner'
 import useTripDetailViewModel from '@/components/TripDetail/useTripDetailViewModel.js'
 import CollapsibleTree from '@/components/CollapsibleTree'
-import { getTripSegmentNames } from '@/lib/utils'
-import { toast } from 'sonner'
 
 const TripDetail = () => {
     

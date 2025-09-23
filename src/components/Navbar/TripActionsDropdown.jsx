@@ -22,11 +22,8 @@ import {
     ListEnd,
     Map,
     MapPinPlus,
-    CheckIcon,
 } from 'lucide-react'
 import InputDialog from '@/components/InputDialog'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
 import useUIOptionsViewModel from '@/components/Navbar/UIOptionsViewModel'
 import useTripActionsViewModel from '@/components/Navbar/TripActionsViewModel'
 import usePlanActionsViewModel from '@/components/Navbar/PlanActionsViewModel'

@@ -218,7 +218,7 @@ const useTripDetailViewModel = () => {
     }, [tripId, planId, plans, router, hasRedirectedToPlan])
     
     useEffect(() => {
-        console.log('find', {id: tripId, lst: trips?.map(it => it.id)})
+        
         const nextTrip = tripId
             ? trips.find(t => t.id.toString() === tripId)
             : trips?.[0]

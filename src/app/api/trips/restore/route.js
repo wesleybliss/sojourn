@@ -3,7 +3,7 @@ import { getToken } from 'next-auth/jwt'
 import db from '@/db/index.js'
 import * as schemas from '@/db/schema.js'
 import dayjs from 'dayjs'
-import { isUserTripMember, withAuth } from '@/lib/auth.js'
+import { withAuth } from '@/lib/auth.js'
 
 const toDate = v => {
     
@@ -22,9 +22,19 @@ const toDate = v => {
     
 }
 
-export const POST = withAuth(async (request, { auth }) => {
+export const POST = withAuth(async request => {
     
     try {
+        
+        const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
+        
+        if (!token || !token.sub)
+            return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+        
+        const userId = parseInt(String(token.sub), 10)
+        
+        if (Number.isNaN(userId))
+            return NextResponse.json({ success: false, error: 'Invalid user ID' }, { status: 400 })
         
         const body = await request.json()
         
