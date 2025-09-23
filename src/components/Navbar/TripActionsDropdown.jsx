@@ -18,6 +18,7 @@ const TripActionsDropdown = ({
     plan,
     onRenameTrip,
     onBackupTrip,
+    onCreatePlan,
     onRenamePlan,
     onDeletePlan,
     onClonePlan,
@@ -25,6 +26,7 @@ const TripActionsDropdown = ({
     
     const [newTripName, setNewTripName] = useState('')
     const [renameTripDialogOpen, setRenameTripDialogOpen] = useState(false)
+    const [createPlanDialogOpen, setCreatePlanDialogOpen] = useState(false)
     const [renamePlanDialogOpen, setRenamePlanDialogOpen] = useState(false)
     
     useEffect(() => {
@@ -59,7 +61,7 @@ const TripActionsDropdown = ({
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel className="opacity-60">Plans</DropdownMenuLabel>
                 <DropdownMenuGroup>
-                    <DropdownMenuItem onClick={() => toast('@todo')}>
+                    <DropdownMenuItem onClick={() => setCreatePlanDialogOpen(true)}>
                         New Plan
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setRenamePlanDialogOpen(true)}>
@@ -85,6 +87,16 @@ const TripActionsDropdown = ({
             inputFieldLabel="New Trip Name"
             initialValue={trip?.name || ''}
             onSubmit={onRenameTrip} />
+        
+        <InputDialog
+            className="CreatePlanDialog"
+            open={createPlanDialogOpen}
+            setOpen={setCreatePlanDialogOpen}
+            title="Create Plan"
+            description="Create a new plan."
+            inputFieldLabel="New Plan Name"
+            initialValue={''}
+            onSubmit={onCreatePlan} />
         
         <InputDialog
             className="RenamePlanDialog"

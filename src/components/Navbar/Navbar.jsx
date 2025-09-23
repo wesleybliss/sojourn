@@ -63,6 +63,7 @@ const Navbar = () => {
                         plan={vm.currentPlan}
                         onRenameTrip={vm.updateTrip('name')}
                         onBackupTrip={vm.backupTrip}
+                        onCreatePlan={vm.createPlan}
                         onRenamePlan={vm.updatePlan('name')}
                         onDeletePlan={vm.deletePlan}
                         onClonePlan={vm.clonePlan} />

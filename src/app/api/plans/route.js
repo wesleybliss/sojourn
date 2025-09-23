@@ -1,37 +1,55 @@
 import { NextResponse } from 'next/server'
 import db from '@/db/index.js'
 import * as schemas from '@/db/schema.js'
+import { withAuth, isUserTripMember } from '@/lib/auth'
 
 /**
  * POST /api/plans
  * Creates a new plan.
  */
-export async function POST(request) {
+export const POST = withAuth(async (request, { auth }) => {
+    
     try {
-        const planData = await request.json()
         
-        const [newPlan] = await db
+        const body = await request.json()
+        
+        const tripId = body.tripId
+        const name = body.name?.trim() || ''
+        const description = body.description?.trim() || null
+        
+        if (!tripId)
+            return NextResponse.json(
+                { success: false, error: 'Param tripId is required' },
+                { status: 422 })
+        
+        if (!name)
+            return NextResponse.json(
+                { success: false, error: 'Name is required' },
+                { status: 422 })
+        
+        const isMember = await isUserTripMember(auth, tripId)
+        
+        if (!isMember)
+            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
+        
+        const [createdPlan] = await db
             .insert(schemas.plans)
             .values({
-                tripId: planData.tripId,
-                name: planData.name || 'Untitled Plan',
-                description: planData.description || '',
+                tripId: parseInt(tripId, 10),
+                name,
+                description,
             })
             .returning()
         
         return NextResponse.json(
-            {
-                success: true,
-                data: newPlan,
-                message: 'Plan created successfully',
-            },
-            { status: 201 },
-        )
-    } catch (error) {
-        console.error('Error creating plan:', error)
-        return NextResponse.json(
-            { success: false, error: error.message },
-            { status: 500 },
-        )
+            { success: true, data: createdPlan, message: 'Plan created successfully' },
+            { status: 201 })
+        
+    } catch (e) {
+        
+        console.error('Error creating plan:', e)
+        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        
     }
-}
+    
+})

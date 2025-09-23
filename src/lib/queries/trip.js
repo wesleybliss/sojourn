@@ -163,11 +163,14 @@ export const useRenamePlan = () => {
 }
 
 export const useDeletePlan = () => {
+    
     const queryClient = useQueryClient()
     
     return useMutation({
         mutationFn: async ({ planId }) => {
-            const res = await fetch(`/api/plans/${planId}`, { method: 'DELETE' })
+            const res = await fetch(`/api/plans/${planId}`, {
+                method: 'DELETE',
+            })
             
             if (!res.ok) throw new Error('Failed to delete plan')
             return res.json()
@@ -176,6 +179,7 @@ export const useDeletePlan = () => {
             queryClient.invalidateQueries(['trip', data.tripId])
         },
     })
+    
 }
 
 export const useDeleteTripMutation = () => {

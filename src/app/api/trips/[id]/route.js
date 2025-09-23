@@ -4,94 +4,106 @@ import {
     getTripWithDetails,
     updateTrip as updateTripQuery,
     deleteTrip as deleteTripQuery,
-} from '@/db/repos/trips.js'
+} from '@/db/repos/trips'
+import { withAuth, isUserTripMember } from '@/lib/auth'
 
 /**
  * GET /api/trips/[id]
  * Returns a single trip by ID.
  */
-export async function GET(request, opts) {
-    
-    const params = await opts.params
+export const GET = withAuth(async (request, { params, auth }) => {
     
     try {
+        
+        // const { id, withDetails } = await params
+        const { id } = await params
         const { searchParams } = new URL(request.url)
-        const withDetails = searchParams.get('withDetails') === 'true'
-        const id = parseInt(params.id, 10)
+        const withDetails = searchParams.get('withDetails')
         
-        let trip
+        const isMember = await isUserTripMember(auth, id)
         
-        if (withDetails) {
-            trip = await getTripWithDetails(id)
-        } else {
-            trip = await getTripById(id)
-        }
+        if (!isMember)
+            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
         
-        if (!trip) {
+        const trip = withDetails
+            ? await getTripWithDetails(id)
+            : await getTripById(id)
+        
+        if (!trip)
             return NextResponse.json(
                 { success: false, error: 'Trip not found' },
-                { status: 404 },
-            )
-        }
+                { status: 404 })
         
         return NextResponse.json({
             success: true,
             data: trip,
         })
-    } catch (error) {
-        console.error(`Error getting trip ${params.id}:`, error)
+        
+    } catch (e) {
+        
+        console.error(`Error getting trip ${params.id}:`, e)
         return NextResponse.json(
-            { success: false, error: error.message },
-            { status: 500 },
-        )
+            { success: false, error: e.message },
+            { status: 500 })
+        
     }
-}
+    
+})
 
 /**
  * PUT /api/trips/[id]
  * Updates a trip by ID.
  */
-export async function PUT(request, opts) {
-    
-    const params = await opts.params
+export const PUT = withAuth(async (request, { params, auth }) => {
     
     try {
-        const tripData = await request.json()
-        const id = parseInt(params.id, 10)
         
-        const updatedTrip = await updateTripQuery(id, tripData)
+        const { id } = await params
+        const body = await request.json()
         
-        if (!updatedTrip) {
+        const isMember = await isUserTripMember(auth, id)
+        
+        if (!isMember)
+            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
+        
+        const updatedTrip = await updateTripQuery(id, body)
+        
+        if (!updatedTrip)
             return NextResponse.json(
                 { success: false, error: 'Trip not found' },
-                { status: 404 },
-            )
-        }
+                { status: 404 })
         
         return NextResponse.json({
             success: true,
             data: updatedTrip,
             message: 'Trip updated successfully',
         })
-    } catch (error) {
-        console.error(`Error updating trip ${params.id}:`, error)
+        
+    } catch (e) {
+        
+        console.error(`Error updating trip ${params.id}:`, e)
         return NextResponse.json(
-            { success: false, error: error.message },
-            { status: 500 },
-        )
+            { success: false, error: e.message },
+            { status: 500 })
+        
     }
-}
+    
+})
 
 /**
  * DELETE /api/trips/[id]
  * Deletes a trip by ID.
  */
-export async function DELETE(request, opts) {
-    
-    const params = await opts.params
+export const DELETE = withAuth(async (request, { params, auth }) => {
     
     try {
-        const id = parseInt(params.id, 10)
+        
+        const { id } = await params
+        
+        const isMember = await isUserTripMember(auth, id)
+        
+        if (!isMember)
+            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
         
         await deleteTripQuery(id)
         
@@ -99,11 +111,14 @@ export async function DELETE(request, opts) {
             success: true,
             message: 'Trip deleted successfully',
         })
-    } catch (error) {
-        console.error(`Error deleting trip ${params.id}:`, error)
+        
+    } catch (e) {
+        
+        console.error(`Error deleting trip ${params.id}:`, e)
         return NextResponse.json(
-            { success: false, error: error.message },
-            { status: 500 },
-        )
+            { success: false, error: e.message },
+            { status: 500 })
+        
     }
-}
+    
+})

@@ -7,6 +7,7 @@ import {
 import Ajv from 'ajv'
 import tripsWithPlansSchema from '@/lib/json-schemas/trip-backup.jsonschema.js'
 import dayjs from 'dayjs'
+import { isUserTripMember, withAuth } from '@/lib/auth.js'
 
 const ajvDebug = true
 
@@ -60,21 +61,16 @@ const transformTrip = trip => ({
     segments: Array.isArray(trip.segments) ? trip.segments.map(transformSegment) : [],
 })
 
-export async function POST(request/* , opts */) {
+export const POST = withAuth(async (request, { auth }) => {
     
     try {
         
-        const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
-        
-        if (!token || !token.sub)
-            return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
-        
-        const userId = parseInt(String(token.sub), 10)
-        
-        if (Number.isNaN(userId))
-            return NextResponse.json({ success: false, error: 'Invalid user ID' }, { status: 400 })
-        
         const body = await request.json()
+        
+        const isMember = await isUserTripMember(auth, body.tripId)
+        
+        if (!isMember)
+            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
         
         const ajvProps = ajvDebug ? { allErrors: true, verbose: true } : {}
         
@@ -149,4 +145,4 @@ export async function POST(request/* , opts */) {
         
     }
     
-}
+})

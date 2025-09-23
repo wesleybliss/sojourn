@@ -44,10 +44,10 @@ export const useCreatePlan = () => {
     
     return useMutation({
         mutationFn: async ({ tripId, ...planData }) => {
-            const response = await fetch(`/api/trips/${tripId}/plans`, {
+            const response = await fetch('/api/plans', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(planData),
+                body: JSON.stringify({ tripId, ...planData }),
             })
             
             if (!response.ok) {
@@ -59,8 +59,8 @@ export const useCreatePlan = () => {
             return await response.json()
         },
         onSuccess: (data, variables) => {
-            queryClient.invalidateQueries({ queryKey: plansQueryKey(variables.tripId) })
-            queryClient.invalidateQueries({ queryKey: ['trips', variables.tripId] })
+            // queryClient.invalidateQueries({ queryKey: plansQueryKey(variables.tripId) })
+            queryClient.invalidateQueries(['trip', variables.tripId])
         },
     })
 }
@@ -116,9 +116,7 @@ export const useDeletePlan = () => {
             return plan
         },
         onSuccess: (data, variables) => {
-            queryClient.invalidateQueries({ queryKey: plansQueryKey(variables.tripId) })
-            queryClient.invalidateQueries({ queryKey: ['plans', variables.id] })
-            queryClient.invalidateQueries({ queryKey: ['trips', variables.tripId] })
+            queryClient.invalidateQueries(['trip', variables.tripId])
         },
     })
 }

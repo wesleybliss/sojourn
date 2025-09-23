@@ -5,7 +5,7 @@ import useDebug from '@/hooks/useDebug'
 import { useCallback } from 'react'
 import { toast } from 'sonner'
 import { useDeletePlan, useUpdateTrip } from '@/lib/queries/trip'
-import { useUpdatePlan, useClonePlan } from '@/lib/queries/plans'
+import { useUpdatePlan, useClonePlan, useCreatePlan } from '@/lib/queries/plans'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { useBackupTrips } from '@/lib/queries/backups'
@@ -25,6 +25,7 @@ const NavbarViewModel = () => {
     const queryClient = useQueryClient()
     const updateTripMutation = useUpdateTrip()
     const backupMutation = useBackupTrips()
+    const createPlanMutation = useCreatePlan()
     const updatePlanMutation = useUpdatePlan()
     const deletePlanMutation = useDeletePlan()
     const clonePlanMutation = useClonePlan()
@@ -61,6 +62,22 @@ const NavbarViewModel = () => {
         }
         
     }, [currentTrip])
+    
+    const createPlan = useCallback(async name => {
+        
+        if (!currentTrip) return
+        
+        if (!name?.length) return console.warn('createPlan empty name')
+        
+        createPlanMutation.mutate({ tripId: currentTrip.id, name }, {
+            onSuccess: newPlan => {
+                toast('Plan created')
+                // queryClient.invalidateQueries(['trip', currentTrip.id])
+                router.push(`/trips/${currentTrip.id}/plans/${newPlan.data.id}`)
+            },
+        })
+        
+    }, [createPlanMutation, queryClient, currentTrip, currentPlan, router])
     
     const updatePlan = useCallback(field => async e => {
         
@@ -138,6 +155,7 @@ const NavbarViewModel = () => {
         
         // Methods
         updateTrip,
+        createPlan,
         updatePlan,
         deletePlan,
         clonePlan,
