@@ -16,7 +16,7 @@ import { Switch } from '@/components/ui/switch'
 import DatePicker from '@/components/DatePicker'
 import TailwindPrimaryColorPicker from '@/components/TailwindPrimaryColorPicker'
 import ConfirmDeleteSegmentsDialog from './ConfirmDeleteSegmentsDialog'
-import { MoveRight, SquareArrowUp, SquareArrowDown, Globe } from 'lucide-react'
+import { CalendarCheck, CalendarRange, Plane, BedDouble, SquareArrowUp, SquareArrowDown, Globe } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import dayjs from 'dayjs'
 
@@ -60,19 +60,35 @@ const SegmentsTable = ({
                     </TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead>Start Date</TableHead>
-                    <TableHead>{/* Arrow */}</TableHead>
                     <TableHead>End Date</TableHead>
-                    <TableHead>Color</TableHead>
-                    <TableHead>Days</TableHead>
-                    <TableHead>* Days</TableHead>
-                    <TableHead>Flight</TableHead>
-                    <TableHead>Stay</TableHead>
                     <TableHead>
-                        <div className="" title="Shengen Region">
-                            <Globe />
+                        <div
+                            className="mx-auto size-6 rounded-full bg-conic/decreasing 
+                                from-violet-700 via-lime-300 to-violet-700 opacity-60"
+                            title="Segment Color" />
+                    </TableHead>
+                    <TableHead>
+                        <CalendarCheck className="mx-auto" title="Segment Days"/>
+                    </TableHead>
+                    <TableHead>
+                        <CalendarRange className="mx-auto" title="Cumulative Days" />
+                    </TableHead>
+                    <TableHead>
+                        <div title="Flight Booked">
+                            <Plane />
                         </div>
                     </TableHead>
-                    <TableHead>&nbsp;</TableHead>
+                    <TableHead>
+                        <div title="Stay Booked">
+                            <BedDouble />
+                        </div>
+                    </TableHead>
+                    <TableHead>
+                        <div title="Shengen Region">
+                            <Globe size="1.5rem" />
+                        </div>
+                    </TableHead>
+                    <TableHead>{/* Delete Icon */}&nbsp;</TableHead>
                 </TableRow>
                 {anyChecked && (
                     <TableRow>
@@ -80,17 +96,17 @@ const SegmentsTable = ({
                         <TableHead>&nbsp;</TableHead>
                         <TableHead>&nbsp;</TableHead>
                         <TableHead>&nbsp;</TableHead>
-                        <TableHead>&nbsp;</TableHead>
                         <TableHead>
                             <div className={cn(
                                 'flex flex-col items-center justify-center',
-                                'border border-secondary rounded-md',
+                                'border border-slate-400 rounded-md',
                             )}>
                                 <TailwindPrimaryColorPicker
                                     value="bg-rainbow-right"
                                     onChange={updateCheckedSegments('color')} />
                             </div>
                         </TableHead>
+                        <TableHead>&nbsp;</TableHead>
                         <TableHead>&nbsp;</TableHead>
                         <TableHead>&nbsp;</TableHead>
                         <TableHead>&nbsp;</TableHead>
@@ -133,12 +149,6 @@ const SegmentsTable = ({
                                 buttonVariant="link"
                                 date={it.startDate || Date.now()}
                                 onSelect={updateSegment(it.id, 'startDate')} />
-                        </TableCell>
-                        
-                        <TableCell>
-                            <div className="flex items-center gap-4">
-                                <MoveRight className="opacity-30" />
-                            </div>
                         </TableCell>
                         
                         <TableCell>
@@ -193,12 +203,14 @@ const SegmentsTable = ({
                                 onConfirm={() => deleteSegments([it.id])} />
                             <Button
                                 className="opacity-50 hover:opacity-100"
-                                variant="ghost">
+                                variant="ghost"
+                                title="Move segment up">
                                 <SquareArrowUp />
                             </Button>
                             <Button
                                 className="opacity-50 hover:opacity-100"
-                                variant="ghost">
+                                variant="ghost"
+                                title="Move segment down">
                                 <SquareArrowDown />
                             </Button>
                         </TableCell>
