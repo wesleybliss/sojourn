@@ -29,7 +29,7 @@ export const importTripStatus = createWire(null)
 export const importTripProgressMax = createWire(null)
 export const importTripProgressValue = createWire(null)
 
-export const showMap = createPersistedWire(keys.showMap, false)
+export const showMap = createWire(false)
 
 //
 

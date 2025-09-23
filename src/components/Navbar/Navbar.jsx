@@ -1,12 +1,13 @@
 'use client'
 
 import useNavbarViewModel from './NavbarViewModel'
+import { cn } from '@/lib/utils'
 import ThemeToggle from '@/components/ThemeToggle'
 import AccountMenu from '@/components/AccountMenu.jsx'
 import CurrentPlanSelector from '@/components/CurrentPlanSelector.jsx'
-import { cn } from '@/lib/utils.js'
-import Link from 'next/link'
 import TripActionsDropdown from '@/components/Navbar/TripActionsDropdown.jsx'
+import Link from 'next/link'
+import { Badge } from '@/components/ui/badge'
 
 const Navbar = () => {
     
@@ -39,8 +40,12 @@ const Navbar = () => {
                 
                 </>)}
                 
+                <Badge className="ml-4" variant="secondary">
+                    {vm.segments?.length || '0'} Segments
+                </Badge>
+                
                 {vm.shengenData && (
-                    <div className="flex items-center gap-2 ml-4 text-sm">
+                    <Badge className="flex items-center gap-2 ml-4" variant="secondary" title="Shengen Allowance">
                         <div>{vm.shengenData?.startDate?.format('MMM D, YYYY')}</div>
                         <div>&rarr;</div>
                         <div className={cn({
@@ -51,7 +56,7 @@ const Navbar = () => {
                         <div className="italic">
                             {vm.shengenData?.totalDays || '0'} days, {vm.shengenData?.remainingDays || '0'} remaining
                         </div>
-                    </div>
+                    </Badge>
                 )}
             
             </div>
@@ -60,15 +65,7 @@ const Navbar = () => {
                 {vm.currentTrip && (
                     <TripActionsDropdown
                         trip={vm.currentTrip}
-                        plan={vm.currentPlan}
-                        onRenameTrip={vm.updateTrip('name')}
-                        onBackupTrip={vm.backupTrip}
-                        onCreatePlan={vm.createPlan}
-                        onRenamePlan={vm.updatePlan('name')}
-                        onDeletePlan={vm.deletePlan}
-                        onClonePlan={vm.clonePlan}
-                        onAddSegment={vm.addSegment}
-                        onCopySegmentNames={vm.copySegmentNamesToClipboard} />
+                        plan={vm.currentPlan} />
                 )}
                 <ThemeToggle variant="ghost" />
                 {vm.user && <AccountMenu user={vm.user} />}

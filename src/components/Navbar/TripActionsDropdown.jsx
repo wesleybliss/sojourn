@@ -1,13 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuLabel,
     DropdownMenuGroup,
     DropdownMenuItem,
+    DropdownMenuCheckboxItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu.jsx'
+} from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import {
     Ellipsis,
@@ -18,34 +19,35 @@ import {
     FileX,
     Files,
     ClipboardCopy,
+    ListEnd,
+    Map,
     MapPinPlus,
+    CheckIcon,
 } from 'lucide-react'
-import InputDialog from '@/components/InputDialog.jsx'
+import InputDialog from '@/components/InputDialog'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
+import useUIOptionsViewModel from '@/components/Navbar/UIOptionsViewModel'
+import useTripActionsViewModel from '@/components/Navbar/TripActionsViewModel'
+import usePlanActionsViewModel from '@/components/Navbar/PlanActionsViewModel'
+import useSegmentActionsViewModel from '@/components/Navbar/SegmentActionsViewModel'
 
 const TripActionsDropdown = ({
     trip,
     plan,
-    onRenameTrip,
-    onBackupTrip,
-    onCreatePlan,
-    onRenamePlan,
-    onDeletePlan,
-    onClonePlan,
-    onAddSegment,
-    onCopySegmentNames,
 } = {}) => {
     
-    const [newTripName, setNewTripName] = useState('')
-    const [renameTripDialogOpen, setRenameTripDialogOpen] = useState(false)
-    const [createPlanDialogOpen, setCreatePlanDialogOpen] = useState(false)
-    const [renamePlanDialogOpen, setRenamePlanDialogOpen] = useState(false)
+    const uiOptionsViewModel = useUIOptionsViewModel()
+    const tripActionsViewModel = useTripActionsViewModel(trip, plan)
+    const planActionsViewModel = usePlanActionsViewModel(trip, plan)
+    const segmentActionsViewModel = useSegmentActionsViewModel(trip, plan)
     
     useEffect(() => {
         
-        if (trip?.name && !newTripName.length)
-            setNewTripName(trip.name)
+        if (trip?.name && !tripActionsViewModel.newTripName.length)
+            tripActionsViewModel.setNewTripName(trip.name)
         
-    }, [trip, newTripName])
+    }, [trip, tripActionsViewModel.newTripName])
     
     return (<>
         
@@ -62,10 +64,10 @@ const TripActionsDropdown = ({
                 
                 <DropdownMenuLabel className="opacity-60">Trips</DropdownMenuLabel>
                 <DropdownMenuGroup>
-                    <DropdownMenuItem onClick={() => setRenameTripDialogOpen(true)}>
+                    <DropdownMenuItem onClick={() => tripActionsViewModel.setRenameTripDialogOpen(true)}>
                         <FolderPen className="text-yellow-500" /> Rename Trip
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={onBackupTrip}>
+                    <DropdownMenuItem onClick={tripActionsViewModel.backupTrip}>
                         <FolderDown className="text-violet-500" /> Backup Trip
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
@@ -73,16 +75,16 @@ const TripActionsDropdown = ({
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel className="opacity-60">Plans</DropdownMenuLabel>
                 <DropdownMenuGroup>
-                    <DropdownMenuItem onClick={() => setCreatePlanDialogOpen(true)}>
+                    <DropdownMenuItem onClick={() => planActionsViewModel.setCreatePlanDialogOpen(true)}>
                         <FilePlus className="text-green-500" /> New Plan
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setRenamePlanDialogOpen(true)}>
+                    <DropdownMenuItem onClick={() => planActionsViewModel.setRenamePlanDialogOpen(true)}>
                         <FilePen className="text-yellow-500" /> Rename Plan
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={onDeletePlan}>
+                    <DropdownMenuItem onClick={planActionsViewModel.deletePlan}>
                         <FileX className="text-red-500" /> Delete Plan
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={onClonePlan}>
+                    <DropdownMenuItem onClick={planActionsViewModel.clonePlan}>
                         <Files className="text-slate-500" /> Clone Plan
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
@@ -90,12 +92,36 @@ const TripActionsDropdown = ({
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel className="opacity-60">Segments</DropdownMenuLabel>
                 <DropdownMenuGroup>
-                    <DropdownMenuItem onClick={onAddSegment}>
+                    <DropdownMenuItem onClick={segmentActionsViewModel.addSegment}>
                         <MapPinPlus className="text-green-500" /> New Segment
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={onCopySegmentNames}>
+                    <DropdownMenuItem onClick={segmentActionsViewModel.copySegmentNamesToClipboard}>
                         <ClipboardCopy className="text-slate-500" /> Copy Segment Names
                     </DropdownMenuItem>
+                </DropdownMenuGroup>
+                
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel className="opacity-60">Options</DropdownMenuLabel>
+                <DropdownMenuGroup>
+                    {/* <DropdownMenuItem onClick={uiOptionsViewModel.toggleCascadeEnabled}>
+                        <ListEnd className="text-teal-500" />
+                        <Switch
+                            id="toggle-cascade"
+                            checked={uiOptionsViewModel.cascadeEnabled} />
+                        <Label htmlFor="toggle-cascade">Cascade</Label>
+                    </DropdownMenuItem>*/}
+                    <DropdownMenuCheckboxItem
+                        checked={uiOptionsViewModel.cascadeEnabled}
+                        onCheckedChange={uiOptionsViewModel.setCascadeEnabled}
+                        alignCheckboxRight>
+                        <ListEnd className="text-teal-500" /> Cascade
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem
+                        checked={uiOptionsViewModel.showMap}
+                        onCheckedChange={uiOptionsViewModel.setShowMap}
+                        alignCheckboxRight>
+                        <Map className="text-amber-500" /> Show Map
+                    </DropdownMenuCheckboxItem>
                 </DropdownMenuGroup>
             
             </DropdownMenuContent>
@@ -104,33 +130,33 @@ const TripActionsDropdown = ({
         
         <InputDialog
             className="RenameTripDialog"
-            open={renameTripDialogOpen}
-            setOpen={setRenameTripDialogOpen}
+            open={tripActionsViewModel.renameTripDialogOpen}
+            setOpen={tripActionsViewModel.setRenameTripDialogOpen}
             title="Rename Trip"
             description="Update the trip name."
             inputFieldLabel="New Trip Name"
             initialValue={trip?.name || ''}
-            onSubmit={onRenameTrip} />
+            onSubmit={tripActionsViewModel.updateTrip('name')} />
         
         <InputDialog
             className="CreatePlanDialog"
-            open={createPlanDialogOpen}
-            setOpen={setCreatePlanDialogOpen}
+            open={planActionsViewModel.createPlanDialogOpen}
+            setOpen={planActionsViewModel.setCreatePlanDialogOpen}
             title="Create Plan"
             description="Create a new plan."
             inputFieldLabel="New Plan Name"
             initialValue={''}
-            onSubmit={onCreatePlan} />
+            onSubmit={planActionsViewModel.createPlan} />
         
         <InputDialog
             className="RenamePlanDialog"
-            open={renamePlanDialogOpen}
-            setOpen={setRenamePlanDialogOpen}
+            open={planActionsViewModel.renamePlanDialogOpen}
+            setOpen={planActionsViewModel.setRenamePlanDialogOpen}
             title="Rename Plan"
             description="Update the plan name."
             inputFieldLabel="New Plan Name"
             initialValue={plan?.name || ''}
-            onSubmit={onRenamePlan} />
+            onSubmit={planActionsViewModel.updatePlan('name')} />
     
     </>)
     

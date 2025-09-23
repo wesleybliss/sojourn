@@ -10,6 +10,7 @@ export const useTripsQuery = (opts = {}) => useQuery({
             return it
         }),
     enabled: true,
+    keepPreviousData: true,
     retry: 3,
     ...opts,
 })

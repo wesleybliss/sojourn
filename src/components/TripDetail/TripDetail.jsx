@@ -1,22 +1,22 @@
 'use client'
 
 import { useState } from 'react'
-import SegmentsTable from '@/components/SegmentsTable.jsx'
-import SegmentsGanttChart from '@/components/SegmentsGanttChart.jsx'
-import MapLibreMap from '@/components/MapLibreMap.jsx'
-import { Button } from '@/components/ui/button.jsx'
-import { Label } from '@/components/ui/label.jsx'
-import { Switch } from '@/components/ui/switch.jsx'
+import SegmentsTable from '@/components/SegmentsTable'
+import SegmentsGanttChart from '@/components/SegmentsGanttChart'
+import MapLibreMap from '@/components/MapLibreMap'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import { MapPinPlus, ChevronsUpDown, ClipboardPenLine } from 'lucide-react'
 import {
     Collapsible,
     CollapsibleContent,
     CollapsibleTrigger,
-} from '@/components/ui/collapsible.jsx'
-import LoadingSpinner from '@/components/LoadingSpinner.jsx'
+} from '@/components/ui/collapsible'
+import LoadingSpinner from '@/components/LoadingSpinner'
 import useTripDetailViewModel from '@/components/TripDetail/useTripDetailViewModel.js'
-import CollapsibleTree from '@/components/CollapsibleTree.jsx'
-import { getTripSegmentNames } from '@/lib/utils.js'
+import CollapsibleTree from '@/components/CollapsibleTree'
+import { getTripSegmentNames } from '@/lib/utils'
 import { toast } from 'sonner'
 
 const TripDetail = () => {
@@ -39,8 +39,7 @@ const TripDetail = () => {
             
             {/* <TripHeader vm={vm} /> */}
             
-            <header className="flex items-center justify-between">
-                <h3>Segments: {vm.segments?.length || '0'}</h3>
+            {/* <header className="flex items-center justify-between">
                 <div className="flex items-center justify-end gap-4">
                     <div className="flex items-center space-x-2">
                         <Switch
@@ -57,7 +56,7 @@ const TripDetail = () => {
                         <Label htmlFor="toggle-map">Show Map</Label>
                     </div>
                 </div>
-            </header>
+            </header> */}
             
             <div className="grid grid-cols-2 gap-2">
                 <div className="flex flex-col gap-2 w-fit">

@@ -28,6 +28,7 @@ export const useTripQuery = tripId => useQuery({
         
     },
     enabled: !!tripId,
+    keepPreviousData: true,
     retry: 0,
 })
 

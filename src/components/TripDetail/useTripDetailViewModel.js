@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
-import { useWire, useWireValue } from '@forminator/react-wire'
+import { useWire, useWireState, useWireValue } from '@forminator/react-wire'
 import * as store from '@/store'
 import { useParams, useRouter } from 'next/navigation'
 import {
@@ -39,14 +39,17 @@ const useTripDetailViewModel = () => {
     const [isLoadingInitial, setIsLoadingInitial] = useState(true)
     const [isEditingName, setIsEditingName] = useState(false)
     const [focusedLatLng, setFocusedLatLng] = useState(undefined)
-    const [showMap, setShowMap] = useState(false)
     const [cascadeEnabled, setCascadeEnabled] = useState(false)
     const [hasRedirectedToPlan, setHasRedirectedToPlan] = useState(false)
+    
+    const [showMap, setShowMap] = useWireState(store.showMap)
     
     const isLoading = useMemo(() => (
         isLoadingInitial || tripIsLoading
     ), [isLoadingInitial, tripIsLoading])
     
+    const trips = useWireValue(store.trips)
+    const currentTripId = useWire(store.currentTripId)
     const plans = useWireValue(store.currentPlans)
     const currentPlanId = useWire(store.currentPlanId)
     const currentPlan = useWireValue(store.currentPlan)
@@ -215,15 +218,22 @@ const useTripDetailViewModel = () => {
     }, [tripId, planId, plans, router, hasRedirectedToPlan])
     
     useEffect(() => {
+        console.log('find', {id: tripId, lst: trips?.map(it => it.id)})
+        const nextTrip = tripId
+            ? trips.find(t => t.id.toString() === tripId)
+            : trips?.[0]
         
-        const value = planId
+        if (nextTrip)
+            currentTripId.setValue(nextTrip.id)
+        
+        const nextPlan = planId
             ? plans.find(p => p.id.toString() === planId)
             : plans?.[0]
         
-        if (value)
-            currentPlanId.setValue(value.id)
+        if (nextPlan)
+            currentPlanId.setValue(nextPlan.id)
         
-    }, [plans, planId])
+    }, [trips, tripId, plans, planId])
     
     useEffect(() => {
         

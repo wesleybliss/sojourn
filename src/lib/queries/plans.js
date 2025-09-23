@@ -19,6 +19,7 @@ export const usePlansQuery = (tripId, opts = {}) => useQuery({
         return await response.json()
     },
     enabled: !!tripId,
+    keepPreviousData: true,
     ...opts,
 })
 
@@ -36,6 +37,7 @@ export const usePlanQuery = (planId, opts = {}) => useQuery({
         return await response.json()
     },
     enabled: !!planId,
+    keepPreviousData: true,
     ...opts,
 })
 
