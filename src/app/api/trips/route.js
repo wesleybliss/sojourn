@@ -5,6 +5,11 @@ import {
     getTripsWithSegmentCountByUserId,
     createTrip as createTripQuery,
 } from '@/db/repos/trips.js'
+import { createPlan } from '@/db/repos/plans.js'
+import { createSegment } from '@/db/repos/segments.js'
+import db from '@/db/index'
+import * as schemas from '@/db/schema'
+import dayjs from 'dayjs'
 
 /**
  * GET /api/trips
@@ -75,13 +80,43 @@ export async function POST(request) {
         
         const tripData = await request.json()
         
-        const newTrip = await createTripQuery({
+        const newTripPayload = {
             userId,
             name: tripData.name || 'Untitled Trip',
             description: tripData.description || '',
             startDate: tripData.startDate || null,
             endDate: tripData.endDate || null,
             coverImageUrl: tripData.coverImageUrl || null,
+        }
+        
+        const newTrip = await db.transaction(async tx => {
+            
+            const trip = await createTripQuery(newTripPayload, tx)
+            
+            await tx.insert(schemas.userTrips).values({
+                userId,
+                tripId: trip.id,
+            })
+            
+            const plan = await createPlan({
+                tripId: trip.id,
+                name: dayjs().format('MMMM YYYY'),
+                description: '',
+            }, tx)
+            
+            await createSegment({
+                tripId: trip.id,
+                planId: plan.id,
+                name: 'First Stop',
+                description: '',
+                // order: 1,
+                startDate: dayjs().format('YYYY-MM-DD'),
+                endDate: dayjs().add('5', 'day').format('YYYY-MM-DD'),
+                color: 'bg-blue-500',
+            }, tx)
+            
+            return trip
+            
         })
         
         return NextResponse.json(
@@ -90,16 +125,14 @@ export async function POST(request) {
                 data: newTrip,
                 message: 'Trip created successfully',
             },
-            { status: 201 },
-        )
+            { status: 201 })
         
     } catch (e) {
         
         console.error('Error creating trip:', e)
         return NextResponse.json(
             { success: false, error: e.message },
-            { status: 500 },
-        )
+            { status: 500 })
         
     }
     

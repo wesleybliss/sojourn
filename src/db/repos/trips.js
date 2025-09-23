@@ -258,11 +258,12 @@ export const deleteSegments = async ids => {
 }
 
 // Create a new trip
-export const createTrip = async tripData => {
+export const createTrip = async (tripData, tx = null) => {
     try {
-        const [newTrip] = await db
+        const [newTrip] = await (tx || db)
             .insert(schemas.trips)
             .values({
+                userId: tripData.userId,
                 name: tripData.name,
                 description: tripData.description,
                 startDate: tripData.startDate,

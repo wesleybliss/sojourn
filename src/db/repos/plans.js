@@ -71,9 +71,9 @@ export const getPlanById = async id => {
 }
 
 // Create a new plan
-export const createPlan = async planData => {
+export const createPlan = async (planData, tx) => {
     try {
-        const [newPlan] = await db
+        const [newPlan] = await (tx || db)
             .insert(schemas.plans)
             .values({
                 name: planData.name,

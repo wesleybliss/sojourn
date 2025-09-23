@@ -87,9 +87,9 @@ export const getAllSegments = async () => {
 }
 
 // Create a new segment
-export const createSegment = async segmentData => {
+export const createSegment = async (segmentData, tx) => {
     try {
-        const [newSegment] = await db
+        const [newSegment] = await (tx || db)
             .insert(schemas.segments)
             .values({
                 tripId: segmentData.tripId,

@@ -13,9 +13,14 @@ export const useTripQuery = tripId => useQuery({
             const res = await fetch(`/api/trips/${tripId}?withDetails=true`)
             const { data } = await res.json()
             
-            updateItemArray(store.trips, data)
-            // store.currentTripId.setValue(idToInt(data))
-            store.currentTripId.setValue(data.id)
+            // @todo need to handle this better
+            try {
+                updateItemArray(store.trips, data)
+                // store.currentTripId.setValue(idToInt(data))
+                store.currentTripId.setValue(data.id)
+            } catch (e) {
+                console.warn('useTripQuery: updateItemArray failed', e)
+            }
             
             return data
             
