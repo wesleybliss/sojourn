@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server'
-import {
-    getAllTrips,
-    getSegmentsByTripId,
-} from '@/db/repos/trips'
+import tripsRepo from '@/db/repos/trips'
+import segmentsRepo from '@/db/repos/segments'
 import db from '@/db/index.js'
 import * as schemas from '@/db/schema.js'
 import { eq } from 'drizzle-orm'
@@ -13,12 +11,12 @@ import { eq } from 'drizzle-orm'
  */
 export async function POST() {
     try {
-        const trips = await getAllTrips()
+        const trips = await tripsRepo.findAll()
         const migrationResults = []
         
         for (const trip of trips) {
             console.log('Migrating trip:', trip.name)
-            const segments = await getSegmentsByTripId(trip.id)
+            const segments = await segmentsRepo.findAllByTripId(trip.id)
             
             let planId = null
             let migratedSegments = 0

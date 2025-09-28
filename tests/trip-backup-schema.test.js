@@ -1,16 +1,17 @@
 import { test } from '@jest/globals'
 import fs from 'fs'
 import path from 'path'
-import { fileURLToPath } from 'url'
 import Ajv from 'ajv'
 import schema from '../src/lib/json-schemas/trip-backup.jsonschema.js'
 import dayjs from 'dayjs'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+// import { fileURLToPath } from 'url'
+/* const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename) */
 
 test('sample backup JSON validates against schema', () => {
     
+    // eslint-disable-next-line no-undef
     const samplePath = path.resolve(__dirname, '../src/lib/json-schemas/trip-backup-schema-sample.json')
     const raw = fs.readFileSync(samplePath, 'utf8')
     const data = JSON.parse(raw)
@@ -24,8 +25,8 @@ test('sample backup JSON validates against schema', () => {
     
     const sampleSegment = data.trips[0].plans[0].segments[0]
     
-    const dateInputExpectPairs = [
+    /* const dateInputExpectPairs = [
         [dayjs(sampleSegment.startDate).format('YYYY-MM-DD hh:mm:ss')],
-    ]
+    ] */
     
 })

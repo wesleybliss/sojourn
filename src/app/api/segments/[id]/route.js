@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import db from '@/db/index.js'
 import * as schemas from '@/db/schema.js'
 import { eq } from 'drizzle-orm'
-import { getSegmentById, getSegmentsByPlanId } from '@/db/repos/segments.js'
+import segmentsRepo from '@/db/repos/segments'
 import { convertStringDates, getUpdatePayload } from '@/lib/utils.js'
 import dayjs from 'dayjs'
 
@@ -13,7 +13,7 @@ export async function PUT(request, opts) {
     try {
         
         const id = parseInt(params.id, 10)
-        const segment = await getSegmentById(id)
+        const segment = await segmentsRepo.findOneById(id)
         
         if (segment?.id !== id)
             return NextResponse.json({ success: false, error: 'Segment not found' }, { status: 404 })
@@ -27,7 +27,7 @@ export async function PUT(request, opts) {
         
         if (cascadeEnabled && (payload.startDate || payload.endDate)) {
             
-            const segments = await getSegmentsByPlanId(segment.planId)
+            const segments = await segmentsRepo.findAllByPlanId(segment.planId)
             
             const targetIndex = segments.findIndex(s => s.id === id)
             
