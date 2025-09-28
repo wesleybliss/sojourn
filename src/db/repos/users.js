@@ -1,26 +1,26 @@
-import db from '@/db/index'
+import Repository from '@/db/repos/repo'
 import * as schemas from '@/db/schema'
-import { eq } from 'drizzle-orm'
 
-export const getUserByEmail = async email => {
+export class UsersRepository extends Repository {
     
-    try {
+    constructor() {
         
-        const user = await db.select({
-            id: schemas.users.id,
-            email: schemas.users.email,
-        })
-            .from(schemas.users)
-            .where(eq(schemas.users.email, email))
-            .limit(1)
+        super('user', 'users', schemas.users)
         
-        return user[0]
+    }
+    
+    tx(transaction) {
         
-    } catch (e) {
+        return new UsersRepository(this.name, this.plural, this.schema, transaction)
         
-        console.error(`Error fetching user with email ${email}:`, e)
-        throw new Error('Failed to fetch user')
+    }
+    
+    async findOneByEmail(email) {
+        
+        return super.findOneBy('email', email)
         
     }
     
 }
+
+export default new UsersRepository()

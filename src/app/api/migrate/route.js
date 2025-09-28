@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import {
     getAllTrips,
     getSegmentsByTripId,
-} from '@/db/repos/trips.js'
+} from '@/db/repos/trips'
 import db from '@/db/index.js'
 import * as schemas from '@/db/schema.js'
 import { eq } from 'drizzle-orm'

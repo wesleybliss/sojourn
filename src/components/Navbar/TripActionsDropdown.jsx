@@ -1,4 +1,6 @@
 import { useEffect } from 'react'
+import { useWireState } from '@forminator/react-wire'
+import * as store from '@/store'
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -39,6 +41,8 @@ const TripActionsDropdown = ({
     const planActionsViewModel = usePlanActionsViewModel(trip, plan)
     const segmentActionsViewModel = useSegmentActionsViewModel(trip, plan)
     
+    const [isTripEditMode, setIsTripEditMode] = useWireState(store.isTripEditMode)
+    
     useEffect(() => {
         
         if (trip?.name && !tripActionsViewModel.newTripName.length)
@@ -61,6 +65,9 @@ const TripActionsDropdown = ({
                 
                 <DropdownMenuLabel className="opacity-60">Trips</DropdownMenuLabel>
                 <DropdownMenuGroup>
+                    <DropdownMenuItem onClick={() => setIsTripEditMode(!isTripEditMode)}>
+                        <FolderPen className="text-blue-500" /> Edit Trip
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => tripActionsViewModel.setRenameTripDialogOpen(true)}>
                         <FolderPen className="text-yellow-500" /> Rename Trip
                     </DropdownMenuItem>

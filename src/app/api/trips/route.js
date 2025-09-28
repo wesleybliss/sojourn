@@ -1,12 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
-import {
-    getTripsByUserId,
-    getTripsWithSegmentCountByUserId,
-    createTrip as createTripQuery,
-} from '@/db/repos/trips.js'
-import { createPlan } from '@/db/repos/plans.js'
-import { createSegment } from '@/db/repos/segments.js'
+import tripsRepo from '@/db/repos/trips'
+import plansRepo from '@/db/repos/plans'
+import segmentsRepo from '@/db/repos/segments'
 import db from '@/db/index'
 import * as schemas from '@/db/schema'
 import dayjs from 'dayjs'
@@ -36,8 +32,8 @@ export async function GET(request) {
         const withCounts = searchParams.get('withCounts') === 'true'
         
         const trips = withCounts
-            ? await getTripsWithSegmentCountByUserId(userId)
-            : await getTripsByUserId(userId)
+            ? await tripsRepo.findAllByUserIdWithSegmentCount(userId)
+            : await tripsRepo.findAllByUserId(userId)
         
         return NextResponse.json({
             success: true,
@@ -91,20 +87,20 @@ export async function POST(request) {
         
         const newTrip = await db.transaction(async tx => {
             
-            const trip = await createTripQuery(newTripPayload, tx)
+            const trip = await tripsRepo.tx(tx).create(newTripPayload)
             
             await tx.insert(schemas.userTrips).values({
                 userId,
                 tripId: trip.id,
             })
             
-            const plan = await createPlan({
+            const plan = await plansRepo.tx(tx).create({
                 tripId: trip.id,
                 name: dayjs().format('MMMM YYYY'),
                 description: '',
-            }, tx)
+            })
             
-            await createSegment({
+            await segmentsRepo.tx(tx).create({
                 tripId: trip.id,
                 planId: plan.id,
                 name: 'First Stop',
@@ -113,7 +109,7 @@ export async function POST(request) {
                 startDate: dayjs().format('YYYY-MM-DD'),
                 endDate: dayjs().add('5', 'day').format('YYYY-MM-DD'),
                 color: 'bg-blue-500',
-            }, tx)
+            })
             
             return trip
             

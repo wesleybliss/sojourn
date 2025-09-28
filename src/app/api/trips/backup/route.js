@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
-import { getTripWithDetails, getTripsByUserId } from '@/db/repos/trips'
+import tripsRepo from '@/db/repos/trips'
+import plansRepo from '@/db/repos/plans'
 import Ajv from 'ajv'
 import tripsWithPlansSchema from '@/lib/json-schemas/trip-backup.jsonschema'
 import dayjs from 'dayjs'
@@ -95,7 +96,7 @@ export const POST = withAuth(async (request, { auth }) => {
             if (!isMember)
                 return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
             
-            const trip = await getTripWithDetails(Number(tripId))
+            const trip = await tripsRepo.findOneWithDetails(Number(tripId), plansRepo)
             
             if (!trip)
                 return NextResponse.json({ success: false, error: 'Trip not found' }, { status: 404 })
@@ -107,11 +108,11 @@ export const POST = withAuth(async (request, { auth }) => {
             // multiple
             const requestedIds = Array.isArray(body?.tripIds) ? body.tripIds.map(id => Number(id)) : null
             
-            const userTrips = await getTripsByUserId(userId)
+            const userTrips = await tripsRepo.findAllByUserId(userId)
             
             const filtered = requestedIds ? userTrips.filter(t => requestedIds.includes(Number(t.id))) : userTrips
             
-            const detailsPromises = filtered.map(t => getTripWithDetails(Number(t.id)))
+            const detailsPromises = filtered.map(t => tripsRepo.findOneWithDetails(Number(t.id)), plansRepo)
             const details = await Promise.all(detailsPromises)
             
             trips = details.filter(Boolean).map(t => transformTrip(t))

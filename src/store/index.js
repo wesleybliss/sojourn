@@ -31,6 +31,8 @@ export const importTripProgressValue = createWire(null)
 
 export const showMap = createWire(false)
 
+export const isTripEditMode = createWire(false)
+
 //
 
 export const shengenData = createSelector({

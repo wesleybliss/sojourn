@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server'
 import { withAuth, isUserTripMember } from '@/lib/auth'
 import db from '@/db/index'
 import * as schemas from '@/db/schema'
-import { getUserByEmail } from '@/db/repos/users'
-import { getTripById } from '@/db/repos/trips'
+import usersRepo from '@/db/repos/users'
+import tripsRepo from '@/db/repos/trips'
 
 /**
  * POST /api/trips/invite
@@ -26,14 +26,14 @@ export const POST = withAuth(async (request, { params, auth }) => {
         if (!isMember)
             return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
         
-        const invitee = await getUserByEmail(inviteeEmail)
+        const invitee = await usersRepo.findOneByEmail(inviteeEmail)
         
         if (!invitee)
             return NextResponse.json(
                 { success: false, error: 'Invitee not found' },
                 { status: 404 })
         
-        const trip = await getTripById(id)
+        const trip = await tripsRepo.findOneById(id)
         
         if (!trip)
             return NextResponse.json(

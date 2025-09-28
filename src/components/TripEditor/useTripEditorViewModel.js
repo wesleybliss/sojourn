@@ -17,7 +17,7 @@ import { toast } from 'sonner'
 import dayjs from 'dayjs'
 import { sortArrByUpdatedAt } from '@/lib/utils.js'
 
-const useTripDetailViewModel = () => {
+const useTripEditorViewModel = () => {
     
     const params = useParams()
     const router = useRouter()
@@ -43,6 +43,7 @@ const useTripDetailViewModel = () => {
     const [hasRedirectedToPlan, setHasRedirectedToPlan] = useState(false)
     
     const [showMap, setShowMap] = useWireState(store.showMap)
+    const [isTripEditMode, setIsTripEditMode] = useWireState(store.isTripEditMode)
     
     const isLoading = useMemo(() => (
         isLoadingInitial || tripIsLoading
@@ -278,6 +279,8 @@ const useTripDetailViewModel = () => {
         setCascadeEnabled,
         showMap,
         setShowMap,
+        isTripEditMode,
+        setIsTripEditMode,
         
         // Memos
         shengenData,
@@ -304,4 +307,4 @@ const useTripDetailViewModel = () => {
     }
 }
 
-export default useTripDetailViewModel
+export default useTripEditorViewModel

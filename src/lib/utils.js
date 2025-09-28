@@ -382,3 +382,6 @@ export const setAbortableTimeout = (callback, delayInMilliseconds, customAbortCo
     return controller
     
 }
+
+export const formatDate = (date = new Date(), customFormat = 'ddd MMM D, YYYY') =>
+    dayjs(date).format(customFormat)

@@ -1,10 +1,6 @@
 import { NextResponse } from 'next/server'
-import {
-    getTripById,
-    getTripWithDetails,
-    updateTrip as updateTripQuery,
-    deleteTrip as deleteTripQuery,
-} from '@/db/repos/trips'
+import tripsRepo from '@/db/repos/trips'
+import plansRepo from '@/db/repos/plans'
 import { withAuth, isUserTripMember } from '@/lib/auth'
 
 /**
@@ -13,10 +9,10 @@ import { withAuth, isUserTripMember } from '@/lib/auth'
  */
 export const GET = withAuth(async (request, { params, auth }) => {
     
+    const { id } = await params
+    
     try {
         
-        // const { id, withDetails } = await params
-        const { id } = await params
         const { searchParams } = new URL(request.url)
         const withDetails = searchParams.get('withDetails')
         
@@ -26,8 +22,8 @@ export const GET = withAuth(async (request, { params, auth }) => {
             return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
         
         const trip = withDetails
-            ? await getTripWithDetails(id)
-            : await getTripById(id)
+            ? await tripsRepo.findOneWithDetails(id, plansRepo)
+            : await tripsRepo.findOneById(id)
         
         if (!trip)
             return NextResponse.json(
@@ -41,7 +37,7 @@ export const GET = withAuth(async (request, { params, auth }) => {
         
     } catch (e) {
         
-        console.error(`Error getting trip ${params.id}:`, e)
+        console.error(`Error getting trip ${id}:`, e)
         return NextResponse.json(
             { success: false, error: e.message },
             { status: 500 })
@@ -56,9 +52,10 @@ export const GET = withAuth(async (request, { params, auth }) => {
  */
 export const PUT = withAuth(async (request, { params, auth }) => {
     
+    const { id } = await params
+    
     try {
         
-        const { id } = await params
         const body = await request.json()
         
         const isMember = await isUserTripMember(auth, id)
@@ -66,7 +63,7 @@ export const PUT = withAuth(async (request, { params, auth }) => {
         if (!isMember)
             return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
         
-        const updatedTrip = await updateTripQuery(id, body)
+        const updatedTrip = await tripsRepo.updateById(id, body)
         
         if (!updatedTrip)
             return NextResponse.json(
@@ -81,7 +78,7 @@ export const PUT = withAuth(async (request, { params, auth }) => {
         
     } catch (e) {
         
-        console.error(`Error updating trip ${params.id}:`, e)
+        console.error(`Error updating trip ${id}:`, e)
         return NextResponse.json(
             { success: false, error: e.message },
             { status: 500 })
@@ -96,16 +93,16 @@ export const PUT = withAuth(async (request, { params, auth }) => {
  */
 export const DELETE = withAuth(async (request, { params, auth }) => {
     
+    const { id } = await params
+    
     try {
-        
-        const { id } = await params
         
         const isMember = await isUserTripMember(auth, id)
         
         if (!isMember)
             return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
         
-        await deleteTripQuery(id)
+        await tripsRepo.deleteById(id)
         
         return NextResponse.json({
             success: true,
@@ -114,7 +111,7 @@ export const DELETE = withAuth(async (request, { params, auth }) => {
         
     } catch (e) {
         
-        console.error(`Error deleting trip ${params.id}:`, e)
+        console.error(`Error deleting trip ${id}:`, e)
         return NextResponse.json(
             { success: false, error: e.message },
             { status: 500 })

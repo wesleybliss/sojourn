@@ -1,10 +1,14 @@
 import '../envConfig'
 import './globals.css'
 import { Inter } from 'next/font/google'
+import dayjs from 'dayjs'
+import advancedFormat from 'dayjs/plugin/advancedFormat'
 import Navbar from '@/components/Navbar'
 import QueryProvider from '@/components/providers/QueryProvider'
 import NextAuthProvider from '@/components/providers/NextAuthProvider.jsx'
 import { Toaster } from 'sonner'
+
+dayjs.extend(advancedFormat)
 
 const inter = Inter({ subsets: ['latin'] })
 

@@ -52,6 +52,11 @@ export const segments = table('segments', {
     isShengenRegion: integer('isShengenRegion', { mode: 'boolean' }).default(false).notNull(),
 })
 
+export const places = table('places', {
+    name: text('name').notNull(),
+    coverImageUrl: text('coverImageUrl'),
+})
+
 // Relations
 
 export const usersRelations = relations(users, ({ many }) => ({

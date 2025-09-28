@@ -1,123 +1,85 @@
-import db from '@/db/index.js'
+import Repository from '@/db/repos/repo'
 import * as schemas from '@/db/schema.js'
 import { eq, asc } from 'drizzle-orm'
 
-const normalizeDateValue = v => {
-    if (!v) return null
-    if (typeof v === 'string') return v
-    if (v instanceof Date) return v.getTime()
+export class PlansRepository extends Repository  {
     
-    if (typeof v === 'number') {
-        return v < 1e12 ? v * 1000 : v
+    constructor() {
+        
+        super('plan', 'plans', schemas.plans)
+        
     }
     
-    return v
-}
-
-
-// Get plans for a specific trip
-export const getPlansByTripId = async tripId => {
-    try {
-        const plansWithSegments = await db
-            .select({
-                plan: schemas.plans,
-                segment: schemas.segments,
-            })
-            .from(schemas.plans)
-            .leftJoin(schemas.segments, eq(schemas.segments.planId, schemas.plans.id))
-            .where(eq(schemas.plans.tripId, tripId))
-            .orderBy(asc(schemas.plans.id), asc(schemas.segments.startDate))
+    tx(transaction) {
         
-        // Group segments by plan
-        const plansMap = new Map()
+        return new PlansRepository(this.name, this.plural, this.schema, transaction)
         
-        plansWithSegments.forEach(({ plan, segment }) => {
-            if (!plansMap.has(plan.id)) {
-                plansMap.set(plan.id, {
-                    ...plan,
-                    segments: [],
-                })
-            }
-            
-            if (segment) {
-                plansMap.get(plan.id).segments.push({
-                    ...segment,
-                    startDate: normalizeDateValue(segment.startDate),
-                    endDate: normalizeDateValue(segment.endDate),
-                })
-            }
+    }
+    
+    async create(data) {
+        
+        return super.create({
+            name: data.name,
+            description: data.description,
+            tripId: data.tripId,
         })
         
-        return Array.from(plansMap.values())
-    } catch (error) {
-        console.error(`Error fetching plans for trip ${tripId}:`, error)
-        throw new Error('Failed to fetch plans')
     }
-}
-
-// Get a single plan by ID
-export const getPlanById = async id => {
-    try {
-        const [plan] = await db
-            .select()
-            .from(schemas.plans)
-            .where(eq(schemas.plans.id, id))
+    
+    async findAllByTripId(tripId) {
         
-        return plan || null
-    } catch (error) {
-        console.error(`Error fetching plan ${id}:`, error)
-        throw new Error('Failed to fetch plan')
-    }
-}
-
-// Create a new plan
-export const createPlan = async (planData, tx) => {
-    try {
-        const [newPlan] = await (tx || db)
-            .insert(schemas.plans)
-            .values({
-                name: planData.name,
-                description: planData.description,
-                tripId: planData.tripId,
+        try {
+            
+            const plansWithSegments = await this.db
+                .select({
+                    plan: schemas.plans,
+                    segment: schemas.segments,
+                })
+                .from(schemas.plans)
+                .leftJoin(schemas.segments, eq(schemas.segments.planId, schemas.plans.id))
+                .where(eq(schemas.plans.tripId, tripId))
+                .orderBy(asc(schemas.plans.id), asc(schemas.segments.startDate))
+            
+            // Group segments by plan
+            const plansMap = new Map()
+            
+            plansWithSegments.forEach(({ plan, segment }) => {
+                
+                if (!plansMap.has(plan.id))
+                    plansMap.set(plan.id, {
+                        ...plan,
+                        segments: [],
+                    })
+                
+                if (segment)
+                    plansMap.get(plan.id).segments.push({
+                        ...segment,
+                        startDate: this.normalizeDateValue(segment.startDate),
+                        endDate: this.normalizeDateValue(segment.endDate),
+                    })
+                
             })
-            .returning()
+            
+            return Array.from(plansMap.values())
+            
+        } catch (e) {
+            
+            console.error(`Error fetching ${this.plural} for trip ${tripId}:`, e)
+            throw new Error(`Failed to fetch ${this.plural}`)
+            
+        }
         
-        return newPlan
-    } catch (error) {
-        console.error('Error creating plan:', error)
-        throw new Error('Failed to create plan')
     }
+    
+    async updateById(id, data) {
+        
+        return super.updateById(id, {
+            name: data.name,
+            description: data.description,
+        })
+        
+    }
+    
 }
 
-// Update a plan
-export const updatePlan = async (id, planData) => {
-    try {
-        const [updatedPlan] = await db
-            .update(schemas.plans)
-            .set({
-                name: planData.name,
-                description: planData.description,
-            })
-            .where(eq(schemas.plans.id, id))
-            .returning()
-        
-        return updatedPlan
-    } catch (error) {
-        console.error(`Error updating plan ${id}:`, error)
-        throw new Error('Failed to update plan')
-    }
-}
-
-// Delete a plan
-export const deletePlan = async id => {
-    try {
-        await db
-            .delete(schemas.plans)
-            .where(eq(schemas.plans.id, id))
-        
-        return { success: true }
-    } catch (error) {
-        console.error(`Error deleting plan ${id}:`, error)
-        throw new Error('Failed to delete plan')
-    }
-}
+export default new PlansRepository()

@@ -1,10 +1,10 @@
 import { redirect } from 'next/navigation'
 import ProtectedRoute from '@/components/ProtectedRoute'
-import TripDetail from '@/components/TripDetail'
+import TripView from '@/components/TripView'
 
 export default async function Plans({ params }) {
     
-    const { tripId, planId } = await params
+    const { tripId } = await params
     
     if (!tripId) {
         redirect('/trips')
@@ -13,7 +13,7 @@ export default async function Plans({ params }) {
     
     return (
         <ProtectedRoute>
-            <TripDetail tripId={tripId} planId={planId} />
+            <TripView />
         </ProtectedRoute>
     )
     
