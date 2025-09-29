@@ -1,6 +1,6 @@
 import useThrottledPlacePhotos from './useThrottledPlacePhotos'
 import MapLibreMap from '@/components/MapLibreMap'
-import SegmentsList from '@/components/SegmentsList'
+import SegmentsList from '@/components/segments/SegmentsList'
 import { cn } from '@/lib/utils'
 import { Progress } from '@/components/ui/progress'
 
@@ -15,9 +15,12 @@ const TripDetail = ({
         <div className="Trip w-full flex flex-col flex-1 gap-4 p-4">
             
             {placePhotosVm.progressPercent > 0 && (
-                <Progress
-                    className="w-full"
-                    value={placePhotosVm.progressPercent} />
+                <div className="w-1/2 mx-auto p-5 border border-slate-300 rounded-xl">
+                    <p className="mb-2 text-sm">Updating places, please wait...</p>
+                    <Progress
+                        className="w-full"
+                        value={placePhotosVm.progressPercent} />
+                </div>
             )}
             
             <div className={cn('w-full', {

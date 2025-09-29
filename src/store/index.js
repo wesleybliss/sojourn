@@ -25,6 +25,16 @@ export const currentSegments = createSelector({
 
 //
 
+export const placesWithCoverImages = createWire([])
+export const placeNamesToCoverImagesMap = createSelector({
+    get: ({ get }) => get(placesWithCoverImages)?.reduce((acc, it) => ({
+        ...acc,
+        [it.name]: it.coverImageUrl,
+    }), {}),
+})
+
+//
+
 export const importTripStatus = createWire(null)
 export const importTripProgressMax = createWire(null)
 export const importTripProgressValue = createWire(null)

@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import SegmentsTable from '@/components/SegmentsTable'
-import SegmentsGanttChart from '@/components/SegmentsGanttChart'
+import SegmentsTable from '@/components/segments/SegmentsTable'
+import SegmentsGanttChart from '@/components/segments/SegmentsGanttChart'
 import MapLibreMap from '@/components/MapLibreMap'
 import { Button } from '@/components/ui/button'
 import { ChevronsUpDown } from 'lucide-react'

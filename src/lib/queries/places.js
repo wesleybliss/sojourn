@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { placesWithCoverImages } from '@/store'
 
 export const usePlacesQuery = () => useQuery({
     queryKey: ['places'],
@@ -8,6 +9,9 @@ export const usePlacesQuery = () => useQuery({
             
             const res = await fetch('/api/places')
             const { data } = await res.json()
+            
+            if (data?.length)
+                placesWithCoverImages.setValue(data)
             
             return data
             

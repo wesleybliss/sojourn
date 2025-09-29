@@ -15,7 +15,7 @@ import {
 import { Switch } from '@/components/ui/switch'
 import DatePicker from '@/components/DatePicker'
 import TailwindPrimaryColorPicker from '@/components/TailwindPrimaryColorPicker'
-import ConfirmDeleteSegmentsDialog from './ConfirmDeleteSegmentsDialog'
+import ConfirmDeleteSegmentsDialog from 'src/components/ConfirmDeleteSegmentsDialog'
 import { CalendarCheck, CalendarRange, Plane, BedDouble, SquareArrowUp, SquareArrowDown, Globe } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import dayjs from 'dayjs'

@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { throttledQueue, seconds } from 'throttled-queue'
 import { usePlacesQuery } from '@/lib/queries/places'
-import { abortableFetch, fakeAbortableFetch } from '@/lib/utils'
+import { abortableFetch } from '@/lib/utils'
 
 const throttle = throttledQueue({
     maxPerInterval: 3,
@@ -51,45 +51,44 @@ const useThrottledPlacePhotos = segments => {
         setProgressMax(missingPlaces.length)
         setProgressValue(0)
         
-        missingPlaces.forEach(name => {
+        const promises = missingPlaces.map(name => throttle(() => {
             
-            throttle(() => {
-                
-                // return fetch('https://api.github.com/search/users?q=shaunpersad');
-                
-                const request = fakeAbortableFetch('/api/places', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name,
-                    }),
-                })
-                
-                const index = requests.push(request) - 1
-                
-                request.promise
-                    .then(it => {
-                        requests.splice(index, 1)
-                        setProgressValue(v => v + 1)
-                        return it
-                    })
-                    .catch(e => {
-                        console.error('useThrottledPlacePhotos fetch error', e)
-                        setProgressValue(v => v + 1)
-                    })
-                
-                return request
-                
+            // return fetch('https://api.github.com/search/users?q=shaunpersad');
+            
+            const request = abortableFetch('/api/places', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name,
+                }),
             })
             
+            const index = requests.push(request) - 1
+            
+            request.promise
+                .then(it => {
+                    requests.splice(index, 1)
+                    setProgressValue(v => v + 1)
+                    return it
+                })
+                .catch(e => {
+                    console.error('useThrottledPlacePhotos fetch error', e)
+                    setProgressValue(v => v + 1)
+                })
+            
+            return request.promise
+            
+        }))
+        
+        Promise.all(promises).then(() => {
+            setProgressMax(0)
+            setProgressValue(0)
         })
         
         return () => {
-            
             requests.forEach(it => it.abort)
-            
         }
         
     }, [segments, places])
