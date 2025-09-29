@@ -41,8 +41,12 @@ const SegmentsList = ({
                 
                 <LeftImageCard
                     key={it.id}
+                    wrapperClassName="py-2 lg:py-4"
+                    headerClassName="px-3 lg:px-5"
+                    contentClassName="px-3 lg:px-5"
                     imageSrc={placeNamesToCoverImagesMap[it.name]}
                     imageAlt={it.name}
+                    maxWidth="max-w-full lg:max-w-2xl"
                     title={<h3 className="text-xl">{it.name}</h3>}
                     description={
                         <div className="flex items-center gap-4">

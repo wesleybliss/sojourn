@@ -8,14 +8,16 @@ import {
 } from '@/components/ui/card'
 
 const LeftImageCard = ({
+    className = '',
+    imageClassName = '',
+    wrapperClassName = 'py-4',
+    headerClassName = '',
+    contentClassName = '',
     imageSrc,
     imageAlt = 'Card image',
     title,
     description,
     children,
-    className = '',
-    imageClassName = '',
-    contentClassName = '',
     maxWidth = 'max-w-2xl',
     height = '',
     imageWidth = 'w-1/3',
@@ -35,17 +37,17 @@ const LeftImageCard = ({
             </div>
             
             {/* Content Section */}
-            <div className={`${contentWidth} flex flex-col py-4 ${contentClassName}`}>
+            <div className={`${contentWidth} flex flex-col ${wrapperClassName}`}>
                 
                 {(title || description) && (
-                    <CardHeader>
+                    <CardHeader className={headerClassName || ''}>
                         {title && <CardTitle>{title}</CardTitle>}
                         {description && <CardDescription>{description}</CardDescription>}
                     </CardHeader>
                 )}
                 
                 {children && (
-                    <CardContent className="flex-1">
+                    <CardContent className={`flex-1 ${contentClassName || ''}`}>
                         {children}
                     </CardContent>
                 )}
