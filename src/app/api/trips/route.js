@@ -11,7 +11,7 @@ import dayjs from 'dayjs'
  * GET /api/trips
  * Returns the list of trips in JSON format.
  */
-export async function GET(request) {
+export const GET = async request => {
     
     try {
         

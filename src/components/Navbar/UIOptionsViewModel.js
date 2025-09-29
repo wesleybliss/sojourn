@@ -1,8 +1,11 @@
 import { useState, useCallback } from 'react'
 import { useWireState } from '@forminator/react-wire'
 import * as store from '@/store'
+import { useRouter } from 'next/navigation'
 
 const UIOptionsViewModel = () => {
+    
+    const router = useRouter()
     
     const [cascadeEnabled, setCascadeEnabled] = useState(false)
     
@@ -27,6 +30,9 @@ const UIOptionsViewModel = () => {
         showMap,
         setShowMap,
         toggleShowMap,
+        
+        // Hooks
+        router,
         
     }
     

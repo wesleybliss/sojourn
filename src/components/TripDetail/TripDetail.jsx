@@ -1,14 +1,24 @@
+import useThrottledPlacePhotos from './useThrottledPlacePhotos'
 import MapLibreMap from '@/components/MapLibreMap'
 import SegmentsList from '@/components/SegmentsList'
 import { cn } from '@/lib/utils'
+import { Progress } from '@/components/ui/progress'
 
 const TripDetail = ({
     vm,
 } = {}) => {
     
+    const placePhotosVm = useThrottledPlacePhotos(vm.segments)
+    
     return (
         
         <div className="Trip w-full flex flex-col flex-1 gap-4 p-4">
+            
+            {placePhotosVm.progressPercent > 0 && (
+                <Progress
+                    className="w-full"
+                    value={placePhotosVm.progressPercent} />
+            )}
             
             <div className={cn('w-full', {
                 'grid grid-cols-2 gap-2': vm.showMap,

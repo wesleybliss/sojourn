@@ -2,6 +2,7 @@ import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import dayjs from 'dayjs'
 import bcrypt from 'bcryptjs'
+import { nanoid } from 'nanoid'
 
 export const gridColumnsMap = {
     1: 'grid-cols-1',
@@ -385,3 +386,42 @@ export const setAbortableTimeout = (callback, delayInMilliseconds, customAbortCo
 
 export const formatDate = (date = new Date(), customFormat = 'ddd MMM D, YYYY') =>
     dayjs(date).format(customFormat)
+
+export const parseFormData = (e, fields = []) => {
+    
+    const formData = new FormData(e.target)
+    
+    return fields.reduce((acc, it) => ({
+        ...acc,
+        [it]: formData.get(it),
+    }), {})
+    
+}
+
+export const abortableFetch = (url, opts = {}) => {
+    
+    const controller = new AbortController()
+    
+    const promise = fetch(url, {
+        ...opts,
+        signal: controller.signal,
+    })
+    
+    return {
+        promise,
+        abort: () => controller.abort(),
+    }
+    
+}
+
+export const fakeAbortableFetch = url => {
+    
+    const id = nanoid()
+    const promise = new Promise(x => setTimeout(x, 700))
+    
+    return {
+        promise,
+        abort: () => console.warn('aborted', id, url),
+    }
+    
+}

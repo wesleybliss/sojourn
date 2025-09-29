@@ -24,6 +24,7 @@ import {
     ListEnd,
     Map,
     MapPinPlus,
+    Bug,
 } from 'lucide-react'
 import InputDialog from '@/components/InputDialog'
 import useUIOptionsViewModel from '@/components/Navbar/UIOptionsViewModel'
@@ -127,6 +128,16 @@ const TripActionsDropdown = ({
                         <Map className="text-amber-500" /> Show Map
                     </DropdownMenuCheckboxItem>
                 </DropdownMenuGroup>
+                
+                {process.env.NEXT_PUBLIC_DEBUG_ENABLED === 'true' && (<>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuLabel className="opacity-60">Development Options</DropdownMenuLabel>
+                    <DropdownMenuGroup>
+                        <DropdownMenuItem onClick={() => uiOptionsViewModel.router.push('/debug')}>
+                            <Bug className="text-orange-500" /> Debug
+                        </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                </>)}
             
             </DropdownMenuContent>
         

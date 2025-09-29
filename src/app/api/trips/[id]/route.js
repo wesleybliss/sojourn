@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
+import { withAuth, isUserTripMember } from '@/lib/auth'
 import tripsRepo from '@/db/repos/trips'
 import plansRepo from '@/db/repos/plans'
-import { withAuth, isUserTripMember } from '@/lib/auth'
 
 /**
  * GET /api/trips/[id]
