@@ -17,6 +17,16 @@ import { toast } from 'sonner'
 import dayjs from 'dayjs'
 import { sortArrByUpdatedAt } from '@/lib/utils.js'
 
+const matchesDate = (date, query) => {
+    
+    const q = query?.toLowerCase()
+    const d1 = dayjs(date).format().toLowerCase()
+    const d2 = dayjs(date).format('MMMM DD, YYYY').toLowerCase()
+    
+    return d1.includes(q) || d2.includes(q)
+    
+}
+
 const useTripEditorViewModel = () => {
     
     const params = useParams()
@@ -41,13 +51,10 @@ const useTripEditorViewModel = () => {
     const [focusedLatLng, setFocusedLatLng] = useState(undefined)
     const [cascadeEnabled, setCascadeEnabled] = useState(false)
     const [hasRedirectedToPlan, setHasRedirectedToPlan] = useState(false)
+    const [segmentsFilterQuery, setSegmentsFilterQuery] = useState('')
     
     const [showMap, setShowMap] = useWireState(store.showMap)
     const [isTripEditMode, setIsTripEditMode] = useWireState(store.isTripEditMode)
-    
-    const isLoading = useMemo(() => (
-        isLoadingInitial || tripIsLoading
-    ), [isLoadingInitial, tripIsLoading])
     
     const trips = useWireValue(store.trips)
     const currentTripId = useWire(store.currentTripId)
@@ -56,6 +63,28 @@ const useTripEditorViewModel = () => {
     const currentPlan = useWireValue(store.currentPlan)
     const segments = useWireValue(store.currentSegments)
     const shengenData = useWireValue(store.shengenData)
+    
+    const isLoading = useMemo(() => (
+        isLoadingInitial || tripIsLoading
+    ), [isLoadingInitial, tripIsLoading])
+    
+    const filteredSegments = useMemo(() => {
+        
+        if (!segmentsFilterQuery?.length || !segments?.length)
+            return segments
+        
+        return segments?.filter(it => {
+            
+            const query = segmentsFilterQuery.toLowerCase()
+            const matchesName = it.name.toLowerCase().includes(query)
+            const matchesStartDate = matchesDate(it.startDate, query)
+            const matchesEndDate = matchesDate(it.endDate, query)
+            
+            return matchesName || matchesStartDate || matchesEndDate
+            
+        }) || []
+        
+    }, [segments, segmentsFilterQuery])
     
     const summaryTripText = useMemo(() => {
         
@@ -268,6 +297,8 @@ const useTripEditorViewModel = () => {
         setIsEditingName,
         focusedLatLng,
         setFocusedLatLng,
+        segmentsFilterQuery,
+        setSegmentsFilterQuery,
         
         // Global State
         trip,
@@ -283,6 +314,7 @@ const useTripEditorViewModel = () => {
         setIsTripEditMode,
         
         // Memos
+        filteredSegments,
         shengenData,
         summaryTripText,
         totalDaysPerSegmentByIndex,

@@ -3,6 +3,7 @@ import MapLibreMap from '@/components/MapLibreMap'
 import SegmentsList from '@/components/segments/SegmentsList'
 import { cn } from '@/lib/utils'
 import { Progress } from '@/components/ui/progress'
+import SegmentsFilterToolbar from '@/components/segments/SegmentsFilterToolbar'
 
 const TripDetail = ({
     vm,
@@ -37,12 +38,15 @@ const TripDetail = ({
                         <p>You have no segments yet.</p>
                     )}
                     
-                    {vm.segments?.length > 0 && (
+                    {vm.segments?.length > 0 && (<>
+                        <SegmentsFilterToolbar
+                            className="w-full max-w-2xl mx-auto mb-4"
+                            vm={vm} />
                         <SegmentsList
-                            segments={vm.segments}
+                            segments={vm.filteredSegments}
                             getTotalDaysPerSegment={vm.getTotalDaysPerSegment}
                             getCumulativeDaysPerSegment={vm.getCumulativeDaysPerSegment} />
-                    )}
+                    </>)}
                 
                 </div>
                 
