@@ -72,24 +72,28 @@ const SegmentsList = ({
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="text-center">
-                                        <CalendarCheck className="mx-auto" title="Segment Days"/>
+                                    <TableHead className="w-5 pl-0 pr-0">
+                                        <div className="flex items-center">
+                                            <CalendarCheck title="Segment Days"/>
+                                        </div>
                                     </TableHead>
-                                    <TableHead className="text-center">
-                                        <CalendarRange className="mx-auto" title="Cumulative Days" />
+                                    <TableHead className="w-5 pl-0 pr-0">
+                                        <div className="flex items-center">
+                                            <CalendarRange title="Cumulative Days" />
+                                        </div>
                                     </TableHead>
-                                    <TableHead className="text-center">
-                                        <div title="Flight Booked">
+                                    <TableHead className="w-5 pl-2 pr-0">
+                                        <div className="flex items-center" title="Flight Booked">
                                             <Plane />
                                         </div>
                                     </TableHead>
-                                    <TableHead className="text-center">
-                                        <div title="Stay Booked">
+                                    <TableHead className="w-5 pl-2 pr-0">
+                                        <div className="flex items-center" title="Stay Booked">
                                             <BedDouble />
                                         </div>
                                     </TableHead>
-                                    <TableHead className="text-center">
-                                        <div title="Shengen Region">
+                                    <TableHead className="w-5 pl-2 pr-0">
+                                        <div className="flex items-center" title="Shengen Region">
                                             <Globe size="1.5rem" />
                                         </div>
                                     </TableHead>
@@ -97,22 +101,32 @@ const SegmentsList = ({
                             </TableHeader>
                             <TableBody>
                                 <TableRow>
-                                    <TableCell className="text-center">{getTotalDaysPerSegment(it)}</TableCell>
-                                    <TableCell className="text-center">{getCumulativeDaysPerSegment(i)}</TableCell>
-                                    <TableCell className="text-center">
-                                        {it.flightBooked
-                                            ? <CircleCheck className="text-emerald-500" />
-                                            : <CircleAlert className="text-orange-500" />}
+                                    <TableCell className="w-5 pl-2 pr-0 text-left text-lg">
+                                        {getTotalDaysPerSegment(it)}
                                     </TableCell>
-                                    <TableCell className="text-center">
-                                        {it.stayBooked
-                                            ? <CircleCheck className="text-emerald-500" />
-                                            : <CircleAlert className="text-orange-500" />}
+                                    <TableCell className="w-5 pl-2 pr-0 text-left text-lg">
+                                        {getCumulativeDaysPerSegment(i)}
                                     </TableCell>
-                                    <TableCell className="text-center">
-                                        {it.isShengenRegion
-                                            ? <CircleCheck className="text-emerald-500" />
-                                            : <CircleAlert className="text-orange-500" />}
+                                    <TableCell className="w-5 pl-2 pr-0">
+                                        <div className="flex items-center">
+                                            {it.flightBooked
+                                                ? <CircleCheck className="text-emerald-500" />
+                                                : <CircleAlert className="text-orange-500" />}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="w-5 pl-2 pr-0">
+                                        <div className="flex items-center">
+                                            {it.stayBooked
+                                                ? <CircleCheck className="text-emerald-500" />
+                                                : <CircleAlert className="text-orange-500" />}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="w-5 pl-2 pr-0">
+                                        <div className="flex items-center">
+                                            {it.isShengenRegion
+                                                ? <CircleCheck className="text-emerald-500" />
+                                                : <CircleAlert className="text-orange-500" />}
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             </TableBody>
