@@ -46,7 +46,7 @@ const TripsPage = () => {
                 </div>
             )}
             
-            <div className={cn('grid gap-2 grid-cols-4')}>
+            <div className={cn('grid gap-2 grid-cols-1 md:grid-cols-4')}>
                 {vm.trips?.data?.map(trip => (
                     <TripCard
                         key={trip.id}

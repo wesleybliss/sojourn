@@ -17,47 +17,55 @@ const Navbar = () => {
         
         <nav className="flex items-center justify-between px-4 py-2 bg-background border-b">
             
-            <div className="flex flex-col lg:flex-row items-center gap-2 lg:gap-0">
+            <div className="flex flex-col lg:flex-row items-center gap-1">
                 
-                <div className="text-sm font-bold opacity-70">
-                    <Link href="/">
-                        Trip Planner
-                    </Link>
-                </div>
-                
-                {vm.currentTrip && (<>
+                <div className="flex flex-row items-center gap-2 lg:gap-0">
                     
-                    <div className="mx-2 text-sm hidden lg:block">/</div>
-                    <div className="flex items-center justify-between group text-sm">
-                        <Link href={`/trips/${vm.currentTrip?.id}`}>
-                            {vm.currentTrip?.name || ''}
+                    <div className="text-sm font-bold opacity-70">
+                        <Link href="/">
+                            Trip Planner
                         </Link>
                     </div>
                     
-                    <div className="ml-4">
-                        <CurrentPlanSelector />
-                    </div>
-                
-                </>)}
-                
-                <Badge className="ml-4" variant="secondary">
-                    {vm.segments?.length || '0'} Segments
-                </Badge>
-                
-                {vm.shengenData && (
-                    <Badge className="flex items-center gap-2 ml-4" variant="secondary" title="Shengen Allowance">
-                        <div>{vm.shengenData?.startDate?.format('MMM D, YYYY')}</div>
-                        <div>&rarr;</div>
-                        <div className={cn({
-                            'text-red-500': vm.shengenData?.isOver === true,
-                        })}>
-                            {vm.shengenData?.endDate?.format('MMM D, YYYY')}
+                    {vm.currentTrip && (<>
+                        
+                        <div className="mx-2 text-sm hidden lg:block">/</div>
+                        <div className="flex items-center justify-between group text-sm">
+                            <Link href={`/trips/${vm.currentTrip?.id}`}>
+                                {vm.currentTrip?.name || ''}
+                            </Link>
                         </div>
-                        <div className="italic">
-                            {vm.shengenData?.totalDays || '0'} days, {vm.shengenData?.remainingDays || '0'} remaining
+                        
+                        <div className="ml-4">
+                            <CurrentPlanSelector />
                         </div>
+                    
+                    </>)}
+                
+                </div>
+                
+                <div className="flex flex-col lg:flex-row items-center gap-2 lg:gap-0">
+                    <Badge className="ml-4" variant="secondary">
+                        {vm.segments?.length || '0'} Segments
                     </Badge>
-                )}
+                    
+                    {vm.shengenData && (
+                        <Badge className="flex items-center gap-2 ml-4" variant="secondary" title="Shengen Allowance">
+                            <div>{vm.shengenData?.startDate?.format('MMM D, YYYY')}</div>
+                            <div>&rarr;</div>
+                            <div className={cn({
+                                'text-red-500': vm.shengenData?.isOver === true,
+                            })}>
+                                {vm.shengenData?.endDate?.format('MMM D, YYYY')}
+                            </div>
+                            <div className="italic">
+                                {vm.shengenData?.totalDays || '0'} days,
+                                &nbsp;{vm.shengenData?.remainingDays || '0'} remaining
+                            </div>
+                        </Badge>
+                    )}
+                
+                </div>
             
             </div>
             
