@@ -32,8 +32,8 @@ export class TripsRepository extends Repository {
     async findAllByUserId(userId) {
         
         try {
-            
-            const trips = await this.db
+            const db = await this.getDb()
+            const trips = await db
                 .select({ trip: this.schema })
                 .from(this.schema)
                 .innerJoin(

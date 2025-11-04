@@ -32,8 +32,8 @@ export class SegmentsRepository extends Repository  {
     async findAllByTripId(tripId) {
         
         try {
-            
-            const segments = await this.db
+            const db = await this.getDb()
+            const segments = await db
                 .select()
                 .from(schemas.segments)
                 .where(eq(schemas.segments.tripId, tripId))
@@ -57,8 +57,8 @@ export class SegmentsRepository extends Repository  {
     async findAllByPlanId(planId) {
         
         try {
-            
-            const segments = await this.db
+            const db = await this.getDb()
+            const segments = await db
                 .select()
                 .from(this.schema)
                 .where(eq(this.schema.planId, planId))

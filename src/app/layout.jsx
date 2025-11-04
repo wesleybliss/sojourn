@@ -6,6 +6,7 @@ import advancedFormat from 'dayjs/plugin/advancedFormat'
 import Navbar from '@/components/Navbar'
 import QueryProvider from '@/components/providers/QueryProvider'
 import NextAuthProvider from '@/components/providers/NextAuthProvider.jsx'
+import OfflineSync from '@/components/OfflineSync'
 import { Toaster } from 'sonner'
 
 dayjs.extend(advancedFormat)
@@ -21,6 +22,7 @@ export default function RootLayout({ children }) {
                 
                 <NextAuthProvider>
                     <QueryProvider>
+                        <OfflineSync />
                         <Navbar />
                         {children}
                         <Toaster />

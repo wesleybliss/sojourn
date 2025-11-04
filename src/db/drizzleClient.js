@@ -13,6 +13,7 @@ export const getDrizzleDb = () => {
     if (drizzleDb) return drizzleDb
     
     const client = getClientDb()
+    
     drizzleDb = drizzle(client, { schema })
     
     return drizzleDb

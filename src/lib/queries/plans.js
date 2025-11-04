@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-/* import * as store from '@/store'
-import { updateItemArray } from '@/lib/storeUtils.js' */
+import plansRepo from '@/db/repos/plans'
+import { syncDb } from '@/db/clientDb'
+import { useOnlineStatus } from '@/hooks/useOnlineStatus'
 
 const plansQueryKey = (tripId, exclusive = false) =>
     exclusive ? [tripId] : ['trips', tripId, 'plans']
@@ -8,135 +9,101 @@ const plansQueryKey = (tripId, exclusive = false) =>
 export const usePlansQuery = (tripId, opts = {}) => useQuery({
     queryKey: plansQueryKey(tripId),
     queryFn: async () => {
-        const response = await fetch(`/api/trips/${tripId}/plans`)
+        const plans = await plansRepo.findAllByTripId(tripId)
         
-        if (!response.ok) {
-            const error = await response.json().catch(() => ({}))
-            
-            throw new Error(error.message || 'Failed to fetch plans')
-        }
-        
-        return await response.json()
+        return plans
     },
     enabled: !!tripId,
-    keepPreviousData: true,
     ...opts,
 })
 
 export const usePlanQuery = (planId, opts = {}) => useQuery({
     queryKey: ['plans', planId],
     queryFn: async () => {
-        const response = await fetch(`/api/plans/${planId}`)
+        const plan = await plansRepo.findOneById(planId)
         
-        if (!response.ok) {
-            const error = await response.json().catch(() => ({}))
-            
-            throw new Error(error.message || 'Failed to fetch plan')
-        }
-        
-        return await response.json()
+        if (!plan) throw new Error('Plan not found')
+        return plan
     },
     enabled: !!planId,
-    keepPreviousData: true,
     ...opts,
 })
 
 export const useCreatePlan = () => {
     const queryClient = useQueryClient()
+    const online = useOnlineStatus()
     
     return useMutation({
         mutationFn: async ({ tripId, ...planData }) => {
-            const response = await fetch('/api/plans', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ tripId, ...planData }),
-            })
+            const newPlan = await plansRepo.create({ tripId, ...planData })
             
-            if (!response.ok) {
-                const error = await response.json().catch(() => ({}))
-                
-                throw new Error(error.message || 'Failed to create plan')
-            }
-            
-            return await response.json()
+            return newPlan
         },
-        onSuccess: (data, variables) => {
-            // queryClient.invalidateQueries({ queryKey: plansQueryKey(variables.tripId) })
-            queryClient.invalidateQueries(['trip', variables.tripId])
+        onSuccess: async (data, variables) => {
+            await queryClient.invalidateQueries(['trip', variables.tripId])
+            
+            if (online) {
+                syncDb().catch(err => console.error('Sync after create plan failed:', err))
+            }
         },
     })
 }
 
 export const useUpdatePlan = () => {
     const queryClient = useQueryClient()
+    const online = useOnlineStatus()
     
     return useMutation({
-        mutationFn: async ({ /* tripId, */ planId, ...planData }) => {
-            const response = await fetch(`/api/plans/${planId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(planData),
-            })
+        mutationFn: async ({ planId, ...planData }) => {
+            const updated = await plansRepo.updateById(planId, planData)
             
-            if (!response.ok) {
-                const error = await response.json().catch(() => ({}))
-                
-                throw new Error(error.message || 'Failed to update plan')
-            }
-            
-            return await response.json()
+            return updated
         },
-        onSuccess: (data, variables) => {
-            try {
-                console.log('invalidateQueries', { variables, queryKey: plansQueryKey(variables.tripId, true) })
-            } catch (e) {
-                console.error('ehh', e)
-            }
+        onSuccess: async (data, variables) => {
+            await queryClient.invalidateQueries(['trip', ...plansQueryKey(variables.tripId, true)])
             
-            queryClient.invalidateQueries(['trip', ...plansQueryKey(variables.tripId, true)])
-            /* queryClient.invalidateQueries({ queryKey: ['plans', variables.id] })
-            queryClient.invalidateQueries({ queryKey: ['trips', variables.tripId] }) */
+            if (online) {
+                syncDb().catch(err => console.error('Sync after update plan failed:', err))
+            }
         },
     })
 }
 
 export const useDeletePlan = () => {
     const queryClient = useQueryClient()
+    const online = useOnlineStatus()
     
     return useMutation({
         mutationFn: async plan => {
-            const res = await fetch(`/api/plans/${plan.id}`, {
-                method: 'DELETE',
-            })
-            
-            if (!res.ok) {
-                const error = await res.json().catch(console.error)
-                
-                throw new Error(error.message || 'Failed to delete plan')
-            }
-            
+            await plansRepo.deleteById(plan.id)
             return plan
         },
-        onSuccess: (data, variables) => {
-            queryClient.invalidateQueries(['trip', variables.tripId])
+        onSuccess: async (data, variables) => {
+            await queryClient.invalidateQueries(['trip', variables.tripId])
+            
+            if (online) {
+                syncDb().catch(err => console.error('Sync after delete plan failed:', err))
+            }
         },
     })
 }
 
 export const useClonePlan = () => {
     const queryClient = useQueryClient()
+    const online = useOnlineStatus()
     
     return useMutation({
-        mutationFn: async ({ planId }) => {
-            
-            const res = await fetch(`/api/plans/${planId}/clone`, { method: 'POST' })
-            
-            if (!res.ok) throw new Error('Failed to clone plan')
-            
-            return await res.json()
+        mutationFn: async () => {
+            // Need to implement clone in plansRepo
+            // For now, throw error
+            throw new Error('Clone plan not yet implemented in local-first mode')
         },
-        onSuccess: data => {
-            queryClient.invalidateQueries(['trip', data.tripId])
+        onSuccess: async data => {
+            await queryClient.invalidateQueries(['trip', data.tripId])
+            
+            if (online) {
+                syncDb().catch(err => console.error('Sync after clone plan failed:', err))
+            }
         },
     })
 }

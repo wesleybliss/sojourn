@@ -29,8 +29,8 @@ export class PlansRepository extends Repository  {
     async findAllByTripId(tripId) {
         
         try {
-            
-            const plansWithSegments = await this.db
+            const db = await this.getDb()
+            const plansWithSegments = await db
                 .select({
                     plan: schemas.plans,
                     segment: schemas.segments,

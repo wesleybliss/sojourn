@@ -9,18 +9,18 @@ let client
  */
 export const getClientDb = () => {
     if (client) return client
-
+    
     if (typeof window === 'undefined') {
         throw new Error('clientDb must only be used in the browser')
     }
-
+    
     const syncUrl = process.env.NEXT_PUBLIC_TURSO_DATABASE_URL
     const authToken = process.env.NEXT_PUBLIC_TURSO_AUTH_TOKEN
-
+    
     if (!syncUrl || !authToken) {
         throw new Error('Missing NEXT_PUBLIC_TURSO_DATABASE_URL or NEXT_PUBLIC_TURSO_AUTH_TOKEN')
     }
-
+    
     // Create embedded replica: local file synced with remote Turso
     client = createClient({
         url: 'file:trip-planner.db',
@@ -28,7 +28,7 @@ export const getClientDb = () => {
         authToken,
         syncInterval: 60, // Auto-sync every 60 seconds when online
     })
-
+    
     return client
 }
 
@@ -40,6 +40,7 @@ export const getClientDb = () => {
  */
 export const executeQuery = async (sql, args = []) => {
     const db = getClientDb()
+    
     return db.execute({ sql, args })
 }
 
@@ -79,7 +80,8 @@ export const syncDb = async (options = {}) => {
 export const getTableNames = async () => {
     const result = await executeQuery(
         'SELECT name FROM sqlite_schema WHERE type = ? ORDER BY name',
-        ['table']
+        ['table'],
     )
+    
     return result.rows.map(row => row.name)
 }

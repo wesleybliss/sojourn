@@ -7,9 +7,9 @@ import { useEffect, useState } from 'react'
  */
 export const useOnlineStatus = () => {
     const [online, setOnline] = useState(
-        typeof navigator !== 'undefined' ? navigator.onLine : true
+        typeof navigator !== 'undefined' ? navigator.onLine : true,
     )
-
+    
     useEffect(() => {
         const handleOnline = () => setOnline(true)
         const handleOffline = () => setOnline(false)
@@ -22,7 +22,7 @@ export const useOnlineStatus = () => {
             window.removeEventListener('offline', handleOffline)
         }
     }, [])
-
+    
     return online
 }
 

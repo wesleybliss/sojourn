@@ -1,22 +1,24 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import * as store from '@/store'
 import { updateItemArray } from '@/lib/storeUtils.js'
-
-// const idToInt = obj => obj?.id ? parseInt(obj?.id, 10) : null
+import tripsRepo from '@/db/repos/trips'
+import plansRepo from '@/db/repos/plans'
+import segmentsRepo from '@/db/repos/segments'
+import { syncDb } from '@/db/clientDb'
+import { useOnlineStatus } from '@/hooks/useOnlineStatus'
 
 export const useTripQuery = tripId => useQuery({
     queryKey: ['trip', tripId],
     queryFn: async () => {
         
         try {
+            const data = await tripsRepo.findOneWithDetails(tripId, plansRepo)
             
-            const res = await fetch(`/api/trips/${tripId}?withDetails=true`)
-            const { data } = await res.json()
+            if (!data) throw new Error('Trip not found')
             
             // @todo need to handle this better
             try {
                 updateItemArray(store.trips, data)
-                // store.currentTripId.setValue(idToInt(data))
                 store.currentTripId.setValue(data.id)
             } catch (e) {
                 console.warn('useTripQuery: updateItemArray failed', e)
@@ -25,121 +27,110 @@ export const useTripQuery = tripId => useQuery({
             return data
             
         } catch (e) {
-            
             console.error('queries/trip', e)
             throw e
-            
         }
         
     },
     enabled: !!tripId,
-    keepPreviousData: true,
     retry: 0,
 })
 
 export const useCreateTripMutation = () => {
-    
     const queryClient = useQueryClient()
+    const online = useOnlineStatus()
     
     return useMutation({
         mutationFn: async tripData => {
-            const res = await fetch('/api/trips', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(tripData),
-            })
-            const { data } = await res.json()
+            const newTrip = await tripsRepo.create(tripData)
             
-            return data
+            return newTrip
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries(['trips'])
+        onSuccess: async () => {
+            await queryClient.invalidateQueries(['trips'])
+            
+            if (online) {
+                syncDb().catch(err => console.error('Sync after create failed:', err))
+            }
         },
     })
-    
 }
 
 export const useUpdateTrip = () => {
     const queryClient = useQueryClient()
+    const online = useOnlineStatus()
     
     return useMutation({
         mutationFn: async ({ tripId, ...tripData }) => {
-            const res = await fetch(`/api/trips/${tripId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(tripData),
-            })
+            const updated = await tripsRepo.updateById(tripId, tripData)
             
-            if (!res.ok) throw new Error('Failed to update trip')
-            return res.json()
+            return updated
         },
-        onSuccess: (data, variables) => {
-            queryClient.invalidateQueries(['trip', variables.tripId])
-            // queryClient.invalidateQueries(['trips'])
+        onSuccess: async (data, variables) => {
+            await queryClient.invalidateQueries(['trip', variables.tripId])
+            
+            if (online) {
+                syncDb().catch(err => console.error('Sync after update failed:', err))
+            }
         },
     })
 }
 
 export const useAddSegment = () => {
     const queryClient = useQueryClient()
+    const online = useOnlineStatus()
     
     return useMutation({
         mutationFn: async segmentData => {
-            const res = await fetch('/api/segments', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(segmentData),
-            })
+            const newSegment = await segmentsRepo.create(segmentData)
             
-            if (!res.ok) throw new Error('Failed to add segment')
-            return res.json()
+            return newSegment
         },
-        onSuccess: data => {
-            queryClient.invalidateQueries(['trip', data.tripId])
+        onSuccess: async data => {
+            await queryClient.invalidateQueries(['trip', data.tripId])
+            
+            if (online) {
+                syncDb().catch(err => console.error('Sync after add segment failed:', err))
+            }
         },
     })
 }
 
 export const useUpdateSegment = () => {
-    
     const queryClient = useQueryClient()
+    const online = useOnlineStatus()
     
     return useMutation({
         mutationFn: async ({ segmentId, ...segmentData }) => {
-            const res = await fetch(`/api/segments/${segmentId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(segmentData),
-            })
+            const updated = await segmentsRepo.updateById(segmentId, segmentData)
             
-            if (!res.ok) throw new Error('Failed to update segment')
-            return res.json()
+            return updated
         },
-        onSuccess: data => {
-            queryClient.invalidateQueries(['trip', data.tripId])
+        onSuccess: async data => {
+            await queryClient.invalidateQueries(['trip', data.tripId])
+            
+            if (online) {
+                syncDb().catch(err => console.error('Sync after update segment failed:', err))
+            }
         },
     })
-    
 }
 
 export const useDeleteSegments = () => {
     const queryClient = useQueryClient()
+    const online = useOnlineStatus()
     
     return useMutation({
         mutationFn: async ({ tripId, planId, segmentIds }) => {
-            const res = await fetch('/api/segments', {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ tripId, planId, segmentIds }),
-            })
-            
-            if (!res.ok) throw new Error('Failed to delete segments')
-            return res.json()
+            await segmentsRepo.deleteByIds(segmentIds)
+            return { tripId, planId, segmentIds }
         },
-        onSuccess: data => {
-            queryClient.invalidateQueries(['trip', data.tripId])
+        onSuccess: async data => {
+            await queryClient.invalidateQueries(['trip', data.tripId])
+            
+            if (online) {
+                syncDb().catch(err => console.error('Sync after delete segments failed:', err))
+            }
         },
     })
 }
@@ -150,57 +141,63 @@ export const useDeleteSegments = () => {
  */
 export const useRenamePlan = () => {
     const queryClient = useQueryClient()
+    const online = useOnlineStatus()
     
     return useMutation({
         mutationFn: async ({ planId, name }) => {
-            const res = await fetch(`/api/plans/${planId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name }),
-            })
+            const updated = await plansRepo.updateById(planId, { name })
             
-            if (!res.ok) throw new Error('Failed to rename plan')
-            return res.json()
+            return updated
         },
-        onSuccess: data => {
-            queryClient.invalidateQueries(['trip', data.tripId])
+        onSuccess: async data => {
+            await queryClient.invalidateQueries(['trip', data.tripId])
+            
+            if (online) {
+                syncDb().catch(err => console.error('Sync after rename plan failed:', err))
+            }
         },
     })
 }
 
 export const useDeletePlan = () => {
-    
     const queryClient = useQueryClient()
+    const online = useOnlineStatus()
     
     return useMutation({
         mutationFn: async ({ planId }) => {
-            const res = await fetch(`/api/plans/${planId}`, {
-                method: 'DELETE',
-            })
+            // First get the plan to know its tripId
+            const plan = await plansRepo.findOneById(planId)
             
-            if (!res.ok) throw new Error('Failed to delete plan')
-            return res.json()
+            if (!plan) throw new Error('Plan not found')
+            
+            await plansRepo.deleteById(planId)
+            return { tripId: plan.tripId, planId }
         },
-        onSuccess: data => {
-            queryClient.invalidateQueries(['trip', data.tripId])
+        onSuccess: async data => {
+            await queryClient.invalidateQueries(['trip', data.tripId])
+            
+            if (online) {
+                syncDb().catch(err => console.error('Sync after delete plan failed:', err))
+            }
         },
     })
-    
 }
 
 export const useDeleteTripMutation = () => {
-    
     const queryClient = useQueryClient()
+    const online = useOnlineStatus()
     
     return useMutation({
         mutationFn: async tripId => {
-            await fetch(`/api/trips/${tripId}`, {
-                method: 'DELETE',
-            })
+            await tripsRepo.deleteById(tripId)
+            return tripId
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries(['trips'])
+        onSuccess: async () => {
+            await queryClient.invalidateQueries(['trips'])
+            
+            if (online) {
+                syncDb().catch(err => console.error('Sync after delete trip failed:', err))
+            }
         },
     })
-    
 }

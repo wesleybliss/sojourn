@@ -11,7 +11,7 @@ import { syncDb } from '@/db/clientDb'
 export const useAutoSync = () => {
     const online = useOnlineStatus()
     const prevOnline = useRef(online)
-
+    
     useEffect(() => {
         // Trigger sync when transitioning from offline to online
         if (!prevOnline.current && online) {
@@ -20,6 +20,7 @@ export const useAutoSync = () => {
                 console.error('[AutoSync] Sync failed:', err)
             })
         }
+        
         prevOnline.current = online
     }, [online])
 }

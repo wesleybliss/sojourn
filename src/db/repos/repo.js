@@ -1,5 +1,33 @@
-import database from '@/db'
 import { desc, eq } from 'drizzle-orm'
+
+let defaultDb = null
+let dbPromise = null
+
+// Lazy-load the appropriate database
+const getDatabase = async () => {
+    if (defaultDb) return defaultDb
+    
+    // Avoid multiple concurrent loads
+    if (dbPromise) return dbPromise
+    
+    dbPromise = (async () => {
+        if (typeof window !== 'undefined') {
+            // In browser - lazy load client db
+            const { getDrizzleDb } = await import('@/db/drizzleClient')
+            
+            defaultDb = getDrizzleDb()
+        } else {
+            // In server - lazy load server db
+            const serverDb = await import('@/db')
+            
+            defaultDb = serverDb.default || serverDb.db
+        }
+        
+        return defaultDb
+    })()
+    
+    return dbPromise
+}
 
 /**
  * @typedef {Object} Repository
@@ -27,16 +55,35 @@ class Repository {
      * @param {string} name - Single name (e.g. item)
      * @param {string} plural - Plural form (e.g. items)
      * @param {Object} schema - The schema object for the repository (e.g. db.items)
-     * @param {Object} db - The database connection or a transaction (default: database)
+     * @param {Object} db - The database connection or a transaction (default: auto-detected)
      * @returns {Repository}
      */
-    constructor(name, plural, schema, db = database) {
+    constructor(name, plural, schema, db = null) {
         
         this.name = name
         this.plural = plural
         this.schema = schema
-        this.db = db
+        this._db = db
+        this._dbPromise = null
         
+    }
+    
+    // Lazy getter for database
+    async getDb() {
+        if (this._db) return this._db
+        
+        if (!this._dbPromise) {
+            this._dbPromise = getDatabase()
+        }
+        
+        this._db = await this._dbPromise
+        return this._db
+    }
+    
+    // Sync getter for backward compatibility (will throw if not initialized)
+    get db() {
+        if (this._db) return this._db
+        throw new Error('Database not initialized. Call await repo.getDb() first or pass db to constructor.')
     }
     
     //region Helpers
@@ -66,8 +113,8 @@ class Repository {
     async create(data) {
         
         try {
-            
-            const [newItem] = await this.db
+            const db = await this.getDb()
+            const [newItem] = await db
                 .insert(this.schema)
                 .values(data)
                 .returning()
@@ -76,8 +123,8 @@ class Repository {
             
         } catch (e) {
             
-            console.error(`Error creating ${name}:`, e)
-            throw new Error(`Failed to create ${name}`)
+            console.error(`Error creating ${this.name}:`, e)
+            throw new Error(`Failed to create ${this.name}`)
             
         }
         
@@ -86,8 +133,9 @@ class Repository {
     async findAll() {
         
         try {
+            const db = await this.getDb()
             
-            return await this.db
+            return await db
                 .select()
                 .from(this.schema)
                 .orderBy(desc(this.schema.id))
@@ -104,8 +152,9 @@ class Repository {
     async findAllBy(key, value) {
         
         try {
+            const db = await this.getDb()
             
-            return await this.db
+            return await db
                 .select()
                 .from(this.schema)
                 .where(eq(this.schema[key], value))
@@ -123,8 +172,8 @@ class Repository {
     async findOneBy(key, value) {
         
         try {
-            
-            const [item] = await this.db
+            const db = await this.getDb()
+            const [item] = await db
                 .select()
                 .from(this.schema)
                 .where(eq(this.schema[key], value))
@@ -134,7 +183,7 @@ class Repository {
             
         } catch (e) {
             
-            console.error(`Error fetching name by ${key} = ${value}:`, e)
+            console.error(`Error fetching ${this.name} by ${key} = ${value}:`, e)
             throw new Error(`Failed to fetch ${this.name}`)
             
         }
@@ -150,8 +199,8 @@ class Repository {
     async updateById(id, data) {
         
         try {
-            
-            const [updatedItem] = await this.db
+            const db = await this.getDb()
+            const [updatedItem] = await db
                 .update(this.schema)
                 .set(data)
                 .where(eq(this.schema.id, id))
@@ -171,8 +220,9 @@ class Repository {
     async deleteByIds(ids) {
         
         try {
+            const db = await this.getDb()
             
-            await this.db
+            await db
                 .delete(this.schema)
                 .where(this.schema.id.in(ids))
             
