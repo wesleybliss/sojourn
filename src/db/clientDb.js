@@ -1,4 +1,4 @@
-import { createClient } from '@libsql/client'
+import { createClient } from '@libsql/client/web'
 
 let client
 
@@ -21,11 +21,11 @@ export const getClientDb = () => {
         throw new Error('Missing NEXT_PUBLIC_TURSO_DATABASE_URL or NEXT_PUBLIC_TURSO_AUTH_TOKEN')
     }
     
-    // Create embedded replica: local file synced with remote Turso
+    // Create embedded replica: IndexedDB-backed local DB that syncs with Turso
     client = createClient({
-        url: 'file:trip-planner.db',
-        syncUrl,
+        url: syncUrl,
         authToken,
+        syncUrl,
         syncInterval: 60, // Auto-sync every 60 seconds when online
     })
     
@@ -40,7 +40,6 @@ export const getClientDb = () => {
  */
 export const executeQuery = async (sql, args = []) => {
     const db = getClientDb()
-    
     return db.execute({ sql, args })
 }
 
@@ -51,10 +50,7 @@ export const executeQuery = async (sql, args = []) => {
  */
 export const withTransaction = async fn => {
     const db = getClientDb()
-    
-    // libSQL embedded replica doesn't support manual transactions yet
-    // Just execute the function - sync will handle conflicts
-    return fn(db)
+    return db.transaction(fn)
 }
 
 /**
@@ -64,7 +60,6 @@ export const withTransaction = async fn => {
  */
 export const syncDb = async (options = {}) => {
     const db = getClientDb()
-    
     if (typeof db.sync === 'function') {
         await db.sync(options)
     } else {
@@ -82,6 +77,5 @@ export const getTableNames = async () => {
         'SELECT name FROM sqlite_schema WHERE type = ? ORDER BY name',
         ['table'],
     )
-    
     return result.rows.map(row => row.name)
 }
