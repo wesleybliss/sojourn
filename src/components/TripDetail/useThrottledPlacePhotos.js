@@ -38,10 +38,9 @@ const useThrottledPlacePhotos = segments => {
         
         const placeNames = places.map(it => it.name)
         const segmentNames = segments.map(it => it.name)
-        const missingPlaces = segmentNames
-            .filter(it => console.log(it, (placeNames.includes(it) ? '✓' : 'x'))|| !placeNames.includes(it))
+        const missingPlaces = segmentNames.filter(it => !placeNames.includes(it))
         
-        console.log('throttle pic, missing', missingPlaces.length, 'of', segmentNames.length)
+        // console.log('throttle pic, missing', missingPlaces.length, 'of', segmentNames.length)
         
         if (!missingPlaces.length)
             return
