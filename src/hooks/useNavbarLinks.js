@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { toast } from 'sonner'
 
-const useNavbarLinks = (user, trips, backupMutation, debugDumpData, setDeleteDatabaseDialogOpen) => {
+const useNavbarLinks = (user, trips, backupMutation, debugDumpData, setDeleteDatabaseDialogOpen, isOnline) => {
     
     return useMemo(() => {
         
@@ -20,6 +20,10 @@ const useNavbarLinks = (user, trips, backupMutation, debugDumpData, setDeleteDat
             ['#debug:dump', 'Debug/Dump', debugDumpData(trips?.data)],
             ['#debug:clear', 'Debug/Clear', e => {
                 e.preventDefault()
+                if (!isOnline) {
+                    toast.error('This action requires an internet connection')
+                    return
+                }
                 setDeleteDatabaseDialogOpen(true)
             }],
             /* ['#debug:backup', 'Backup', async e => {
@@ -62,6 +66,11 @@ const useNavbarLinks = (user, trips, backupMutation, debugDumpData, setDeleteDat
             ['#debug:backup', 'Backup', async e => {
                 e.preventDefault()
                 
+                if (!isOnline) {
+                    toast.error('Backup requires an internet connection')
+                    return
+                }
+                
                 try {
                     await backupMutation.mutateAsync({ type: 'multiple' })
                     toast.success('Backup file downloaded')
@@ -71,7 +80,7 @@ const useNavbarLinks = (user, trips, backupMutation, debugDumpData, setDeleteDat
                 }
             }],
         ]
-    }, [trips, user, backupMutation])
+    }, [trips, user, backupMutation, isOnline])
     
 }
 

@@ -14,6 +14,7 @@ import { Progress } from '@/components/ui/progress'
 import { FolderUp } from 'lucide-react'
 import { toast } from 'sonner'
 import { useRestoreTrips } from '@/lib/queries/backups'
+import useOnlineStatus from '@/hooks/useOnlineStatus'
 
 export default function ImportTripsPage() {
     const fileInputRef = useRef()
@@ -23,7 +24,13 @@ export default function ImportTripsPage() {
     const [importStatus, setImportStatus] = useState('')
     const [progressPercent, setProgressPercent] = useState(0)
     
+    const isOnline = useOnlineStatus()
+    
     const startRestoreTrip = () => {
+        if (!isOnline) {
+            toast.error('Restore requires an internet connection')
+            return
+        }
         fileInputRef.current.value = null
         fileInputRef.current.click()
     }
@@ -93,8 +100,9 @@ export default function ImportTripsPage() {
                         <Button
                             className="mt-4"
                             variant="secondary"
-                            disabled={isImporting}
-                            onClick={startRestoreTrip}>
+                            disabled={isImporting || !isOnline}
+                            onClick={startRestoreTrip}
+                            title={!isOnline ? 'Restore requires an internet connection' : ''}>
                             <FolderUp />
                             Select Backup File
                         </Button>

@@ -1,12 +1,18 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useOnlineStatus } from '@/hooks/useOnlineStatus'
 
 const idToInt = obj => obj?.id ? parseInt(obj?.id, 10) : null
 
 export const useBackupTrips = () => {
     const queryClient = useQueryClient()
+    const online = useOnlineStatus()
     
     return useMutation({
         mutationFn: async ({ type = 'multiple', tripId = null, tripIds = null } = {}) => {
+            if (!online) {
+                throw new Error('Backup requires an internet connection')
+            }
+            
             const body = { type }
             
             if (Array.isArray(tripIds))
@@ -58,9 +64,13 @@ export const useBackupTrips = () => {
 
 export const useRestoreTrips = () => {
     const queryClient = useQueryClient()
+    const online = useOnlineStatus()
     
     return useMutation({
         mutationFn: async backupData => {
+            if (!online) {
+                throw new Error('Restore requires an internet connection')
+            }
             const res = await fetch('/api/trips/restore', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

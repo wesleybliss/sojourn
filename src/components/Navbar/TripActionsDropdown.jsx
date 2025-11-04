@@ -13,6 +13,11 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import {
+    Tooltip,
+    TooltipTrigger,
+    TooltipContent,
+} from '@/components/ui/tooltip'
+import {
     Ellipsis,
     FolderPen,
     FilePlus,
@@ -31,6 +36,7 @@ import useUIOptionsViewModel from '@/components/Navbar/UIOptionsViewModel'
 import useTripActionsViewModel from '@/components/Navbar/TripActionsViewModel'
 import usePlanActionsViewModel from '@/components/Navbar/PlanActionsViewModel'
 import useSegmentActionsViewModel from '@/components/Navbar/SegmentActionsViewModel'
+import useOnlineStatus from '@/hooks/useOnlineStatus'
 
 const TripActionsDropdown = ({
     trip,
@@ -43,6 +49,7 @@ const TripActionsDropdown = ({
     const segmentActionsViewModel = useSegmentActionsViewModel(trip, plan)
     
     const [isTripEditMode, setIsTripEditMode] = useWireState(store.isTripEditMode)
+    const isOnline = useOnlineStatus()
     
     useEffect(() => {
         
@@ -72,9 +79,22 @@ const TripActionsDropdown = ({
                     <DropdownMenuItem onClick={() => tripActionsViewModel.setRenameTripDialogOpen(true)}>
                         <FolderPen className="text-yellow-500" /> Rename Trip
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={tripActionsViewModel.backupTrip}>
-                        <FolderDown className="text-violet-500" /> Backup Trip
-                    </DropdownMenuItem>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div>
+                                <DropdownMenuItem
+                                    onClick={tripActionsViewModel.backupTrip}
+                                    disabled={!isOnline}>
+                                    <FolderDown className="text-violet-500" /> Backup Trip
+                                </DropdownMenuItem>
+                            </div>
+                        </TooltipTrigger>
+                        {!isOnline && (
+                            <TooltipContent>
+                                Backup requires an internet connection
+                            </TooltipContent>
+                        )}
+                    </Tooltip>
                 </DropdownMenuGroup>
                 
                 <DropdownMenuSeparator />

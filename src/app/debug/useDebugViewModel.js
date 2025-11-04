@@ -3,6 +3,8 @@ import { parseFormData } from '@/lib/utils'
 import { toBase64 } from '@/lib/storage/vercel-blob'
 import { usePlacesQuery } from '@/lib/queries/places'
 import { useQueryClient } from '@tanstack/react-query'
+import useOnlineStatus from '@/hooks/useOnlineStatus'
+import { toast } from 'sonner'
 
 const useDebugViewModel = () => {
     
@@ -11,6 +13,7 @@ const useDebugViewModel = () => {
     const [sampleImageBlobUrl, setSampleImageBlobUrl] = useState(null)
     
     const queryClient = useQueryClient()
+    const isOnline = useOnlineStatus()
     
     const {
         data: places,
@@ -80,6 +83,11 @@ const useDebugViewModel = () => {
             
             e.preventDefault()
             setSampleImageBlobUrl(null)
+            
+            if (!isOnline) {
+                toast.error('File upload requires an internet connection')
+                return
+            }
             
             const { file } = parseFormData(e, ['file'])
             

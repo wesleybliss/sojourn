@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 import { useUpdateTrip } from '@/lib/queries/trip'
 import { useQueryClient } from '@tanstack/react-query'
 import { useBackupTrips } from '@/lib/queries/backups'
+import { useOnlineStatus } from '@/hooks/useOnlineStatus'
 
 const TripActionsViewModel = currentTrip => {
     
@@ -14,6 +15,7 @@ const TripActionsViewModel = currentTrip => {
     const queryClient = useQueryClient()
     const updateTripMutation = useUpdateTrip()
     const backupMutation = useBackupTrips()
+    const online = useOnlineStatus()
     
     const updateTrip = useCallback(field => async e => {
         
@@ -58,6 +60,7 @@ const TripActionsViewModel = currentTrip => {
         setNewTripName,
         renameTripDialogOpen,
         setRenameTripDialogOpen,
+        online,
         
         // React Query
         updateTrip,

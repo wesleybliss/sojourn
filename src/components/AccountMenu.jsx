@@ -15,6 +15,7 @@ import { useTripsQuery } from '@/lib/queries/trips.js'
 import { useState } from 'react'
 import { useBackupTrips } from '@/lib/queries/backups.js'
 import { toast } from 'sonner'
+import useOnlineStatus from '@/hooks/useOnlineStatus'
 
 const debugDumpData = trips => e => {
     
@@ -45,10 +46,17 @@ const AccountMenu = () => {
     const [deleteDatabaseDialogOpen, setDeleteDatabaseDialogOpen] = useState(false)
     
     const backupMutation = useBackupTrips()
+    const isOnline = useOnlineStatus()
     
-    const links = useNavbarLinks(user, trips, backupMutation, debugDumpData, setDeleteDatabaseDialogOpen)
+    const links = useNavbarLinks(user, trips, backupMutation, debugDumpData, setDeleteDatabaseDialogOpen, isOnline)
     
     const debugDeleteDatabase = async () => {
+        
+        if (!isOnline) {
+            toast.error('This action requires an internet connection')
+            setDeleteDatabaseDialogOpen(false)
+            return
+        }
         
         try {
             // Since Turso is a remote database, we'll clear all data instead of deleting the DB
