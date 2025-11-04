@@ -3,8 +3,15 @@ import { createClient } from '@libsql/client/web'
 let client
 
 /**
- * Get or create the browser-side libSQL client with embedded replica.
- * Uses IndexedDB for local persistence and syncs with Turso cloud.
+ * Get or create the browser-side libSQL client.
+ * 
+ * NOTE: Currently uses HTTP-only mode. Embedded replicas with offline support
+ * are not yet available in @libsql/client/web. For true local-first with sync,
+ * we need either:
+ * 1. Wait for browser embedded replica support in @libsql/client
+ * 2. Use @tursodatabase/database-wasm with custom sync logic
+ * 3. Implement Service Worker caching for offline HTTP requests
+ * 
  * @returns {import('@libsql/client').Client}
  */
 export const getClientDb = () => {
@@ -14,19 +21,18 @@ export const getClientDb = () => {
         throw new Error('clientDb must only be used in the browser')
     }
     
-    const syncUrl = process.env.NEXT_PUBLIC_TURSO_DATABASE_URL
+    const url = process.env.NEXT_PUBLIC_TURSO_DATABASE_URL
     const authToken = process.env.NEXT_PUBLIC_TURSO_AUTH_TOKEN
     
-    if (!syncUrl || !authToken) {
+    if (!url || !authToken) {
         throw new Error('Missing NEXT_PUBLIC_TURSO_DATABASE_URL or NEXT_PUBLIC_TURSO_AUTH_TOKEN')
     }
     
-    // Create embedded replica: IndexedDB-backed local DB that syncs with Turso
+    // Create HTTP client (online-only for now)
+    // TODO: Implement proper offline support
     client = createClient({
-        url: syncUrl,
+        url,
         authToken,
-        syncUrl,
-        syncInterval: 60, // Auto-sync every 60 seconds when online
     })
     
     return client
@@ -55,16 +61,17 @@ export const withTransaction = async fn => {
 
 /**
  * Manually trigger a sync with Turso cloud.
- * @param {Object} options - Sync options
+ * 
+ * NOTE: Sync is not available in HTTP-only mode.
+ * This is a placeholder for future embedded replica support.
+ * 
+ * @param {Object} options - Sync options  
  * @returns {Promise<void>}
  */
 export const syncDb = async (options = {}) => {
-    const db = getClientDb()
-    if (typeof db.sync === 'function') {
-        await db.sync(options)
-    } else {
-        console.warn('Sync method not available on this client')
-    }
+    // HTTP-only mode doesn't support manual sync
+    // Data is always fresh from server
+    console.info('Sync not needed in HTTP mode - data is always current')
 }
 
 /**
