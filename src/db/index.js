@@ -1,6 +1,6 @@
 import 'dotenv/config'
-// import '../envConfig'
-import { createClient } from '@libsql/client'
+import { NS } from '@/constants'
+import { connect } from '@tursodatabase/database-wasm/turbopack'
 import { drizzle } from 'drizzle-orm/libsql'
 
 if (!process.env.TURSO_DATABASE_URL?.length) {
@@ -8,16 +8,13 @@ if (!process.env.TURSO_DATABASE_URL?.length) {
     throw new Error('Missing TURSO_DATABASE_URL env var')
 }
 
-export const turso = createClient({
-    url: process.env.TURSO_DATABASE_URL,
-    authToken: process.env.TURSO_AUTH_TOKEN,
+const dbConnection = await connect(`${NS}.db`, {
+    syncUrl: process.env.TURSO_DATABASE_URL, // 'libsql://your-db-org.turso.io',
+    syncToken: process.env.TURSO_AUTH_TOKEN,
+    syncInterval: 60, // secs, or false for manual
+    tracing: 'debug', // 'info' | 'debug' | 'trace'
 })
 
-export const db = drizzle({
-    connection: {
-        url: process.env.TURSO_DATABASE_URL,
-        authToken: process.env.TURSO_AUTH_TOKEN,
-    },
-})
+export const db = drizzle(dbConnection)
 
 export default db

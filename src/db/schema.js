@@ -5,6 +5,7 @@ import { timestamps, table, lower, optsCascadeAll, timestampSeconds } from './db
 export const users = table('users', {
     email: text('email').notNull(),
     password: text('password').notNull(),
+    unsafeManualToken: text('unsafeManualToken'),
 }, table => [
     uniqueIndex('emailUniqueIndex').on(lower(table.email)),
 ])

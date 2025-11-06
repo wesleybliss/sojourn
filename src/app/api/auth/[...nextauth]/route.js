@@ -30,11 +30,22 @@ const authOptions = {
                         .where(eq(schemas.users.email, credentials.email))
                     
                     if (!user) return null
+                    
+                    // Check for manual token bypass (for testing)
+                    if (user.unsafeManualToken && credentials.password === user.unsafeManualToken) {
+                        console.log('Authorize: using unsafeManualToken bypass for', credentials.email)
+                        delete user.password
+                        delete user.unsafeManualToken
+                        return user
+                    }
+                    
+                    // Fallback to password verification
                     const valid = await checkPassword(credentials.password, user.password)
                     
                     if (!valid) return null
                     // Remove sensitive fields
                     delete user.password
+                    delete user.unsafeManualToken
                     
                     return user
                     
