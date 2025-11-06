@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import plansRepo from '@/db/repos/plans'
-import { syncDb } from '@/db/clientDb'
 import { useOnlineStatus } from '@/hooks/useOnlineStatus'
 
 const plansQueryKey = (tripId, exclusive = false) =>
@@ -43,7 +42,6 @@ export const useCreatePlan = () => {
             await queryClient.invalidateQueries(['trip', variables.tripId])
             
             if (online) {
-                syncDb().catch(err => console.error('Sync after create plan failed:', err))
             }
         },
     })
@@ -63,7 +61,6 @@ export const useUpdatePlan = () => {
             await queryClient.invalidateQueries(['trip', ...plansQueryKey(variables.tripId, true)])
             
             if (online) {
-                syncDb().catch(err => console.error('Sync after update plan failed:', err))
             }
         },
     })
@@ -82,7 +79,6 @@ export const useDeletePlan = () => {
             await queryClient.invalidateQueries(['trip', variables.tripId])
             
             if (online) {
-                syncDb().catch(err => console.error('Sync after delete plan failed:', err))
             }
         },
     })
@@ -102,7 +98,6 @@ export const useClonePlan = () => {
             await queryClient.invalidateQueries(['trip', data.tripId])
             
             if (online) {
-                syncDb().catch(err => console.error('Sync after clone plan failed:', err))
             }
         },
     })

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { syncDb } from '@/db/clientDb'
 import { useOnlineStatus } from '@/hooks/useOnlineStatus'
 import { Button } from '@/components/ui/button'
 import { RefreshCw } from 'lucide-react'
@@ -20,7 +19,9 @@ export default function SyncButton() {
         setSyncing(true)
         
         try {
-            await syncDb()
+            // Dynamic import to avoid SSR issues with WASM
+            const { syncDbSafe } = await import('@/lib/syncDbSafe')
+            await syncDbSafe()
         } catch (err) {
             console.error('[SyncButton] Sync failed:', err)
         } finally {

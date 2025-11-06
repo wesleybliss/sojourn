@@ -4,7 +4,6 @@ import { updateItemArray } from '@/lib/storeUtils.js'
 import tripsRepo from '@/db/repos/trips'
 import plansRepo from '@/db/repos/plans'
 import segmentsRepo from '@/db/repos/segments'
-import { syncDb } from '@/db/clientDb'
 import { useOnlineStatus } from '@/hooks/useOnlineStatus'
 
 export const useTripQuery = tripId => useQuery({
@@ -50,7 +49,6 @@ export const useCreateTripMutation = () => {
             await queryClient.invalidateQueries(['trips'])
             
             if (online) {
-                syncDb().catch(err => console.error('Sync after create failed:', err))
             }
         },
     })
@@ -70,7 +68,6 @@ export const useUpdateTrip = () => {
             await queryClient.invalidateQueries(['trip', variables.tripId])
             
             if (online) {
-                syncDb().catch(err => console.error('Sync after update failed:', err))
             }
         },
     })
@@ -90,7 +87,6 @@ export const useAddSegment = () => {
             await queryClient.invalidateQueries(['trip', data.tripId])
             
             if (online) {
-                syncDb().catch(err => console.error('Sync after add segment failed:', err))
             }
         },
     })
@@ -110,7 +106,6 @@ export const useUpdateSegment = () => {
             await queryClient.invalidateQueries(['trip', data.tripId])
             
             if (online) {
-                syncDb().catch(err => console.error('Sync after update segment failed:', err))
             }
         },
     })
@@ -129,7 +124,6 @@ export const useDeleteSegments = () => {
             await queryClient.invalidateQueries(['trip', data.tripId])
             
             if (online) {
-                syncDb().catch(err => console.error('Sync after delete segments failed:', err))
             }
         },
     })
@@ -153,7 +147,6 @@ export const useRenamePlan = () => {
             await queryClient.invalidateQueries(['trip', data.tripId])
             
             if (online) {
-                syncDb().catch(err => console.error('Sync after rename plan failed:', err))
             }
         },
     })
@@ -177,7 +170,6 @@ export const useDeletePlan = () => {
             await queryClient.invalidateQueries(['trip', data.tripId])
             
             if (online) {
-                syncDb().catch(err => console.error('Sync after delete plan failed:', err))
             }
         },
     })
@@ -196,7 +188,6 @@ export const useDeleteTripMutation = () => {
             await queryClient.invalidateQueries(['trips'])
             
             if (online) {
-                syncDb().catch(err => console.error('Sync after delete trip failed:', err))
             }
         },
     })

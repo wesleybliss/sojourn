@@ -1,5 +1,7 @@
 import { loadEnvConfig } from '@next/env'
 
-const projectDir = process.cwd()
-
-loadEnvConfig(projectDir)
+// Only load env config on the server side
+if (typeof window === 'undefined') {
+    const projectDir = process.cwd()
+    loadEnvConfig(projectDir)
+}

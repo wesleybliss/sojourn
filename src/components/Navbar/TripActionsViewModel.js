@@ -17,6 +17,21 @@ const TripActionsViewModel = currentTrip => {
     const backupMutation = useBackupTrips()
     const online = useOnlineStatus()
     
+    const syncRemoteDatabase = useCallback(async () => {
+        if (!online) {
+            toast.error('Cannot sync while offline')
+            return
+        }
+        try {
+            toast.loading('Refreshing data...')
+            await queryClient.invalidateQueries()
+            toast.success('Data refreshed successfully')
+        } catch (error) {
+            console.error('Refresh failed:', error)
+            toast.error('Failed to refresh data')
+        }
+    }, [online, queryClient])
+
     const updateTrip = useCallback(field => async e => {
         
         if (!currentTrip) return
@@ -63,6 +78,7 @@ const TripActionsViewModel = currentTrip => {
         online,
         
         // React Query
+        syncRemoteDatabase,
         updateTrip,
         backupTrip,
         

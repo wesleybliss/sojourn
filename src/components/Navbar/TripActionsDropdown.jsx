@@ -18,6 +18,7 @@ import {
     TooltipContent,
 } from '@/components/ui/tooltip'
 import {
+    RefreshCw,
     Ellipsis,
     FolderPen,
     FilePlus,
@@ -71,6 +72,14 @@ const TripActionsDropdown = ({
             
             <DropdownMenuContent align="end">
                 
+                <DropdownMenuLabel className="opacity-60">Sync</DropdownMenuLabel>
+                <DropdownMenuGroup>
+                    <DropdownMenuItem onClick={tripActionsViewModel.syncRemoteDatabase}>
+                        <RefreshCw className="text-blue-500" /> Sync Now
+                    </DropdownMenuItem>
+                </DropdownMenuGroup>
+                
+                <DropdownMenuSeparator />
                 <DropdownMenuLabel className="opacity-60">Trips</DropdownMenuLabel>
                 <DropdownMenuGroup>
                     <DropdownMenuItem onClick={() => setIsTripEditMode(!isTripEditMode)}>
