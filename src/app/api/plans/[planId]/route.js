@@ -67,13 +67,11 @@ export const PUT = withAuth(async (request, { params, auth }) => {
         if (!plan)
             return NextResponse.json({ success: false, error: 'Plan not found' }, { status: 404 })
         
-        const planData = await request.json()
-        
         const [updatedPlan] = await db
             .update(schemas.plans)
             .set({
-                name: planData.name,
-                description: planData.description,
+                name: body.name,
+                description: body.description,
             })
             .where(eq(schemas.plans.id, parseInt(planId, 10)))
             .returning()
