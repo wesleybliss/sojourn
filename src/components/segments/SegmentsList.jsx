@@ -1,34 +1,20 @@
 import { useWireValue } from '@forminator/react-wire'
 import { placeNamesToCoverImagesMap as placeNamesToCoverImagesMapWire } from '@/store'
-import {
-    Table,
-    TableBody,
-    // TableCaption,
-    TableHead,
-    TableHeader,
-    TableRow,
-    TableCell,
-} from '@/components/ui/table'
-import {
-    ArrowRight,
-    CalendarCheck,
-    CalendarRange,
-    Plane,
-    BedDouble,
-    Globe,
-    CircleAlert,
-    CircleCheck,
-} from 'lucide-react'
+import { Table } from '@/components/ui/table'
+import { ArrowRight } from 'lucide-react'
 import dayjs from '@/lib/dayjs'
 import LeftImageCard from '@/components/ImageLeftCard'
 import { backgroundToBorderColors } from '@/lib/colors'
+import SegmentsListDetailsTableHeader from '@/components/segments/SegmentsListDetailsTableHeader'
+import SegmentsListDetailsTableBody from '@/components/segments/SegmentsListDetailsTableBody'
+import { cn } from '@/lib/utils'
 
 const SegmentCardDate = ({ date }) => (
-    <div>
+    <div className="w-full px-3 py-2 bg-slate-100 rounded-lg">
         <div className="text-sm font-medium text-muted-foreground">
             {dayjs(date).format('dddd')}
         </div>
-        <div className="flex items-center text-base font-medium">
+        <div className="flex items-center text-base font-medium font-mono">
             <span>{dayjs(date).format('MMM Do')}</span>
             <span className="text-muted-foreground">, {dayjs(date).format('YYYY')}</span>
         </div>
@@ -37,15 +23,21 @@ const SegmentCardDate = ({ date }) => (
 
 const SegmentsList = ({
     segments,
+    segmentsListViewMode,
     getTotalDaysPerSegment,
     getCumulativeDaysPerSegment,
+    getSegmentPlanned,
+    getSegmentCompleted,
 }) => {
     
     const placeNamesToCoverImagesMap = useWireValue(placeNamesToCoverImagesMapWire)
     
     return (
         
-        <div className="SegmentsList w-full flex flex-col items-center gap-4 mx-auto">
+        <div className={cn('SegmentsList items-center gap-4 mx-auto', {
+            'flex flex-col': segmentsListViewMode !== 'grid',
+            'grid grid-cols-2': segmentsListViewMode === 'grid',
+        })}>
             
             {segments.map((it, i) => (
                 
@@ -60,7 +52,7 @@ const SegmentsList = ({
                     maxWidth="max-w-full lg:max-w-2xl"
                     title={<h3 className="text-xl">{it.name}</h3>}
                     description={
-                        <div className="flex items-center gap-4">
+                        <div className="flex justify-between items-center gap-4">
                             <SegmentCardDate date={it.startDate} />
                             <div className="flex flex-col justify-center items-center content-center">
                                 <ArrowRight className="opacity-50" />
@@ -68,68 +60,18 @@ const SegmentsList = ({
                             <SegmentCardDate date={it.endDate} />
                         </div>
                     }>
-                    <div className="overflow-x-auto mt-4">
+                    <div className="overflow-x-auto mt-2">
                         <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-5 pl-0 pr-0">
-                                        <div className="flex items-center">
-                                            <CalendarCheck title="Segment Days"/>
-                                        </div>
-                                    </TableHead>
-                                    <TableHead className="w-5 pl-0 pr-0">
-                                        <div className="flex items-center">
-                                            <CalendarRange title="Cumulative Days" />
-                                        </div>
-                                    </TableHead>
-                                    <TableHead className="w-5 pl-2 pr-0">
-                                        <div className="flex items-center" title="Flight Booked">
-                                            <Plane />
-                                        </div>
-                                    </TableHead>
-                                    <TableHead className="w-5 pl-2 pr-0">
-                                        <div className="flex items-center" title="Stay Booked">
-                                            <BedDouble />
-                                        </div>
-                                    </TableHead>
-                                    <TableHead className="w-5 pl-2 pr-0">
-                                        <div className="flex items-center" title="Shengen Region">
-                                            <Globe size="1.5rem" />
-                                        </div>
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell className="w-5 pl-2 pr-0 text-left text-lg">
-                                        {getTotalDaysPerSegment(it)}
-                                    </TableCell>
-                                    <TableCell className="w-5 pl-2 pr-0 text-left text-lg">
-                                        {getCumulativeDaysPerSegment(i)}
-                                    </TableCell>
-                                    <TableCell className="w-5 pl-2 pr-0">
-                                        <div className="flex items-center">
-                                            {it.flightBooked
-                                                ? <CircleCheck className="text-emerald-500" />
-                                                : <CircleAlert className="text-orange-500" />}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="w-5 pl-2 pr-0">
-                                        <div className="flex items-center">
-                                            {it.stayBooked
-                                                ? <CircleCheck className="text-emerald-500" />
-                                                : <CircleAlert className="text-orange-500" />}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="w-5 pl-2 pr-0">
-                                        <div className="flex items-center">
-                                            {it.isShengenRegion
-                                                ? <CircleCheck className="text-emerald-500" />
-                                                : <CircleAlert className="text-orange-500" />}
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
+                            <SegmentsListDetailsTableHeader />
+                            <SegmentsListDetailsTableBody
+                                endDate={it.endDate}
+                                totalDaysPerSegment={getTotalDaysPerSegment(it)}
+                                cumulativeDaysPerSegment={getCumulativeDaysPerSegment(i)}
+                                flightBooked={it.flightBooked}
+                                stayBooked={it.stayBooked}
+                                isShengenRegion={it.isShengenRegion}
+                                isSegmentPlanned={getSegmentPlanned(it)}
+                                isSegmentCompleted={getSegmentCompleted(it)} />
                         </Table>
                     </div>
                 </LeftImageCard>

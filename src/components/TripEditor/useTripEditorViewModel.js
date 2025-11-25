@@ -52,6 +52,7 @@ const useTripEditorViewModel = () => {
     const [cascadeEnabled, setCascadeEnabled] = useState(false)
     const [hasRedirectedToPlan, setHasRedirectedToPlan] = useState(false)
     const [segmentsFilterQuery, setSegmentsFilterQuery] = useState('')
+    const [segmentsListViewMode, setSegmentsListViewMode] = useState('list')
     
     const [showMap, setShowMap] = useWireState(store.showMap)
     const [isTripEditMode, setIsTripEditMode] = useWireState(store.isTripEditMode)
@@ -186,6 +187,12 @@ const useTripEditorViewModel = () => {
             .reduce((acc, it) => acc + it, 0)
     ), [totalDaysPerSegmentByIndex])
     
+    // If the segment has both flight and stay booked, it's considered planned
+    const getSegmentPlanned = useCallback(segment => (segment.flightBooked && segment.stayBooked), [])
+    
+    // If the segment end date has elapsed
+    const getSegmentCompleted = useCallback(segment => dayjs().isAfter(dayjs(segment.endDate)), [])
+    
     const backupTrip = useCallback(async () => {
         
         try {
@@ -280,7 +287,7 @@ const useTripEditorViewModel = () => {
             setFocusedLatLng(coords)
             
             console.log('Updated map ' + coords)
-            toast(`Updated map ${coords.lng},${coords.lat}`)
+            // toast(`Updated map ${coords.lng},${coords.lat}`)
             
         }
         
@@ -299,6 +306,8 @@ const useTripEditorViewModel = () => {
         setFocusedLatLng,
         segmentsFilterQuery,
         setSegmentsFilterQuery,
+        segmentsListViewMode,
+        setSegmentsListViewMode,
         
         // Global State
         trip,
@@ -329,6 +338,8 @@ const useTripEditorViewModel = () => {
         deleteSegments,
         getTotalDaysPerSegment,
         getCumulativeDaysPerSegment,
+        getSegmentPlanned,
+        getSegmentCompleted,
         backupTrip,
         renamePlan,
         deletePlan,

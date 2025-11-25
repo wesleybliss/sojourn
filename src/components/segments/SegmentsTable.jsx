@@ -16,7 +16,18 @@ import { Switch } from '@/components/ui/switch'
 import DatePicker from '@/components/DatePicker'
 import TailwindPrimaryColorPicker from '@/components/TailwindPrimaryColorPicker'
 import ConfirmDeleteSegmentsDialog from 'src/components/ConfirmDeleteSegmentsDialog'
-import { CalendarCheck, CalendarRange, Plane, BedDouble, SquareArrowUp, SquareArrowDown, Globe } from 'lucide-react'
+import {
+    CalendarCheck,
+    CalendarRange,
+    Plane,
+    BedDouble,
+    SquareArrowUp,
+    SquareArrowDown,
+    Globe,
+    CheckCheck,
+    Check,
+    Clock,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import dayjs from 'dayjs'
 
@@ -26,6 +37,8 @@ const SegmentsTable = ({
     deleteSegments,
     getTotalDaysPerSegment,
     getCumulativeDaysPerSegment,
+    getSegmentPlanned,
+    getSegmentCompleted,
 }) => {
     
     const {
@@ -88,6 +101,11 @@ const SegmentsTable = ({
                             <Globe size="1.5rem" />
                         </div>
                     </TableHead>
+                    <TableHead className="w-5 pl-2 pr-0">
+                        <div className="flex items-center" title="Segment completed, planned, or pending">
+                            <Clock size="1.5rem" />
+                        </div>
+                    </TableHead>
                     <TableHead>{/* Delete Icon */}&nbsp;</TableHead>
                 </TableRow>
                 {anyChecked && (
@@ -106,6 +124,7 @@ const SegmentsTable = ({
                                     onChange={updateCheckedSegments('color')} />
                             </div>
                         </TableHead>
+                        <TableHead>&nbsp;</TableHead>
                         <TableHead>&nbsp;</TableHead>
                         <TableHead>&nbsp;</TableHead>
                         <TableHead>&nbsp;</TableHead>
@@ -195,6 +214,16 @@ const SegmentsTable = ({
                             <Switch
                                 checked={it.isShengenRegion}
                                 onCheckedChange={updateSegment(it.id, 'isShengenRegion')} />
+                        </TableCell>
+                        
+                        <TableCell className="text-center">
+                            <div className="flex items-center">
+                                {getSegmentCompleted(it)
+                                    ? <CheckCheck className="text-emerald-500" />
+                                    : getSegmentPlanned(it)
+                                        ? <CheckCheck className="text-gray-500" />
+                                        : <Check className="text-orange-500" />}
+                            </div>
                         </TableCell>
                         
                         <TableCell>

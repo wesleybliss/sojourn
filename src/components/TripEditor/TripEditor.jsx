@@ -44,7 +44,9 @@ const TripEditor = ({
                             updateSegment={vm.updateSegment}
                             deleteSegments={vm.deleteSegments}
                             getTotalDaysPerSegment={vm.getTotalDaysPerSegment}
-                            getCumulativeDaysPerSegment={vm.getCumulativeDaysPerSegment} />
+                            getCumulativeDaysPerSegment={vm.getCumulativeDaysPerSegment}
+                            getSegmentPlanned={vm.getSegmentPlanned}
+                            getSegmentCompleted={vm.getSegmentCompleted} />
                     )}
                 </div>
                 {vm.showMap && <MapLibreMap latLng={console.log('latln', vm.focusedLatLng)||vm.focusedLatLng} />}

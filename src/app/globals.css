@@ -12,6 +12,10 @@ html, body {
   font-family: Roboto, sans-serif;
 }
 
+.font-mono {
+    font-family: "Roboto Mono", monospace;
+}
+
 .font-Roboto {
   font-family: Roboto, sans-serif;
 }
