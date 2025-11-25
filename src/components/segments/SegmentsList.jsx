@@ -23,6 +23,7 @@ const SegmentCardDate = ({ date }) => (
 
 const SegmentsList = ({
     segments,
+    segmentsListShowCompleted,
     segmentsListViewMode,
     getTotalDaysPerSegment,
     getCumulativeDaysPerSegment,

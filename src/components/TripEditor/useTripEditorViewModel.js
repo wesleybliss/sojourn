@@ -52,6 +52,7 @@ const useTripEditorViewModel = () => {
     const [cascadeEnabled, setCascadeEnabled] = useState(false)
     const [hasRedirectedToPlan, setHasRedirectedToPlan] = useState(false)
     const [segmentsFilterQuery, setSegmentsFilterQuery] = useState('')
+    const [segmentsListShowCompleted, setSegmentsListShowCompleted] = useState(false)
     const [segmentsListViewMode, setSegmentsListViewMode] = useState('list')
     
     const [showMap, setShowMap] = useWireState(store.showMap)
@@ -308,6 +309,8 @@ const useTripEditorViewModel = () => {
         setSegmentsFilterQuery,
         segmentsListViewMode,
         setSegmentsListViewMode,
+        segmentsListShowCompleted,
+        setSegmentsListShowCompleted,
         
         // Global State
         trip,

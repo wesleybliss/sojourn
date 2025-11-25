@@ -44,6 +44,7 @@ const TripDetail = ({
                             vm={vm} />
                         <SegmentsList
                             segments={vm.filteredSegments}
+                            segmentsListShowCompleted={vm.segmentsListShowCompleted}
                             segmentsListViewMode={vm.segmentsListViewMode}
                             getTotalDaysPerSegment={vm.getTotalDaysPerSegment}
                             getCumulativeDaysPerSegment={vm.getCumulativeDaysPerSegment}

@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input'
-// import { Toggle } from '@/components/ui/toggle'
+import { Toggle } from '@/components/ui/toggle'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { List, Grid2x2 } from 'lucide-react'
+import { Eye, EyeOff, List, Grid2x2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const SegmentsFilterToolbar = ({
@@ -22,6 +22,19 @@ const SegmentsFilterToolbar = ({
                     onChange={e => vm.setSegmentsFilterQuery(e.target.value)}
                     onKeyUp={e => e.key === 'Escape' && vm.setSegmentsFilterQuery('')} />
                 
+                <Toggle
+                    className="data-[state=on]:bg-slate-100 data-[state=on]:*:[svg]:stroke-slate-900"
+                    title="Toggle completed segments"
+                    aria-label="Toggle completed segments"
+                    size="sm"
+                    variant="outline"
+                    pressed={vm.segmentsListShowCompleted}
+                    onPressedChange={vm.setSegmentsListShowCompleted}>
+                    {vm.segmentsListShowCompleted
+                        ? <Eye />
+                        : <EyeOff />}
+                </Toggle>
+                
                 <ToggleGroup
                     type="single"
                     variant="outline"
@@ -31,12 +44,14 @@ const SegmentsFilterToolbar = ({
                     <ToggleGroupItem
                         className="data-[state=on]:bg-slate-100 data-[state=on]:*:[svg]:stroke-slate-900"
                         value="list"
+                        title="Toggle list"
                         aria-label="Toggle list">
                         <List />
                     </ToggleGroupItem>
                     <ToggleGroupItem
                         className="data-[state=on]:bg-slate-100 data-[state=on]:*:[svg]:stroke-slate-900"
                         value="grid"
+                        title="Toggle grid"
                         aria-label="Toggle grid">
                         <Grid2x2 />
                     </ToggleGroupItem>
