@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useWireValue } from '@forminator/react-wire'
 import { placeNamesToCoverImagesMap as placeNamesToCoverImagesMapWire } from '@/store'
 import { Table } from '@/components/ui/table'
@@ -33,6 +34,12 @@ const SegmentsList = ({
     
     const placeNamesToCoverImagesMap = useWireValue(placeNamesToCoverImagesMapWire)
     
+    const filteredSegments = useMemo(() => (
+        segmentsListShowCompleted
+            ? segments
+            : segments.filter(it => dayjs(it.endDate).isAfter(dayjs()))
+    ), [segments, segmentsListShowCompleted])
+    
     return (
         
         <div className={cn('SegmentsList items-center gap-4 mx-auto', {
@@ -40,7 +47,7 @@ const SegmentsList = ({
             'grid grid-cols-2': segmentsListViewMode === 'grid',
         })}>
             
-            {segments.map((it, i) => (
+            {filteredSegments.map((it, i) => (
                 
                 <LeftImageCard
                     key={it.id}
