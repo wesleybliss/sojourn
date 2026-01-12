@@ -85,35 +85,35 @@ export async function POST(request) {
             coverImageUrl: tripData.coverImageUrl || null,
         }
         
-        const newTrip = await db.transaction(async tx => {
-            
-            const trip = await tripsRepo.tx(tx).create(newTripPayload)
-            
-            await tx.insert(schemas.userTrips).values({
-                userId,
-                tripId: trip.id,
-            })
-            
-            const plan = await plansRepo.tx(tx).create({
-                tripId: trip.id,
-                name: dayjs().format('MMMM YYYY'),
-                description: '',
-            })
-            
-            await segmentsRepo.tx(tx).create({
-                tripId: trip.id,
-                planId: plan.id,
-                name: 'First Stop',
-                description: '',
-                // order: 1,
-                startDate: dayjs().format('YYYY-MM-DD'),
-                endDate: dayjs().add('5', 'day').format('YYYY-MM-DD'),
-                color: 'bg-blue-500',
-            })
-            
-            return trip
-            
+        // Create trip
+        const trip = await tripsRepo.create(newTripPayload)
+        
+        // Link user to trip
+        await db.insert(schemas.userTrips).values({
+            userId,
+            tripId: trip.id,
         })
+        
+        // Create default plan
+        const plan = await plansRepo.create({
+            tripId: trip.id,
+            name: dayjs().format('MMMM YYYY'),
+            description: '',
+        })
+        
+        // Create default segment
+        await segmentsRepo.create({
+            tripId: trip.id,
+            planId: plan.id,
+            name: 'First Stop',
+            description: '',
+            // order: 1,
+            startDate: dayjs().format('YYYY-MM-DD'),
+            endDate: dayjs().add('5', 'day').format('YYYY-MM-DD'),
+            color: 'bg-blue-500',
+        })
+        
+        const newTrip = trip
         
         return NextResponse.json(
             {
