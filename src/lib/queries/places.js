@@ -7,7 +7,9 @@ export const usePlacesQuery = () => useQuery({
         
         try {
             
-            const res = await fetch('/api/places')
+            const res = await fetch('/api/places', {
+                credentials: 'include',
+            })
             const { data } = await res.json()
             
             if (data?.length)

@@ -3,7 +3,9 @@ import * as store from '@/store'
 
 export const useTripsQuery = (opts = {}) => useQuery({
     queryKey: ['trips'],
-    queryFn: () => fetch('/api/trips')
+    queryFn: () => fetch('/api/trips', {
+        credentials: 'include',
+    })
         .then(it => it.json())
         .then(it => {
             store.trips.setValue(it.data)

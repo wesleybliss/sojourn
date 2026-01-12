@@ -8,7 +8,9 @@ const plansQueryKey = (tripId, exclusive = false) =>
 export const usePlansQuery = (tripId, opts = {}) => useQuery({
     queryKey: plansQueryKey(tripId),
     queryFn: async () => {
-        const response = await fetch(`/api/trips/${tripId}/plans`)
+        const response = await fetch(`/api/trips/${tripId}/plans`, {
+            credentials: 'include',
+        })
         
         if (!response.ok) {
             const error = await response.json().catch(() => ({}))
@@ -26,7 +28,9 @@ export const usePlansQuery = (tripId, opts = {}) => useQuery({
 export const usePlanQuery = (planId, opts = {}) => useQuery({
     queryKey: ['plans', planId],
     queryFn: async () => {
-        const response = await fetch(`/api/plans/${planId}`)
+        const response = await fetch(`/api/plans/${planId}`, {
+            credentials: 'include',
+        })
         
         if (!response.ok) {
             const error = await response.json().catch(() => ({}))
@@ -50,6 +54,7 @@ export const useCreatePlan = () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ tripId, ...planData }),
+                credentials: 'include',
             })
             
             if (!response.ok) {
@@ -76,6 +81,7 @@ export const useUpdatePlan = () => {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(planData),
+                credentials: 'include',
             })
             
             if (!response.ok) {
@@ -107,6 +113,7 @@ export const useDeletePlan = () => {
         mutationFn: async plan => {
             const res = await fetch(`/api/plans/${plan.id}`, {
                 method: 'DELETE',
+                credentials: 'include',
             })
             
             if (!res.ok) {
@@ -129,7 +136,10 @@ export const useClonePlan = () => {
     return useMutation({
         mutationFn: async ({ planId }) => {
             
-            const res = await fetch(`/api/plans/${planId}/clone`, { method: 'POST' })
+            const res = await fetch(`/api/plans/${planId}/clone`, {
+                method: 'POST',
+                credentials: 'include',
+            })
             
             if (!res.ok) throw new Error('Failed to clone plan')
             

@@ -33,6 +33,7 @@ const useDebugViewModel = () => {
                 body: JSON.stringify({
                     name,
                 }),
+                credentials: 'include',
             })
             
             if (!res.ok)
@@ -99,6 +100,7 @@ const useDebugViewModel = () => {
                     contentType: file.type,
                     base64Data,
                 }),
+                credentials: 'include',
             })
             
             if (!res.ok)
@@ -137,6 +139,7 @@ const useDebugViewModel = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
             })
             
             const result = await response.json()

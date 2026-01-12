@@ -20,6 +20,7 @@ export const useBackupTrips = () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body),
+                credentials: 'include',
             })
             
             if (!res.ok) {
@@ -65,6 +66,7 @@ export const useRestoreTrips = () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(backupData),
+                credentials: 'include',
             })
             
             if (!res.ok) {

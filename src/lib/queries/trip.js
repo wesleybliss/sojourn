@@ -10,7 +10,9 @@ export const useTripQuery = tripId => useQuery({
         
         try {
             
-            const res = await fetch(`/api/trips/${tripId}?withDetails=true`)
+            const res = await fetch(`/api/trips/${tripId}?withDetails=true`, {
+                credentials: 'include',
+            })
             const { data } = await res.json()
             
             // @todo need to handle this better
@@ -49,7 +51,14 @@ export const useCreateTripMutation = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(tripData),
+                credentials: 'include',
             })
+            
+            if (!res.ok) {
+                const error = await res.json().catch(() => ({ error: 'Unknown error' }))
+                throw new Error(error.error || `HTTP ${res.status}`)
+            }
+            
             const { data } = await res.json()
             
             return data
@@ -70,6 +79,7 @@ export const useUpdateTrip = () => {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(tripData),
+                credentials: 'include',
             })
             
             if (!res.ok) throw new Error('Failed to update trip')
@@ -91,6 +101,7 @@ export const useAddSegment = () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(segmentData),
+                credentials: 'include',
             })
             
             if (!res.ok) throw new Error('Failed to add segment')
@@ -112,6 +123,7 @@ export const useUpdateSegment = () => {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(segmentData),
+                credentials: 'include',
             })
             
             if (!res.ok) throw new Error('Failed to update segment')
@@ -133,6 +145,7 @@ export const useDeleteSegments = () => {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ tripId, planId, segmentIds }),
+                credentials: 'include',
             })
             
             if (!res.ok) throw new Error('Failed to delete segments')
@@ -157,6 +170,7 @@ export const useRenamePlan = () => {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name }),
+                credentials: 'include',
             })
             
             if (!res.ok) throw new Error('Failed to rename plan')
@@ -176,6 +190,7 @@ export const useDeletePlan = () => {
         mutationFn: async ({ planId }) => {
             const res = await fetch(`/api/plans/${planId}`, {
                 method: 'DELETE',
+                credentials: 'include',
             })
             
             if (!res.ok) throw new Error('Failed to delete plan')
@@ -196,6 +211,7 @@ export const useDeleteTripMutation = () => {
         mutationFn: async tripId => {
             await fetch(`/api/trips/${tripId}`, {
                 method: 'DELETE',
+                credentials: 'include',
             })
         },
         onSuccess: () => {
