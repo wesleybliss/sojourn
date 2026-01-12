@@ -56,6 +56,7 @@ export const useCreateTripMutation = () => {
             
             if (!res.ok) {
                 const error = await res.json().catch(() => ({ error: 'Unknown error' }))
+                
                 throw new Error(error.error || `HTTP ${res.status}`)
             }
             
