@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input'
 import { Toggle } from '@/components/ui/toggle'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { Eye, EyeOff, List, Grid2x2 } from 'lucide-react'
+import { Eye, EyeOff, FolderPen, List, Grid2x2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const SegmentsFilterToolbar = ({
@@ -33,6 +33,17 @@ const SegmentsFilterToolbar = ({
                     {vm.segmentsListShowCompleted
                         ? <Eye />
                         : <EyeOff />}
+                </Toggle>
+                
+                <Toggle
+                    className="data-[state=on]:bg-slate-100 data-[state=on]:*:[svg]:stroke-slate-900"
+                    title="Toggle edit mode"
+                    aria-label="Toggle edit mode"
+                    size="sm"
+                    variant="outline"
+                    pressed={vm.isTripEditMode}
+                    onPressedChange={() => vm.setIsTripEditMode(!vm.isTripEditMode)}>
+                    <FolderPen />
                 </Toggle>
                 
                 <ToggleGroup

@@ -4,6 +4,7 @@ import SegmentsList from '@/components/segments/SegmentsList'
 import { cn } from '@/lib/utils'
 import { Progress } from '@/components/ui/progress'
 import SegmentsFilterToolbar from '@/components/segments/SegmentsFilterToolbar'
+import SadFolderIcon from '@/components/graphics/SadFolderIcon'
 
 const TripDetail = ({
     vm,
@@ -34,28 +35,50 @@ const TripDetail = ({
                     'w-full': !vm.showMap,
                 })}>
                     
-                    {vm.trip && vm.segments?.length <= 0 && (
-                        <p>You have no segments yet.</p>
-                    )}
-                    
                     {vm.segments?.length > 0 && (<>
                         <SegmentsFilterToolbar
                             className="w-full max-w-2xl mx-auto mb-4"
                             vm={vm} />
                         <SegmentsList
                             segments={vm.filteredSegments}
-                            segmentsListShowCompleted={vm.segmentsListShowCompleted}
                             segmentsListViewMode={vm.segmentsListViewMode}
                             getTotalDaysPerSegment={vm.getTotalDaysPerSegment}
                             getCumulativeDaysPerSegment={vm.getCumulativeDaysPerSegment}
                             getSegmentPlanned={vm.getSegmentPlanned}
                             getSegmentCompleted={vm.getSegmentCompleted}/>
                     </>)}
+                    
+                    {/* Only show empty state when trip is fully loaded, has a plan, and truly has no segments */}
+                    {/* Don't show during fetching to avoid flash */}
+                    {vm.trip && vm.currentPlan && !vm.isFetching && vm.segments?.length === 0 && (
+                        <p className="text-center">You have no segments yet.</p>
+                    )}
+                    
+                    {/* Show message when segments exist but all are filtered out (past dates) */}
+                    {vm.segments?.length > 0 && vm.filteredSegments?.length === 0 && (
+                        <div className="flex flex-col justify-center items-center gap-8">
+                            <SadFolderIcon className="size-25 text-gray-500" />
+                            <p className="text-center text-muted-foreground">
+                                <b>All segments have elapsed.</b>
+                            </p>
+                            <p className="text-center text-muted-foreground">
+                                Toggle the "show all" button at the top to see
+                                past segments.
+                            </p>
+                        </div>
+                    )}
                 
                 </div>
                 
                 {vm.showMap && <MapLibreMap latLng={vm.focusedLatLng} />}
             
+            </div>
+            
+            {/* Debug output */}
+            <div className="mt-4 p-2 text-xs text-gray-500 border-t">
+                Debug: Trip ID: {vm.trip?.id}, Plan ID: {vm.currentPlan?.id},
+                Segments: {vm.segments?.length || 0}, Filtered: {vm.filteredSegments?.length || 0},
+                isFetching: {String(vm.isFetching)}
             </div>
         
         </div>

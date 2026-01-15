@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
-import { useWire, useWireState, useWireValue } from '@forminator/react-wire'
+import { useWireState } from '@forminator/react-wire'
 import * as store from '@/store'
 import { useParams, useRouter } from 'next/navigation'
 import {
@@ -11,11 +11,10 @@ import {
     useRenamePlan,
     useDeletePlan,
 } from '@/lib/queries/trip.js'
-import { useQueryClient } from '@tanstack/react-query'
 import { useBackupTrips } from '@/lib/queries/backups'
 import { toast } from 'sonner'
 import dayjs from 'dayjs'
-import { sortArrByUpdatedAt } from '@/lib/utils.js'
+import { sortArrByUpdatedAt, calculateTotalDays } from '@/lib/utils.js'
 
 const matchesDate = (date, query) => {
     
@@ -31,11 +30,56 @@ const useTripEditorViewModel = () => {
     
     const params = useParams()
     const router = useRouter()
-    const queryClient = useQueryClient()
-    
     const { tripId, planId } = params
     
-    const { data: trip, error: tripError, isLoading: tripIsLoading } = useTripQuery(tripId)
+    // React Query is the single source of truth for trip/plans/segments
+    const {
+        data: trip,
+        error: tripError,
+        isLoading: tripIsLoading,
+        isFetching: tripIsFetching,
+    } = useTripQuery(tripId)
+    
+    // Derive plans/currentPlan/segments directly from the React Query trip data
+    // This eliminates the "split brain" issue between React Query and wire store
+    const plans = useMemo(() => trip?.plans || [], [trip])
+    
+    const currentPlan = useMemo(() => {
+        if (!plans.length) return null
+        
+        if (planId) {
+            const found = plans.find(p => p.id.toString() === planId.toString())
+            
+            if (found) return found
+        }
+        
+        // Fall back to first plan if planId doesn't match
+        return plans[0] || null
+    }, [plans, planId])
+    
+    const segments = useMemo(() => currentPlan?.segments || [], [currentPlan])
+    
+    // Compute shengenData locally instead of from wire selector
+    const shengenData = useMemo(() => {
+        const shengenSegments = segments?.filter(it => it.isShengenRegion) || []
+        
+        if (!shengenSegments.length) return null
+        
+        const { startDate, endDate, totalDays } = calculateTotalDays(
+            shengenSegments[0].startDate,
+            shengenSegments[shengenSegments.length - 1].endDate,
+        )
+        
+        const remainingDays = 89 - totalDays
+        
+        return {
+            startDate,
+            endDate,
+            isOver: remainingDays < 0,
+            totalDays,
+            remainingDays,
+        }
+    }, [segments])
     
     // Mutations
     const updateTripMutation = useUpdateTrip()
@@ -55,16 +99,9 @@ const useTripEditorViewModel = () => {
     const [segmentsListShowCompleted, setSegmentsListShowCompleted] = useState(false)
     const [segmentsListViewMode, setSegmentsListViewMode] = useState('list')
     
+    // Wire store is only used for UI preferences, not entity data
     const [showMap, setShowMap] = useWireState(store.showMap)
     const [isTripEditMode, setIsTripEditMode] = useWireState(store.isTripEditMode)
-    
-    const trips = useWireValue(store.trips)
-    const currentTripId = useWire(store.currentTripId)
-    const plans = useWireValue(store.currentPlans)
-    const currentPlanId = useWire(store.currentPlanId)
-    const currentPlan = useWireValue(store.currentPlan)
-    const segments = useWireValue(store.currentSegments)
-    const shengenData = useWireValue(store.shengenData)
     
     const isLoading = useMemo(() => (
         isLoadingInitial || tripIsLoading
@@ -72,21 +109,31 @@ const useTripEditorViewModel = () => {
     
     const filteredSegments = useMemo(() => {
         
-        if (!segmentsFilterQuery?.length || !segments?.length)
-            return segments
+        if (!segments?.length) return []
         
-        return segments?.filter(it => {
-            
+        let result = segments
+        
+        // Filter by completion status (hide past segments unless showCompleted is true)
+        if (!segmentsListShowCompleted) {
+            result = result.filter(it => dayjs(it.endDate).isAfter(dayjs()))
+        }
+        
+        // Filter by search query
+        if (segmentsFilterQuery?.length) {
             const query = segmentsFilterQuery.toLowerCase()
-            const matchesName = it.name.toLowerCase().includes(query)
-            const matchesStartDate = matchesDate(it.startDate, query)
-            const matchesEndDate = matchesDate(it.endDate, query)
             
-            return matchesName || matchesStartDate || matchesEndDate
-            
-        }) || []
+            result = result.filter(it => {
+                const matchesName = it.name.toLowerCase().includes(query)
+                const matchesStartDate = matchesDate(it.startDate, query)
+                const matchesEndDate = matchesDate(it.endDate, query)
+                
+                return matchesName || matchesStartDate || matchesEndDate
+            })
+        }
         
-    }, [segments, segmentsFilterQuery])
+        return result
+        
+    }, [segments, segmentsFilterQuery, segmentsListShowCompleted])
     
     const summaryTripText = useMemo(() => {
         
@@ -102,74 +149,79 @@ const useTripEditorViewModel = () => {
         
         const value = e?.target?.value ?? e
         
+        // Mutation hook handles invalidation
         updateTripMutation.mutate({ tripId, [field]: value }, {
-            onSuccess: () => {
-                toast('Trip updated')
-                queryClient.invalidateQueries(['trip', tripId])
-            },
+            onSuccess: () => toast('Trip updated'),
         })
         
-    }, [tripId, updateTripMutation, queryClient])
+    }, [tripId, updateTripMutation])
     
     const addSegment = useCallback(async () => {
         
-        if (!currentPlan) return
+        if (!currentPlan || !tripId) return
         
-        const newSegment = {
-            planId: currentPlan.id,
-            name: 'New Segment',
-            startDate: dayjs().format('YYYY-MM-DD'),
-            endDate: dayjs().add(1, 'day').format('YYYY-MM-DD'),
+        // Find the segment with the furthest end date to use as the new segment's start
+        let startDate = dayjs()
+        
+        if (segments?.length) {
+            const lastSegment = segments.reduce((latest, seg) =>
+                dayjs(seg.endDate).isAfter(dayjs(latest.endDate)) ? seg : latest,
+            )
+            
+            startDate = dayjs(lastSegment.endDate)
         }
         
+        const newSegment = {
+            tripId,
+            planId: currentPlan.id,
+            name: 'New Segment',
+            startDate: startDate.format('YYYY-MM-DD'),
+            endDate: startDate.add(1, 'day').format('YYYY-MM-DD'),
+        }
+        
+        // Mutation hook handles invalidation
         addSegmentMutation.mutate(newSegment, {
-            onSuccess: () => {
-                toast('Segment added')
-                queryClient.invalidateQueries(['trip', tripId])
-            },
+            onSuccess: () => toast('Segment added'),
         })
         
-    }, [currentPlan, addSegmentMutation, queryClient, tripId])
+    }, [currentPlan, tripId, segments, addSegmentMutation])
     
     const updateSegment = useCallback((id, field) => async e => {
         
-        console.log('updateSegment', { trip, planId, segmentsLen: segments?.length })
-        
-        if (!trip || !planId || !segments)
+        if (!trip || !currentPlan)
             return console.warn('updateSegment: no current trip or plan')
         
-        const value = e?.target?.value ?? e // Use nullish coalescing
-        
-        console.log('updateSegment', { planId, id, field, value, cascadeEnabled })
+        const value = e?.target?.value ?? e
         
         const payload = {
-            segmentId: id, [field]: value,
+            segmentId: id,
+            tripId,
+            planId: currentPlan.id,
+            [field]: value,
             cascadeEnabled,
         }
         
+        // Mutation hook handles optimistic updates and invalidation
         updateSegmentMutation.mutate(payload, {
-            onSuccess: () => {
-                toast('Segment updated')
-                queryClient.invalidateQueries(['trip', tripId])
-            },
+            onSuccess: () => toast('Segment updated'),
         })
         
-    }, [trip, tripId, planId, segments, updateSegmentMutation, queryClient, cascadeEnabled])
+    }, [trip, tripId, currentPlan, updateSegmentMutation, cascadeEnabled])
     
     const deleteSegments = useCallback(async ids => {
         
+        if (!currentPlan) return
+        
+        // Mutation hook handles invalidation
         deleteSegmentsMutation.mutate({
             tripId,
-            planId,
+            planId: currentPlan.id,
             segmentIds: ids,
         }, {
-            onSuccess: () => {
-                toast(`Segment${ids.length > 1 ? 's' : ''} deleted`)
-                queryClient.invalidateQueries(['trip', tripId])
-            },
+            onSuccess: () => toast(`Segment${ids.length > 1 ? 's' : ''} deleted`),
         })
         
-    }, [deleteSegmentsMutation, queryClient, tripId, planId])
+    }, [deleteSegmentsMutation, tripId, currentPlan])
     
     const getTotalDaysPerSegment = segment => {
         
@@ -206,35 +258,33 @@ const useTripEditorViewModel = () => {
         
     }, [tripId])
     
-    const renamePlan = useCallback(async planId => {
+    const renamePlan = useCallback(async planIdToRename => {
         
         const newName = prompt('Enter a new plan name:')
         
         if (!newName?.trim()) return
         
-        renamePlanMutation.mutate({ planId, name: newName }, {
-            onSuccess: () => {
-                toast('Plan renamed')
-                queryClient.invalidateQueries(['trip', tripId])
-            },
+        // Mutation hook handles invalidation
+        renamePlanMutation.mutate({ planId: planIdToRename, name: newName }, {
+            onSuccess: () => toast('Plan renamed'),
         })
         
-    }, [renamePlanMutation, queryClient, tripId])
+    }, [renamePlanMutation])
     
-    const deletePlan = useCallback(async planId => {
+    const deletePlan = useCallback(async planIdToDelete => {
         
         if (!confirm('Are you sure you want to delete this plan?'))
             return
         
-        deletePlanMutation.mutate({ planId }, {
+        // Mutation hook handles invalidation
+        deletePlanMutation.mutate({ planId: planIdToDelete }, {
             onSuccess: () => {
                 toast('Plan deleted')
-                queryClient.invalidateQueries(['trip', tripId])
                 router.push(`/trips/${tripId}`)
             },
         })
         
-    }, [deletePlanMutation, queryClient, tripId, router])
+    }, [deletePlanMutation, tripId, router])
     
     useEffect(() => {
         
@@ -255,23 +305,18 @@ const useTripEditorViewModel = () => {
         
     }, [tripId, planId, plans, router, hasRedirectedToPlan])
     
+    // Sync trip/plan/segments to wire store for Navbar and other components that read from it
     useEffect(() => {
         
-        const nextTrip = tripId
-            ? trips.find(t => t.id.toString() === tripId)
-            : trips?.[0]
+        if (trip) {
+            store.currentTripId.setValue(trip.id)
+        }
         
-        if (nextTrip)
-            currentTripId.setValue(nextTrip.id)
+        if (currentPlan) {
+            store.currentPlanId.setValue(currentPlan.id)
+        }
         
-        const nextPlan = planId
-            ? plans.find(p => p.id.toString() === planId)
-            : plans?.[0]
-        
-        if (nextPlan)
-            currentPlanId.setValue(nextPlan.id)
-        
-    }, [trips, tripId, plans, planId])
+    }, [trip, currentPlan])
     
     useEffect(() => {
         
@@ -349,6 +394,7 @@ const useTripEditorViewModel = () => {
         
         // Loading/error states
         isLoading,
+        isFetching: tripIsFetching,
         error: tripError,
     }
 }

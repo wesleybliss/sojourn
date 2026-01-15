@@ -1,5 +1,7 @@
 # Trip segments flash / empty state plan (state management review)
 
+**Status: IMPLEMENTED**
+
 ## Problem
 After mutations like renaming a segment, the Trip page briefly flashes and shows “You have no segments yet.” A manual refresh then shows the correct segments. This strongly suggests a client state synchronization issue (transient or stuck) rather than a server data issue.
 

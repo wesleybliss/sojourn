@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { useWireValue } from '@forminator/react-wire'
 import { placeNamesToCoverImagesMap as placeNamesToCoverImagesMapWire } from '@/store'
 import { Table } from '@/components/ui/table'
@@ -24,7 +23,6 @@ const SegmentCardDate = ({ date }) => (
 
 const SegmentsList = ({
     segments,
-    segmentsListShowCompleted,
     segmentsListViewMode,
     getTotalDaysPerSegment,
     getCumulativeDaysPerSegment,
@@ -34,11 +32,8 @@ const SegmentsList = ({
     
     const placeNamesToCoverImagesMap = useWireValue(placeNamesToCoverImagesMapWire)
     
-    const filteredSegments = useMemo(() => (
-        segmentsListShowCompleted
-            ? segments
-            : segments.filter(it => dayjs(it.endDate).isAfter(dayjs()))
-    ), [segments, segmentsListShowCompleted])
+    // Segments are already filtered by the viewmodel (search + completion status)
+    // No additional filtering needed here
     
     return (
         
@@ -47,7 +42,7 @@ const SegmentsList = ({
             'grid grid-cols-2': segmentsListViewMode === 'grid',
         })}>
             
-            {filteredSegments.map((it, i) => (
+            {segments.map((it, i) => (
                 
                 <LeftImageCard
                     key={it.id}

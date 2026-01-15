@@ -119,7 +119,8 @@ export const useUpdateSegment = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ segmentId, ...segmentData }) => {
+        // eslint-disable-next-line no-unused-vars
+        mutationFn: async ({ segmentId, tripId, planId, ...segmentData }) => {
             const res = await fetch(`/api/segments/${segmentId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -128,10 +129,58 @@ export const useUpdateSegment = () => {
             })
             
             if (!res.ok) throw new Error('Failed to update segment')
-            return res.json()
+            
+            const json = await res.json()
+            
+            // Attach tripId to the response for onSettled
+            return { ...json, tripId }
         },
-        onSuccess: data => {
-            queryClient.invalidateQueries(['trip', data.tripId])
+        // Optimistic update: immediately update the cache before the server responds
+        onMutate: async ({ segmentId, tripId, planId, cascadeEnabled, ...updates }) => {
+            // Cancel any outgoing refetches so they don't overwrite our optimistic update
+            await queryClient.cancelQueries(['trip', tripId])
+            
+            // Snapshot the previous value
+            const previousTrip = queryClient.getQueryData(['trip', tripId])
+            
+            // Optimistically update the cache
+            if (previousTrip && !cascadeEnabled) {
+                queryClient.setQueryData(['trip', tripId], old => {
+                    if (!old?.plans) return old
+                    
+                    return {
+                        ...old,
+                        plans: old.plans.map(plan => {
+                            if (plan.id.toString() !== planId?.toString()) return plan
+                            
+                            return {
+                                ...plan,
+                                segments: plan.segments?.map(seg => {
+                                    if (seg.id !== segmentId) return seg
+                                    return { ...seg, ...updates }
+                                }),
+                            }
+                        }),
+                    }
+                })
+            }
+            
+            // Return context with the snapshotted value
+            return { previousTrip, tripId }
+        },
+        // If mutation fails, rollback to the previous value
+        onError: (err, variables, context) => {
+            if (context?.previousTrip) {
+                queryClient.setQueryData(['trip', context.tripId], context.previousTrip)
+            }
+        },
+        // Always refetch after error or success to ensure server state is correct
+        onSettled: (data, error, variables) => {
+            const tid = data?.tripId || variables?.tripId
+            
+            if (tid) {
+                queryClient.invalidateQueries(['trip', tid])
+            }
         },
     })
     

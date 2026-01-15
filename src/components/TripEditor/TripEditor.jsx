@@ -35,7 +35,9 @@ const TripEditor = ({
             
             <div className="grid grid-cols-2 gap-2">
                 <div className="flex flex-col gap-2 w-fit">
-                    {vm.trip && vm.segments?.length <= 0 && (
+                    {/* Only show empty state when trip is fully loaded, has a plan, and truly has no segments */}
+                    {/* Don't show during fetching to avoid flash */}
+                    {vm.trip && vm.currentPlan && !vm.isFetching && vm.segments?.length === 0 && (
                         <p>You have no segments yet.</p>
                     )}
                     {vm.segments?.length > 0 && (
@@ -60,7 +62,7 @@ const TripEditor = ({
             )}
             
             {/* Debug: Show if segments exist but gantt not rendering */}
-            {vm.trip && vm.segments?.length === 0 && (
+            {vm.trip && vm.currentPlan && !vm.isFetching && vm.segments?.length === 0 && (
                 <div className="mt-4 p-4 border rounded bg-yellow-50">
                     <p>No segments available for Gantt chart</p>
                 </div>

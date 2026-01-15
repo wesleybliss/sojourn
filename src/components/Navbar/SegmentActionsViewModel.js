@@ -11,16 +11,29 @@ const SegmentActionsViewModel = (currentTrip, currentPlan) => {
     const queryClient = useQueryClient()
     const addSegmentMutation = useAddSegment()
     
+    const segments = currentPlan?.segments || []
+    
     const addSegment = useCallback(async () => {
         
         if (!currentTrip || !currentPlan)
             return console.warn('addSegment no trip or plan selected')
         
+        // Find the segment with the furthest end date to use as the new segment's start
+        let startDate = dayjs()
+        
+        if (segments?.length) {
+            const lastSegment = segments.reduce((latest, seg) =>
+                dayjs(seg.endDate).isAfter(dayjs(latest.endDate)) ? seg : latest,
+            )
+            
+            startDate = dayjs(lastSegment.endDate)
+        }
+        
         const newSegment = {
             tripId: currentTrip.id,
             planId: currentPlan.id,
-            startDate: dayjs().format('YYYY-MM-DD'),
-            endDate: dayjs().add(1, 'day').format('YYYY-MM-DD'),
+            startDate: startDate.format('YYYY-MM-DD'),
+            endDate: startDate.add(1, 'day').format('YYYY-MM-DD'),
             name: 'New Segment',
             color: 'bg-blue-500',
         }
@@ -28,11 +41,10 @@ const SegmentActionsViewModel = (currentTrip, currentPlan) => {
         addSegmentMutation.mutate(newSegment, {
             onSuccess: () => {
                 toast('Segment added')
-                // queryClient.invalidateQueries(['trip', currentTrip.id])
             },
         })
         
-    }, [currentPlan, addSegmentMutation, queryClient, currentTrip])
+    }, [currentPlan, segments, addSegmentMutation, currentTrip])
     
     const copySegmentNamesToClipboard = useCallback(async () => {
         

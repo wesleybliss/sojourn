@@ -37,9 +37,17 @@ export const updateItemObject = (wire, item) => {
 export const updateItemArray = (wire, item) => {
     
     const prev = wire.getValue() || []
+    const index = prev.findIndex(it => it.id === item.id)
     
-    wire.setValue(prev.map(it => it.id === item.id
-        ? deepmerge(prev, item)
-        : it,
-    ))
+    if (index === -1) {
+        // Item not found - append it
+        wire.setValue([...prev, item])
+    } else {
+        // Merge with the existing element (not the entire array)
+        wire.setValue(prev.map(it => it.id === item.id
+            ? deepmerge(it, item)
+            : it,
+        ))
+    }
+    
 }
