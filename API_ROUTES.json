@@ -1,0 +1,168 @@
+[
+  {
+    "path": "/api/auth/signup",
+    "methods": ["POST"],
+    "description": "Creates a new user account.",
+    "authRequired": false,
+    "parameters": [
+      { "name": "email", "in": "body", "required": true, "type": "string" },
+      { "name": "password", "in": "body", "required": true, "type": "string" },
+      { "name": "inviteCode", "in": "body", "required": true, "type": "string" }
+    ]
+  },
+  {
+    "path": "/api/auth/[...nextauth]",
+    "methods": ["GET", "POST"],
+    "description": "NextAuth.js authentication endpoints (signin, signout, session, etc.).",
+    "authRequired": false,
+    "parameters": []
+  },
+  {
+    "path": "/api/debug/clear-all",
+    "methods": ["POST"],
+    "description": "Clears all data from the database. For debugging purposes.",
+    "authRequired": true,
+    "parameters": []
+  },
+  {
+    "path": "/api/debug/storage/blob",
+    "methods": ["POST"],
+    "description": "Uploads an image to blob storage.",
+    "authRequired": true,
+    "parameters": [
+      { "name": "name", "in": "body", "required": true, "type": "string" },
+      { "name": "contentType", "in": "body", "required": true, "type": "string" },
+      { "name": "base64Data", "in": "body", "required": true, "type": "string" }
+    ]
+  },
+  {
+    "path": "/api/migrate",
+    "methods": ["POST"],
+    "description": "Migrates trips to plans, creating default plans for trips that lack them.",
+    "authRequired": false,
+    "parameters": []
+  },
+  {
+    "path": "/api/plans",
+    "methods": ["POST"],
+    "description": "Creates a new plan.",
+    "authRequired": true,
+    "parameters": [
+      { "name": "tripId", "in": "body", "required": true, "type": "integer" },
+      { "name": "name", "in": "body", "required": true, "type": "string" },
+      { "name": "description", "in": "body", "required": false, "type": "string" }
+    ]
+  },
+  {
+    "path": "/api/plans/[planId]",
+    "methods": ["GET", "PUT", "DELETE"],
+    "description": "Operations on a single plan.",
+    "authRequired": true,
+    "parameters": [
+      { "name": "planId", "in": "path", "required": true, "type": "integer" },
+      { "name": "tripId", "in": "body", "required": true, "type": "integer", "description": "Required for auth verification" },
+      { "name": "name", "in": "body", "required": false, "type": "string", "description": "For PUT" },
+      { "name": "description", "in": "body", "required": false, "type": "string", "description": "For PUT" }
+    ]
+  },
+  {
+    "path": "/api/plans/[planId]/clone",
+    "methods": ["POST"],
+    "description": "Clones a plan and all its segments.",
+    "authRequired": false,
+    "parameters": [
+      { "name": "planId", "in": "path", "required": true, "type": "integer" }
+    ]
+  },
+  {
+    "path": "/api/segments",
+    "methods": ["POST", "DELETE"],
+    "description": "Creates a new segment or deletes multiple segments.",
+    "authRequired": true,
+    "parameters": [
+      { "name": "tripId", "in": "body", "required": true, "type": "integer" },
+      { "name": "planId", "in": "body", "required": true, "type": "integer" },
+      { "name": "name", "in": "body", "required": true, "type": "string", "description": "For POST" },
+      { "name": "startDate", "in": "body", "required": true, "type": "string", "description": "For POST" },
+      { "name": "endDate", "in": "body", "required": true, "type": "string", "description": "For POST" },
+      { "name": "color", "in": "body", "required": false, "type": "string", "description": "For POST" },
+      { "name": "segmentIds", "in": "body", "required": true, "type": "array", "description": "For DELETE" }
+    ]
+  },
+  {
+    "path": "/api/segments/[id]",
+    "methods": ["PUT"],
+    "description": "Updates a segment. Supports cascading date updates.",
+    "authRequired": false,
+    "parameters": [
+      { "name": "id", "in": "path", "required": true, "type": "integer" },
+      { "name": "cascadeEnabled", "in": "body", "required": false, "type": "boolean" },
+      { "name": "startDate", "in": "body", "required": false, "type": "string" },
+      { "name": "endDate", "in": "body", "required": false, "type": "string" }
+    ]
+  },
+  {
+    "path": "/api/trips",
+    "methods": ["GET", "POST"],
+    "description": "Lists user's trips or creates a new one.",
+    "authRequired": true,
+    "parameters": [
+      { "name": "withCounts", "in": "query", "required": false, "type": "boolean", "description": "For GET" },
+      { "name": "name", "in": "body", "required": false, "type": "string", "description": "For POST" },
+      { "name": "description", "in": "body", "required": false, "type": "string", "description": "For POST" },
+      { "name": "startDate", "in": "body", "required": false, "type": "string", "description": "For POST" },
+      { "name": "endDate", "in": "body", "required": false, "type": "string", "description": "For POST" },
+      { "name": "coverImageUrl", "in": "body", "required": false, "type": "string", "description": "For POST" }
+    ]
+  },
+  {
+    "path": "/api/trips/[id]",
+    "methods": ["GET", "PUT", "DELETE"],
+    "description": "Operations on a single trip.",
+    "authRequired": true,
+    "parameters": [
+      { "name": "id", "in": "path", "required": true, "type": "integer" },
+      { "name": "withDetails", "in": "query", "required": false, "type": "boolean", "description": "For GET" }
+    ]
+  },
+  {
+    "path": "/api/trips/[id]/invite",
+    "methods": ["POST"],
+    "description": "Invites another user to the trip.",
+    "authRequired": true,
+    "parameters": [
+      { "name": "id", "in": "path", "required": true, "type": "integer" },
+      { "name": "inviteeEmail", "in": "body", "required": true, "type": "string" }
+    ]
+  },
+  {
+    "path": "/api/trips/backup",
+    "methods": ["POST"],
+    "description": "Generates a JSON backup file of trips.",
+    "authRequired": true,
+    "parameters": [
+      { "name": "type", "in": "body", "required": true, "type": "string", "enum": ["single", "multiple"] },
+      { "name": "tripId", "in": "body", "required": false, "type": "integer", "description": "Required if type is single" },
+      { "name": "tripIds", "in": "body", "required": false, "type": "array", "description": "Optional if type is multiple" }
+    ]
+  },
+  {
+    "path": "/api/trips/restore",
+    "methods": ["POST"],
+    "description": "Restores trips from a JSON backup.",
+    "authRequired": true,
+    "parameters": [
+      { "name": "trips", "in": "body", "required": true, "type": "array" },
+      { "name": "onConflictAction", "in": "body", "required": false, "type": "string", "enum": ["duplicate", "overwrite"], "default": "duplicate" }
+    ]
+  },
+  {
+    "path": "/api/places",
+    "methods": ["GET", "POST"],
+    "description": "Lists places or creates a new one.",
+    "authRequired": true,
+    "parameters": [
+      { "name": "name", "in": "body", "required": true, "type": "string", "description": "For POST" }
+    ]
+  }
+]
