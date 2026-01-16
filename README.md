@@ -1,4 +1,4 @@
-# Trip Planner (Basic)
+# Trip Planner
 
 A comprehensive trip planning application designed to help travelers organize itineraries, visualize schedules, and track important details like Schengen zone days. Built with Next.js 15, Drizzle ORM, and Tailwind CSS.
 
