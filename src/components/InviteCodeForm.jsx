@@ -9,26 +9,26 @@ import { toast } from 'sonner'
 import { useAuth } from '@/components/providers/AuthProvider'
 
 export default function InviteCodeForm() {
-
+    
     const { firebaseUser, refreshUser } = useAuth()
     const [inviteCode, setInviteCode] = useState('')
     const [isLoading, setIsLoading] = useState(false)
-
-    const handleSubmit = async (e) => {
-
+    
+    const handleSubmit = async e => {
+        
         e.preventDefault()
-
+        
         if (!inviteCode.trim()) {
             toast.error('Please enter an invite code')
             return
         }
-
+        
         setIsLoading(true)
-
+        
         try {
-
+            
             const token = await firebaseUser.getIdToken()
-
+            
             const response = await fetch('/api/auth/user', {
                 method: 'POST',
                 headers: {
@@ -37,40 +37,40 @@ export default function InviteCodeForm() {
                 },
                 body: JSON.stringify({ inviteCode: inviteCode.trim() }),
             })
-
+            
             const data = await response.json()
-
+            
             if (response.ok) {
                 toast.success('Access granted! Welcome to Trip Planner.')
                 await refreshUser()
             } else {
                 toast.error(data.error || 'Invalid invite code')
             }
-
+            
         } catch (error) {
-
+            
             console.error('Invite code submission error:', error)
             toast.error('An error occurred. Please try again.')
-
+            
         } finally {
-
+            
             setIsLoading(false)
-
+            
         }
-
+        
     }
-
+    
     return (
-
+        
         <Card className="w-full max-w-md">
-
+            
             <CardHeader>
                 <CardTitle>Enter Invite Code</CardTitle>
                 <CardDescription>
                     This app is currently in beta. Please enter your invite code to continue.
                 </CardDescription>
             </CardHeader>
-
+            
             <form onSubmit={handleSubmit}>
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
@@ -81,25 +81,24 @@ export default function InviteCodeForm() {
                             type="text"
                             placeholder="Enter your invite code"
                             value={inviteCode}
-                            onChange={(e) => setInviteCode(e.target.value)}
+                            onChange={e => setInviteCode(e.target.value)}
                             required
-                            autoFocus
-                        />
+                            autoFocus/>
                     </div>
                     <p className="text-sm text-muted-foreground">
                         Signed in as {firebaseUser?.email}
                     </p>
                 </CardContent>
-
+                
                 <CardFooter>
                     <Button className="w-full" type="submit" disabled={isLoading}>
                         {isLoading ? 'Verifying...' : 'Submit'}
                     </Button>
                 </CardFooter>
             </form>
-
+        
         </Card>
-
+        
     )
-
+    
 }

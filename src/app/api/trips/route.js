@@ -12,34 +12,34 @@ import dayjs from 'dayjs'
  * Returns the list of trips in JSON format.
  */
 export const GET = withAuth(async (request, { auth }) => {
-
+    
     try {
-
+        
         const { userId } = auth
-
+        
         const { searchParams } = new URL(request.url)
         const withCounts = searchParams.get('withCounts') === 'true'
-
+        
         const trips = withCounts
             ? await tripsRepo.findAllByUserIdWithSegmentCount(userId)
             : await tripsRepo.findAllByUserId(userId)
-
+        
         return NextResponse.json({
             success: true,
             data: trips,
             count: trips.length,
         })
-
+        
     } catch (e) {
-
+        
         console.error('Error getting trips:', e)
         return NextResponse.json(
             { success: false, error: e.message },
             { status: 500 },
         )
-
+        
     }
-
+    
 })
 
 /**
@@ -47,13 +47,13 @@ export const GET = withAuth(async (request, { auth }) => {
  * Creates a new trip.
  */
 export const POST = withAuth(async (request, { auth }) => {
-
+    
     try {
-
+        
         const { userId } = auth
-
+        
         const tripData = await request.json()
-
+        
         const newTripPayload = {
             userId,
             name: tripData.name || 'Untitled Trip',
@@ -62,23 +62,23 @@ export const POST = withAuth(async (request, { auth }) => {
             endDate: tripData.endDate || null,
             coverImageUrl: tripData.coverImageUrl || null,
         }
-
+        
         // Create trip
         const trip = await tripsRepo.create(newTripPayload)
-
+        
         // Link user to trip
         await db.insert(schemas.userTrips).values({
             userId,
             tripId: trip.id,
         })
-
+        
         // Create default plan
         const plan = await plansRepo.create({
             tripId: trip.id,
             name: dayjs().format('MMMM YYYY'),
             description: '',
         })
-
+        
         // Create default segment
         await segmentsRepo.create({
             tripId: trip.id,
@@ -90,9 +90,9 @@ export const POST = withAuth(async (request, { auth }) => {
             endDate: dayjs().add('5', 'day').format('YYYY-MM-DD'),
             color: 'bg-blue-500',
         })
-
+        
         const newTrip = trip
-
+        
         return NextResponse.json(
             {
                 success: true,
@@ -100,14 +100,14 @@ export const POST = withAuth(async (request, { auth }) => {
                 message: 'Trip created successfully',
             },
             { status: 201 })
-
+        
     } catch (e) {
-
+        
         console.error('Error creating trip:', e)
         return NextResponse.json(
             { success: false, error: e.message },
             { status: 500 })
-
+        
     }
-
+    
 })

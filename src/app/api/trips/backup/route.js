@@ -59,11 +59,11 @@ const transformTrip = trip => ({
 })
 
 export const POST = withAuth(async (request, { auth }) => {
-
+    
     try {
-
+        
         const { userId } = auth
-
+        
         const body = await request.json()
         const ajvProps = ajvDebug ? { allErrors: true, verbose: true } : {}
         

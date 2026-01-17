@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
         
         <html lang="en" data-arp="">
             <body className={inter.className}>
-
+                
                 <AuthProvider>
                     <QueryProvider>
                         <Navbar />
@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
                         <Toaster />
                     </QueryProvider>
                 </AuthProvider>
-
+            
             </body>
         </html>
         

@@ -22,11 +22,11 @@ const toDate = v => {
 }
 
 export const POST = withAuth(async (request, { auth }) => {
-
+    
     try {
-
+        
         const { userId } = auth
-
+        
         const body = await request.json()
         
         if (!body || !body.type || !body.trips)

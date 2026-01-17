@@ -8,25 +8,25 @@ import { toast } from 'sonner'
 import { useAuth } from '@/components/providers/AuthProvider'
 
 export default function LoginForm() {
-
+    
     const router = useRouter()
     const { signInWithGoogle } = useAuth()
     const [isLoading, setIsLoading] = useState(false)
-
+    
     const handleGoogleSignIn = async () => {
-
+        
         setIsLoading(true)
-
+        
         try {
-
+            
             await signInWithGoogle()
             toast.success('Login successful!')
             router.push('/')
-
+            
         } catch (error) {
-
+            
             console.error('Google sign-in error:', error)
-
+            
             if (error.code === 'auth/popup-closed-by-user') {
                 toast.error('Sign-in cancelled')
             } else if (error.code === 'auth/popup-blocked') {
@@ -34,41 +34,40 @@ export default function LoginForm() {
             } else {
                 toast.error('Failed to sign in. Please try again.')
             }
-
+            
         } finally {
-
+            
             setIsLoading(false)
-
+            
         }
-
+        
     }
-
+    
     return (
-
+        
         <Card className="w-full max-w-md">
-
+            
             <CardHeader>
                 <CardTitle>Login</CardTitle>
                 <CardDescription>Sign in with your Google account</CardDescription>
             </CardHeader>
-
+            
             <CardContent className="space-y-4">
                 <Button
                     className="w-full"
                     onClick={handleGoogleSignIn}
                     disabled={isLoading}
-                    type="button"
-                >
+                    type="button">
                     {isLoading ? 'Signing in...' : 'Continue with Google'}
                 </Button>
             </CardContent>
-
+            
             <CardFooter className="flex flex-col space-y-2 text-sm text-muted-foreground">
                 <p>Sign in with your Google account to access your trips.</p>
             </CardFooter>
-
+        
         </Card>
-
+        
     )
-
+    
 }
