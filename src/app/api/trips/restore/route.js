@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { getToken } from 'next-auth/jwt'
 import db from '@/db/index.js'
 import * as schemas from '@/db/schema.js'
 import dayjs from 'dayjs'
@@ -22,20 +21,12 @@ const toDate = v => {
     
 }
 
-export const POST = withAuth(async request => {
-    
+export const POST = withAuth(async (request, { auth }) => {
+
     try {
-        
-        const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
-        
-        if (!token || !token.sub)
-            return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
-        
-        const userId = parseInt(String(token.sub), 10)
-        
-        if (Number.isNaN(userId))
-            return NextResponse.json({ success: false, error: 'Invalid user ID' }, { status: 400 })
-        
+
+        const { userId } = auth
+
         const body = await request.json()
         
         if (!body || !body.type || !body.trips)

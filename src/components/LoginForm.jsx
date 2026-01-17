@@ -3,120 +3,72 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
-import { signIn } from 'next-auth/react'
+import { useAuth } from '@/components/providers/AuthProvider'
 
 export default function LoginForm() {
-    
+
     const router = useRouter()
-    
-    
+    const { signInWithGoogle } = useAuth()
     const [isLoading, setIsLoading] = useState(false)
-    const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-    })
-    const [showPassword, setShowPassword] = useState(false)
-    
-    const handleChange = e => {
-        
-        const { name, value } = e.target
-        
-        setFormData(prev => ({
-            ...prev,
-            [name]: value,
-        }))
-        
-    }
-    
-    const handleSubmit = async e => {
-        
-        e.preventDefault()
-        
+
+    const handleGoogleSignIn = async () => {
+
         setIsLoading(true)
-        
+
         try {
-            
-            const res = await signIn('credentials', {
-                redirect: false,
-                email: formData.email,
-                password: formData.password,
-            })
-            
-            if (res?.ok) {
-                toast.success('Login successful!')
-                router.push('/')
-            } else {
-                toast.error(res?.error || 'Invalid credentials')
-            }
-            
+
+            await signInWithGoogle()
+            toast.success('Login successful!')
+            router.push('/')
+
         } catch (error) {
-            
-            console.error('Login error:', error)
-            toast.error('An unexpected error occurred')
-            
+
+            console.error('Google sign-in error:', error)
+
+            if (error.code === 'auth/popup-closed-by-user') {
+                toast.error('Sign-in cancelled')
+            } else if (error.code === 'auth/popup-blocked') {
+                toast.error('Popup blocked. Please allow popups for this site.')
+            } else {
+                toast.error('Failed to sign in. Please try again.')
+            }
+
         } finally {
-            
+
             setIsLoading(false)
-            
+
         }
-        
+
     }
-    
+
     return (
-        
+
         <Card className="w-full max-w-md">
-            
+
             <CardHeader>
                 <CardTitle>Login</CardTitle>
-                <CardDescription>Sign in to your account</CardDescription>
+                <CardDescription>Sign in with your Google account</CardDescription>
             </CardHeader>
-            
-            <form onSubmit={handleSubmit}>
-                <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                            id="email"
-                            name="email"
-                            type="email"
-                            placeholder="name@example.com"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required/>
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="password">Password</Label>
-                        <Input
-                            id="password"
-                            name="password"
-                            type={showPassword ? 'text' : 'password'}
-                            placeholder="Your password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            required/>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <Checkbox
-                            id="show-password"
-                            checked={showPassword}
-                            onCheckedChange={setShowPassword} />
-                        <Label htmlFor="show-password">Show password</Label>
-                    </div>
-                </CardContent>
-                <CardFooter className="mt-4">
-                    <Button className="w-full" type="submit" disabled={isLoading}>
-                        {isLoading ? 'Signing in...' : 'Login'}
-                    </Button>
-                </CardFooter>
-            </form>
-        
+
+            <CardContent className="space-y-4">
+                <Button
+                    className="w-full"
+                    onClick={handleGoogleSignIn}
+                    disabled={isLoading}
+                    type="button"
+                >
+                    {isLoading ? 'Signing in...' : 'Continue with Google'}
+                </Button>
+            </CardContent>
+
+            <CardFooter className="flex flex-col space-y-2 text-sm text-muted-foreground">
+                <p>Sign in with your Google account to access your trips.</p>
+            </CardFooter>
+
         </Card>
-        
+
     )
-    
+
 }

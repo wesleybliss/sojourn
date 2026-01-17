@@ -1,34 +1,43 @@
 'use client'
 
-import { useSession } from 'next-auth/react'
+import { useAuth } from '@/components/providers/AuthProvider'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import LoadingSpinner from '@/components/LoadingSpinner'
+import InviteCodeForm from '@/components/InviteCodeForm'
 
 export default function ProtectedRoute({ children }) {
-    
-    const { status } = useSession()
+
+    const { user, firebaseUser, loading, needsInviteCode } = useAuth()
     const router = useRouter()
-    
+
     useEffect(() => {
-        
-        if (status === 'unauthenticated') {
+
+        if (!loading && !firebaseUser) {
             console.warn('ProtectedRoute#hook redirecting to login')
             router.push('/login')
         }
-        
-    }, [status, router])
-    
-    if (status === 'loading')
+
+    }, [loading, firebaseUser, router])
+
+    if (loading)
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <LoadingSpinner />
             </div>
         )
-    
-    if (status === 'unauthenticated')
+
+    if (!firebaseUser)
         return null
-    
+
+    // User is authenticated but needs to enter invite code
+    if (needsInviteCode)
+        return (
+            <div className="flex items-center justify-center min-h-screen p-4">
+                <InviteCodeForm />
+            </div>
+        )
+
     return children
-    
+
 }

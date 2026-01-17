@@ -1,12 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import * as store from '@/store'
+import { fetchJSON } from '@/lib/api'
 
 export const useTripsQuery = (opts = {}) => useQuery({
     queryKey: ['trips'],
-    queryFn: () => fetch('/api/trips', {
-        credentials: 'include',
-    })
-        .then(it => it.json())
+    queryFn: () => fetchJSON('/api/trips')
         .then(it => {
             store.trips.setValue(it.data)
             return it

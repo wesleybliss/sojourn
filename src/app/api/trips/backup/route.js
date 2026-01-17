@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { getToken } from 'next-auth/jwt'
 import tripsRepo from '@/db/repos/trips'
 import plansRepo from '@/db/repos/plans'
 import Ajv from 'ajv'
@@ -60,19 +59,11 @@ const transformTrip = trip => ({
 })
 
 export const POST = withAuth(async (request, { auth }) => {
-    
+
     try {
-        
-        const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
-        
-        if (!token || !token.sub)
-            return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
-        
-        const userId = parseInt(String(token.sub), 10)
-        
-        if (Number.isNaN(userId))
-            return NextResponse.json({ success: false, error: 'Invalid user ID' }, { status: 400 })
-        
+
+        const { userId } = auth
+
         const body = await request.json()
         const ajvProps = ajvDebug ? { allErrors: true, verbose: true } : {}
         

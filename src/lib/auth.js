@@ -1,46 +1,125 @@
 import db from '@/db/index'
 import * as schemas from '@/db/schema'
-import { eq, and } from 'drizzle-orm'
-import { getToken } from 'next-auth/jwt'
+import { eq, and, sql } from 'drizzle-orm'
+import { adminAuth } from '@/lib/firebase/admin'
 import HttpError from '@/errors/HttpError'
 import { NextResponse } from 'next/server'
 
 /**
- * An asynchronous function that authorizes a user based on the provided request object.
+ * Extracts and verifies Firebase ID token from request Authorization header.
  *
- * The function validates the user's token extracted from the request, verifies the token's user ID,
- * and retrieves the corresponding user data from the database. If any step in the authorization
- * process fails, an appropriate HTTP error is thrown.
- *
- * @param {Object} request - The incoming request object containing authentication details.
- * @throws {HttpError} 401 - If the token is missing or invalid.
- * @throws {HttpError} 400 - If the extracted user ID is invalid or not a number.
- * @throws {HttpError} 404 - If the user ID does not correspond to a valid user in the database.
- * @returns {Promise<Object>} Resolves with an object containing the authorized user, token, and user ID.
+ * @param {Object} request - The incoming request object
+ * @returns {Promise<Object>} Decoded Firebase token
+ * @throws {HttpError} 401 - If token is missing or invalid
  */
-export const authorize = async request => {
-    
-    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
-    
-    if (!token || !token.sub)
-        throw new HttpError(401, 'Unauthorized')
-    
-    const userId = parseInt(String(token.sub), 10)
-    
-    if (Number.isNaN(userId))
-        throw new HttpError(400, 'Invalid user ID')
-    
-    const [user] = await db
+const verifyFirebaseToken = async (request) => {
+    const authHeader = request.headers.get('Authorization')
+
+    if (!authHeader || !authHeader.startsWith('Bearer '))
+        throw new HttpError(401, 'Missing or invalid authorization header')
+
+    const idToken = authHeader.substring(7)
+
+    try {
+        const decodedToken = await adminAuth.verifyIdToken(idToken)
+        return decodedToken
+    } catch (error) {
+        console.error('Firebase token verification failed:', error)
+        throw new HttpError(401, 'Invalid or expired token')
+    }
+}
+
+/**
+ * Gets or creates a user based on Firebase authentication.
+ *
+ * - If firebaseUid exists in DB, returns that user
+ * - If not, attempts to link by email (claim legacy account)
+ * - If no match, creates new user
+ * - Handles enabled flag for beta access control
+ *
+ * @param {Object} firebaseUser - Decoded Firebase token containing uid, email, name, picture
+ * @returns {Promise<Object>} Database user record
+ * @throws {HttpError} For validation or conflict errors
+ */
+const getOrCreateUser = async (firebaseUser) => {
+    const { uid: firebaseUid, email, name, picture } = firebaseUser
+
+    if (!email)
+        throw new HttpError(400, 'Email not provided by authentication provider. Please contact support.')
+
+    const normalizedEmail = email.toLowerCase().trim()
+
+    // 1. Try to find user by firebaseUid
+    const [existingByUid] = await db
         .select()
         .from(schemas.users)
-        .where(eq(schemas.users.id, userId))
+        .where(eq(schemas.users.firebaseUid, firebaseUid))
         .limit(1)
-    
-    if (!user || user?.id !== userId)
-        throw new HttpError(404, 'User not found')
-    
-    return { user, token, userId }
-    
+
+    if (existingByUid)
+        return existingByUid
+
+    // 2. Try to find by email (legacy account linking)
+    const [existingByEmail] = await db
+        .select()
+        .from(schemas.users)
+        .where(sql`lower(${schemas.users.email}) = ${normalizedEmail}`)
+        .limit(1)
+
+    if (existingByEmail) {
+        // Email match found - check if already claimed by different Firebase user
+        if (existingByEmail.firebaseUid && existingByEmail.firebaseUid !== firebaseUid) {
+            throw new HttpError(409, 'This email is associated with a different account. Please contact support.')
+        }
+
+        // Claim this legacy account by setting firebaseUid
+        const [updated] = await db
+            .update(schemas.users)
+            .set({
+                firebaseUid,
+                name: name || existingByEmail.name,
+                photoUrl: picture || existingByEmail.photoUrl,
+            })
+            .where(eq(schemas.users.id, existingByEmail.id))
+            .returning()
+
+        return updated
+    }
+
+    // 3. Create new user (enabled=false by default, will need invite code)
+    const [newUser] = await db
+        .insert(schemas.users)
+        .values({
+            email: normalizedEmail,
+            firebaseUid,
+            name: name || null,
+            photoUrl: picture || null,
+            enabled: false,
+        })
+        .returning()
+
+    return newUser
+}
+
+/**
+ * Authorizes a user based on Firebase ID token from request.
+ *
+ * Verifies Firebase token, gets or creates user in database, and returns auth context.
+ *
+ * @param {Object} request - The incoming request object containing Authorization header
+ * @throws {HttpError} 401 - If the token is missing or invalid
+ * @throws {HttpError} 400 - If email is missing or other validation fails
+ * @throws {HttpError} 409 - If email conflict detected
+ * @returns {Promise<Object>} Resolves with { user, firebaseToken, userId }
+ */
+export const authorize = async request => {
+
+    const firebaseToken = await verifyFirebaseToken(request)
+
+    const user = await getOrCreateUser(firebaseToken)
+
+    return { user, firebaseToken, userId: user.id }
+
 }
 
 export const withAuth = handler => async (request, context) => {

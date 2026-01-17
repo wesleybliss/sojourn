@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 import Navbar from '@/components/Navbar'
 import QueryProvider from '@/components/providers/QueryProvider'
-import NextAuthProvider from '@/components/providers/NextAuthProvider.jsx'
+import { AuthProvider } from '@/components/providers/AuthProvider'
 import { Toaster } from 'sonner'
 
 dayjs.extend(advancedFormat)
@@ -18,15 +18,15 @@ export default function RootLayout({ children }) {
         
         <html lang="en" data-arp="">
             <body className={inter.className}>
-                
-                <NextAuthProvider>
+
+                <AuthProvider>
                     <QueryProvider>
                         <Navbar />
                         {children}
                         <Toaster />
                     </QueryProvider>
-                </NextAuthProvider>
-            
+                </AuthProvider>
+
             </body>
         </html>
         

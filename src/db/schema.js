@@ -4,9 +4,13 @@ import { timestamps, table, lower, optsCascadeAll, timestampSeconds } from './db
 
 export const users = table('users', {
     email: text('email').notNull(),
-    password: text('password').notNull(),
+    firebaseUid: text('firebaseUid'), // Firebase UID for Google authentication
+    enabled: integer('enabled', { mode: 'boolean' }).default(false), // Beta access control
+    name: text('name'), // User display name from Firebase
+    photoUrl: text('photoUrl'), // User photo URL from Firebase
 }, table => [
     uniqueIndex('emailUniqueIndex').on(lower(table.email)),
+    uniqueIndex('firebaseUidUniqueIndex').on(table.firebaseUid),
 ])
 
 export const trips = table('trips', {
