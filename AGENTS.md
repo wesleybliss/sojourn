@@ -49,6 +49,7 @@ Agent guidelines for automated agents in this repo.
   - Avoid inline `z-index` (use Tailwind classes or config).
   - JSDoc types in `typedefs.js` or inline JSDoc.
 - **Global Variables:** `Logger` is available globally.
+- **Check Your Work:** Always run `pnpm lint` before committing.
 
 ## Project Structure
 - `src/app`: Next.js App Router pages and layouts.
