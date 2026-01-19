@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { fetchJSON } from '@/lib/api'
 /* import * as store from '@/store'
 import { updateItemArray } from '@/lib/storeUtils.js' */
 
@@ -7,19 +8,7 @@ const plansQueryKey = (tripId, exclusive = false) =>
 
 export const usePlansQuery = (tripId, opts = {}) => useQuery({
     queryKey: plansQueryKey(tripId),
-    queryFn: async () => {
-        const response = await fetch(`/api/trips/${tripId}/plans`, {
-            credentials: 'include',
-        })
-        
-        if (!response.ok) {
-            const error = await response.json().catch(() => ({}))
-            
-            throw new Error(error.message || 'Failed to fetch plans')
-        }
-        
-        return await response.json()
-    },
+    queryFn: () => fetchJSON(`/api/trips/${tripId}/plans`),
     enabled: !!tripId,
     keepPreviousData: true,
     ...opts,
@@ -27,19 +16,7 @@ export const usePlansQuery = (tripId, opts = {}) => useQuery({
 
 export const usePlanQuery = (planId, opts = {}) => useQuery({
     queryKey: ['plans', planId],
-    queryFn: async () => {
-        const response = await fetch(`/api/plans/${planId}`, {
-            credentials: 'include',
-        })
-        
-        if (!response.ok) {
-            const error = await response.json().catch(() => ({}))
-            
-            throw new Error(error.message || 'Failed to fetch plan')
-        }
-        
-        return await response.json()
-    },
+    queryFn: () => fetchJSON(`/api/plans/${planId}`),
     enabled: !!planId,
     keepPreviousData: true,
     ...opts,
@@ -50,20 +27,10 @@ export const useCreatePlan = () => {
     
     return useMutation({
         mutationFn: async ({ tripId, ...planData }) => {
-            const response = await fetch('/api/plans', {
+            return fetchJSON('/api/plans', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ tripId, ...planData }),
-                credentials: 'include',
             })
-            
-            if (!response.ok) {
-                const error = await response.json().catch(() => ({}))
-                
-                throw new Error(error.message || 'Failed to create plan')
-            }
-            
-            return await response.json()
         },
         onSuccess: (data, variables) => {
             // queryClient.invalidateQueries({ queryKey: plansQueryKey(variables.tripId) })
@@ -77,20 +44,10 @@ export const useUpdatePlan = () => {
     
     return useMutation({
         mutationFn: async ({ /* tripId, */ planId, ...planData }) => {
-            const response = await fetch(`/api/plans/${planId}`, {
+            return fetchJSON(`/api/plans/${planId}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(planData),
-                credentials: 'include',
             })
-            
-            if (!response.ok) {
-                const error = await response.json().catch(() => ({}))
-                
-                throw new Error(error.message || 'Failed to update plan')
-            }
-            
-            return await response.json()
         },
         onSuccess: (data, variables) => {
             try {
@@ -111,18 +68,9 @@ export const useDeletePlan = () => {
     
     return useMutation({
         mutationFn: async plan => {
-            const res = await fetch(`/api/plans/${plan.id}`, {
+            return fetchJSON(`/api/plans/${plan.id}`, {
                 method: 'DELETE',
-                credentials: 'include',
             })
-            
-            if (!res.ok) {
-                const error = await res.json().catch(console.error)
-                
-                throw new Error(error.message || 'Failed to delete plan')
-            }
-            
-            return plan
         },
         onSuccess: (data, variables) => {
             queryClient.invalidateQueries(['trip', variables.tripId])
@@ -135,15 +83,9 @@ export const useClonePlan = () => {
     
     return useMutation({
         mutationFn: async ({ planId }) => {
-            
-            const res = await fetch(`/api/plans/${planId}/clone`, {
+            return fetchJSON(`/api/plans/${planId}/clone`, {
                 method: 'POST',
-                credentials: 'include',
             })
-            
-            if (!res.ok) throw new Error('Failed to clone plan')
-            
-            return await res.json()
         },
         onSuccess: data => {
             queryClient.invalidateQueries(['trip', data.tripId])

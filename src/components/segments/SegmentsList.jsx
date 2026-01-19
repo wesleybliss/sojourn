@@ -28,6 +28,7 @@ const SegmentsList = ({
     getCumulativeDaysPerSegment,
     getSegmentPlanned,
     getSegmentCompleted,
+    shufflePlaceCoverPhoto,
 }) => {
     
     const placeNamesToCoverImagesMap = useWireValue(placeNamesToCoverImagesMapWire)
@@ -50,10 +51,10 @@ const SegmentsList = ({
                     wrapperClassName="py-2 lg:py-4"
                     headerClassName="px-3 lg:px-5"
                     contentClassName="px-3 lg:px-5"
-                    imageSrc={placeNamesToCoverImagesMap[it.name]}
+                    imageSrc={placeNamesToCoverImagesMap[it.name]?.url}
                     imageAlt={it.name}
                     maxWidth="max-w-full lg:max-w-2xl"
-                    title={<h3 className="text-xl">{it.name}</h3>}
+                    title={it.name}
                     description={
                         <div className="flex justify-between items-center gap-4">
                             <SegmentCardDate date={it.startDate} />
@@ -62,7 +63,9 @@ const SegmentsList = ({
                             </div>
                             <SegmentCardDate date={it.endDate} />
                         </div>
-                    }>
+                    }
+                    placeId={placeNamesToCoverImagesMap[it.name]?.id}
+                    shufflePlaceCoverPhoto={shufflePlaceCoverPhoto}>
                     <div className="overflow-x-auto mt-2">
                         <Table>
                             <SegmentsListDetailsTableHeader />

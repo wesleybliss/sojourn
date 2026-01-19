@@ -29,7 +29,10 @@ export const placesWithCoverImages = createWire([])
 export const placeNamesToCoverImagesMap = createSelector({
     get: ({ get }) => get(placesWithCoverImages)?.reduce((acc, it) => ({
         ...acc,
-        [it.name]: it.coverImageUrl,
+        [it.name]: {
+            id: it.id,
+            url: it.coverImageUrl,
+        },
     }), {}),
 })
 

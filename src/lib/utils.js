@@ -68,8 +68,13 @@ export const createSyntheticDownload = (data, type, fileName) => {
 
 export const getRandomUnsplashImageUrl = async topic => {
     
+    const accessKey = process.env.UNSPLASH_ACCESS_KEY
+    
+    if (!accessKey?.length)
+        throw new Error('Missing UNSPLASH_ACCESS_KEY')
+    
     // Only include alpha characters
-    const cleanTopic = topic.replace(/[^a-zA-Z]/g, '')
+    const cleanTopic = encodeURIComponent(topic.replace(/[^a-zA-Z]/g, ' '))
     
     const url = `https://api.unsplash.com/photos/random?orientation=landscape&query=${cleanTopic}`
     
@@ -77,7 +82,7 @@ export const getRandomUnsplashImageUrl = async topic => {
         
         const res = await fetch(url, {
             headers: {
-                Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`,
+                Authorization: `Client-ID ${accessKey}`,
             },
         })
         

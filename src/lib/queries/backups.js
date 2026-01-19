@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { fetchWithAuth, fetchJSON } from '@/lib/api'
 
 const idToInt = obj => obj?.id ? parseInt(obj?.id, 10) : null
 
@@ -16,11 +17,10 @@ export const useBackupTrips = () => {
             else
                 body.tripId = tripId
             
-            const res = await fetch('/api/trips/backup', {
+            const res = await fetchWithAuth('/api/trips/backup', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body),
-                credentials: 'include',
             })
             
             if (!res.ok) {
@@ -62,20 +62,10 @@ export const useRestoreTrips = () => {
     
     return useMutation({
         mutationFn: async backupData => {
-            const res = await fetch('/api/trips/restore', {
+            return fetchJSON('/api/trips/restore', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(backupData),
-                credentials: 'include',
             })
-            
-            if (!res.ok) {
-                const json = await res.json().catch(() => null)
-                
-                throw new Error(json?.error || 'Failed to restore backup')
-            }
-            
-            return res.json()
         },
         onSuccess: () => {
             queryClient.invalidateQueries(['trips'])

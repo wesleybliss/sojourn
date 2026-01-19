@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import * as store from '@/store'
 import { updateItemArray } from '@/lib/storeUtils.js'
+import { fetchJSON } from '@/lib/api'
 
 // const idToInt = obj => obj?.id ? parseInt(obj?.id, 10) : null
 
@@ -10,10 +11,7 @@ export const useTripQuery = tripId => useQuery({
         
         try {
             
-            const res = await fetch(`/api/trips/${tripId}?withDetails=true`, {
-                credentials: 'include',
-            })
-            const { data } = await res.json()
+            const { data } = await fetchJSON(`/api/trips/${tripId}?withDetails=true`)
             
             // @todo need to handle this better
             try {
@@ -45,22 +43,10 @@ export const useCreateTripMutation = () => {
     
     return useMutation({
         mutationFn: async tripData => {
-            const res = await fetch('/api/trips', {
+            const { data } = await fetchJSON('/api/trips', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(tripData),
-                credentials: 'include',
             })
-            
-            if (!res.ok) {
-                const error = await res.json().catch(() => ({ error: 'Unknown error' }))
-                
-                throw new Error(error.error || `HTTP ${res.status}`)
-            }
-            
-            const { data } = await res.json()
             
             return data
         },
@@ -76,15 +62,10 @@ export const useUpdateTrip = () => {
     
     return useMutation({
         mutationFn: async ({ tripId, ...tripData }) => {
-            const res = await fetch(`/api/trips/${tripId}`, {
+            return fetchJSON(`/api/trips/${tripId}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(tripData),
-                credentials: 'include',
             })
-            
-            if (!res.ok) throw new Error('Failed to update trip')
-            return res.json()
         },
         onSuccess: (data, variables) => {
             queryClient.invalidateQueries(['trip', variables.tripId])
@@ -98,15 +79,10 @@ export const useAddSegment = () => {
     
     return useMutation({
         mutationFn: async segmentData => {
-            const res = await fetch('/api/segments', {
+            return fetchJSON('/api/segments', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(segmentData),
-                credentials: 'include',
             })
-            
-            if (!res.ok) throw new Error('Failed to add segment')
-            return res.json()
         },
         onSuccess: data => {
             queryClient.invalidateQueries(['trip', data.tripId])
@@ -121,16 +97,10 @@ export const useUpdateSegment = () => {
     return useMutation({
         // eslint-disable-next-line no-unused-vars
         mutationFn: async ({ segmentId, tripId, planId, ...segmentData }) => {
-            const res = await fetch(`/api/segments/${segmentId}`, {
+            const json = await fetchJSON(`/api/segments/${segmentId}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(segmentData),
-                credentials: 'include',
             })
-            
-            if (!res.ok) throw new Error('Failed to update segment')
-            
-            const json = await res.json()
             
             // Attach tripId to the response for onSettled
             return { ...json, tripId }
@@ -191,15 +161,10 @@ export const useDeleteSegments = () => {
     
     return useMutation({
         mutationFn: async ({ tripId, planId, segmentIds }) => {
-            const res = await fetch('/api/segments', {
+            return fetchJSON('/api/segments', {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ tripId, planId, segmentIds }),
-                credentials: 'include',
             })
-            
-            if (!res.ok) throw new Error('Failed to delete segments')
-            return res.json()
         },
         onSuccess: data => {
             queryClient.invalidateQueries(['trip', data.tripId])
@@ -216,15 +181,10 @@ export const useRenamePlan = () => {
     
     return useMutation({
         mutationFn: async ({ planId, name }) => {
-            const res = await fetch(`/api/plans/${planId}`, {
+            return fetchJSON(`/api/plans/${planId}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name }),
-                credentials: 'include',
             })
-            
-            if (!res.ok) throw new Error('Failed to rename plan')
-            return res.json()
         },
         onSuccess: data => {
             queryClient.invalidateQueries(['trip', data.tripId])
@@ -238,13 +198,9 @@ export const useDeletePlan = () => {
     
     return useMutation({
         mutationFn: async ({ planId }) => {
-            const res = await fetch(`/api/plans/${planId}`, {
+            return fetchJSON(`/api/plans/${planId}`, {
                 method: 'DELETE',
-                credentials: 'include',
             })
-            
-            if (!res.ok) throw new Error('Failed to delete plan')
-            return res.json()
         },
         onSuccess: data => {
             queryClient.invalidateQueries(['trip', data.tripId])
@@ -259,9 +215,8 @@ export const useDeleteTripMutation = () => {
     
     return useMutation({
         mutationFn: async tripId => {
-            await fetch(`/api/trips/${tripId}`, {
+            await fetchJSON(`/api/trips/${tripId}`, {
                 method: 'DELETE',
-                credentials: 'include',
             })
         },
         onSuccess: () => {

@@ -3,6 +3,7 @@ import { parseFormData } from '@/lib/utils'
 import { toBase64 } from '@/lib/storage/vercel-blob'
 import { usePlacesQuery } from '@/lib/queries/places'
 import { useQueryClient } from '@tanstack/react-query'
+import { fetchJSON } from '@/lib/api'
 
 const useDebugViewModel = () => {
     
@@ -25,21 +26,12 @@ const useDebugViewModel = () => {
         
         try {
             
-            const res = await fetch('/api/places', {
+            const data = await fetchJSON('/api/places', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify({
                     name,
                 }),
-                credentials: 'include',
             })
-            
-            if (!res.ok)
-                return console.error('createNewPlace error', res)
-            
-            const data = await res.json()
             
             console.log('createNewPlace ok', data)
             
@@ -92,21 +84,15 @@ const useDebugViewModel = () => {
             // const blob = new Blob([file], { type: file.type })
             const base64Data = await toBase64(file)
             
-            const res = await fetch('/api/debug/storage/blob', {
+            const json = await fetchJSON('/api/debug/storage/blob', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     name: file.name,
                     contentType: file.type,
                     base64Data,
                 }),
-                credentials: 'include',
             })
             
-            if (!res.ok)
-                throw new Error('Failed to upload file', res)
-            
-            const json = await res.json()
             const { url } = json
             
             console.log('uploadSampleImageBlob', json)
@@ -134,15 +120,9 @@ const useDebugViewModel = () => {
         
         try {
             
-            const response = await fetch('/api/migrate', {
+            const result = await fetchJSON('/api/migrate', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
             })
-            
-            const result = await response.json()
             
             setResult(result)
             

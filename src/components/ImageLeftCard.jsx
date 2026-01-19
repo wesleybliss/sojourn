@@ -1,4 +1,5 @@
-import React from 'react'
+import { useCallback } from 'react'
+import { cn } from '@/lib/utils'
 import {
     Card,
     CardContent,
@@ -6,6 +7,15 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card'
+import {
+    ContextMenu,
+    ContextMenuContent,
+    ContextMenuItem,
+    ContextMenuTrigger,
+} from '@/components/ui/context-menu'
+
+const emptyImageSrc = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfF' +
+    'cSJAAAADUlEQVR4AWJqaGz8DwAAAP//e4lw8wAAAAZJREFUAwAFkwKEpgq4TgAAAABJRU5ErkJggg=='
 
 const LeftImageCard = ({
     className = '',
@@ -22,7 +32,19 @@ const LeftImageCard = ({
     height = '',
     imageWidth = 'w-1/3',
     contentWidth = 'w-2/3',
+    placeId,
+    shufflePlaceCoverPhoto,
 }) => {
+    
+    const shufflePlaceCoverPhotoCustom = useCallback(() => {
+        
+        const customTopic = prompt('Please enter a custom topic for the image (optional):')
+        
+        if (!customTopic?.trim()?.length) return
+        
+        shufflePlaceCoverPhoto(placeId, customTopic)
+        
+    }, [placeId, shufflePlaceCoverPhoto])
     
     return (
         
@@ -30,10 +52,31 @@ const LeftImageCard = ({
             
             {/* Image Section */}
             <div className={`${imageWidth} relative`}>
-                <img
+                <ContextMenu>
+                    <ContextMenuTrigger
+                        className="relative">
+                        <img
+                            className={cn('w-full h-full object-cover', imageClassName, {
+                                'min-w-50': !imageSrc,
+                            })}
+                            src={imageSrc ?? emptyImageSrc}
+                            alt={imageAlt} />
+                    </ContextMenuTrigger>
+                    <ContextMenuContent className="w-52">
+                        <ContextMenuItem inset onClick={() => shufflePlaceCoverPhoto(placeId, title)}>
+                            Shuffle Image
+                        </ContextMenuItem>
+                        <ContextMenuItem inset onClick={shufflePlaceCoverPhotoCustom}>
+                            Shuffle Image (Custom)
+                        </ContextMenuItem>
+                    </ContextMenuContent>
+                </ContextMenu>
+                {/* <img
+                    className={`w-full h-full object-cover ${imageClassName}`}
                     src={imageSrc}
                     alt={imageAlt}
-                    className={`w-full h-full object-cover ${imageClassName}`} />
+                    onDoubleClick={() => shufflePlaceCoverPhoto(placeId, title)}
+                /> */}
             </div>
             
             {/* Content Section */}
@@ -41,7 +84,7 @@ const LeftImageCard = ({
                 
                 {(title || description) && (
                     <CardHeader className={headerClassName || ''}>
-                        {title && <CardTitle>{title}</CardTitle>}
+                        {title && <CardTitle><h3 className="text-xl">{title}</h3></CardTitle>}
                         {description && <CardDescription>{description}</CardDescription>}
                     </CardHeader>
                 )}

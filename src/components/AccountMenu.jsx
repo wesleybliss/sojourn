@@ -15,6 +15,7 @@ import { useTripsQuery } from '@/lib/queries/trips.js'
 import { useState } from 'react'
 import { useBackupTrips } from '@/lib/queries/backups.js'
 import { toast } from 'sonner'
+import { fetchJSON } from '@/lib/api'
 
 const debugDumpData = trips => e => {
     
@@ -51,17 +52,9 @@ const AccountMenu = () => {
         
         try {
             // Since Turso is a remote database, we'll clear all data instead of deleting the DB
-            const response = await fetch('/api/debug/clear-all', {
+            await fetchJSON('/api/debug/clear-all', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
             })
-            
-            if (!response.ok) {
-                throw new Error('Failed to clear database')
-            }
             
             setDeleteDatabaseDialogOpen(false)
             toast.success('Database cleared successfully')

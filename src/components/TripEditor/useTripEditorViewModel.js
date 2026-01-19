@@ -10,11 +10,14 @@ import {
     useDeleteSegments,
     useRenamePlan,
     useDeletePlan,
-} from '@/lib/queries/trip.js'
+} from '@/lib/queries/trip'
+import { useShufflePlaceCoverPhoto } from '@/lib/queries/places'
 import { useBackupTrips } from '@/lib/queries/backups'
 import { toast } from 'sonner'
 import dayjs from 'dayjs'
-import { sortArrByUpdatedAt, calculateTotalDays } from '@/lib/utils.js'
+import { sortArrByUpdatedAt, calculateTotalDays } from '@/lib/utils'
+import { useUpdatePlan } from '@/lib/queries/plans'
+import { useUpdatePlace } from '@/lib/queries/places'
 
 const matchesDate = (date, query) => {
     
@@ -89,6 +92,9 @@ const useTripEditorViewModel = () => {
     const deleteSegmentsMutation = useDeleteSegments()
     const renamePlanMutation = useRenamePlan()
     const deletePlanMutation = useDeletePlan()
+    const updatePlanMutation = useUpdatePlan()
+    const updatePlace = useUpdatePlace()
+    const shufflePlaceCoverPhotoMutation = useShufflePlaceCoverPhoto()
     
     const [isLoadingInitial, setIsLoadingInitial] = useState(true)
     const [isEditingName, setIsEditingName] = useState(false)
@@ -286,6 +292,31 @@ const useTripEditorViewModel = () => {
         
     }, [deletePlanMutation, tripId, router])
     
+    const shufflePlaceCoverPhoto = useCallback(async (placeId, topic) => {
+        
+        if (!placeId || !topic?.length)
+            return console.error('useTripEditorViewModel#shufflePlaceCoverPhoto missing params', { placeId, topic })
+        
+        console.log('useTripEditorViewModel#shufflePlaceCoverPhoto', placeId, topic)
+        
+        shufflePlaceCoverPhotoMutation.mutate({ topic }, {
+            onSuccess: data => {
+                console.log('shufflePlaceCoverPhoto', data)
+                
+                return updatePlace.mutate({ placeId, coverImageUrl: data.data }, {
+                    onSuccess: () => {
+                        toast('Place cover photo updated')
+                    },
+                    onError: e => {
+                        console.error('Error updating place cover photo:', e)
+                        toast.error('Failed to update place cover photo')
+                    },
+                })
+            },
+        })
+        
+    }, [shufflePlaceCoverPhotoMutation])
+    
     useEffect(() => {
         
         setIsLoadingInitial(true)
@@ -391,6 +422,8 @@ const useTripEditorViewModel = () => {
         backupTrip,
         renamePlan,
         deletePlan,
+        updatePlanMutation,
+        shufflePlaceCoverPhoto,
         
         // Loading/error states
         isLoading,

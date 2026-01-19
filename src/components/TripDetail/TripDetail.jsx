@@ -45,7 +45,8 @@ const TripDetail = ({
                             getTotalDaysPerSegment={vm.getTotalDaysPerSegment}
                             getCumulativeDaysPerSegment={vm.getCumulativeDaysPerSegment}
                             getSegmentPlanned={vm.getSegmentPlanned}
-                            getSegmentCompleted={vm.getSegmentCompleted}/>
+                            getSegmentCompleted={vm.getSegmentCompleted}
+                            shufflePlaceCoverPhoto={vm.shufflePlaceCoverPhoto} />
                     </>)}
                     
                     {/* Only show empty state when trip is fully loaded, has a plan, and truly has no segments */}
