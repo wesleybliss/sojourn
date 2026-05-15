@@ -1,10 +1,14 @@
+import { createRequire } from 'node:module'
+
 import globals from 'globals'
 import eslintJs from '@eslint/js'
 import reactCompiler from 'eslint-plugin-react-compiler'
 import stylistic from '@stylistic/eslint-plugin'
 import reactPlugin from 'eslint-plugin-react'
 import reactHooksPlugin from 'eslint-plugin-react-hooks'
-import indentEmptyLinesPlugin from 'eslint-plugin-indent-empty-lines'
+
+const require = createRequire(import.meta.url)
+const indentEmptyLinesPlugin = require('eslint-plugin-indent-empty-lines').default
 
 // @todo investigate these
 // https://github.com/dustinspecker/awesome-eslint
@@ -68,7 +72,7 @@ export default [
             'react/jsx-uses-react': 'error',
             'react/jsx-uses-vars': 'error',
             
-            'react/jsx-filename-extension': ['error', { extensions: ['.jsx'] }],
+            // 'react/jsx-filename-extension': ['error', { extensions: ['.jsx'] }],
             'react/prop-types': 'off',
             'react-hooks/rules-of-hooks': 'error',
             'react-hooks/exhaustive-deps': strictMode ? 'error' : 'off', // @todo nice to have eventually
@@ -142,6 +146,7 @@ export default [
             'radix': ['error', 'always'],
             'no-eq-null': 'error',
             'object-curly-spacing': ['error', 'always'],
+            'preserve-caught-error': 'off',
         },
     },
     

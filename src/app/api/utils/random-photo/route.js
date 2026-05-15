@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { withAuth } from '@/lib/auth'
 import { getRandomUnsplashImageUrl } from '@/lib/utils'
 
-export const POST = withAuth(async (request, { params }) => {
+export const POST = withAuth(async (request/* , { params } */) => {
     
     const body = await request.json()
     const { topic } = body
