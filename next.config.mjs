@@ -7,17 +7,18 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
+const resolvedAliases = Object.fromEntries(
+    Object.entries(aliases).map(([key, value]) => [
+        key,
+        path.resolve(__dirname, value),
+    ])
+)
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
-    webpack(config) {
-        
-        for (const [aliasKey, aliasPath] of Object.entries(aliases)) {
-            config.resolve.alias[aliasKey] = path.resolve(__dirname, aliasPath)
-        }
-        
-        return config
-        
+    turbopack: {
+        resolveAlias: resolvedAliases,
     },
     // Shuffle env vars via NEXT_PUBLIC_* prefix in .env
     // env: {
