@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { withAuth } from '@/lib/auth'
 import usersRepo from '@/db/repos/users'
 import { Buffer } from 'node:buffer'
 import { putPlaceImageBuffer } from '@/lib/storage/vercel-blob'
 
-export const POST = withAuth(async (request, { auth }) => {
+export const POST = withAuth(async (request: NextRequest, { auth }) => {
     
     try {
         

@@ -105,14 +105,7 @@ const getOrCreateUser = async (firebaseUser: DecodedIdToken) => {
 
 /**
  * Authorizes a user based on Firebase ID token from request.
- *
- * Verifies Firebase token, gets or creates user in database, and returns auth context.
- *
- * @param {Object} request - The incoming request object containing Authorization header
- * @throws {HttpError} 401 - If the token is missing or invalid
- * @throws {HttpError} 400 - If email is missing or other validation fails
- * @throws {HttpError} 409 - If email conflict detected
- * @returns {Promise<Object>} Resolves with { user, firebaseToken, userId }
+ * Verifies Firebase token, gets or creates user in the database, and returns auth context.
  */
 export const authorize = async (request: NextRequest) => {
     
@@ -137,7 +130,7 @@ export const withAuth = (handler: (req: NextRequest, context: { auth: AuthContex
             request.app = {}
         
         Object.keys(auth).forEach(key => {
-            request.app[key] = auth[key]
+            request.app[key] = auth[key as keyof typeof auth]
         })
         
         return await handler(request, newContext)
@@ -145,7 +138,7 @@ export const withAuth = (handler: (req: NextRequest, context: { auth: AuthContex
     } catch (e) {
         
         if (e instanceof HttpError)
-            return NextResponse.json({ success: false, error: e.message }, { status: (e as HttpError).status })
+            return NextResponse.json({ success: false, error: (e as HttpError).message }, { status: (e as HttpError).status })
         
         console.error('Authorization error:', e)
         return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
@@ -167,13 +160,13 @@ export const isUserTripMember = async (auth: AuthContext, tripId: ID) => {
             .select()
             .from(schemas.userTrips)
             .where(and(
-                eq(schemas.userTrips.userId, parseInt(userId, 10)),
-                eq(schemas.userTrips.tripId, parseInt(tripId, 10)),
+                eq(schemas.userTrips.userId, userId),
+                eq(schemas.userTrips.tripId, tripId),
             ))
         
         return Array.isArray(rows) &&
             rows.length > 0 &&
-            rows[0].tripId === parseInt(tripId, 10)
+            rows[0].tripId === tripId
         
     } catch (e) {
         
