@@ -1,35 +1,38 @@
+import database from '@/db'
 import Repository from '@/db/repos/repo'
 import * as schemas from '@/db/schema'
 import { eq, desc } from 'drizzle-orm'
+import { TripInsert, TripSelect } from '@/types/database'
+import { ID } from '@/types/data'
 
-export class TripsRepository extends Repository {
+export class TripsRepository extends Repository<typeof schemas.trips> {
     
-    constructor() {
+    constructor(db?: typeof database) {
         
-        super('trip', 'trips', schemas.trips)
+        super('trip', 'trips', schemas.trips, db)
         
     }
     
-    tx(transaction) {
+    tx(transaction: typeof database) {
         
-        return new TripsRepository(this.name, this.plural, this.schema, transaction)
+        return new TripsRepository(transaction)
         
     }
     
-    async create(data) {
+    async create(
+        data: TripInsert,
+    ): Promise<TripSelect> {
         
         return super.create({
             userId: data.userId,
             name: data.name,
             description: data.description,
-            startDate: data.startDate,
-            endDate: data.endDate,
             coverImageUrl: data.coverImageUrl,
         })
         
     }
     
-    async findAllByUserId(userId) {
+    async findAllByUserId(userId: ID) {
         
         try {
             
@@ -54,7 +57,7 @@ export class TripsRepository extends Repository {
         
     }
     
-    async findAllByUserIdWithSegmentCount(userId, segmentsRepo) {
+    async findAllByUserIdWithSegmentCount(userId: ID, segmentsRepo: Repository<typeof schemas.segments>) {
         
         try {
             
@@ -81,12 +84,12 @@ export class TripsRepository extends Repository {
     }
     
     /**
-     * 
+     *
      * @param id
      * @param {PlansRepository} plansRepo
      * @returns {Promise<{plans: Promise<any[]|undefined>|Promise<*|undefined>|*}|null>}
      */
-    async findOneWithDetails(id, plansRepo) {
+    async findOneWithDetails(id: ID, plansRepo: Repository<typeof schemas.plans>) {
         
         try {
             
@@ -110,7 +113,7 @@ export class TripsRepository extends Repository {
         
     }
     
-    async updateById(id, data) {
+    async updateById(id: ID, data) {
         
         return await super.updateById(id, {
             name: data.name,

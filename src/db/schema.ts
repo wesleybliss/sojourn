@@ -1,4 +1,3 @@
-import { relations, sql } from 'drizzle-orm'
 import { primaryKey, uniqueIndex, text, integer, real } from 'drizzle-orm/sqlite-core'
 import { timestamps, table, lower, optsCascadeAll, timestampSeconds } from './dbUtils'
 
@@ -60,70 +59,6 @@ export const places = table('places', {
     name: text('name').notNull(),
     coverImageUrl: text('coverImageUrl'),
 })
-
-// Relations
-
-export const usersRelations = relations(users, ({ many }) => ({
-    trips: many(userTrips, { relationName: 'userTrips' }), // Enables someUser.trips
-}))
-
-export const tripsRelations = relations(trips, ({ many }) => ({
-    members: many(userTrips, { relationName: 'userTrips' }), // Enables someTrip.members
-    plans: many(plans),
-    segments: many(segments),
-}))
-
-export const userTripsRelations = relations(userTrips, ({ one }) => ({
-    user: one(users, {
-        fields: [userTrips.userId],
-        references: [users.id],
-        relationName: 'userTrips',
-    }),
-    trip: one(trips, {
-        fields: [userTrips.tripId],
-        references: [trips.id],
-        relationName: 'userTrips',
-    }),
-}))
-
-export const plansRelations = relations(plans, ({ one, many }) => ({
-    trip: one(trips, {
-        fields: [plans.tripId],
-        references: [trips.id],
-    }),
-    segments: many(segments),
-}))
-
-export const segmentsRelations = relations(segments, ({ one }) => ({
-    trip: one(trips, {
-        fields: [segments.tripId],
-        references: [trips.id],
-    }),
-    plan: one(plans, {
-        fields: [segments.planId],
-        references: [plans.id],
-    }),
-}))
-
-//
-
-export const updateTimestampTrigger = (tableName: string) => {
-    
-    const table = sql.raw(tableName)
-    const trigger = sql.raw(`update_${tableName}_timestamp`)
-    
-    return sql.raw(`
-        CREATE TRIGGER ${trigger}
-        AFTER UPDATE ON ${table}
-        FOR EACH ROW
-        BEGIN
-            UPDATE ${table}
-            SET updatedAt = CURRENT_TIMESTAMP
-            WHERE id = OLD.id;
-        END;
-    `)
-    
-}
 
 /*
 SQLite Reference:

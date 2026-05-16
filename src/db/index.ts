@@ -1,7 +1,8 @@
 import 'dotenv/config'
-// import '../envConfig'
 import { createClient } from '@libsql/client'
 import { drizzle } from 'drizzle-orm/libsql'
+import * as schema from './schema'
+import { relations } from './relations'
 
 if (!process.env.TURSO_DATABASE_URL?.length) {
     console.error('Missing TURSO_DATABASE_URL env var', JSON.stringify(process.env, null, 2))
@@ -13,6 +14,10 @@ export const turso = createClient({
     authToken: process.env.TURSO_AUTH_TOKEN,
 })
 
-export const db = drizzle(turso)
+export const db = drizzle({
+    client: turso,
+    schema,
+    relations,
+})
 
 export default db

@@ -1,21 +1,22 @@
+import database from '@/db'
 import Repository from '@/db/repos/repo'
 import * as schemas from '@/db/schema'
 
-export class UsersRepository extends Repository<typeof schemas.users, typeof db> {
+export class UsersRepository extends Repository<typeof schemas.users> {
     
-    constructor() {
+    constructor(db?: typeof database) {
         
-        super('user', 'users', schemas.users)
+        super('user', 'users', schemas.users, db)
         
     }
     
-    tx(transaction: TDatabase) {
+    tx(transaction: typeof database) {
         
-        return new UsersRepository(this.name, this.plural, this.schema, transaction)
+        return new UsersRepository(transaction)
         
     }
     
-    async findOneByEmail(email) {
+    async findOneByEmail(email: string) {
         
         return super.findOneBy('email', email)
         

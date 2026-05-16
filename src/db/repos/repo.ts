@@ -4,22 +4,6 @@ import { BaseSQLiteDatabase, SQLiteTable } from 'drizzle-orm/sqlite-core'
 import { ID } from '@/types/data'
 
 /**
- * @typedef {Object} Repository
- * @property {string} name - The name of the repository
- * @property {string} plural - The plural form of the name
- * @property {Object} schema - The schema object for the repository
- * @property {Object} methods - The methods for interacting with the repository
- * @property {Function} methods.tx - A function to create a new transaction
- * @property {Function} methods.create - A function to create a new item
- * @property {Function} methods.findAll - A function to get all items
- * @property {Function} methods.findAllBy - A function to get all items by a specific key
- * @property {Function} methods.findOneById - A function to get an item by its ID
- * @property {Function} methods.updateById - A function to update an item by its ID
- * @property {Function} methods.deleteByIds - A function to delete multiple items by their IDs
- * @property {Function} methods.deleteById - A function to delete an item by its ID
- */
-
-/**
  * Generic repository with the specified name, plural form, schema, and database connection.
  */
 class Repository<
@@ -32,7 +16,7 @@ class Repository<
         'sync' | 'async',
         unknown,
         Record<string, never>
-    >,
+    > = typeof database,
 > {
     
     public name: string
