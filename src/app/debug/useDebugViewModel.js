@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { parseFormData } from '@/lib/utils'
+import { parseFormData } from '@/utils'
 import { toBase64 } from '@/lib/storage/vercel-blob'
 import { usePlacesQuery } from '@/lib/queries/places'
 import { useQueryClient } from '@tanstack/react-query'

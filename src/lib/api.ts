@@ -2,12 +2,8 @@ import { auth } from '@/lib/firebase/client'
 
 /**
  * Makes an authenticated API request with Firebase ID token
- *
- * @param {string} url - API endpoint URL
- * @param {Object} options - fetch options
- * @returns {Promise<Response>}
  */
-export async function fetchWithAuth(url, options = {}) {
+export async function fetchWithAuth(url: string, options: RequestInit = {}) {
     const user = auth.currentUser
     
     if (!user) {
@@ -29,12 +25,8 @@ export async function fetchWithAuth(url, options = {}) {
 
 /**
  * Makes an authenticated API request and returns JSON
- *
- * @param {string} url - API endpoint URL
- * @param {Object} options - fetch options
- * @returns {Promise<any>}
  */
-export async function fetchJSON(url, options = {}) {
+export async function fetchJSON(url: string, options: RequestInit = {}) {
     const response = await fetchWithAuth(url, {
         ...options,
         headers: {

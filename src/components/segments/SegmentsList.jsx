@@ -7,7 +7,7 @@ import LeftImageCard from '@/components/ImageLeftCard'
 import { backgroundToBorderColors } from '@/lib/colors'
 import SegmentsListDetailsTableHeader from '@/components/segments/SegmentsListDetailsTableHeader'
 import SegmentsListDetailsTableBody from '@/components/segments/SegmentsListDetailsTableBody'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils'
 
 const SegmentCardDate = ({ date }) => (
     <div className="w-full px-3 py-2 bg-slate-100 rounded-lg">

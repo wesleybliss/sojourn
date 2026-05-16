@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import placesRepo from '@/db/repos/places'
 import { withAuth } from '@/lib/auth'
-import { getRandomUnsplashImageUrl } from '@/lib/utils'
+import { getRandomUnsplashImageUrl } from '@/utils'
 
 /**
  * POST /api/places

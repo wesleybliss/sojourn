@@ -2,15 +2,15 @@ import Repository from '@/db/repos/repo'
 import * as schemas from '@/db/schema'
 import { eq, asc } from 'drizzle-orm'
 import database from '@/db'
-import { SegmentInsert, SegmentSelect } from '@/types/database'
+import { Segment, SegmentInsert, SegmentSelect } from '@/types/database'
 import { ID } from '@/types/data'
 
-export interface ISegmentsRepository extends Repository<typeof schemas.segments> {
+export interface ISegmentsRepository extends Repository<Segment, typeof schemas.segments> {
     findAllByTripId(tripId: ID): Promise<SegmentSelect[]>
     findAllByPlanId(planId: ID): Promise<SegmentSelect[]>
 }
 
-export class SegmentsRepository extends Repository<typeof schemas.segments> implements ISegmentsRepository {
+export class SegmentsRepository extends Repository<Segment, typeof schemas.segments> implements ISegmentsRepository {
     
     constructor(db?: typeof database) {
         

@@ -3,7 +3,7 @@
     "tsBuildInfoFile": "./node_modules/.cache/tsbuildinfo/web.tsbuildinfo",
     "declarationDir": "./node_modules/.cache/dts/web",
     "composite": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["ES2023", "DOM"],
     "allowJs": false,
     "target": "es2017",
     "skipLibCheck": true,

@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { toast } from 'sonner'
 import { useAddSegment } from '@/lib/queries/trip'
 import { useQueryClient } from '@tanstack/react-query'
-import { getTripSegmentNames } from '@/lib/utils'
+import { getTripSegmentNames } from '@/utils'
 import dayjs from 'dayjs'
 
 const SegmentActionsViewModel = (currentTrip, currentPlan) => {

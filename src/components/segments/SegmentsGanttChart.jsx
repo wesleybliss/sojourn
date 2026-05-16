@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import GanttChart from '@/components/GanttChart'
-import { calculateTotalDays } from '@/lib/utils.js'
+import { calculateTotalDays } from '@/utils'
 import dayjs from 'dayjs'
 
 const SegmentsGanttChart = ({

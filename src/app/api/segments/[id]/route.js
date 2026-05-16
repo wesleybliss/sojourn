@@ -3,7 +3,7 @@ import db from '@/db/index.js'
 import * as schemas from '@/db/schema.js'
 import { eq } from 'drizzle-orm'
 import segmentsRepo from '@/db/repos/segments'
-import { convertStringDates, getUpdatePayload } from '@/lib/utils.js'
+import { convertStringDates, getUpdatePayload } from '@/utils'
 import dayjs from 'dayjs'
 
 export async function PUT(request, opts) {

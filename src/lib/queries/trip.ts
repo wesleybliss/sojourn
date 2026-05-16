@@ -2,10 +2,37 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import * as store from '@/store'
 import { updateItemArray } from '@/lib/storeUtils.js'
 import { fetchJSON } from '@/lib/api'
+import { ID } from '@/types/data'
+import { keepPreviousData } from '@tanstack/react-query'
+import { Segment, Trip, TripInsert } from '@/types/database'
 
-// const idToInt = obj => obj?.id ? parseInt(obj?.id, 10) : null
+type UpdateTripBody = Partial<Trip> & {
+    tripId: ID
+}
 
-export const useTripQuery = tripId => useQuery({
+type UpdateSegmentBody = Partial<Segment> & {
+    tripId: ID
+    planId: ID
+    segmentId: ID
+    cascadeEnabled?: boolean
+}
+
+type DeleteSegmentsBody = {
+    tripId: ID
+    planId: ID
+    segmentIds: ID[]
+}
+
+type RenamePlanBody = {
+    planId: ID
+    name: string
+}
+
+type DeletePlanBody = {
+    planId: ID
+}
+
+export const useTripQuery = (tripId: ID) => useQuery({
     queryKey: ['trip', tripId],
     queryFn: async () => {
         
@@ -33,7 +60,7 @@ export const useTripQuery = tripId => useQuery({
         
     },
     enabled: !!tripId,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     retry: 0,
 })
 
@@ -51,7 +78,7 @@ export const useCreateTripMutation = () => {
             return data
         },
         onSuccess: () => {
-            queryClient.invalidateQueries(['trips'])
+            queryClient.invalidateQueries({ queryKey: ['trips'] })
         },
     })
     
@@ -61,15 +88,14 @@ export const useUpdateTrip = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ tripId, ...tripData }) => {
+        mutationFn: async ({ tripId, ...tripData }: UpdateTripBody) => {
             return fetchJSON(`/api/trips/${tripId}`, {
                 method: 'PUT',
                 body: JSON.stringify(tripData),
             })
         },
         onSuccess: (data, variables) => {
-            queryClient.invalidateQueries(['trip', variables.tripId])
-            // queryClient.invalidateQueries(['trips'])
+            queryClient.invalidateQueries({ queryKey: ['trip', variables.tripId] })
         },
     })
 }
@@ -85,7 +111,7 @@ export const useAddSegment = () => {
             })
         },
         onSuccess: data => {
-            queryClient.invalidateQueries(['trip', data.tripId])
+            queryClient.invalidateQueries({ queryKey: ['trip', data.tripId] })
         },
     })
 }
@@ -96,7 +122,7 @@ export const useUpdateSegment = () => {
     
     return useMutation({
         // eslint-disable-next-line no-unused-vars
-        mutationFn: async ({ segmentId, tripId, planId, ...segmentData }) => {
+        mutationFn: async ({ segmentId, tripId, planId, ...segmentData }: UpdateSegmentBody) => {
             const json = await fetchJSON(`/api/segments/${segmentId}`, {
                 method: 'PUT',
                 body: JSON.stringify(segmentData),
@@ -108,14 +134,14 @@ export const useUpdateSegment = () => {
         // Optimistic update: immediately update the cache before the server responds
         onMutate: async ({ segmentId, tripId, planId, cascadeEnabled, ...updates }) => {
             // Cancel any outgoing refetches so they don't overwrite our optimistic update
-            await queryClient.cancelQueries(['trip', tripId])
+            await queryClient.cancelQueries({ queryKey: ['trip', tripId] })
             
             // Snapshot the previous value
             const previousTrip = queryClient.getQueryData(['trip', tripId])
             
             // Optimistically update the cache
             if (previousTrip && !cascadeEnabled) {
-                queryClient.setQueryData(['trip', tripId], old => {
+                queryClient.setQueryData(['trip', tripId], (old: Trip | undefined) => {
                     if (!old?.plans) return old
                     
                     return {
@@ -149,7 +175,7 @@ export const useUpdateSegment = () => {
             const tid = data?.tripId || variables?.tripId
             
             if (tid) {
-                queryClient.invalidateQueries(['trip', tid])
+                queryClient.invalidateQueries({ queryKey: ['trip', tid] })
             }
         },
     })
@@ -160,14 +186,14 @@ export const useDeleteSegments = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ tripId, planId, segmentIds }) => {
+        mutationFn: async ({ tripId, planId, segmentIds }: DeleteSegmentsBody) => {
             return fetchJSON('/api/segments', {
                 method: 'DELETE',
                 body: JSON.stringify({ tripId, planId, segmentIds }),
             })
         },
         onSuccess: data => {
-            queryClient.invalidateQueries(['trip', data.tripId])
+            queryClient.invalidateQueries({ queryKey: ['trip', data.tripId] })
         },
     })
 }
@@ -180,14 +206,14 @@ export const useRenamePlan = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ planId, name }) => {
+        mutationFn: async ({ planId, name }: RenamePlanBody) => {
             return fetchJSON(`/api/plans/${planId}`, {
                 method: 'PUT',
                 body: JSON.stringify({ name }),
             })
         },
         onSuccess: data => {
-            queryClient.invalidateQueries(['trip', data.tripId])
+            queryClient.invalidateQueries({ queryKey: ['trip', data.tripId] })
         },
     })
 }
@@ -197,13 +223,13 @@ export const useDeletePlan = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ planId }) => {
+        mutationFn: async ({ planId }: DeletePlanBody) => {
             return fetchJSON(`/api/plans/${planId}`, {
                 method: 'DELETE',
             })
         },
         onSuccess: data => {
-            queryClient.invalidateQueries(['trip', data.tripId])
+            queryClient.invalidateQueries({ queryKey: ['trip', data.tripId] })
         },
     })
     
@@ -220,7 +246,7 @@ export const useDeleteTripMutation = () => {
             })
         },
         onSuccess: () => {
-            queryClient.invalidateQueries(['trips'])
+            queryClient.invalidateQueries({ queryKey: ['trips'] })
         },
     })
     

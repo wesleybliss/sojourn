@@ -1,7 +1,7 @@
 'use client'
 
 import useNavbarViewModel from './NavbarViewModel'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils'
 import ThemeToggle from '@/components/ThemeToggle'
 import AccountMenu from '@/components/AccountMenu.jsx'
 import CurrentPlanSelector from '@/components/CurrentPlanSelector.jsx'

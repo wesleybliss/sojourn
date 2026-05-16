@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export function useLocalStorage(key, initialValue) {
+export function useLocalStorage(key: string, initialValue: unknown) {
     const [storedValue, setStoredValue] = useState(() => {
         if (typeof window === 'undefined') {
             return initialValue
@@ -16,7 +16,7 @@ export function useLocalStorage(key, initialValue) {
         }
     })
     
-    const setValue = value => {
+    const setValue = (value: unknown) => {
         try {
             const valueToStore = value instanceof Function ? value(storedValue) : value
             

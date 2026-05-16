@@ -3,7 +3,7 @@ import db from '@/db/index'
 import * as schemas from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
-import { omit } from '@/lib/utils.js'
+import { omit } from '@/utils'
 
 export async function POST(request, { params }) {
     

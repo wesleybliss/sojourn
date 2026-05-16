@@ -28,7 +28,7 @@ import {
     Check,
     Clock,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils'
 import dayjs from 'dayjs'
 
 const SegmentsTable = ({

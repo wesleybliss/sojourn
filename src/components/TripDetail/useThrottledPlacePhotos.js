@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { throttledQueue, seconds } from 'throttled-queue'
 import { usePlacesQuery } from '@/lib/queries/places'
-import { abortableFetch } from '@/lib/utils'
+import { abortableFetch } from '@/utils'
 
 const throttle = throttledQueue({
     maxPerInterval: 3,

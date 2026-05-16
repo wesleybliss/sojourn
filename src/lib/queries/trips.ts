@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import * as store from '@/store'
 import { fetchJSON } from '@/lib/api'
+import { keepPreviousData } from '@tanstack/react-query'
 
 export const useTripsQuery = (opts = {}) => useQuery({
     queryKey: ['trips'],
@@ -10,7 +11,7 @@ export const useTripsQuery = (opts = {}) => useQuery({
             return it
         }),
     enabled: true,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     retry: 3,
     ...opts,
 })

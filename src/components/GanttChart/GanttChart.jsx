@@ -2,7 +2,7 @@ import { useState } from 'react'
 import useGanttChartViewModel from './GanttChartViewModel'
 import { format, differenceInDays } from 'date-fns'
 import { GripHorizontal } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils'
 
 const GanttChart = ({
     items,

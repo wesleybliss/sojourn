@@ -1,29 +1,31 @@
 import deepmerge from 'deepmerge'
+import { Wire } from '@forminator/react-wire'
+import { ID, ItemWithId } from '@/types/data'
 
-export const addItemObject = (wire, item) =>
+export const addItemObject = (wire: Wire<Record<string, ItemWithId>>, item: ItemWithId) =>
     wire.setValue({
         ...wire.getValue(),
         [item.id]: item,
     })
 
-export const addItemArray = (wire, item) =>
+export const addItemArray = (wire: Wire<unknown[]>, item: unknown[]) =>
     wire.setValue([
         ...wire.getValue(),
         item,
     ])
 
-export const removeItemObject = (wire, item) =>
+export const removeItemObject = (wire: Wire<Record<string, ItemWithId>>, item: ItemWithId) =>
     wire.setValue({
         ...wire.getValue(),
         [item.id]: undefined,
     })
 
-export const removeItemArray = (wire, item) =>
+export const removeItemArray = (wire: Wire<ItemWithId[]>, item: ItemWithId) =>
     wire.setValue(
         wire.getValue().filter(i => i.id !== item.id),
     )
 
-export const updateItemObject = (wire, item) => {
+export const updateItemObject = (wire: Wire<Record<string, ItemWithId>>, item: ItemWithId) => {
     
     const prev = wire.getValue()
     
@@ -34,7 +36,7 @@ export const updateItemObject = (wire, item) => {
     
 }
 
-export const updateItemArray = (wire, item) => {
+export const updateItemArray = <T extends { id: ID },>(wire: Wire<T[]>, item: T) => {
     
     const prev = wire.getValue() || []
     const index = prev.findIndex(it => it.id === item.id)
@@ -44,10 +46,11 @@ export const updateItemArray = (wire, item) => {
         wire.setValue([...prev, item])
     } else {
         // Merge with the existing element (not the entire array)
-        wire.setValue(prev.map(it => it.id === item.id
+        const nextVal = prev.map(it => it.id === item.id
             ? deepmerge(it, item)
             : it,
-        ))
+        )
+        wire.setValue(nextVal as T[])
     }
     
 }

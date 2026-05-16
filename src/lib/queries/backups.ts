@@ -1,18 +1,25 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { fetchWithAuth, fetchJSON } from '@/lib/api'
+import { ItemWithId } from '@/types/data'
 
-const idToInt = obj => obj?.id ? parseInt(obj?.id, 10) : null
+const idToInt = (obj: ItemWithId | null) => obj?.id ?? null
+
+type BackupTripsBody = {
+    type: 'single' | 'multiple'
+    tripId?: number | null
+    tripIds?: (number | null)[] | null
+}
 
 export const useBackupTrips = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ type = 'multiple', tripId = null, tripIds = null } = {}) => {
-            const body = { type }
+        mutationFn: async ({ type = 'multiple', tripId = null, tripIds = null }: BackupTripsBody) => {
+            const body: BackupTripsBody = { type }
             
             if (Array.isArray(tripIds))
                 body.tripIds = tripIds
-                    .map(id => (typeof id === 'object' ? idToInt(id) : parseInt(id, 10)))
+                    .map(id => (typeof id === 'object' ? idToInt(id) : id))
                     .filter(Boolean)
             else
                 body.tripId = tripId
@@ -52,7 +59,9 @@ export const useBackupTrips = () => {
             return { filename }
         },
         onSuccess: () => {
-            queryClient.invalidateQueries(['trips'])
+            queryClient.invalidateQueries({
+                queryKey: ['trips'],
+            })
         },
     })
 }
@@ -68,7 +77,9 @@ export const useRestoreTrips = () => {
             })
         },
         onSuccess: () => {
-            queryClient.invalidateQueries(['trips'])
+            queryClient.invalidateQueries({
+                queryKey: ['trips'],
+            })
         },
     })
 }

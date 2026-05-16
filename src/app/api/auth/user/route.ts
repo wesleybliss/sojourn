@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
             )
         }
         
-        console.error('Error in POST /api/auth/user:', error)
+        console.error('Error in POST /api/auth/user:', e)
         return NextResponse.json(
             { success: false, error: 'Internal Server Error' },
             { status: 500 },

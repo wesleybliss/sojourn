@@ -1,8 +1,9 @@
 import { createSelector, createWire } from '@forminator/react-wire'
+import { EventBusPayload } from '@/types'
 
 /**
  * Global event bus for raising events that other components can consume.
- * 
+ *
  * @see useEventSubscription for subscribing to events
  */
 
@@ -10,22 +11,20 @@ import { createSelector, createWire } from '@forminator/react-wire'
  * Internal value of the global event bus.
  * Should not be read directly from outside this file.
  * Use the `postEvent` function to broadcast an event.
- * 
- * @type {Wire<null, EventBusPayload>}
  */
-const eventBusInternal = createWire(null)
+const eventBusInternal = createWire<EventBusPayload | null>(null)
 
-export const eventBus = createSelector({
+export const eventBus = createSelector<EventBusPayload | null>({
     get: ({ get }) => get(eventBusInternal),
 })
 
 /**
  * Post a new event to the event bus
- * 
+ *
  * @param {string} name - must be one of `constants.js#EVENTS`
  * @param {*} [data] - optional data payload
  */
-export const postEvent = (name, data) => {
+export const postEvent = (name: string, data: unknown) => {
     
     console.log('eventBus#postEvent', name, data)
     

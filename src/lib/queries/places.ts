@@ -1,6 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { placesWithCoverImages } from '@/store'
 import { fetchJSON } from '@/lib/api'
+import { keepPreviousData } from '@tanstack/react-query'
+import { ID } from '@/types/data'
+
+type UpdatePlaceBody = {
+    placeId: ID
+    name?: string
+    description?: string
+    coverPhoto?: string
+}
+
+type ShufflePlaceCoverPhotoBody = {
+    topic: string
+}
 
 export const usePlacesQuery = () => useQuery({
     queryKey: ['places'],
@@ -23,7 +36,7 @@ export const usePlacesQuery = () => useQuery({
         }
         
     },
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     retry: 0,
 })
 
@@ -31,7 +44,7 @@ export const useUpdatePlace = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ placeId, ...placeData }) => {
+        mutationFn: async ({ placeId, ...placeData }: UpdatePlaceBody) => {
             if (!placeId)
                 throw new Error('useUpdatePlace: placeId is required')
             
@@ -41,14 +54,14 @@ export const useUpdatePlace = () => {
             })
         },
         onSuccess: () => {
-            queryClient.invalidateQueries(['places'])
+            queryClient.invalidateQueries({ queryKey: ['places'] })
         },
     })
 }
 
 export const useShufflePlaceCoverPhoto = () => {
     return useMutation({
-        mutationFn: async ({ topic }) => {
+        mutationFn: async ({ topic }: ShufflePlaceCoverPhotoBody) => {
             console.log('useShufflePlaceCoverPhoto.mutate', { topic })
             return fetchJSON('/api/utils/random-photo', {
                 method: 'POST',

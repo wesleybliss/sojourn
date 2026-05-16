@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { withAuth } from '@/lib/auth'
-import { getRandomUnsplashImageUrl } from '@/lib/utils'
+import { getRandomUnsplashImageUrl } from '@/utils'
 
 export const POST = withAuth(async (request/* , { params } */) => {
     

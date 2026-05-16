@@ -40,7 +40,7 @@ export const POST = withAuth(async (request, { auth }) => {
         
         console.error('❌ Error clearing database:', e)
         return NextResponse.json(
-            { success: false, error: e.message },
+            { success: false, error: (e as Error).message },
             { status: 500 },
         )
         

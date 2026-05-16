@@ -11,7 +11,9 @@ export const POST = withAuth(async (request: NextRequest, { auth }) => {
         const { userId } = auth
         
         if (!userId)
-            return false
+            return NextResponse.json(
+                { success: false, error: 'Unauthorized' },
+                { status: 401 })
         
         const user = await usersRepo.findOneById(userId)
         
@@ -47,7 +49,7 @@ export const POST = withAuth(async (request: NextRequest, { auth }) => {
         
         console.error('Error uploading image to blob storage:', e)
         return NextResponse.json(
-            { success: false, error: e.message },
+            { success: false, error: e instanceof Error ? e.message : 'Unknown error' },
             { status: 500 })
         
     }

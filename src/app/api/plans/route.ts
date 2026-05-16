@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import db from '@/db/index.js'
 import * as schemas from '@/db/schema.js'
-import { withAuth, isUserTripMember } from '@/lib/auth'
-import { TAuthContext } from '@/types/firebase'
+import { withAuth, isUserTripMember, AuthContext } from '@/lib/auth'
 
-const handler = async (request: NextRequest, { auth }: { auth: TAuthContext }) => {
+const handler = async (request: NextRequest, { auth }: { auth: AuthContext }) => {
     
     try {
         

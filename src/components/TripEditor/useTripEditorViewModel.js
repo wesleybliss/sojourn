@@ -15,7 +15,7 @@ import { useShufflePlaceCoverPhoto } from '@/lib/queries/places'
 import { useBackupTrips } from '@/lib/queries/backups'
 import { toast } from 'sonner'
 import dayjs from 'dayjs'
-import { sortArrByUpdatedAt, calculateTotalDays } from '@/lib/utils'
+import { sortArrByUpdatedAt, calculateTotalDays } from '@/utils'
 import { useUpdatePlan } from '@/lib/queries/plans'
 import { useUpdatePlace } from '@/lib/queries/places'
 

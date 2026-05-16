@@ -6,15 +6,16 @@ import HttpError from '@/errors/HttpError'
 import { NextRequest, NextResponse } from 'next/server'
 import { ID } from '@/types/data'
 import { DecodedIdToken } from 'firebase-admin/auth'
+import { UserSelect } from '@/types/database'
 
 /**
  * Extracts and verifies Firebase ID token from request Authorization header.
  *
- * @param {Object} request - The incoming request object
- * @returns {Promise<Object>} Decoded Firebase token
- * @throws {HttpError} 401 - If token is missing or invalid
+ * @param request - The incoming request object
+ * @returns Decoded Firebase token
+ * @throws HttpError 401 - If token is missing or invalid
  */
-const verifyFirebaseToken = async (request: NextRequest) => {
+const verifyFirebaseToken = async (request: NextRequest): Promise<DecodedIdToken> => {
     const authHeader = request.headers.get('Authorization')
     
     if (!authHeader || !authHeader.startsWith('Bearer '))
@@ -39,11 +40,11 @@ const verifyFirebaseToken = async (request: NextRequest) => {
  * - If no match, creates new user
  * - Handles enabled flag for beta access control
  *
- * @param {Object} firebaseUser - Decoded Firebase token containing uid, email, name, picture
- * @returns {Promise<Object>} Database user record
- * @throws {HttpError} For validation or conflict errors
+ * @param firebaseUser - Decoded Firebase token containing uid, email, name, picture
+ * @returns Database user record
+ * @throws HttpError For validation or conflict errors
  */
-const getOrCreateUser = async (firebaseUser: DecodedIdToken) => {
+const getOrCreateUser = async (firebaseUser: DecodedIdToken): Promise<UserSelect> => {
     const { uid: firebaseUid, email, name, picture } = firebaseUser
     
     if (!email)
@@ -107,7 +108,7 @@ const getOrCreateUser = async (firebaseUser: DecodedIdToken) => {
  * Authorizes a user based on Firebase ID token from request.
  * Verifies Firebase token, gets or creates user in the database, and returns auth context.
  */
-export const authorize = async (request: NextRequest) => {
+export const authorize = async (request: NextRequest): Promise<{ user: UserSelect; firebaseToken: DecodedIdToken; userId: ID }> => {
     
     const firebaseToken = await verifyFirebaseToken(request)
     
@@ -117,21 +118,18 @@ export const authorize = async (request: NextRequest) => {
     
 }
 
-type AuthContext = Record<string, unknown>
+export type AuthContext = {
+    user: UserSelect
+    firebaseToken: DecodedIdToken
+    userId: ID
+}
 
-export const withAuth = (handler: (req: NextRequest, context: { auth: AuthContext }) => Promise<NextResponse>) => async (request: NextRequest & { app: Record<string, unknown> }, context: AuthContext) => {
+export const withAuth = (handler: (req: NextRequest, context: { auth: AuthContext }) => Promise<NextResponse>) => async (request: NextRequest, context: Record<string, unknown> = {}) => {
     
     try {
         
         const auth = await authorize(request)
         const newContext = { ...context, auth }
-        
-        if (!request.app)
-            request.app = {}
-        
-        Object.keys(auth).forEach(key => {
-            request.app[key] = auth[key as keyof typeof auth]
-        })
         
         return await handler(request, newContext)
         
@@ -147,15 +145,11 @@ export const withAuth = (handler: (req: NextRequest, context: { auth: AuthContex
     
 }
 
-export const isUserTripMember = async (auth: AuthContext, tripId: ID) => {
-    
+export const isUserTripMember = async ({ userId }: AuthContext, tripId: ID): Promise<boolean> => {
     try {
-        
-        const { userId } = auth
-        
         if (!userId || !tripId)
             return false
-        
+
         const rows = await db
             .select()
             .from(schemas.userTrips)
@@ -163,16 +157,13 @@ export const isUserTripMember = async (auth: AuthContext, tripId: ID) => {
                 eq(schemas.userTrips.userId, userId),
                 eq(schemas.userTrips.tripId, tripId),
             ))
-        
+
         return Array.isArray(rows) &&
             rows.length > 0 &&
             rows[0].tripId === tripId
-        
+
     } catch (e) {
-        
         console.error('isUserTripMember', e)
         return false
-        
     }
-    
 }

@@ -2,14 +2,14 @@ import Repository from '@/db/repos/repo'
 import * as schemas from '@/db/schema.js'
 import { eq, asc } from 'drizzle-orm'
 import database from '@/db'
-import { PlanInsert, PlanSelect } from '@/types/database'
+import { Plan, PlanInsert, PlanSelect } from '@/types/database'
 import { ID } from '@/types/data'
 
-export interface IPlansRepository extends Repository<typeof schemas.plans> {
+export interface IPlansRepository extends Repository<Plan, typeof schemas.plans> {
     findAllByTripId(tripId: ID): Promise<PlanSelect[]>
 }
 
-export class PlansRepository extends Repository<typeof schemas.plans> implements IPlansRepository {
+export class PlansRepository extends Repository<Plan, typeof schemas.plans> implements IPlansRepository {
     
     constructor(db?: typeof database) {
         

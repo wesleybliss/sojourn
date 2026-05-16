@@ -11,21 +11,13 @@ type Select<T extends SQLiteTable> = InferSelectModel<T>
 /**
  * Generic repository with the specified name, plural form, schema, and database connection.
  */
-class Repository<TSchema extends SQLiteTable> {
+class Repository<TModel, TSchema extends SQLiteTable> {
 
     public name: string
     public plural: string
     public schema: TSchema
     public db: Database
-
-    /**
-     * @constructor
-     * @param {string} name - Single name (e.g. item)
-     * @param {string} plural - Plural form (e.g. items)
-     * @param {Object} schema - The schema object for the repository (e.g. db.items)
-     * @param {Object} db - The database connection or a transaction (default: database)
-     * @returns {Repository}
-     */
+    
     constructor(name: string, plural: string, schema: TSchema, db?: Database) {
 
         this.name = name
@@ -50,7 +42,7 @@ class Repository<TSchema extends SQLiteTable> {
     }
 
     // eslint-disable-next-line no-unused-vars
-    tx(transaction: Database): Repository<TSchema> {
+    tx(transaction: Database): Repository<TModel, TSchema> {
 
         throw new Error('Method not implemented.')
 
@@ -74,67 +66,67 @@ class Repository<TSchema extends SQLiteTable> {
     async create(
         data: Insert<TSchema>,
     ): Promise<Select<TSchema>> {
-
+        
         try {
-
+            
             const result = await this.db
                 .insert(this.schema)
                 .values(data as Insert<TSchema>)
                 .returning() as Select<TSchema>[]
-
+            
             return result[0]
-
+            
         } catch (e) {
-
+            
             console.error(`Error creating ${this.name}:`, e)
             throw new Error(`Failed to create ${this.name}`)
-
+            
         }
-
+        
     }
 
     async findAll(): Promise<Select<TSchema>[]> {
-
+        
         try {
-
+            
             return await this.db
                 .select()
                 .from(this.schema)
                 .orderBy(desc(this.idColumn)) as Select<TSchema>[]
-
+            
         } catch (e) {
-
+            
             console.error(`Error fetching ${this.plural}:`, e)
             throw new Error(`Failed to fetch ${this.plural}`)
-
+            
         }
-
+        
     }
-
+    
     async findAllBy<
         TKey extends keyof Select<TSchema>
     >(
         key: TKey,
         value: Select<TSchema>[TKey],
     ): Promise<Select<TSchema>[]> {
-
+        
         try {
-
+            
             const field = (this.schema as unknown as Record<string, AnyColumn>)[key as string]
-
+            
             return await this.db
                 .select()
                 .from(this.schema)
                 .where(eq(field, value))
                 .orderBy(desc(this.createdAtColumn)) as Select<TSchema>[]
-
+            
         } catch (e) {
-
+            
             console.error(`Error fetching ${this.plural} by ${String(key)}:`, e)
             throw new Error(`Failed to fetch ${this.plural}`)
-
+            
         }
-
+        
     }
 
     async findOneBy<
@@ -143,34 +135,31 @@ class Repository<TSchema extends SQLiteTable> {
         key: TKey,
         value: Select<TSchema>[TKey],
     ): Promise<Select<TSchema> | null> {
-
+        
         try {
-
+            
             const field = (this.schema as unknown as Record<string, AnyColumn>)[key as string]
-
+            
             const [item] = await this.db
                 .select()
                 .from(this.schema)
                 .where(eq(field, value))
                 .limit(1)
-
+            
             return (item ?? null) as Select<TSchema> | null
-
+            
         } catch (e) {
-
+            
             console.error(`Error fetching ${this.name} by ${String(key)} = ${String(value)}:`, e)
             throw new Error(`Failed to fetch ${this.name}`)
-
+            
         }
-
+        
     }
 
-    async findOneById(id: ID) {
-
-        return await this.findOneBy(
-            'id' as keyof Select<TSchema>,
-            id as Select<TSchema>[keyof Select<TSchema>],
-        )
+    async findOneById(id: ID): Promise<TModel | null> {
+        
+        return await this.findOneBy('id', id) as TModel | null
 
     }
 
@@ -216,9 +205,9 @@ class Repository<TSchema extends SQLiteTable> {
     }
 
     async deleteById(id: ID) {
-
+        
         return await this.deleteByIds([id])
-
+        
     }
 
 }

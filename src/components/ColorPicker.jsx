@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils'
 
 /**
  * @typedef {object} ColorPickerProps

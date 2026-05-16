@@ -1,19 +1,18 @@
 import * as store from '@/store'
-import tripsRepo from '@/db/repositories/trips'
-import segmentsRepo from '@/db/repositories/segments'
+import tripsRepo from '@/db/repos/trips'
+import segmentsRepo from '@/db/repos/segments'
 import {
     generateSlug,
     createSyntheticDownload,
     getRandomUnsplashImageUrl,
-} from '@/lib/utils'
+} from '@/utils'
 import dayjs from 'dayjs'
+import { RequiredPartialSegment, RequiredPartialTrip, Segment, Trip } from '@/types/database'
+import { ID } from '@/types/data'
 
-export const backupTrip = async trip => {
+export const backupTrip = async (trip: Trip) => {
     
-    const segments = await segmentsRepo.table
-        .where('tripId')
-        .equals(trip.id)
-        .sortBy('startDate')
+    const segments = await segmentsRepo.findAllByTripId(trip.id)
     
     const data = {
         type: 'single',
@@ -32,8 +31,8 @@ export const backupTrip = async trip => {
 
 export const backupAllTrips = async () => {
     
-    const trips = await tripsRepo.getAll()
-    const segments = await segmentsRepo.getAll()
+    const trips = await tripsRepo.findAll()
+    const segments = await segmentsRepo.findAll()
     
     const data = {
         type: 'multiple',
@@ -51,7 +50,14 @@ export const backupAllTrips = async () => {
 }
 
 // @todo was working but now with Dexie cloud, need to handle IDs
-export const restoreTrip1 = async (data, overwrite = false) => {
+export const restoreTrip1 = async (
+    data: {
+        type: string,
+        trip: Trip,
+        segments: Segment[],
+    },
+    overwrite = false,
+) => {
     
     if (data.type !== 'single')
         throw new Error('Invalid backup type')
@@ -66,7 +72,7 @@ export const restoreTrip1 = async (data, overwrite = false) => {
     
     let shouldDeleteTrip = false
     
-    const existingTrip = await tripsRepo.getById(trip.id)
+    const existingTrip = await tripsRepo.findOneById(trip.id)
     
     if (existingTrip)
         if (!overwrite)
@@ -74,20 +80,21 @@ export const restoreTrip1 = async (data, overwrite = false) => {
         else
             shouldDeleteTrip = true
     
-    const existingSegments = await Promise.all(segments.map(it => segmentsRepo.getById(it.id)))
+    const existingSegments: Segment[] = (await Promise.all(segments.map(it => segmentsRepo.findOneById(it.id))))
+        .filter((it): it is Segment => Boolean(it?.id))
     
     if (existingSegments.length > 0)
         if (!overwrite)
             throw new Error('Some segments already exist')
     
     if (shouldDeleteTrip)
-        await tripsRepo.delete(trip.id)
+        await tripsRepo.deleteById(trip.id)
     
     // Extra check, but deleting the trip should have also deleted all related segments
     if (existingSegments.length > 0)
         await Promise.all(existingSegments
-            .filter(it => Boolean(it?.id))
-            .map(it => segmentsRepo.delete(it.id)))
+            .filter((it: Segment | null) => Boolean(it?.id))
+            .map((it: Segment) => segmentsRepo.deleteById(it.id)))
     
     if (!trip.coverImageUrl)
         trip.coverImageUrl = await getRandomUnsplashImageUrl(trip.name)
@@ -105,7 +112,35 @@ export const restoreTrip1 = async (data, overwrite = false) => {
     
 }
 
-export const restoreTrip = async (data, onConflictAction = 'duplicate') => {
+const findExistingTrip = async (trip: Partial<Trip>): Promise<Trip | null> => {
+    
+    if (!trip.id && !trip.name) {
+        console.warn('findExistingTrip neither ID or name provided')
+        return null
+    }
+    
+    if (trip.id) {
+        
+        const existingTrip = await tripsRepo.findOneById(trip.id)
+        
+        if (existingTrip)
+            return existingTrip
+        
+    }
+    
+    return trip.name ? await tripsRepo.findOneByName(trip.name) : null
+    
+}
+
+export const restoreTrip = async (
+    ownerId: ID,
+    data: {
+        type: string,
+        trip: RequiredPartialTrip,
+        segments: Partial<Segment>[],
+    },
+    onConflictAction: string = 'duplicate',
+) => {
     
     if (process.env.NODE_ENV)
         return console.warn('need to implement plans restore')
@@ -117,8 +152,12 @@ export const restoreTrip = async (data, onConflictAction = 'duplicate') => {
     
     const { trip, segments } = data
     
-    const existingTrip = await tripsRepo.getById(trip.id) || await tripsRepo.getByName(trip.name, true)
-    const existingSegments = await Promise.all(segments.map(it => segmentsRepo.getById(it.id)))
+    const existingTrip = await findExistingTrip(trip)
+    const existingSegments = await Promise.all(segments.map(it => {
+        return (it.id)
+            ? segmentsRepo.findOneById(it.id)
+            : Promise.resolve(null)
+    }))
     
     if (existingTrip?.id && onConflictAction === 'duplicate') {
         
@@ -151,24 +190,26 @@ export const restoreTrip = async (data, onConflictAction = 'duplicate') => {
     
     console.log('restoreTrip: restoring trip', trip.name, 'with', segments.length, 'segments')
     
-    if (existingTrip && overwrite)
-        await tripsRepo.delete(trip.id)
+    if (existingTrip?.id && overwrite)
+        await tripsRepo.deleteById(trip.id!)
     
     // Extra check, but deleting the trip should have also deleted all related segments
-    if (existingSegments.length > 0 && overwrite)
-        await Promise.all(existingSegments
-            .filter(it => Boolean(it?.id))
-            .map(it => segmentsRepo.delete(it.id)))
+    if (existingSegments.length > 0 && overwrite) {
+        const segmentDeleteCandidates: Segment[] = existingSegments
+            .filter((it): it is Segment => Boolean(it?.id))
+        await Promise.all(segmentDeleteCandidates
+            .map(it => segmentsRepo.deleteById(it.id)))
+    }
     
     if (!trip.coverImageUrl)
         trip.coverImageUrl = await getRandomUnsplashImageUrl(trip.name)
     
-    const dbgAllTrips = await tripsRepo.getAll()
-    const dbgAllSegments = await segmentsRepo.getAll()
+    const dbgAllTrips = await tripsRepo.findAll()
+    const dbgAllSegments = await segmentsRepo.findAll()
     
     if (overwrite) {
-        await Promise.all(dbgAllSegments.map(it => segmentsRepo.delete(it.id)))
-        await Promise.all(dbgAllTrips.map(it => tripsRepo.delete(it.id)))
+        await Promise.all(dbgAllSegments.map(it => segmentsRepo.deleteById(it.id)))
+        await Promise.all(dbgAllTrips.map(it => tripsRepo.deleteById(it.id)))
     }
     
     console.log('actions#restoreTrip creating trip', {
@@ -178,25 +219,37 @@ export const restoreTrip = async (data, onConflictAction = 'duplicate') => {
     
     delete trip.id
     
-    const newTripId = await tripsRepo.create(trip)
+    const newTrip = await tripsRepo.create({
+        ...trip,
+        userId: ownerId,
+    })
     
     store.importTripProgressValue.setValue(1)
     
     segments.forEach((_, i) => {
         delete segments[i].id
-        segments[i].tripId = newTripId
+        segments[i].tripId = newTrip.id
+        segments[i].name = segments[i].name ?? `Imported segment ${Math.random()}`
     })
     
     console.log('actions#restoreTrip creating segments')
     await Promise.all(segments.map(async it => {
-        await segmentsRepo.create(it)
+        await segmentsRepo.create(it as RequiredPartialSegment)
         store.importTripProgressValue.setValue(
             store.importTripProgressValue.getValue() + 1)
     }))
     
 }
 
-export const restoreAllTrips = async (data, onConflictAction = 'duplicate') => {
+export const restoreAllTrips = async (
+    ownerId: ID,
+    data: {
+        type: string,
+        trips: RequiredPartialTrip[],
+        segments: Partial<Segment>[],
+    },
+    onConflictAction: string = 'duplicate',
+) => {
     
     if (data.type !== 'multiple')
         throw new Error('Invalid backup type')
@@ -205,7 +258,7 @@ export const restoreAllTrips = async (data, onConflictAction = 'duplicate') => {
         
         const segments = data.segments.filter(seg => seg.tripId === trip.id)
         
-        return restoreTrip({
+        return restoreTrip(ownerId, {
             type: 'single',
             trip,
             segments,

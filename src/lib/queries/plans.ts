@@ -1,24 +1,39 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { fetchJSON } from '@/lib/api'
+import { ID } from '@/types/data'
+import { Plan, PlanInsert } from '@/types/database'
+import { keepPreviousData } from '@tanstack/react-query'
 /* import * as store from '@/store'
 import { updateItemArray } from '@/lib/storeUtils.js' */
 
-const plansQueryKey = (tripId, exclusive = false) =>
+type CreatePlanBody = PlanInsert & {
+    tripId: ID
+}
+
+type UpdatePlanBody = Partial<Plan> & {
+    planId: ID
+}
+
+type ClonePlanBody = {
+    planId: ID
+}
+
+const plansQueryKey = (tripId: ID, exclusive = false) =>
     exclusive ? [tripId] : ['trips', tripId, 'plans']
 
-export const usePlansQuery = (tripId, opts = {}) => useQuery({
+export const usePlansQuery = (tripId: ID, opts = {}) => useQuery({
     queryKey: plansQueryKey(tripId),
     queryFn: () => fetchJSON(`/api/trips/${tripId}/plans`),
     enabled: !!tripId,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     ...opts,
 })
 
-export const usePlanQuery = (planId, opts = {}) => useQuery({
+export const usePlanQuery = (planId: ID, opts = {}) => useQuery({
     queryKey: ['plans', planId],
     queryFn: () => fetchJSON(`/api/plans/${planId}`),
     enabled: !!planId,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     ...opts,
 })
 
@@ -26,7 +41,7 @@ export const useCreatePlan = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ tripId, ...planData }) => {
+        mutationFn: async ({ tripId, ...planData }: CreatePlanBody) => {
             return fetchJSON('/api/plans', {
                 method: 'POST',
                 body: JSON.stringify({ tripId, ...planData }),
@@ -34,7 +49,7 @@ export const useCreatePlan = () => {
         },
         onSuccess: (data, variables) => {
             // queryClient.invalidateQueries({ queryKey: plansQueryKey(variables.tripId) })
-            queryClient.invalidateQueries(['trip', variables.tripId])
+            queryClient.invalidateQueries({ queryKey: ['trip', variables.tripId] })
         },
     })
 }
@@ -43,22 +58,14 @@ export const useUpdatePlan = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ /* tripId, */ planId, ...planData }) => {
+        mutationFn: async ({ /* tripId, */ planId, ...planData }: UpdatePlanBody) => {
             return fetchJSON(`/api/plans/${planId}`, {
                 method: 'PUT',
                 body: JSON.stringify(planData),
             })
         },
         onSuccess: (data, variables) => {
-            try {
-                console.log('invalidateQueries', { variables, queryKey: plansQueryKey(variables.tripId, true) })
-            } catch (e) {
-                console.error('ehh', e)
-            }
-            
-            queryClient.invalidateQueries(['trip', ...plansQueryKey(variables.tripId, true)])
-            /* queryClient.invalidateQueries({ queryKey: ['plans', variables.id] })
-            queryClient.invalidateQueries({ queryKey: ['trips', variables.tripId] }) */
+            queryClient.invalidateQueries({ queryKey: ['trip', 'trips'] })
         },
     })
 }
@@ -67,13 +74,13 @@ export const useDeletePlan = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async plan => {
+        mutationFn: async (plan: Plan) => {
             return fetchJSON(`/api/plans/${plan.id}`, {
                 method: 'DELETE',
             })
         },
         onSuccess: (data, variables) => {
-            queryClient.invalidateQueries(['trip', variables.tripId])
+            queryClient.invalidateQueries({ queryKey: ['trip', variables.tripId] })
         },
     })
 }
@@ -82,13 +89,13 @@ export const useClonePlan = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ planId }) => {
+        mutationFn: async ({ planId }: ClonePlanBody) => {
             return fetchJSON(`/api/plans/${planId}/clone`, {
                 method: 'POST',
             })
         },
         onSuccess: data => {
-            queryClient.invalidateQueries(['trip', data.tripId])
+            queryClient.invalidateQueries({ queryKey: ['trip', data.tripId] })
         },
     })
 }

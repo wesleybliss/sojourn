@@ -1,7 +1,7 @@
 import useThrottledPlacePhotos from './useThrottledPlacePhotos'
 import MapLibreMap from '@/components/MapLibreMap'
 import SegmentsList from '@/components/segments/SegmentsList'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils'
 import { Progress } from '@/components/ui/progress'
 import SegmentsFilterToolbar from '@/components/segments/SegmentsFilterToolbar'
 import SadFolderIcon from '@/components/graphics/SadFolderIcon'

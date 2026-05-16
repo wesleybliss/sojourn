@@ -2,7 +2,7 @@ import { Input } from '@/components/ui/input'
 import { Toggle } from '@/components/ui/toggle'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Eye, EyeOff, FolderPen, List, Grid2x2 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils'
 
 const SegmentsFilterToolbar = ({
     className = '',

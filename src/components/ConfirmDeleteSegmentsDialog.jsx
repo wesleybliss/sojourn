@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { cn, noop } from '@/lib/utils'
+import { cn, noop } from '@/utils'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { Button } from '@/components/ui/button'
 import { MapPinX } from 'lucide-react'

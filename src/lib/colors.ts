@@ -1,5 +1,10 @@
 
-export const backgroundToBorderColors = {
+type BackgroundToBorderColor = {
+    border: string
+    borderRight: string
+}
+
+export const backgroundToBorderColors: Record<string, BackgroundToBorderColor> = {
     'bg-transparent': {
         border: 'border-transparent',
         borderRight: 'border-r-transparent',

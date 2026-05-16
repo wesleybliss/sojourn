@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
-import { loadImageAsync } from '@/lib/utils'
+import { loadImageAsync } from '@/utils'
 import useAbortableFetch from '@/lib/hooks/useAbortableFetch'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils'
 import md5 from 'md5'
 
 const Gravatar = ({
