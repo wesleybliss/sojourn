@@ -1,21 +1,20 @@
 import { useCallback } from 'react'
 import { useWireValue } from '@forminator/react-wire'
-import * as store from '@/store/index.js'
+import * as store from '@/store'
 import { useLiveQuery } from 'dexie-react-hooks'
-import tripsRepo from '@/db/repositories/trips'
-import segmentsRepo from '@/db/repositories/segments'
-import { EVENT_CREATE_SEGMENT } from '@/constants.js'
+import tripsRepo from '@/db/repos/trips'
+import segmentsRepo from '@/db/repos/segments'
+import { EVENT_CREATE_SEGMENT } from '@/constants'
 import useEventSubscription from '@/hooks/useEventSubscription'
 import { toast } from 'sonner'
-import plansRepo from '@/db/repositories/plans.js'
+import plansRepo from '@/db/repos/plans'
 
 const useGlobalEvents = () => {
     
     const tripId = useWireValue(store.currentTripId)
     const planId = useWireValue(store.currentPlanId)
-    
-    const currentTrip = useLiveQuery(() => tripId ? tripsRepo.getById(tripId) : null, [tripId])
-    const currentPlan = useLiveQuery(() => planId ? plansRepo.getById(planId) : null, [planId])
+    const currentTrip = useWireValue(store.currentTrip)
+    const currentPlan = useWireValue(store.currentPlan)
     
     const addSegment = useCallback(async () => {
         

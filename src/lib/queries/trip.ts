@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import * as store from '@/store'
-import { updateItemArray } from '@/lib/storeUtils.js'
+import { updateItemArray } from '@/lib/storeUtils'
 import { fetchJSON } from '@/lib/api'
 import { ID } from '@/types/data'
 import { keepPreviousData } from '@tanstack/react-query'

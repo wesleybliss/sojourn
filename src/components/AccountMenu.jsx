@@ -11,9 +11,9 @@ import {
 } from '@/components/ui/dropdown-menu'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { useAuth } from '@/components/providers/AuthProvider'
-import { useTripsQuery } from '@/lib/queries/trips.js'
+import { useTripsQuery } from '@/lib/queries/trips'
 import { useState } from 'react'
-import { useBackupTrips } from '@/lib/queries/backups.js'
+import { useBackupTrips } from '@/lib/queries/backups'
 import { toast } from 'sonner'
 import { fetchJSON } from '@/lib/api'
 

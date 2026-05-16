@@ -1,15 +1,13 @@
 import { useCallback } from 'react'
 import { useSubscribe } from '@forminator/react-wire'
-import { eventBus as storeEventBus } from '@/lib/eventBus.js'
-import { EVENTS } from '@/constants.js'
+import { eventBus as storeEventBus } from '@/lib/eventBus'
+import { EVENTS } from '@/constants'
 
-/**
- * 
- * @param {string} eventName - one of @constants/events
- * @param {function} callback
- * @param {Array<*>} [dependencies] - optional dependencies for the useCallback
- */
-const useEventSubscription = (eventName, callback, dependencies = []) => {
+const useEventSubscription = (
+    eventName: string,
+    callback: (data: unknown | null) => unknown | Promise<unknown>,
+    dependencies: never[] = [],
+) => {
     
     if (!EVENTS.includes(eventName))
         throw new Error(`Invalid event "${eventName}"; must be one of ${EVENTS}`)

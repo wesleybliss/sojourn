@@ -3,7 +3,7 @@ import {
     updateItemArray,
     addItemArray,
     removeItemArray,
-} from '../src/lib/storeUtils.js'
+} from '../src/lib/storeUtils'
 
 // Mock wire implementation for testing
 const createMockWire = initialValue => {

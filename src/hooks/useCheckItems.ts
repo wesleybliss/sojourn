@@ -1,4 +1,5 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, SetStateAction } from 'react'
+import { ID, ItemWithId } from '@/types/data'
 
 /**
  * Custom hook to manage the state of checkable items, providing utilities
@@ -22,9 +23,9 @@ import { useState, useMemo, useCallback } from 'react'
  *                      Accepts an optional boolean `forceAll` to explicitly set the state to all checked
  *                      or none checked.
  */
-const useCheckItems = items => {
+const useCheckItems = (items: ItemWithId[]) => {
     
-    const [checked, setChecked] = useState([])
+    const [checked, setChecked] = useState<ID[]>([])
     
     const allChecked = useMemo(
         () => items.length > 0 && checked.length === items.length,
@@ -41,7 +42,7 @@ const useCheckItems = items => {
         [allChecked, someChecked],
     )
     
-    const hasChecked = useCallback(idOrIds => {
+    const hasChecked = useCallback((idOrIds: ID | ID[]) => {
         
         if (!Array.isArray(idOrIds))
             return checked.includes(idOrIds)
@@ -50,7 +51,7 @@ const useCheckItems = items => {
         
     }, [checked])
     
-    const setCheckedManual = useCallback((idOrIds, override = false) => {
+    const setCheckedManual = useCallback((idOrIds: ID | ID[], override = false) => {
         
         if (Array.isArray(idOrIds)) {
             
@@ -83,13 +84,17 @@ const useCheckItems = items => {
      * list is passed to an update function (similar to `useState`), removing
      * the need to keep `checked` as a dependency for a `useEffect` hook
      */
-    const updateChecked = useCallback(fn => {
+    const updateChecked = useCallback((fn: ID[] | ((prev: ID[]) => ID[])) => {
         
-        setChecked(prev => fn([...prev]))
+        setChecked(prev =>
+            typeof fn === 'function'
+                ? fn([...prev])
+                : fn
+        )
         
     }, [])
     
-    const toggleChecked = useCallback(idOrIds => {
+    const toggleChecked = useCallback((idOrIds: ID | ID[]) => {
         
         if (Array.isArray(idOrIds))
             setChecked(prev => {
@@ -121,14 +126,14 @@ const useCheckItems = items => {
     const toggleAllChecked = useCallback((forceAll = undefined) => {
         
         if (forceAll === true) {
-            setChecked(items.map(it => it.id || it))
+            setChecked(items.map(it => it.id))
         } else if (forceAll === false) {
             setChecked([])
         } else {
             if (allChecked)
                 setChecked([])
             else
-                setChecked(items.map(it => it.id || it))
+                setChecked(items.map(it => it.id))
         }
         
     }, [allChecked, items])

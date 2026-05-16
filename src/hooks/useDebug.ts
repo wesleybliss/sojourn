@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
-import * as store from '@/store/index.js'
-import * as constants from '@/constants.js'
+import * as store from '@/store'
+import * as constants from '@/constants'
 
 const useDebug = () => {
     
