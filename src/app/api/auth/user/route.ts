@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { authorize } from '@/lib/auth'
 import db from '@/db/index'
 import * as schemas from '@/db/schema'
@@ -11,7 +11,7 @@ import HttpError from '@/errors/HttpError'
  * Returns current user data and whether they need to provide an invite code.
  * Called by AuthProvider to fetch user state after Firebase auth.
  */
-export async function GET(request) {
+export async function GET(request: NextRequest) {
     try {
         const { user } = await authorize(request)
         
@@ -26,15 +26,15 @@ export async function GET(request) {
             },
             needsInviteCode: !user.enabled,
         })
-    } catch (error) {
-        if (error instanceof HttpError) {
+    } catch (e: unknown) {
+        if (e instanceof HttpError) {
             return NextResponse.json(
-                { success: false, error: error.message },
-                { status: error.status },
+                { success: false, error: (e as Error).message },
+                { status: e.status },
             )
         }
         
-        console.error('Error in GET /api/auth/user:', error)
+        console.error('Error in GET /api/auth/user:', e)
         return NextResponse.json(
             { success: false, error: 'Internal Server Error' },
             { status: 500 },
@@ -50,7 +50,7 @@ export async function GET(request) {
  *
  * If code is correct and user is not yet enabled, sets enabled=true.
  */
-export async function POST(request) {
+export async function POST(request: NextRequest) {
     try {
         const { user } = await authorize(request)
         
@@ -107,11 +107,11 @@ export async function POST(request) {
             },
             needsInviteCode: false,
         })
-    } catch (error) {
-        if (error instanceof HttpError) {
+    } catch (e: unknown) {
+        if (e instanceof HttpError) {
             return NextResponse.json(
-                { success: false, error: error.message },
-                { status: error.status },
+                { success: false, error: (e as Error).message },
+                { status: e.status },
             )
         }
         

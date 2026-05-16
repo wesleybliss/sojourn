@@ -3,7 +3,9 @@ import * as schemas from '@/db/schema'
 import { eq, and, sql } from 'drizzle-orm'
 import { adminAuth } from '@/lib/firebase/admin'
 import HttpError from '@/errors/HttpError'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { ID } from '@/types/data'
+import { DecodedIdToken } from 'firebase-admin/auth'
 
 /**
  * Extracts and verifies Firebase ID token from request Authorization header.
@@ -12,7 +14,7 @@ import { NextResponse } from 'next/server'
  * @returns {Promise<Object>} Decoded Firebase token
  * @throws {HttpError} 401 - If token is missing or invalid
  */
-const verifyFirebaseToken = async request => {
+const verifyFirebaseToken = async (request: NextRequest) => {
     const authHeader = request.headers.get('Authorization')
     
     if (!authHeader || !authHeader.startsWith('Bearer '))
@@ -21,9 +23,8 @@ const verifyFirebaseToken = async request => {
     const idToken = authHeader.substring(7)
     
     try {
-        const decodedToken = await adminAuth.verifyIdToken(idToken)
-        
-        return decodedToken
+        // Decoded token
+        return await adminAuth.verifyIdToken(idToken)
     } catch (error) {
         console.error('Firebase token verification failed:', error)
         throw new HttpError(401, 'Invalid or expired token')
@@ -42,7 +43,7 @@ const verifyFirebaseToken = async request => {
  * @returns {Promise<Object>} Database user record
  * @throws {HttpError} For validation or conflict errors
  */
-const getOrCreateUser = async firebaseUser => {
+const getOrCreateUser = async (firebaseUser: DecodedIdToken) => {
     const { uid: firebaseUid, email, name, picture } = firebaseUser
     
     if (!email)
@@ -64,7 +65,7 @@ const getOrCreateUser = async firebaseUser => {
     const [existingByEmail] = await db
         .select()
         .from(schemas.users)
-        .where(sql`lower(${schemas.users.email}) = ${normalizedEmail}`)
+        .where(sql.raw(`lower(${schemas.users.email}) = ${normalizedEmail}`))
         .limit(1)
     
     if (existingByEmail) {
@@ -113,7 +114,7 @@ const getOrCreateUser = async firebaseUser => {
  * @throws {HttpError} 409 - If email conflict detected
  * @returns {Promise<Object>} Resolves with { user, firebaseToken, userId }
  */
-export const authorize = async request => {
+export const authorize = async (request: NextRequest) => {
     
     const firebaseToken = await verifyFirebaseToken(request)
     
@@ -123,7 +124,9 @@ export const authorize = async request => {
     
 }
 
-export const withAuth = handler => async (request, context) => {
+type AuthContext = Record<string, unknown>
+
+export const withAuth = (handler: (req: NextRequest, context: { auth: AuthContext }) => Promise<NextResponse>) => async (request: NextRequest & { app: Record<string, unknown> }, context: AuthContext) => {
     
     try {
         
@@ -142,7 +145,7 @@ export const withAuth = handler => async (request, context) => {
     } catch (e) {
         
         if (e instanceof HttpError)
-            return NextResponse.json({ success: false, error: e.message }, { status: e.status })
+            return NextResponse.json({ success: false, error: e.message }, { status: (e as HttpError).status })
         
         console.error('Authorization error:', e)
         return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
@@ -151,7 +154,7 @@ export const withAuth = handler => async (request, context) => {
     
 }
 
-export const isUserTripMember = async (auth, tripId) => {
+export const isUserTripMember = async (auth: AuthContext, tripId: ID) => {
     
     try {
         

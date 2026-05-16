@@ -1,13 +1,10 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import db from '@/db/index.js'
 import * as schemas from '@/db/schema.js'
 import { withAuth, isUserTripMember } from '@/lib/auth'
+import { TAuthContext } from '@/types/firebase'
 
-/**
- * POST /api/plans
- * Creates a new plan.
- */
-export const POST = withAuth(async (request, { auth }) => {
+const handler = async (request: NextRequest, { auth }: { auth: TAuthContext }) => {
     
     try {
         
@@ -52,4 +49,10 @@ export const POST = withAuth(async (request, { auth }) => {
         
     }
     
-})
+}
+
+/**
+ * POST /api/plans
+ * Creates a new plan.
+ */
+export const POST = withAuth(handler)

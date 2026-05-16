@@ -1,5 +1,7 @@
 import database from '@/db'
-import { desc, eq } from 'drizzle-orm'
+import { AnyColumn, desc, eq, inArray, SQLWrapper, TableConfig } from 'drizzle-orm'
+import { BaseSQLiteDatabase, SQLiteTable } from 'drizzle-orm/sqlite-core'
+import { ID } from '@/types/data'
 
 /**
  * @typedef {Object} Repository
@@ -20,7 +22,23 @@ import { desc, eq } from 'drizzle-orm'
 /**
  * Generic repository with the specified name, plural form, schema, and database connection.
  */
-class Repository {
+class Repository<
+    TSchema extends SQLiteTable<TableConfig> & {
+        id: SQLWrapper | AnyColumn
+        createdAt: SQLWrapper | AnyColumn
+        updatedAt: SQLWrapper | AnyColumn
+    },
+    TDatabase extends BaseSQLiteDatabase<
+        'sync' | 'async',
+        unknown,
+        Record<string, never>
+    >,
+> {
+    
+    public name: string
+    public plural: string
+    public schema: TSchema
+    public db: TDatabase
     
     /**
      * @constructor
@@ -30,25 +48,25 @@ class Repository {
      * @param {Object} db - The database connection or a transaction (default: database)
      * @returns {Repository}
      */
-    constructor(name, plural, schema, db = database) {
+    constructor(name: string, plural: string, schema: TSchema, db: TDatabase | undefined) {
         
         this.name = name
         this.plural = plural
         this.schema = schema
-        this.db = db
+        this.db = (db ?? database) as unknown as TDatabase
         
     }
     
     //region Helpers
     
     // eslint-disable-next-line no-unused-vars
-    tx(transaction) {
+    tx(transaction: TDatabase) {
         
         throw new Error('Method not implemented.')
         
     }
     
-    normalizeDateValue(value) {
+    normalizeDateValue(value: Date | string | number) {
         
         if (!value) return null
         if (typeof value === 'string') return value
@@ -63,7 +81,9 @@ class Repository {
     
     //endregion Helpers
     
-    async create(data) {
+    async create(
+        data: TSchema['$inferInsert'],
+    ): Promise<TSchema['$inferSelect']> {
         
         try {
             
@@ -76,8 +96,8 @@ class Repository {
             
         } catch (e) {
             
-            console.error(`Error creating ${name}:`, e)
-            throw new Error(`Failed to create ${name}`)
+            console.error(`Error creating ${this.name}:`, e)
+            throw new Error(`Failed to create ${this.name}`)
             
         }
         
@@ -101,53 +121,74 @@ class Repository {
         
     }
     
-    async findAllBy(key, value) {
+    async findAllBy<
+        TKey extends keyof TSchema['$inferSelect']
+    >(
+        key: TKey,
+        value: TSchema['$inferSelect'][TKey],
+    ) {
         
         try {
+            
+            const field = this.schema[
+                key as keyof typeof this.schema
+            ] as AnyColumn
             
             return await this.db
                 .select()
                 .from(this.schema)
-                .where(eq(this.schema[key], value))
+                .where(eq(field, value))
                 .orderBy(desc(this.schema.createdAt))
             
         } catch (e) {
             
-            console.error(`Error fetching ${this.plural} by ${key}:`, e)
+            console.error(`Error fetching ${this.plural} by ${key.toString()}:`, e)
             throw new Error(`Failed to fetch ${this.plural}`)
             
         }
         
     }
     
-    async findOneBy(key, value) {
+    async findOneBy<
+        TKey extends keyof TSchema['$inferSelect']
+    >(
+        key: TKey,
+        value: TSchema['$inferSelect'][TKey],
+    ) {
         
         try {
+            
+            const field = this.schema[
+                key as keyof typeof this.schema
+                ] as AnyColumn
             
             const [item] = await this.db
                 .select()
                 .from(this.schema)
-                .where(eq(this.schema[key], value))
+                .where(eq(field, value))
                 .limit(1)
             
             return item || null
             
         } catch (e) {
             
-            console.error(`Error fetching name by ${key} = ${value}:`, e)
+            console.error(`Error fetching name by ${key.toString()} = ${value}:`, e)
             throw new Error(`Failed to fetch ${this.name}`)
             
         }
         
     }
     
-    async findOneById(id) {
+    async findOneById(id: ID) {
         
-        return await this.findOneBy('id', id)
+        return await this.findOneBy('id', id as TSchema['$inferSelect']['id'])
         
     }
     
-    async updateById(id, data) {
+    async updateById(
+        id: ID,
+        data: Partial<TSchema['$inferInsert']>,
+    ): Promise<TSchema['$inferSelect']> {
         
         try {
             
@@ -168,13 +209,13 @@ class Repository {
         
     }
     
-    async deleteByIds(ids) {
+    async deleteByIds(ids: ID[]) {
         
         try {
             
             await this.db
                 .delete(this.schema)
-                .where(this.schema.id.in(ids))
+                .where(inArray(this.schema.id, ids))
             
         } catch (e) {
             
@@ -185,7 +226,7 @@ class Repository {
         
     }
     
-    async deleteById(id) {
+    async deleteById(id: ID) {
         
         return await this.deleteByIds([id])
         

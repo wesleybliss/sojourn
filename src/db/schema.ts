@@ -1,6 +1,6 @@
 import { relations, sql } from 'drizzle-orm'
 import { primaryKey, uniqueIndex, text, integer, real } from 'drizzle-orm/sqlite-core'
-import { timestamps, table, lower, optsCascadeAll, timestampSeconds } from './dbUtils.js'
+import { timestamps, table, lower, optsCascadeAll, timestampSeconds } from './dbUtils'
 
 export const users = table('users', {
     email: text('email').notNull(),
@@ -107,14 +107,23 @@ export const segmentsRelations = relations(segments, ({ one }) => ({
 
 //
 
-export const updateTimestampTrigger = tableName => sql`
-    CREATE TRIGGER update_${tableName}_timestamp
-    AFTER UPDATE ON ${tableName}
-    FOR EACH ROW
-    BEGIN
-      UPDATE ${tableName} SET updatedAt = CURRENT_TIMESTAMP WHERE id = OLD.id;
-    END;
-`
+export const updateTimestampTrigger = (tableName: string) => {
+    
+    const table = sql.raw(tableName)
+    const trigger = sql.raw(`update_${tableName}_timestamp`)
+    
+    return sql.raw(`
+        CREATE TRIGGER ${trigger}
+        AFTER UPDATE ON ${table}
+        FOR EACH ROW
+        BEGIN
+            UPDATE ${table}
+            SET updatedAt = CURRENT_TIMESTAMP
+            WHERE id = OLD.id;
+        END;
+    `)
+    
+}
 
 /*
 SQLite Reference:

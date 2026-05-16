@@ -1,7 +1,7 @@
 import Repository from '@/db/repos/repo'
 import * as schemas from '@/db/schema'
 
-export class UsersRepository extends Repository {
+export class UsersRepository extends Repository<typeof schemas.users, typeof db> {
     
     constructor() {
         
@@ -9,7 +9,7 @@ export class UsersRepository extends Repository {
         
     }
     
-    tx(transaction) {
+    tx(transaction: TDatabase) {
         
         return new UsersRepository(this.name, this.plural, this.schema, transaction)
         

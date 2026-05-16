@@ -1,0 +1,27 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "tsBuildInfoFile": "./node_modules/.cache/tsbuildinfo/api.tsbuildinfo",
+        "declarationDir": "./node_modules/.cache/dts/api",
+        "lib": ["es2015"],
+        "composite": true,
+        "noEmit": false,
+        "emitDeclarationOnly": true,
+        "allowJs": false,
+        "target": "ES2022",
+        "esModuleInterop": true,
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "outDir": "dist",
+        "types": []
+    },
+    "include": [
+        "src/app/api/**/*.ts",
+        "src/app/api/**/*.tsx",
+        "src/app/api/**/*.js",
+        "src/app/api/**/*.jsx"
+    ],
+    "exclude": ["node_modules", "task/**"]
+}
