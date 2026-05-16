@@ -1,22 +1,29 @@
 import Repository from '@/db/repos/repo'
 import * as schemas from '@/db/schema.js'
 import { eq, asc } from 'drizzle-orm'
+import database from '@/db'
+import { PlanInsert, PlanSelect } from '@/types/database'
+import { ID } from '@/types/data'
 
-export class PlansRepository extends Repository  {
+export interface IPlansRepository extends Repository<typeof schemas.plans> {
+    findAllByTripId(tripId: ID): Promise<PlanSelect[]>
+}
+
+export class PlansRepository extends Repository<typeof schemas.plans> implements IPlansRepository {
     
-    constructor() {
+    constructor(db?: typeof database) {
         
-        super('plan', 'plans', schemas.plans)
+        super('plan', 'plans', schemas.plans, db)
         
     }
     
-    tx(transaction) {
+    tx(transaction: typeof database) {
         
-        return new PlansRepository(this.name, this.plural, this.schema, transaction)
+        return new PlansRepository(transaction)
         
     }
     
-    async create(data) {
+    async create(data: PlanInsert): Promise<PlanSelect> {
         
         return super.create({
             name: data.name,
@@ -26,7 +33,7 @@ export class PlansRepository extends Repository  {
         
     }
     
-    async findAllByTripId(tripId) {
+    async findAllByTripId(tripId: ID) {
         
         try {
             
@@ -71,7 +78,7 @@ export class PlansRepository extends Repository  {
         
     }
     
-    async updateById(id, data) {
+    async updateById(id: ID, data: Partial<PlanInsert>) {
         
         return super.updateById(id, {
             name: data.name,

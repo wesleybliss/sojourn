@@ -60,13 +60,16 @@ export const timestamps = {
     // deletedAt: timestamp(),
 }
 
+const idColumn = () => integer('id').primaryKey({ autoIncrement: true })
+
+type IdColumn = ReturnType<typeof idColumn>
+
 type WithId<
     T extends Record<string, ColumnBuilderBase>,
     THasId extends boolean,
 > = THasId extends true
-    ? T & {
-    id: ColumnBuilderBase
-} : T
+    ? T & { id: IdColumn }
+    : T
 
 type ValidColumns<T> = {
     [K in keyof T]:
@@ -124,23 +127,14 @@ export const table = <
     
     if (!name?.length)
         throw new Error('Table name required')
-    
+
     if (!Object.keys(columns).length)
         throw new Error('Table properties required')
-    
-    const fields: Record<string, ColumnBuilderBase> = {}
-    
-    if (columns.id !== false)
-        fields.id = integer('id').primaryKey({ autoIncrement: true })
-    
+
     const { id, ...rest } = columns
-    
+
     const finalColumns = {
-        ...(id === false
-            ? {}
-            : {
-                id: integer('id').primaryKey({ autoIncrement: true }),
-            }),
+        ...(id === false ? {} : { id: idColumn() }),
         ...timestamps,
         ...rest,
     }

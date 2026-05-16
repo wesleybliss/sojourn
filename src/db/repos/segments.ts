@@ -1,16 +1,30 @@
 import Repository from '@/db/repos/repo'
 import * as schemas from '@/db/schema'
 import { eq, asc } from 'drizzle-orm'
+import database from '@/db'
+import { SegmentInsert, SegmentSelect } from '@/types/database'
+import { ID } from '@/types/data'
 
-export class SegmentsRepository extends Repository  {
+export interface ISegmentsRepository extends Repository<typeof schemas.segments> {
+    findAllByTripId(tripId: ID): Promise<SegmentSelect[]>
+    findAllByPlanId(planId: ID): Promise<SegmentSelect[]>
+}
+
+export class SegmentsRepository extends Repository<typeof schemas.segments> implements ISegmentsRepository {
     
-    constructor() {
+    constructor(db?: typeof database) {
         
-        super('segment', 'segments', schemas.segments)
+        super('segment', 'segments', schemas.segments, db)
         
     }
     
-    async create(data) {
+    tx(transaction: typeof database) {
+        
+        return new SegmentsRepository(transaction)
+        
+    }
+    
+    async create(data: SegmentInsert): Promise<SegmentSelect> {
         
         return super.create({
             tripId: data.tripId,
@@ -29,7 +43,7 @@ export class SegmentsRepository extends Repository  {
         
     }
     
-    async findAllByTripId(tripId) {
+    async findAllByTripId(tripId: ID) {
         
         try {
             
@@ -54,7 +68,7 @@ export class SegmentsRepository extends Repository  {
         
     }
     
-    async findAllByPlanId(planId) {
+    async findAllByPlanId(planId: ID) {
         
         try {
             
@@ -79,7 +93,7 @@ export class SegmentsRepository extends Repository  {
         
     }
     
-    async updateById(id, data) {
+    async updateById(id: ID, data: Partial<SegmentInsert>) {
         
         return await super.updateById(id, {
             name: data.name,
