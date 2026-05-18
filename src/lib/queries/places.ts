@@ -2,14 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { placesWithCoverImages } from '@/store'
 import { fetchJSON } from '@/lib/api'
 import { keepPreviousData } from '@tanstack/react-query'
-import { ID } from '@/types/data'
-
-type UpdatePlaceBody = {
-    placeId: ID
-    name?: string
-    description?: string
-    coverPhoto?: string
-}
+import { UpdatePlaceBody } from '@/types/mutations'
 
 type ShufflePlaceCoverPhotoBody = {
     topic: string

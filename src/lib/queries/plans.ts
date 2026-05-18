@@ -3,20 +3,9 @@ import { fetchJSON } from '@/lib/api'
 import { ID } from '@/types/data'
 import { Plan, PlanInsert } from '@/types/database'
 import { keepPreviousData } from '@tanstack/react-query'
+import { ClonePlanBody, CreatePlanBody, UpdatePlanBody } from '@/types/mutations'
 /* import * as store from '@/store'
 import { updateItemArray } from '@/lib/storeUtils.js' */
-
-type CreatePlanBody = PlanInsert & {
-    tripId: ID
-}
-
-type UpdatePlanBody = Partial<Plan> & {
-    planId: ID
-}
-
-type ClonePlanBody = {
-    planId: ID
-}
 
 const plansQueryKey = (tripId: ID, exclusive = false) =>
     exclusive ? [tripId] : ['trips', tripId, 'plans']

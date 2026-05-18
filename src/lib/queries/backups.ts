@@ -1,14 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { fetchWithAuth, fetchJSON } from '@/lib/api'
 import { ItemWithId } from '@/types/data'
+import { BackupTripsBody } from '@/types/mutations'
 
 const idToInt = (obj: ItemWithId | null) => obj?.id ?? null
-
-type BackupTripsBody = {
-    type: 'single' | 'multiple'
-    tripId?: number | null
-    tripIds?: (number | null)[] | null
-}
 
 export const useBackupTrips = () => {
     const queryClient = useQueryClient()

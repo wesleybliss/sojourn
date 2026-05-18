@@ -5,32 +5,13 @@ import { fetchJSON } from '@/lib/api'
 import { ID } from '@/types/data'
 import { keepPreviousData } from '@tanstack/react-query'
 import { Segment, Trip, TripInsert } from '@/types/database'
-
-type UpdateTripBody = Partial<Trip> & {
-    tripId: ID
-}
-
-type UpdateSegmentBody = Partial<Segment> & {
-    tripId: ID
-    planId: ID
-    segmentId: ID
-    cascadeEnabled?: boolean
-}
-
-type DeleteSegmentsBody = {
-    tripId: ID
-    planId: ID
-    segmentIds: ID[]
-}
-
-type RenamePlanBody = {
-    planId: ID
-    name: string
-}
-
-type DeletePlanBody = {
-    planId: ID
-}
+import {
+    DeletePlanBody,
+    DeleteSegmentsBody,
+    RenamePlanBody,
+    UpdateSegmentBody,
+    UpdateTripBody
+} from '@/types/mutations'
 
 export const useTripQuery = (tripId: ID) => useQuery({
     queryKey: ['trip', tripId],
