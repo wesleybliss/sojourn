@@ -37,11 +37,11 @@ export const useUpdatePlace = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ placeId, ...placeData }: UpdatePlaceBody) => {
-            if (!placeId)
-                throw new Error('useUpdatePlace: placeId is required')
+        mutationFn: async ({ id, ...placeData }: UpdatePlaceBody) => {
+            if (!id)
+                throw new Error('useUpdatePlace: id is required')
             
-            return fetchJSON(`/api/places/${placeId}`, {
+            return fetchJSON(`/api/places/${id}`, {
                 method: 'PUT',
                 body: JSON.stringify(placeData),
             })

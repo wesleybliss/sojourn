@@ -4,7 +4,7 @@ import { updateItemArray } from '@/lib/storeUtils'
 import { fetchJSON } from '@/lib/api'
 import { ID } from '@/types/data'
 import { keepPreviousData } from '@tanstack/react-query'
-import { Segment, Trip, TripInsert } from '@/types/database'
+import { Segment, SegmentInsert, Trip, TripInsert } from '@/types/database'
 import {
     DeletePlanBody,
     DeleteSegmentsBody,
@@ -85,7 +85,7 @@ export const useAddSegment = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async segmentData => {
+        mutationFn: async (segmentData: SegmentInsert) => {
             return fetchJSON('/api/segments', {
                 method: 'POST',
                 body: JSON.stringify(segmentData),

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { fetchJSON } from '@/lib/api'
 import { updateItemArray } from '@/lib/storeUtils'
 import * as store from '@/store'
+import { Place } from '@/types/database'
 
 export type BackupTripsBody = {
     type: 'single' | 'multiple'
@@ -10,11 +11,8 @@ export type BackupTripsBody = {
     tripIds?: (number | null)[] | null
 }
 
-export type UpdatePlaceBody = {
-    placeId: ID
-    name?: string
-    description?: string
-    coverPhoto?: string
+export type UpdatePlaceBody = Partial<Place> & {
+    id: ID
 }
 
 export type CreatePlanBody = PlanInsert & {
