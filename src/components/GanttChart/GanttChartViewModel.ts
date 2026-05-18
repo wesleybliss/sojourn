@@ -1,45 +1,57 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, SetStateAction, Dispatch } from 'react'
 import { /* format, */ addDays, eachDayOfInterval, startOfDay, differenceInDays } from 'date-fns'
+import { ID, ItemWithId } from '@/types'
+import { GanttChartSharedProps } from '@/components/GanttChart/GanttChart'
 
-const GanttChartViewModel = (
-    items = [],
-    setItems,
-) => {
+type ResizeTask = {
+    id: ID
+    edge: 'start' | 'end'
+}
+
+const GanttChartViewModel = <T extends ItemWithId>(props: GanttChartSharedProps<T>) => {
     
-    const timelineRef = useRef(null)
+    const {
+        items = [],
+        setItems,
+        startDateKey,
+        endDateKey,
+    } = props
     
-    const [draggedTask, setDraggedTask] = useState(null)
-    const [resizeTask, setResizeTask] = useState(null)
+    const timelineRef = useRef<HTMLDivElement>(null)
+    
+    const [draggedTask, setDraggedTask] = useState<ID | null>(null)
+    const [resizeTask, setResizeTask] = useState<ResizeTask | null>(null)
     
     /* // Calculate date range for the chart
     const startDate = new Date(Math.min(...items.map(task => getTime(task.startDate))))
     const endDate = new Date(Math.max(...items.map(task => getTime(task.endDate))))
     const days = eachDayOfInterval({ start: startDate, end: endDate }) */
     
-    const toMs = v => {
-        if (!v) return null
+    const toMs = (v: Date | number): number => {
+        if (!v)
+            throw new Error('toMs: invalid input')
         if (v instanceof Date) return v.getTime()
         if (typeof v === 'number') return v < 1e12 ? v * 1000 : v
         const parsed = new Date(v)
         
-        return isNaN(parsed.getTime()) ? null : parsed.getTime()
+        if (isNaN(parsed.getTime()))
+            throw new Error('toMs: result was NaN')
+        
+        return parsed.getTime()
     }
     
     const startDate = items.length > 0
-        ? new Date(Math.min(...items.map(it => toMs(it.startDate))))
+        ? new Date(Math.min(...items.map(it => toMs(it[startDateKey] as number | Date))))
         : new Date() // Default start date if no items
     const endDate = items.length > 0
-        ? new Date(Math.max(...items.map(it => toMs(it.endDate))))
+        ? new Date(Math.max(...items.map(it => toMs(it[endDateKey] as number | Date))))
         : addDays(startDate, 7) // Default end date if no items
     const days = eachDayOfInterval({ start: startDate, end: endDate })
     
     /**
      * Get the date from the mouse position
-     * 
-     * @param {number} clientX - The X coordinate of the mouse event
-     * @returns {Date|null} - The date corresponding to the mouse position or null if out of bounds
      */
-    const getDateFromPosition = clientX => {
+    const getDateFromPosition = (clientX: number): Date | null => {
         
         if (!timelineRef.current) return null
         
@@ -63,11 +75,8 @@ const GanttChartViewModel = (
     
     /**
      * Handle the drag start event
-     * 
-     * @param {React.DragEvent} e - The drag event
-     * @param {string} itemId - The ID of the task being dragged
      */
-    const handleDragStart = (e, itemId) => {
+    const handleDragStart = (_: DragEvent, itemId: ID) => {
         
         setDraggedTask(itemId)
         
@@ -75,11 +84,8 @@ const GanttChartViewModel = (
     
     /**
      * Handle the drag over event
-     * 
-     * @param {React.DragEvent} e - The drag event
-     * @returns 
      */
-    const handleDragOver = e => {
+    const handleDragOver = (e: DragEvent) => {
         e.preventDefault()
         if (!draggedTask) return
         
@@ -91,7 +97,10 @@ const GanttChartViewModel = (
         
         if (!date) return
         
-        const duration = differenceInDays(new Date(toMs(task.endDate)), new Date(toMs(task.startDate)))
+        const duration = differenceInDays(
+            new Date(toMs(task[endDateKey] as number | Date)),
+            new Date(toMs(task[startDateKey] as number | Date)),
+        )
         const newStartDate = startOfDay(date)
         const newEndDate = addDays(newStartDate, duration)
         
@@ -113,19 +122,19 @@ const GanttChartViewModel = (
         
         if (!resizeTask) return
         
-        const handleMouseMove = e => {
+        const handleMouseMove = (e: MouseEvent) => {
             const date = getDateFromPosition(e.clientX)
             
             if (!date) return
             
-            setItems(prevItems =>
+            setItems((prevItems: T[]) =>
                 prevItems.map(t => {
                     if (t.id === resizeTask.id) {
                         if (resizeTask.edge === 'start') {
-                            if (date >= new Date(toMs(t.endDate))) return t
+                            if (date >= new Date(toMs(t[endDateKey] as number | Date))) return t
                             return { ...t, startDate: startOfDay(date) }
                         } else {
-                            if (date <= new Date(toMs(t.startDate))) return t
+                            if (date <= new Date(toMs(t[startDateKey] as number | Date))) return t
                             return { ...t, endDate: startOfDay(date) }
                         }
                     }

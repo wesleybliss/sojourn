@@ -2,10 +2,15 @@ import { useMemo } from 'react'
 import GanttChart from '@/components/GanttChart'
 import { calculateTotalDays } from '@/utils'
 import dayjs from 'dayjs'
+import { Plan } from '@/types'
+
+interface SegmentsGanttChartProps {
+    plan: Plan
+}
 
 const SegmentsGanttChart = ({
     plan,
-}) => {
+}: SegmentsGanttChartProps) => {
     
     const segments = useMemo(() => plan?.segments || [], [plan])
     
