@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect, Dispatch, SetStateAction } from 'react'
+import { useState, useMemo, useCallback, useEffect, Dispatch, SetStateAction, ChangeEvent } from 'react'
 import { useWireState } from '@forminator/react-wire'
 import * as store from '@/store'
 import { useParams, useRouter } from 'next/navigation'
@@ -22,6 +22,7 @@ import { Plan, Segment, Trip } from '@/types/database'
 import { Coords, ID } from '@/types/data'
 import { UseMutationResult } from '@tanstack/react-query'
 import { ShengenData } from '@/types'
+import { UpdatePlanBody } from '@/types/mutations'
 import { ListViewMode } from '@/types/ui'
 
 const matchesDate = (date: Date | string, query: string) => {
@@ -57,8 +58,8 @@ export type TTripEditorViewModel = {
     setSegmentsListShowCompleted: Dispatch<SetStateAction<boolean>>
     
     // Global State
-    trip: Trip
-    currentTrip: Trip
+    trip: Trip | undefined
+    currentTrip: Trip | undefined
     currentPlan: Plan | undefined
     plans: Plan[]
     segments: Segment[]
@@ -76,27 +77,27 @@ export type TTripEditorViewModel = {
     totalDaysPerSegmentByIndex: number
     
     // Hooks
-    navigate: Function,
+    navigate: (href: string) => void,
     
     // Actions
-    updateTrip: (field: any) => (e: any) => Promise<void>
+    updateTrip: (field: string) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string | number) => Promise<void>
     addSegment: () => Promise<void>
-    updateSegment: (id: number, field: string) => (e: any) => Promise<void>
-    deleteSegments: (ids: any) => Promise<void>
+    updateSegment: (id: ID, field: string) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string | number) => Promise<void>
+    deleteSegments: (ids: ID[]) => Promise<void>
     getTotalDaysPerSegment: (segment: Segment) => number
-    getCumulativeDaysPerSegment: (index: number) => any
+    getCumulativeDaysPerSegment: (index: number) => number
     getSegmentPlanned: (segment: Segment) => boolean
     getSegmentCompleted: (segment: Segment) => boolean
     backupTrip: () => Promise<void>
     renamePlan: (planIdToRename: ID) => Promise<void>
     deletePlan: (planIdToDelete: ID) => Promise<void>
-    updatePlanMutation: UseMutationResult<any, Error, any, unknown>
+    updatePlanMutation: UseMutationResult<unknown, Error, UpdatePlanBody, unknown>
     shufflePlaceCoverPhoto: (placeId: ID, topic: string) => Promise<void>
-    
+
     // Loading/error states
     isLoading: boolean
     isFetching: boolean
-    error: Error
+    error: Error | null
 }
 
 const useTripEditorViewModel = (): TTripEditorViewModel => {
@@ -175,7 +176,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
     const [hasRedirectedToPlan, setHasRedirectedToPlan] = useState<boolean>(false)
     const [segmentsFilterQuery, setSegmentsFilterQuery] = useState<string>('')
     const [segmentsListShowCompleted, setSegmentsListShowCompleted] = useState<boolean>(false)
-    const [segmentsListViewMode, setSegmentsListViewMode] = useState('list')
+    const [segmentsListViewMode, setSegmentsListViewMode] = useState<ListViewMode>('list')
     
     // Wire store is only used for UI preferences, not entity data
     const [showMap, setShowMap] = useWireState(store.showMap)
@@ -193,7 +194,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         
         // Filter by completion status (hide past segments unless showCompleted is true)
         if (!segmentsListShowCompleted)
-            result = result.filter((it: Segment) => dayjs(it.endDate).isAfter(dayjs()))
+            result = result.filter((it: Segment) => dayjs(it.endDate as Date).isAfter(dayjs()))
         
         // Filter by search query
         if (segmentsFilterQuery?.length) {
@@ -201,8 +202,8 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
             
             result = result.filter(it => {
                 const matchesName = it.name.toLowerCase().includes(query)
-                const matchesStartDate = matchesDate(it.startDate, query)
-                const matchesEndDate = matchesDate(it.endDate, query)
+                const matchesStartDate = matchesDate(it.startDate as Date, query)
+                const matchesEndDate = matchesDate(it.endDate as Date, query)
                 
                 return matchesName || matchesStartDate || matchesEndDate
             })
@@ -222,9 +223,11 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         
     }, [trip, currentPlan, segments])
     
-    const updateTrip = useCallback((field: string) => async e => {
+    const updateTrip = useCallback((field: string) => async (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string | number) => {
         
-        const value = e?.target?.value ?? e
+        const value = typeof e === 'object' && e !== null && 'target' in e 
+            ? e.target.value 
+            : e
         
         // Mutation hook handles invalidation
         updateTripMutation.mutate({ tripId, [field]: value }, {
@@ -241,11 +244,12 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         let startDate = dayjs()
         
         if (segments?.length) {
-            const lastSegment = segments.reduce((acc: Segment | null, it: Segment) => (
-                dayjs(it.endDate).isAfter(dayjs(acc.endDate)) ? it : acc
-            ), null)
+            const lastSegment = segments.reduce((acc: Segment | null, it: Segment) => {
+                if (!acc) return it
+                return dayjs(it.endDate as Date).isAfter(dayjs(acc.endDate as Date)) ? it : acc
+            }, null as Segment | null)
             
-            startDate = dayjs(lastSegment.endDate)
+            if (lastSegment) startDate = dayjs(lastSegment.endDate as Date)
         }
         
         const newSegment = {
@@ -264,12 +268,14 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         
     }, [currentPlan, tripId, segments, addSegmentMutation])
     
-    const updateSegment = useCallback((id: ID, field: string) => async e => {
+    const updateSegment = useCallback((id: ID, field: string) => async (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string | number) => {
         
         if (!trip || !currentPlan)
             return console.warn('updateSegment: no current trip or plan')
         
-        const value = e?.target?.value ?? e
+        const value = typeof e === 'object' && e !== null && 'target' in e 
+            ? e.target.value 
+            : e
         
         const payload = {
             segmentId: id,
@@ -305,7 +311,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         
         if (!segment.startDate || !segment.endDate) return 0
         
-        return dayjs(segment.endDate).diff(dayjs(segment.startDate), 'day')
+        return dayjs(segment.endDate as Date).diff(dayjs(segment.startDate as Date), 'day')
         
     }
     
@@ -322,7 +328,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
     const getSegmentPlanned = useCallback((segment: Segment) => (segment.flightBooked && segment.stayBooked), [])
     
     // If the segment end date has elapsed
-    const getSegmentCompleted = useCallback((segment: Segment) => dayjs().isAfter(dayjs(segment.endDate)), [])
+    const getSegmentCompleted = useCallback((segment: Segment) => dayjs().isAfter(dayjs(segment.endDate as Date)), [])
     
     const backupTrip = useCallback(async () => {
         
