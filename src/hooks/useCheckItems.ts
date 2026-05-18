@@ -1,29 +1,23 @@
 import { useState, useMemo, useCallback, SetStateAction } from 'react'
 import { ID, ItemWithId } from '@/types/data'
 
+export type TCheckItems = {
+    checked: ID[]
+    allChecked: boolean
+    someChecked: boolean
+    anyChecked: boolean
+    hasChecked: (idOrIds: (ID | ID[])) => (boolean)
+    setChecked: (idOrIds: (ID | ID[]), override?: boolean) => void
+    updateChecked: (fn: (ID[] | ((prev: ID[]) => ID[]))) => void
+    toggleChecked: (idOrIds: (ID | ID[])) => void
+    toggleAllChecked: (forceAll?: any) => void
+}
+
 /**
  * Custom hook to manage the state of checkable items, providing utilities
  * for handling checked items in a list.
- *
- * @param {Array} items - Array of items, each item should have a unique identifier (e.g., an `id`).
- * @returns {Object} - Returns an object containing:
- * @property {Array} checked - List of currently checked item identifiers.
- * @property {boolean} allChecked - Boolean indicating if all items are checked.
- * @property {boolean} someChecked - Boolean indicating if some but not all items are checked.
- * @property {boolean} anyChecked - Boolean indicating if any items are checked (either all or some).
- * @property {function} hasChecked - Function to check if a specific item or list of items are checked.
- * @property {function} setChecked - Function to manually set checked items. Accepts a single item ID
- *                      or an array of IDs. When setting multiple items, it can either override
- *                      the existing checked state or add to it.
- * @property {function} updateChecked - Convenience method to update the `checked` list by passing the
- *                      current `checked` state to an update function.
- * @property {function} toggleChecked - Function to toggle the checked state of a specific item or list of items.
- * @property {function} toggleAllChecked - Function to toggle the checked state of all items. If all items are
- *                      checked, it will uncheck them; if none or some are checked, it will check all.
- *                      Accepts an optional boolean `forceAll` to explicitly set the state to all checked
- *                      or none checked.
  */
-const useCheckItems = (items: ItemWithId[]) => {
+const useCheckItems = (items: ItemWithId[]): TCheckItems => {
     
     const [checked, setChecked] = useState<ID[]>([])
     

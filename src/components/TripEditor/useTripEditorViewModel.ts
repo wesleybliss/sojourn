@@ -95,7 +95,7 @@ export type TTripEditorViewModel = {
     // Loading/error states
     isLoading: boolean
     isFetching: boolean
-    error: unknown
+    error: Error
 }
 
 const useTripEditorViewModel = (): TTripEditorViewModel => {

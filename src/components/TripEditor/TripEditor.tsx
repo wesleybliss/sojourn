@@ -13,10 +13,15 @@ import {
 } from '@/components/ui/collapsible'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import CollapsibleTree from '@/components/CollapsibleTree'
+import { TTripEditorViewModel } from '@/components/TripEditor/useTripEditorViewModel'
+
+interface TripEditorProps {
+    vm: TTripEditorViewModel
+}
 
 const TripEditor = ({
     vm,
-} = {}) => {
+}: TripEditorProps) => {
     
     const [isDebugOpen, setIsDebugOpen] = useState(false)
     
@@ -51,7 +56,7 @@ const TripEditor = ({
                             getSegmentCompleted={vm.getSegmentCompleted} />
                     )}
                 </div>
-                {vm.showMap && <MapLibreMap latLng={console.log('latln', vm.focusedLatLng)||vm.focusedLatLng} />}
+                {vm.showMap && <MapLibreMap latLng={[vm.focusedLatLng?.lat || 0, vm.focusedLatLng?.lng || 0]} />}
             </div>
             
             {vm.trip && vm.segments?.length > 0 && (
@@ -79,7 +84,7 @@ const TripEditor = ({
                 open={isDebugOpen}
                 onOpenChange={setIsDebugOpen}
                 className="w-full space-y-2">
-                <div className="w-[350px] flex items-center justify-between space-x-4 px-4">
+                <div className="w-87.5 flex items-center justify-between space-x-4 px-4">
                     <CollapsibleTrigger asChild>
                         <Button variant="ghost" size="sm">
                             <h4 className="text-sm font-semibold">Trip Debug</h4>

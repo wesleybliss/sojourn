@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { ChangeEvent, useCallback } from 'react'
 import useCheckItems from '@/hooks/useCheckItems'
 import { Checkbox } from '@/components/ui/checkbox'
 import EditableTextField from '@/components/EditableTextField'
@@ -30,6 +30,17 @@ import {
 } from 'lucide-react'
 import { cn } from '@/utils'
 import dayjs from 'dayjs'
+import { ID, Segment } from '@/types'
+
+interface SegmentsTableProps {
+    segments: Segment[]
+    updateSegment: (id: ID, field: keyof Segment) => (value: string) => void
+    deleteSegments: (ids: ID[]) => Promise<void>
+    getTotalDaysPerSegment: (segment: Segment) => number
+    getCumulativeDaysPerSegment: (index: number) => number
+    getSegmentPlanned: (segment: Segment) => boolean
+    getSegmentCompleted: (segment: Segment) => boolean
+}
 
 const SegmentsTable = ({
     segments,
@@ -39,7 +50,7 @@ const SegmentsTable = ({
     getCumulativeDaysPerSegment,
     getSegmentPlanned,
     getSegmentCompleted,
-}) => {
+}: SegmentsTableProps) => {
     
     const {
         checked,
@@ -51,7 +62,7 @@ const SegmentsTable = ({
         toggleAllChecked,
     } = useCheckItems(segments)
     
-    const updateCheckedSegments = useCallback(field => async e => {
+    const updateCheckedSegments = useCallback((field: keyof Segment) => async e => {
         
         if (!anyChecked)
             return console.warn('updateCheckedSegments called, but no segments checked')
@@ -69,22 +80,26 @@ const SegmentsTable = ({
                     <TableHead>
                         <Checkbox
                             checked={allChecked ? true : someChecked ? 'indeterminate' : false}
-                            onCheckedChange={toggleAllChecked} />
+                            onCheckedChange={checked => toggleAllChecked(checked === true)} />
                     </TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead>Start Date</TableHead>
                     <TableHead>End Date</TableHead>
                     <TableHead>
                         <div
-                            className="mx-auto size-6 rounded-full bg-conic/decreasing 
+                            className="mx-auto size-6 rounded-full bg-conic/decreasing
                                 from-violet-700 via-lime-300 to-violet-700 opacity-60"
                             title="Segment Color" />
                     </TableHead>
                     <TableHead>
-                        <CalendarCheck className="mx-auto" title="Segment Days"/>
+                        <div title="Segment Days">
+                            <CalendarCheck className="mx-auto" />
+                        </div>
                     </TableHead>
                     <TableHead>
-                        <CalendarRange className="mx-auto" title="Cumulative Days" />
+                        <div title="Cumulative Days">
+                            <CalendarRange className="mx-auto" />
+                        </div>
                     </TableHead>
                     <TableHead>
                         <div title="Flight Booked">
