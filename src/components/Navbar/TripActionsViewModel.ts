@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useState, ChangeEvent } from 'react'
 import { useCallback } from 'react'
 import { toast } from 'sonner'
 import { useUpdateTrip } from '@/lib/queries/trip'
@@ -18,7 +18,7 @@ export type TTripActionsViewModel = {
     setRenameTripDialogOpen: Dispatch<SetStateAction<boolean>>
     
     // React Query
-    updateTrip: (field: any) => (e: any) => Promise<void>
+    updateTrip: (field: keyof Trip) => (e: string | ChangeEvent<HTMLInputElement>) => Promise<void>
     backupTrip: () => Promise<void>
 }
 
@@ -32,11 +32,11 @@ const TripActionsViewModel = (currentTrip: Trip | undefined): TTripActionsViewMo
     const updateTripMutation = useUpdateTrip()
     const backupMutation = useBackupTrips()
     
-    const updateTrip = useCallback((field: string) => async e => {
+    const updateTrip = useCallback((field: keyof Trip) => async (e: string | ChangeEvent<HTMLInputElement>) => {
         
         if (!currentTrip) return
         
-        const value = (e?.target?.value ?? e).trim()
+        const value = ((e as ChangeEvent<HTMLInputElement>)?.target?.value ?? e).trim()
         
         if (!value?.length) return console.warn('updateTrip empty name')
         

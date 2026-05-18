@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback } from 'react'
+import { useCallback } from 'react'
 import useCheckItems from '@/hooks/useCheckItems'
 import { Checkbox } from '@/components/ui/checkbox'
 import EditableTextField from '@/components/EditableTextField'
@@ -15,7 +15,7 @@ import {
 import { Switch } from '@/components/ui/switch'
 import DatePicker from '@/components/DatePicker'
 import TailwindPrimaryColorPicker from '@/components/TailwindPrimaryColorPicker'
-import ConfirmDeleteSegmentsDialog from 'src/components/ConfirmDeleteSegmentsDialog'
+import ConfirmDeleteSegmentsDialog from '@/components/ConfirmDeleteSegmentsDialog'
 import {
     CalendarCheck,
     CalendarRange,
@@ -34,7 +34,7 @@ import { ID, Segment } from '@/types'
 
 interface SegmentsTableProps {
     segments: Segment[]
-    updateSegment: (id: ID, field: keyof Segment) => (value: string) => void
+    updateSegment: (id: ID, field: keyof Segment) => (value: string | boolean | Date | undefined) => void
     deleteSegments: (ids: ID[]) => Promise<void>
     getTotalDaysPerSegment: (segment: Segment) => number
     getCumulativeDaysPerSegment: (index: number) => number
@@ -62,7 +62,7 @@ const SegmentsTable = ({
         toggleAllChecked,
     } = useCheckItems(segments)
     
-    const updateCheckedSegments = useCallback((field: keyof Segment) => async e => {
+    const updateCheckedSegments = useCallback((field: keyof Segment) => async (e: boolean) => {
         
         if (!anyChecked)
             return console.warn('updateCheckedSegments called, but no segments checked')
@@ -160,7 +160,7 @@ const SegmentsTable = ({
                     <TableRow
                         key={it.id}
                         data-id={it?.id}
-                        className={dayjs(it.startDate).isAfter(dayjs(it.endDate)) ? 'border border-red-500' : ''}>
+                        className={dayjs(it.startDate as Date).isAfter(dayjs(it.endDate as Date)) ? 'border border-red-500' : ''}>
                         
                         <TableCell className="w-5">
                             <Checkbox
@@ -181,7 +181,7 @@ const SegmentsTable = ({
                                 buttonClassName="!p-0 border-b border-secondary rounded-none
                                     hover:no-underline hover:border-primary"
                                 buttonVariant="link"
-                                date={it.startDate || Date.now()}
+                                date={it.startDate as Date || Date.now()}
                                 onSelect={updateSegment(it.id, 'startDate')} />
                         </TableCell>
                         
@@ -190,7 +190,7 @@ const SegmentsTable = ({
                                 buttonClassName="!p-0 border-b border-secondary rounded-none
                                     hover:no-underline hover:border-primary"
                                 buttonVariant="link"
-                                date={it.endDate || Date.now()}
+                                date={it.endDate as Date || Date.now()}
                                 onSelect={updateSegment(it.id, 'endDate')} />
                         </TableCell>
                         
