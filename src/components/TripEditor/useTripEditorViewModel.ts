@@ -22,6 +22,7 @@ import { Plan, Segment, Trip } from '@/types/database'
 import { Coords, ID } from '@/types/data'
 import { UseMutationResult } from '@tanstack/react-query'
 import { ShengenData } from '@/types'
+import { ListViewMode } from '@/types/ui'
 
 const matchesDate = (date: Date | string, query: string) => {
     
@@ -50,8 +51,8 @@ export type TTripEditorViewModel = {
     setFocusedLatLng: Dispatch<SetStateAction<Coords | undefined>>
     segmentsFilterQuery: string
     setSegmentsFilterQuery: Dispatch<SetStateAction<string>>
-    segmentsListViewMode: string // @todo make this a type
-    setSegmentsListViewMode: Dispatch<SetStateAction<string>>
+    segmentsListViewMode: ListViewMode
+    setSegmentsListViewMode: Dispatch<SetStateAction<ListViewMode>>
     segmentsListShowCompleted: boolean
     setSegmentsListShowCompleted: Dispatch<SetStateAction<boolean>>
     
@@ -192,7 +193,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         
         // Filter by completion status (hide past segments unless showCompleted is true)
         if (!segmentsListShowCompleted)
-            result = result.filter(it => dayjs(it.endDate).isAfter(dayjs()))
+            result = result.filter((it: Segment) => dayjs(it.endDate).isAfter(dayjs()))
         
         // Filter by search query
         if (segmentsFilterQuery?.length) {
