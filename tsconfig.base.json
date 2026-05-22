@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "composite": true,
+        "noEmit": true,
+        "allowJs": false,
+        "skipLibCheck": true,
+        "strict": true,
+        "allowSyntheticDefaultImports": true,
+        "emitDeclarationOnly": true,
+        "esModuleInterop": true,
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "incremental": true,
+        "outDir": "dist"
+    },
+    "exclude": [
+        "node_modules",
+        "task/**",
+        "eslint.config",
+        "dist"
+    ]
+}

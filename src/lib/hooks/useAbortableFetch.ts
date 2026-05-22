@@ -1,7 +1,11 @@
 import { useRef, useEffect } from 'react'
 import { setAbortableTimeout } from '@/utils'
 
-const useAbortableFetch = (fnAsync: Function, dependencies: unknown[] = [], delayMillis = 400) => {
+const useAbortableFetch = (
+    fnAsync: () => void | Promise<void>,
+    dependencies: unknown[] = [],
+    delayMillis = 400,
+) => {
     
     const refAbortController = useRef(new AbortController())
     

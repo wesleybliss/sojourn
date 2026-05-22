@@ -107,7 +107,7 @@ export const restoreTrip1 = async (
     await Promise.all(segments.map(async it => {
         await segmentsRepo.create(it)
         store.importTripProgressValue.setValue(
-            store.importTripProgressValue.getValue() + 1)
+            (store.importTripProgressValue.getValue() || 0) + 1)
     }))
     
 }
@@ -236,7 +236,7 @@ export const restoreTrip = async (
     await Promise.all(segments.map(async it => {
         await segmentsRepo.create(it as RequiredPartialSegment)
         store.importTripProgressValue.setValue(
-            store.importTripProgressValue.getValue() + 1)
+            (store.importTripProgressValue.getValue() || 0) + 1)
     }))
     
 }

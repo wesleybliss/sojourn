@@ -61,8 +61,8 @@ export const shengenData = createSelector<ShengenData | null>({
             return null
         
         const { startDate, endDate, totalDays } = calculateTotalDays(
-            shengenSegments[0].startDate,
-            shengenSegments[shengenSegments.length - 1].endDate)
+            shengenSegments[0].startDate as Date,
+            shengenSegments[shengenSegments.length - 1].endDate as Date)
         
         const remainingDays = 89 - totalDays
         

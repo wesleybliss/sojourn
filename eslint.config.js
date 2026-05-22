@@ -121,7 +121,7 @@ export default [
         ],
     },
     {
-        files: ['**/*.{ts,tsx,js,jsx,mjs,cjs}'],
+        files: ['**/*.{ts,tsx,js,jsx,mjs,cjs,json}'],
         linterOptions: {
             reportUnusedDisableDirectives: true,
         },

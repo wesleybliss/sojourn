@@ -26,7 +26,7 @@ export const useBackupTrips = () => {
             })
             
             if (!res.ok) {
-                const json = await reson().catch(() => null)
+                const json = await res.json().catch(() => null)
                 
                 throw new Error(json?.error || 'Failed to create backup')
             }

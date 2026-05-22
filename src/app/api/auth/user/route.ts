@@ -12,7 +12,9 @@ import HttpError from '@/errors/HttpError'
  * Called by AuthProvider to fetch user state after Firebase auth.
  */
 export async function GET(request: NextRequest) {
+    
     try {
+        
         const { user } = await authorize(request)
         
         return NextResponse.json({
@@ -26,20 +28,23 @@ export async function GET(request: NextRequest) {
             },
             needsInviteCode: !user.enabled,
         })
+        
     } catch (e: unknown) {
-        if (e instanceof HttpError) {
+        
+        if (e instanceof HttpError)
             return NextResponse.json(
                 { success: false, error: (e as Error).message },
                 { status: e.status },
             )
-        }
         
         console.error('Error in GET /api/auth/user:', e)
         return NextResponse.json(
             { success: false, error: 'Internal Server Error' },
             { status: 500 },
         )
+        
     }
+    
 }
 
 /**
@@ -51,29 +56,28 @@ export async function GET(request: NextRequest) {
  * If code is correct and user is not yet enabled, sets enabled=true.
  */
 export async function POST(request: NextRequest) {
+    
     try {
+        
         const { user } = await authorize(request)
         
         const body = await request.json()
         const { inviteCode } = body
         
-        if (!inviteCode) {
+        if (!inviteCode)
             throw new HttpError(400, 'Invite code is required')
-        }
         
         // Check if invite code matches
         const correctCode = process.env.INVITE_CODE
         
-        if (!correctCode) {
+        if (!correctCode)
             throw new HttpError(500, 'Invite code system not configured')
-        }
         
-        if (inviteCode !== correctCode) {
+        if (inviteCode !== correctCode)
             throw new HttpError(400, 'Invalid invite code')
-        }
         
         // User already enabled - no action needed
-        if (user.enabled) {
+        if (user.enabled)
             return NextResponse.json({
                 success: true,
                 message: 'User already enabled',
@@ -86,7 +90,6 @@ export async function POST(request: NextRequest) {
                 },
                 needsInviteCode: false,
             })
-        }
         
         // Enable the user
         const [updatedUser] = await db
@@ -107,18 +110,21 @@ export async function POST(request: NextRequest) {
             },
             needsInviteCode: false,
         })
+        
     } catch (e: unknown) {
-        if (e instanceof HttpError) {
+        
+        if (e instanceof HttpError)
             return NextResponse.json(
                 { success: false, error: (e as Error).message },
                 { status: e.status },
             )
-        }
         
         console.error('Error in POST /api/auth/user:', e)
         return NextResponse.json(
             { success: false, error: 'Internal Server Error' },
             { status: 500 },
         )
+        
     }
+    
 }

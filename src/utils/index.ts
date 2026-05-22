@@ -47,8 +47,8 @@ export const gridColumnsMap = {
     12: 'grid-cols-12',
 }
 
-export function cn(...inputs: string[]) {
-    return twMerge(clsx(inputs))
+export function cn(...inputs: unknown[]) {
+    return twMerge(clsx(inputs.filter(it => it !== undefined)))
 }
 
 export const noop = () => {
@@ -69,7 +69,7 @@ export const generateSlug = (title: string) => title
  * Related but overkill for our use case
  */
 export const createSyntheticDownload = (
-    data: Blob,
+    data: Blob | string,
     type: string,
     fileName: string,
 ) => {
@@ -113,7 +113,7 @@ export const getRandomUnsplashImageUrl = async (topic: string) => {
             },
         })
         
-        const data = await reson()
+        const data = await res.json()
         
         return data.urls.regular
         
@@ -219,12 +219,12 @@ export const geocodeGeoapify = async (locationName: string) => {
 export const geocode = geocodeGeoapify
 
 export const calculateTotalDays = (
-    initialStartDate: Date,
-    initialEndDate: Date,
+    initialStartDate: Date | unknown,
+    initialEndDate: Date | unknown,
 ) => {
     
-    const startDate =  dayjs(initialStartDate)
-    const endDate = dayjs(initialEndDate)
+    const startDate =  dayjs(initialStartDate as Date)
+    const endDate = dayjs(initialEndDate as Date)
     const totalDays = endDate.diff(startDate, 'day')
     
     return {
@@ -350,8 +350,8 @@ export const copyToClipboard = async (text: string) => {
     
 }
 
-export const sortArrByUpdatedAt = (
-    arr: Array<{ updatedAt: Date }>,
+export const sortArrByUpdatedAt = <T extends Record<string, unknown>,>(
+    arr: Array<T & { updatedAt: Date }>,
     ascending: boolean = false,
 ) => [...arr].sort((a, b) => ascending
     ? dayjs(a.updatedAt).valueOf() - dayjs(b.updatedAt).valueOf()

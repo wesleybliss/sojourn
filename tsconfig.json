@@ -1,25 +1,14 @@
 {
+    "extends": "./tsconfig.base.json",
     "compilerOptions": {
         "tsBuildInfoFile": "./node_modules/.cache/tsbuildinfo/web.tsbuildinfo",
         "declarationDir": "./node_modules/.cache/dts/web",
-        "composite": true,
         "lib": [
             "ES2023",
             "DOM"
         ],
-        "allowJs": false,
         "target": "es2017",
-        "skipLibCheck": true,
-        "strict": true,
-        "allowSyntheticDefaultImports": true,
-        "emitDeclarationOnly": true,
-        "esModuleInterop": true,
-        "module": "esnext",
-        "moduleResolution": "bundler",
-        "resolveJsonModule": true,
-        "isolatedModules": true,
         "jsx": "react-jsx",
-        "incremental": true,
         "types": [
             "vite/client"
         ],
@@ -27,26 +16,17 @@
             "@/*": [
                 "./src/*"
             ]
-        },
-        "noEmit": true,
-        "plugins": [
-            {
-                "name": "next"
-            }
-        ]
+        }
     },
+    "plugins": [
+        {
+            "name": "next"
+        }
+    ],
     "include": [
         "**/*.ts",
         "**/*.tsx",
-        "**/*",
-        "**/*x",
         ".next/types/**/*.ts",
         ".next/dev/types/**/*.ts"
-    ],
-    "exclude": [
-        "node_modules",
-        "task/**",
-        "eslint.config",
-        "dist"
     ]
 }

@@ -41,6 +41,8 @@ const Gravatar = ({
     
     useAbortableFetch(() => {
         
+        if (!url?.length) return
+        
         setLoading(true)
         
         loadImageAsync(url)

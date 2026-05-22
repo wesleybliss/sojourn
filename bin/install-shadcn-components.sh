@@ -85,7 +85,7 @@ for ((i=0; i<${#COMPONENTS[@]}; i+=BATCH_SIZE)); do
     fi
 
     echo ""
-    
+
 done
 
 # Print summary

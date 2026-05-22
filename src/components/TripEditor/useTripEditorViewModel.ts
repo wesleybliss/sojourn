@@ -401,7 +401,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         
         if (!planId && tripId && plans?.length && !hasRedirectedToPlan) {
             
-            const latestPlan = sortArrByUpdatedAt(plans)?.[0] || plans[0]
+            const latestPlan = sortArrByUpdatedAt<Plan>(plans)?.[0] || plans[0]
             
             setHasRedirectedToPlan(true)
             router.replace(`/trips/${tripId}/plans/${latestPlan.id}`)
