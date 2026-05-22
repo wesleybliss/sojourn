@@ -1,15 +1,38 @@
-import { useState } from 'react'
+import { Dispatch, SetStateAction, SyntheticEvent, useState } from 'react'
 import { parseFormData } from '@/utils'
 import { toBase64 } from '@/lib/storage/vercel-blob'
 import { usePlacesQuery } from '@/lib/queries/places'
-import { useQueryClient } from '@tanstack/react-query'
+import { QueryObserverResult, RefetchOptions, useQueryClient } from '@tanstack/react-query'
 import { fetchJSON } from '@/lib/api'
+import { Place } from '@/types'
 
-const useDebugViewModel = () => {
+export type TDebugViewModel = {
+    // State
+    isLoading: boolean
+    setIsLoading: Dispatch<SetStateAction<boolean>>
+    result: Record<string, unknown> | null
+    setResult: Dispatch<SetStateAction<Record<string, unknown> | null>>
+    sampleImageBlobUrl: string | null
+    setSampleImageBlobUrl: Dispatch<SetStateAction<string | null>>
     
-    const [isLoading, setIsLoading] = useState(false)
-    const [result, setResult] = useState(null)
-    const [sampleImageBlobUrl, setSampleImageBlobUrl] = useState(null)
+    // Methods
+    createNewPlace: (name: string) => Promise<void>
+    handleCreateNewPlaceSubmit: (e: SyntheticEvent<HTMLFormElement, SubmitEvent>) => Promise<void>
+    uploadSampleImageBlob: (e: SyntheticEvent<HTMLFormElement, SubmitEvent>) => Promise<void>
+    migrateTripsToPlans: () => Promise<void>
+    
+    // Queries
+    places: Place[]
+    placesError: Error | null
+    placesLoading: boolean
+    placesRefetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<any, Error>>
+}
+
+const useDebugViewModel = (): TDebugViewModel => {
+    
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [result, setResult] = useState<Record<string, unknown> | null>(null)
+    const [sampleImageBlobUrl, setSampleImageBlobUrl] = useState<string | null>(null)
     
     const queryClient = useQueryClient()
     
@@ -22,7 +45,7 @@ const useDebugViewModel = () => {
     
     //region Places
     
-    const createNewPlace = async name => {
+    const createNewPlace = async (name: string) => {
         
         try {
             
@@ -35,7 +58,7 @@ const useDebugViewModel = () => {
             
             console.log('createNewPlace ok', data)
             
-            await queryClient.invalidateQueries(['places'])
+            await queryClient.invalidateQueries({ queryKey: ['places'] })
             
         } catch (e) {
             
@@ -45,13 +68,17 @@ const useDebugViewModel = () => {
         
     }
     
-    const handleCreateNewPlaceSubmit = async e => {
+    const handleCreateNewPlaceSubmit = async (e: SyntheticEvent<HTMLFormElement, SubmitEvent>) => {
         
         try {
             
             e.preventDefault()
             
-            const { name } = parseFormData(e, ['name'])
+            const parsed = parseFormData(e, ['name'])
+            const name = parsed.name as string | undefined
+            
+            if (!name?.length)
+                throw new Error('name cannot be empty')
             
             return await createNewPlace(name)
             
@@ -67,14 +94,15 @@ const useDebugViewModel = () => {
     
     //region Sample Image Blob
     
-    const uploadSampleImageBlob = async e => {
+    const uploadSampleImageBlob = async (e: SyntheticEvent<HTMLFormElement, SubmitEvent>) => {
         
         try {
             
             e.preventDefault()
             setSampleImageBlobUrl(null)
             
-            const { file } = parseFormData(e, ['file'])
+            const parsed = parseFormData(e, ['file'])
+            const file = parsed.file as File | null
             
             if (!file)
                 return console.error('No file selected')
@@ -138,7 +166,7 @@ const useDebugViewModel = () => {
             console.error('Migration error:', e)
             setResult({
                 success: false,
-                error: e.message,
+                error: (e as Error).message,
             })
             
         } finally {

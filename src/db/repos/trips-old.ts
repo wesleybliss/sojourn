@@ -1,8 +1,9 @@
-import db from '@/db/index'
+import db from '@/db'
 import * as schemas from '@/db/schema'
-import { eq, desc, asc } from 'drizzle-orm'
+import { eq, desc, asc, inArray } from 'drizzle-orm'
+import { ID, PlanInsert, Segment, SegmentInsert, TripInsert } from '@/types'
 
-const normalizeDateValue = v => {
+const normalizeDateValue = (v: Date | string | number | null) => {
     if (!v) return null
     if (typeof v === 'string') return v
     if (v instanceof Date) return v.getTime()
@@ -18,12 +19,10 @@ const normalizeDateValue = v => {
 // Get all trips
 export const getAllTrips = async () => {
     try {
-        const trips = await db
+        return await db
             .select()
             .from(schemas.trips)
             .orderBy(desc(schemas.trips.id))
-        
-        return trips
     } catch (error) {
         console.error('Error fetching trips:', error)
         throw new Error('Failed to fetch trips')
@@ -31,7 +30,7 @@ export const getAllTrips = async () => {
 }
 
 // Get trips for a specific user
-export const getTripsByUserId = async userId => {
+export const getTripsByUserId = async (userId: ID) => {
     try {
         const trips = await db
             .select({ trip: schemas.trips })
@@ -51,7 +50,7 @@ export const getTripsByUserId = async userId => {
 }
 
 // Get trips with segment count for a specific user
-export const getTripsWithSegmentCountByUserId = async userId => {
+export const getTripsWithSegmentCountByUserId = async (userId: ID) => {
     try {
         const trips = await getTripsByUserId(userId)
         
@@ -74,7 +73,7 @@ export const getTripsWithSegmentCountByUserId = async userId => {
 }
 
 // Get a single trip by ID
-export const getTripById = async id => {
+export const getTripById = async (id: ID) => {
     try {
         const [trip] = await db
             .select()
@@ -89,7 +88,7 @@ export const getTripById = async id => {
 }
 
 // Get segments for a specific trip
-export const getSegmentsByTripId = async tripId => {
+export const getSegmentsByTripId = async (tripId: ID) => {
     try {
         const segments = await db
             .select()
@@ -97,10 +96,10 @@ export const getSegmentsByTripId = async tripId => {
             .where(eq(schemas.segments.tripId, tripId))
             .orderBy(asc(schemas.segments.startDate))
         
-        return segments.map(s => ({
+        return segments.map((s: Segment) => ({
             ...s,
-            startDate: normalizeDateValue(s.startDate),
-            endDate: normalizeDateValue(s.endDate),
+            startDate: normalizeDateValue(s.startDate as Date),
+            endDate: normalizeDateValue(s.endDate as Date),
         }))
     } catch (error) {
         console.error(`Error fetching segments for trip ${tripId}:`, error)
@@ -109,7 +108,7 @@ export const getSegmentsByTripId = async tripId => {
 }
 
 // Get segments for a specific plan
-export const getSegmentsByPlanId = async planId => {
+export const getSegmentsByPlanId = async (planId: ID) => {
     try {
         const segments = await db
             .select()
@@ -119,8 +118,8 @@ export const getSegmentsByPlanId = async planId => {
         
         return segments.map(s => ({
             ...s,
-            startDate: normalizeDateValue(s.startDate),
-            endDate: normalizeDateValue(s.endDate),
+            startDate: normalizeDateValue(s.startDate as Date),
+            endDate: normalizeDateValue(s.endDate as Date),
         }))
     } catch (error) {
         console.error(`Error fetching segments for plan ${planId}:`, error)
@@ -129,7 +128,7 @@ export const getSegmentsByPlanId = async planId => {
 }
 
 // Get plans for a specific trip
-export const getPlansByTripId = async tripId => {
+export const getPlansByTripId = async (tripId: ID) => {
     try {
         const plansWithSegments = await db
             .select({
@@ -155,8 +154,8 @@ export const getPlansByTripId = async tripId => {
             if (segment) {
                 plansMap.get(plan.id).segments.push({
                     ...segment,
-                    startDate: normalizeDateValue(segment.startDate),
-                    endDate: normalizeDateValue(segment.endDate),
+                    startDate: normalizeDateValue(segment.startDate as Date),
+                    endDate: normalizeDateValue(segment.endDate as Date),
                 })
             }
         })
@@ -169,7 +168,7 @@ export const getPlansByTripId = async tripId => {
 }
 
 // Get a single plan by ID
-export const getPlanById = async id => {
+export const getPlanById = async (id: ID) => {
     try {
         const [plan] = await db
             .select()
@@ -184,7 +183,7 @@ export const getPlanById = async id => {
 }
 
 // Update a plan
-export const updatePlan = async (id, planData) => {
+export const updatePlan = async (id: ID, planData: Partial<PlanInsert>) => {
     try {
         const [updatedPlan] = await db
             .update(schemas.plans)
@@ -203,7 +202,7 @@ export const updatePlan = async (id, planData) => {
 }
 
 // Delete a plan
-export const deletePlan = async id => {
+export const deletePlan = async (id: ID) => {
     try {
         await db
             .delete(schemas.plans)
@@ -217,7 +216,7 @@ export const deletePlan = async id => {
 }
 
 // Update a segment
-export const updateSegment = async (id, segmentData) => {
+export const updateSegment = async (id: ID, segmentData: Partial<SegmentInsert>) => {
     try {
         const [updatedSegment] = await db
             .update(schemas.segments)
@@ -244,11 +243,11 @@ export const updateSegment = async (id, segmentData) => {
 }
 
 // Delete segments
-export const deleteSegments = async ids => {
+export const deleteSegments = async (ids: ID[]) => {
     try {
         await db
             .delete(schemas.segments)
-            .where(schemas.segments.id.in(ids))
+            .where(inArray(schemas.segments.id, ids))
         
         return { success: true }
     } catch (error) {
@@ -258,7 +257,10 @@ export const deleteSegments = async ids => {
 }
 
 // Create a new trip
-export const createTrip = async (tripData, tx = null) => {
+export const createTrip = async (
+    tripData: TripInsert,
+    tx: typeof db | null = null,
+) => {
     try {
         const [newTrip] = await (tx || db)
             .insert(schemas.trips)
@@ -266,8 +268,8 @@ export const createTrip = async (tripData, tx = null) => {
                 userId: tripData.userId,
                 name: tripData.name,
                 description: tripData.description,
-                startDate: tripData.startDate,
-                endDate: tripData.endDate,
+                /*startDate: tripData.startDate,
+                endDate: tripData.endDate,*/
                 coverImageUrl: tripData.coverImageUrl,
             })
             .returning()
@@ -280,15 +282,15 @@ export const createTrip = async (tripData, tx = null) => {
 }
 
 // Update a trip
-export const updateTrip = async (id, tripData) => {
+export const updateTrip = async (id: ID, tripData: Partial<TripInsert>) => {
     try {
         const [updatedTrip] = await db
             .update(schemas.trips)
             .set({
                 name: tripData.name,
                 description: tripData.description,
-                startDate: tripData.startDate,
-                endDate: tripData.endDate,
+                /*startDate: tripData.startDate,
+                endDate: tripData.endDate,*/
                 coverImageUrl: tripData.coverImageUrl,
             })
             .where(eq(schemas.trips.id, id))
@@ -302,7 +304,7 @@ export const updateTrip = async (id, tripData) => {
 }
 
 // Delete a trip
-export const deleteTrip = async id => {
+export const deleteTrip = async (id: ID) => {
     try {
         await db
             .delete(schemas.trips)
@@ -316,7 +318,7 @@ export const deleteTrip = async id => {
 }
 
 // Get trip with all related data (segments and plans)
-export const getTripWithDetails = async id => {
+export const getTripWithDetails = async (id: ID) => {
     try {
         const trip = await getTripById(id)
         
@@ -367,8 +369,8 @@ export const getAllSegments = async () => {
         
         return segments.map(s => ({
             ...s,
-            startDate: normalizeDateValue(s.startDate),
-            endDate: normalizeDateValue(s.endDate),
+            startDate: normalizeDateValue(s.startDate as Date),
+            endDate: normalizeDateValue(s.endDate as Date),
         }))
     } catch (error) {
         console.error('Error fetching all segments:', error)

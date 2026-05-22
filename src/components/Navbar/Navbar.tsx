@@ -4,8 +4,8 @@ import useNavbarViewModel from './NavbarViewModel'
 import { cn } from '@/utils'
 import ThemeToggle from '@/components/ThemeToggle'
 import AccountMenu from '@/components/AccountMenu.jsx'
-import CurrentPlanSelector from '@/components/CurrentPlanSelector.jsx'
-import TripActionsDropdown from '@/components/Navbar/TripActionsDropdown.jsx'
+import CurrentPlanSelector from '@/components/CurrentPlanSelector'
+import TripActionsDropdown from '@/components/Navbar/TripActionsDropdown'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 
@@ -76,7 +76,7 @@ const Navbar = () => {
                         plan={vm.currentPlan} />
                 )}
                 <ThemeToggle variant="ghost" />
-                {vm.user && <AccountMenu user={vm.user} />}
+                {vm.user && <AccountMenu />}
             </div>
         
         </nav>

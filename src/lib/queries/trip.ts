@@ -50,7 +50,7 @@ export const useCreateTripMutation = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async tripData => {
+        mutationFn: async (tripData: Partial<TripInsert>) => {
             const { data } = await fetchJSON('/api/trips', {
                 method: 'POST',
                 body: JSON.stringify(tripData),
@@ -221,7 +221,7 @@ export const useDeleteTripMutation = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async tripId => {
+        mutationFn: async (tripId: ID) => {
             await fetchJSON(`/api/trips/${tripId}`, {
                 method: 'DELETE',
             })

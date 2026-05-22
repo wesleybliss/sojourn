@@ -6,9 +6,13 @@ const debugSidebarLinks = [
     ['Storage', '/debug/storage'],
 ]
 
+interface DebugSidebarProps {
+    className?: string
+}
+
 const DebugSidebar = ({
     className,
-}) => {
+}: DebugSidebarProps) => {
     
     return (
         

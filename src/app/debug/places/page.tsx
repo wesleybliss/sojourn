@@ -38,7 +38,7 @@ const DebugPlacesListPage = () => {
                     <div className="grid grid-cols-6 gap-2">
                         {vm.places.map(it => (
                             <div key={it.id} className="border rounded">
-                                <img src={it.coverImageUrl} width="100%" />
+                                <img src={it.coverImageUrl ?? ''} alt="Place cover image" width="100%" />
                                 <p className="w-full p-2 bg-gray-50 text-center">
                                     {it.name}
                                 </p>

@@ -1,8 +1,10 @@
 import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import bcrypt from 'bcryptjs'
 import { nanoid } from 'nanoid'
+import { ChangeEvent, SyntheticEvent } from 'react'
+import { Plan } from '@/types'
 
 export const requireKeys = (
     source: NodeJS.ProcessEnv | ImportMetaEnv | Record<string, string>,
@@ -45,7 +47,7 @@ export const gridColumnsMap = {
     12: 'grid-cols-12',
 }
 
-export function cn(...inputs) {
+export function cn(...inputs: string[]) {
     return twMerge(clsx(inputs))
 }
 
@@ -53,7 +55,7 @@ export const noop = () => {
     // NOOP
 }
 
-export const generateSlug = title => title
+export const generateSlug = (title: string) => title
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '') // Remove non-alphanumeric, non-space, non-hyphen chars
     .replace(/\s+/g, '-')         // Replace spaces with hyphens
@@ -65,13 +67,12 @@ export const generateSlug = title => title
  *
  * @see https://www.npmjs.com/package/file-saver#supported-browsers
  * Related but overkill for our use case
- *
- * @param {Blob} data - The data to download
- * @param {string} type - The MIME type of the data
- * @param {string} fileName - The name of the file to download
- * @returns {void}
  */
-export const createSyntheticDownload = (data, type, fileName) => {
+export const createSyntheticDownload = (
+    data: Blob,
+    type: string,
+    fileName: string,
+) => {
     
     // Automatically wrap data as a blob, if it's not already
     const blob = data instanceof Blob ? data : new Blob([data], { type })
@@ -88,11 +89,11 @@ export const createSyntheticDownload = (data, type, fileName) => {
     document.body.appendChild(link)
     link.click()
     
-    link.parentNode.removeChild(link)
+    link.parentNode?.removeChild(link)
     
 }
 
-export const getRandomUnsplashImageUrl = async topic => {
+export const getRandomUnsplashImageUrl = async (topic: string) => {
     
     const accessKey = process.env.UNSPLASH_ACCESS_KEY
     
@@ -126,9 +127,9 @@ export const getRandomUnsplashImageUrl = async topic => {
     
 }
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
-export const geocodeNomatim = async locationName => {
+export const geocodeNomatim = async (locationName: string) => {
     
     const endpoint = 'https://nominatim.openstreetmap.org/search'
     const format = 'json'
@@ -178,7 +179,7 @@ export const geocodeNomatim = async locationName => {
     
 }
 
-export const geocodeGeoapify = async locationName => {
+export const geocodeGeoapify = async (locationName: string) => {
     
     const base = 'https://api.geoapify.com/v1/geocode/search'
     const url = `${base}?text=${locationName}&apiKey=${process.env.NEXT_PUBLIC_GEOAPIFY_KEY}`
@@ -217,7 +218,10 @@ export const geocodeGeoapify = async locationName => {
 
 export const geocode = geocodeGeoapify
 
-export const calculateTotalDays = (initialStartDate, initialEndDate) => {
+export const calculateTotalDays = (
+    initialStartDate: Date,
+    initialEndDate: Date,
+) => {
     
     const startDate =  dayjs(initialStartDate)
     const endDate = dayjs(initialEndDate)
@@ -231,7 +235,7 @@ export const calculateTotalDays = (initialStartDate, initialEndDate) => {
     
 }
 
-export const hashPassword = async password => {
+export const hashPassword = async (password: string) => {
     
     const salt = await bcrypt.genSalt(10)
     
@@ -239,50 +243,68 @@ export const hashPassword = async password => {
     
 }
 
-export const checkPassword = async (password, hashedPassword) => {
+export const checkPassword = async (
+    password: string,
+    hashedPassword: string,
+) => {
     
     return await bcrypt.compare(password, hashedPassword)
     
 }
 
-export const omit = (obj, keys = []) => {
+export const omit = <T extends Record<string, unknown>,>(
+    obj: T,
+    keys: Array<keyof T> = [],
+) => {
     
-    return Object.keys(obj).reduce((acc, it) => {
+    return Object.keys(obj).reduce((acc: T, it: keyof T) => {
         
         if (!keys.includes(it))
             acc[it] = obj[it]
         
         return acc
         
-    }, {})
+    }, {} as T)
     
 }
 
-export const keep = (obj, keys = []) => {
+export const keep = <T extends Record<string, unknown>,>(
+    obj: T,
+    keys: Array<keyof T> = [],
+) => {
     
-    return Object.keys(obj).reduce((acc, it) => {
+    return Object.keys(obj).reduce((acc: T, it: keyof T) => {
         
         if (keys.includes(it))
             acc[it] = obj[it]
         
         return acc
         
-    }, {})
+    }, {} as T)
     
 }
 
-export const getUpdatePayload = (control, data, omitKeys = []) => {
+export const getUpdatePayload = <T extends Record<string, unknown>,>(
+    control: T,
+    data: T,
+    omitKeys: Array<keyof T> = [],
+) => {
     
     const keys = Object.keys(omit(control, omitKeys))
-    const payload = keep(data, keys)
     
-    return payload
+    // payload
+    return keep(data, keys)
     
 }
 
-export const convertStringDates = (obj, keys = []) => {
+export const convertStringDates = <
+    T extends Record<string, string | number | Date | Dayjs | null | undefined>,
+>(
+    obj: T,
+    keys: Array<keyof T> = [],
+) => {
     
-    const clone = { ...obj }
+    const clone: T = { ...obj }
     
     keys.forEach(key => {
         
@@ -291,9 +313,9 @@ export const convertStringDates = (obj, keys = []) => {
             const date = dayjs(clone[key])
             
             if (date.isValid())
-                clone[key] = date.toDate()
+                (clone as Record<keyof T, Date>)[key] = date.toDate()
             else
-                throw new Error(`convertStringDates: Invalid date format for key ${key}`)
+                throw new Error(`convertStringDates: Invalid date format for key ${key.toString()}`)
             
         }
         
@@ -303,7 +325,7 @@ export const convertStringDates = (obj, keys = []) => {
     
 }
 
-export const copyToClipboard = async text => {
+export const copyToClipboard = async (text: string) => {
     
     if (navigator?.clipboard?.writeText) {
         await navigator.clipboard.writeText(text)
@@ -328,12 +350,14 @@ export const copyToClipboard = async text => {
     
 }
 
-export const sortArrByUpdatedAt = (arr, ascending = false) => [...arr]
-    .sort((a, b) => ascending
-        ? dayjs(a.updatedAt).valueOf() - dayjs(b.updatedAt).valueOf()
-        : dayjs(b.updatedAt).valueOf() - dayjs(a.updatedAt).valueOf())
+export const sortArrByUpdatedAt = (
+    arr: Array<{ updatedAt: Date }>,
+    ascending: boolean = false,
+) => [...arr].sort((a, b) => ascending
+    ? dayjs(a.updatedAt).valueOf() - dayjs(b.updatedAt).valueOf()
+    : dayjs(b.updatedAt).valueOf() - dayjs(a.updatedAt).valueOf())
 
-export const getTripSegmentNames = async plan => {
+export const getTripSegmentNames = async (plan: Plan | null | undefined) => {
     
     if (!plan?.segments?.length)
         return alert('No segments found or no plan selected')
@@ -346,26 +370,19 @@ export const getTripSegmentNames = async plan => {
 
 /**
  * Asynchronously loads an image from a given URL.
- *
- * @async
- * @function loadImageAsync
- * @param {string} url - The URL of the image to load.
- * @param {Object} [headers={}] - An optional object containing any headers to include with the request.
- * Defaults to an empty object.
- * @param {boolean} [anonymousCors=true] - An optional boolean indicating whether to set the crossOrigin property
- * of the image to 'Anonymous'. Defaults to true.
- * @throws {Error} Will throw an error if the image fails to load.
- * @returns {Promise<{blob: Blob, dataUrl: string}>} Returns a promise that resolves to an
- * object containing the loaded image's blob and data URL.
  */
-export const loadImageAsync = async (url, headers = {}, anonymousCors = true) => {
+export const loadImageAsync = async (
+    url: string,
+    headers?: HeadersInit | undefined,
+    anonymousCors: boolean = true,
+) => {
     
     const img = new Image()
     
     if (anonymousCors)
         img.crossOrigin = 'Anonymous'
     
-    const opts = {
+    const opts: RequestInit = {
         headers,
     }
     
@@ -383,7 +400,11 @@ export const loadImageAsync = async (url, headers = {}, anonymousCors = true) =>
     
 }
 
-export const setAbortableTimeout = (callback, delayInMilliseconds, customAbortController) => {
+export const setAbortableTimeout = (
+    callback: () => void | Promise<void>,
+    delayInMilliseconds: number,
+    customAbortController: AbortController,
+) => {
     
     const controller = customAbortController || new AbortController()
     const signal = controller.signal
@@ -418,18 +439,27 @@ export const setAbortableTimeout = (callback, delayInMilliseconds, customAbortCo
 export const formatDate = (date = new Date(), customFormat = 'ddd MMM D, YYYY') =>
     dayjs(date).format(customFormat)
 
-export const parseFormData = (e, fields = []) => {
+export const parseFormData = <T extends string>(
+    e: SubmitEvent | ChangeEvent<HTMLFormElement> | SyntheticEvent<HTMLFormElement, SubmitEvent>,
+    fields: T[] = []
+): Record<T, FormDataEntryValue | string | null> => {
     
-    const formData = new FormData(e.target)
+    const form = 'nativeEvent' in e
+        ? e.currentTarget  // React events: currentTarget is HTMLFormElement
+        : e.currentTarget as HTMLFormElement // Native SubmitEvent: cast from EventTarget | null
+    
+    const formData = new FormData(form)
     
     return fields.reduce((acc, it) => ({
         ...acc,
         [it]: formData.get(it),
-    }), {})
+    }), {} as Record<T, FormDataEntryValue | string | null>)
     
 }
 
-export const abortableFetch = (url, opts = {}) => {
+
+
+export const abortableFetch = (url: string, opts: Record<string, unknown> = {}) => {
     
     const controller = new AbortController()
     
@@ -445,7 +475,7 @@ export const abortableFetch = (url, opts = {}) => {
     
 }
 
-export const fakeAbortableFetch = url => {
+export const fakeAbortableFetch = (url: string) => {
     
     const id = nanoid()
     const promise = new Promise(x => setTimeout(x, 700))

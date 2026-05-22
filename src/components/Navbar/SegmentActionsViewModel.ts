@@ -4,8 +4,12 @@ import { useAddSegment } from '@/lib/queries/trip'
 import { useQueryClient } from '@tanstack/react-query'
 import { getTripSegmentNames } from '@/utils'
 import dayjs from 'dayjs'
+import { Plan, Segment, Trip } from '@/types'
 
-const SegmentActionsViewModel = (currentTrip, currentPlan) => {
+const SegmentActionsViewModel = (
+    currentTrip: Trip | null,
+    currentPlan: Plan | null,
+) => {
     
     // React Query
     const queryClient = useQueryClient()
@@ -22,11 +26,11 @@ const SegmentActionsViewModel = (currentTrip, currentPlan) => {
         let startDate = dayjs()
         
         if (segments?.length) {
-            const lastSegment = segments.reduce((latest, seg) =>
-                dayjs(seg.endDate).isAfter(dayjs(latest.endDate)) ? seg : latest,
+            const lastSegment = segments.reduce((latest: Segment, seg: Segment) =>
+                dayjs(seg.endDate as Date).isAfter(dayjs(latest.endDate as Date)) ? seg : latest,
             )
             
-            startDate = dayjs(lastSegment.endDate)
+            startDate = dayjs(lastSegment.endDate as Date)
         }
         
         const newSegment = {

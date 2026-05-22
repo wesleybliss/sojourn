@@ -1,12 +1,16 @@
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { useCallback } from 'react'
 import { toast } from 'sonner'
 import { useDeletePlan } from '@/lib/queries/trip'
 import { useUpdatePlan, useClonePlan, useCreatePlan } from '@/lib/queries/plans'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
+import { Plan, Trip } from '@/types'
 
-const PlanActionsViewModel = (currentTrip, currentPlan) => {
+const PlanActionsViewModel = (
+    currentTrip: Trip | null,
+    currentPlan: Plan | null,
+) => {
     
     const router = useRouter()
     
@@ -20,7 +24,7 @@ const PlanActionsViewModel = (currentTrip, currentPlan) => {
     const deletePlanMutation = useDeletePlan()
     const clonePlanMutation = useClonePlan()
     
-    const createPlan = useCallback(async name => {
+    const createPlan = useCallback(async (name: string) => {
         
         if (!currentTrip) return
         
@@ -36,12 +40,14 @@ const PlanActionsViewModel = (currentTrip, currentPlan) => {
         
     }, [createPlanMutation, queryClient, currentTrip, currentPlan, router])
     
-    const updatePlan = useCallback(field => async e => {
+    const updatePlan = useCallback((field: string) => async (e: string | ChangeEvent<HTMLInputElement>) => {
         
         if (!currentTrip) return
         if (!currentPlan) return
         
-        const value = (e?.target?.value ?? e).trim()
+        const value = typeof e === 'string'
+            ? e
+            : (e?.target?.value ?? e).trim()
         
         if (!value?.length) return console.warn('updatePlan empty name')
         

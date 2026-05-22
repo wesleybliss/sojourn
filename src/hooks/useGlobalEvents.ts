@@ -1,13 +1,10 @@
 import { useCallback } from 'react'
 import { useWireValue } from '@forminator/react-wire'
 import * as store from '@/store'
-import { useLiveQuery } from 'dexie-react-hooks'
-import tripsRepo from '@/db/repos/trips'
 import segmentsRepo from '@/db/repos/segments'
 import { EVENT_CREATE_SEGMENT } from '@/constants'
 import useEventSubscription from '@/hooks/useEventSubscription'
 import { toast } from 'sonner'
-import plansRepo from '@/db/repos/plans'
 
 const useGlobalEvents = () => {
     

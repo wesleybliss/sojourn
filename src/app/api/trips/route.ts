@@ -21,7 +21,7 @@ export const GET = withAuth(async (request, { auth }) => {
         const withCounts = searchParams.get('withCounts') === 'true'
         
         const trips = withCounts
-            ? await tripsRepo.findAllByUserIdWithSegmentCount(userId)
+            ? await tripsRepo.findAllByUserIdWithSegmentCount(userId, segmentsRepo)
             : await tripsRepo.findAllByUserId(userId)
         
         return NextResponse.json({
@@ -34,7 +34,7 @@ export const GET = withAuth(async (request, { auth }) => {
         
         console.error('Error getting trips:', e)
         return NextResponse.json(
-            { success: false, error: e.message },
+            { success: false, error: (e as Error).message },
             { status: 500 },
         )
         
@@ -87,7 +87,7 @@ export const POST = withAuth(async (request, { auth }) => {
             description: '',
             // order: 1,
             startDate: dayjs().format('YYYY-MM-DD'),
-            endDate: dayjs().add('5', 'day').format('YYYY-MM-DD'),
+            endDate: dayjs().add(5, 'day').format('YYYY-MM-DD'),
             color: 'bg-blue-500',
         })
         
@@ -105,7 +105,7 @@ export const POST = withAuth(async (request, { auth }) => {
         
         console.error('Error creating trip:', e)
         return NextResponse.json(
-            { success: false, error: e.message },
+            { success: false, error: (e as Error).message },
             { status: 500 })
         
     }

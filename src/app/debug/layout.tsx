@@ -1,8 +1,13 @@
 import DebugSidebar from '@/app/debug/DebugSidebar'
+import { ReactNode } from 'react'
+
+interface DebugLayoutProps {
+    children: ReactNode
+}
 
 const DebugLayout = ({
     children,
-}) => {
+}: DebugLayoutProps) => {
     
     return (
         

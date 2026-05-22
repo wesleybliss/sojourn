@@ -31,14 +31,20 @@ import useUIOptionsViewModel from '@/components/Navbar/UIOptionsViewModel'
 import useTripActionsViewModel from '@/components/Navbar/TripActionsViewModel'
 import usePlanActionsViewModel from '@/components/Navbar/PlanActionsViewModel'
 import useSegmentActionsViewModel from '@/components/Navbar/SegmentActionsViewModel'
+import { Plan, Trip } from '@/types'
+
+interface TripActionsDropdownProps {
+    trip: Trip | null
+    plan: Plan | null
+}
 
 const TripActionsDropdown = ({
     trip,
     plan,
-} = {}) => {
+}: TripActionsDropdownProps) => {
     
     const uiOptionsViewModel = useUIOptionsViewModel()
-    const tripActionsViewModel = useTripActionsViewModel(trip, plan)
+    const tripActionsViewModel = useTripActionsViewModel(trip)
     const planActionsViewModel = usePlanActionsViewModel(trip, plan)
     const segmentActionsViewModel = useSegmentActionsViewModel(trip, plan)
     
@@ -117,14 +123,12 @@ const TripActionsDropdown = ({
                     </DropdownMenuItem>*/}
                     <DropdownMenuCheckboxItem
                         checked={uiOptionsViewModel.cascadeEnabled}
-                        onCheckedChange={uiOptionsViewModel.setCascadeEnabled}
-                        alignCheckboxRight>
+                        onCheckedChange={uiOptionsViewModel.setCascadeEnabled}>
                         <ListEnd className="text-teal-500" /> Cascade
                     </DropdownMenuCheckboxItem>
                     <DropdownMenuCheckboxItem
                         checked={uiOptionsViewModel.showMap}
-                        onCheckedChange={uiOptionsViewModel.setShowMap}
-                        alignCheckboxRight>
+                        onCheckedChange={uiOptionsViewModel.setShowMap}>
                         <Map className="text-amber-500" /> Show Map
                     </DropdownMenuCheckboxItem>
                 </DropdownMenuGroup>
@@ -171,7 +175,7 @@ const TripActionsDropdown = ({
             description="Update the plan name."
             inputFieldLabel="New Plan Name"
             initialValue={plan?.name || ''}
-            onSubmit={planActionsViewModel.updatePlan('name')} />
+            onSubmit={e => planActionsViewModel.updatePlan('name')(e)} />
     
     </>)
     

@@ -11,7 +11,7 @@ export type TTripActionsViewModel = {
     queryClient: QueryClient
     
     // State
-    currentTrip: Trip | undefined
+    currentTrip: Trip | null
     newTripName: string
     setNewTripName: Dispatch<SetStateAction<string>>
     renameTripDialogOpen: boolean
@@ -22,7 +22,7 @@ export type TTripActionsViewModel = {
     backupTrip: () => Promise<void>
 }
 
-const TripActionsViewModel = (currentTrip: Trip | undefined): TTripActionsViewModel => {
+const TripActionsViewModel = (currentTrip: Trip | null): TTripActionsViewModel => {
     
     const [newTripName, setNewTripName] = useState<string>('')
     const [renameTripDialogOpen, setRenameTripDialogOpen] = useState<boolean>(false)

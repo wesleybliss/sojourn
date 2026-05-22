@@ -1,9 +1,25 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, Dispatch, SetStateAction } from 'react'
 import { useWireState } from '@forminator/react-wire'
 import * as store from '@/store'
 import { useRouter } from 'next/navigation'
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 
-const UIOptionsViewModel = () => {
+export type TUIOptionsViewModel = {
+    // State
+    cascadeEnabled: boolean
+    setCascadeEnabled: Dispatch<SetStateAction<boolean>>
+    toggleCascadeEnabled: () => void
+    
+    // Global State
+    showMap: boolean
+    setShowMap: Dispatch<SetStateAction<boolean>>
+    toggleShowMap: () => void
+    
+    // Hooks
+    router: AppRouterInstance
+}
+
+const UIOptionsViewModel = (): TUIOptionsViewModel => {
     
     const router = useRouter()
     

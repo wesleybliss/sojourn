@@ -2,7 +2,7 @@ import { createWire, createSelector } from '@forminator/react-wire'
 import { createPersistedWire } from 'react-wire-persisted'
 import { keys } from '@/constants'
 import { calculateTotalDays } from '@/utils'
-import { Theme } from '@/types'
+import { ShengenData, Theme } from '@/types'
 import { ID } from '@/types/data'
 import { Place, Plan, Segment, Trip } from '@/types/database'
 
@@ -51,7 +51,7 @@ export const isTripEditMode = createWire<boolean>(false)
 
 //
 
-export const shengenData = createSelector({
+export const shengenData = createSelector<ShengenData | null>({
     get: ({ get }) => {
         
         const shengenSegments = get(currentSegments)

@@ -2,8 +2,18 @@ import { useWireValue } from '@forminator/react-wire'
 import * as store from '@/store'
 import useDebug from '@/hooks/useDebug'
 import { useAuth } from '@/components/providers/AuthProvider'
+import { Plan, Segment, ShengenData, Trip, User } from '@/types'
 
-const NavbarViewModel = () => {
+export type TNavbarViewModel = {
+    user: User | null
+    currentTrip: Trip | null
+    plans: Plan[]
+    currentPlan: Plan | null
+    segments: Segment[]
+    shengenData: ShengenData | null
+}
+
+const NavbarViewModel = (): TNavbarViewModel => {
     
     const { user } = useAuth()
     

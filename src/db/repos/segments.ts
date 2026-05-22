@@ -43,6 +43,19 @@ export class SegmentsRepository extends Repository<Segment, typeof schemas.segme
         
     }
     
+    async createWithNextDate(data: Partial<SegmentInsert>): Promise<SegmentSelect> {
+        
+        if (!data.tripId)
+            throw new Error('createWithNextDate: tripId required')
+        
+        const segments = await this.findAllByTripId(data.tripId)
+        
+        console.log('@@@@ testing', segments)
+        
+        throw new Error('Not yet implemented')
+        
+    }
+    
     async findAllByTripId(tripId: ID) {
         
         try {

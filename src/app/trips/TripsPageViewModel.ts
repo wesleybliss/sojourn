@@ -1,8 +1,28 @@
 import { useRouter } from 'next/navigation'
 import { useCreateTripMutation, useDeleteTripMutation } from '@/lib/queries/trip'
 import { useTripsQuery } from '@/lib/queries/trips.js'
+import { ID, Trip, TripInsert } from '@/types'
+import { QueryObserverResult, RefetchOptions, UseMutationResult } from '@tanstack/react-query'
 
-const TripsPageViewModel = () => {
+type TTripsPageViewModel = {
+    // Queries
+    trips: Trip[]
+    tripsError: Error | null
+    tripsLoading: boolean
+    tripsRefetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<any, Error>>
+    
+    // Mutations
+    createTripMutation: UseMutationResult<Trip, Error, Partial<TripInsert>, unknown>
+    deleteTripMutation: UseMutationResult<void, Error, number, unknown>
+    
+    // Methods
+    createNewTrip: () => Promise<void>
+    onDeleteTripClick: (id: ID) => (e: MouseEvent) => Promise<void>
+    navigateToImportTrips: () => void
+    handleTripClick: (tripId: ID) => void
+}
+
+const TripsPageViewModel = (): TTripsPageViewModel => {
     
     const router = useRouter()
     
@@ -23,8 +43,8 @@ const TripsPageViewModel = () => {
             const newTrip = await createTripMutation.mutateAsync({
                 name: 'New Trip',
                 description: '',
-                startDate: new Date().toISOString().split('T')[0],
-                endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                /*startDate: new Date().toISOString().split('T')[0],
+                endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],*/
             })
             
             // setTrips(prevTrips => [...prevTrips, newTrip])
@@ -40,7 +60,7 @@ const TripsPageViewModel = () => {
         
     }
     
-    const onDeleteTripClick = id => async e => {
+    const onDeleteTripClick = (id: ID) => async (e: MouseEvent) => {
         
         e.preventDefault()
         e.stopPropagation()
@@ -61,7 +81,7 @@ const TripsPageViewModel = () => {
     const navigateToImportTrips = () =>
         router.push('/import-trips')
     
-    const handleTripClick = tripId =>
+    const handleTripClick = (tripId: ID) =>
         router.push(`/trips/${tripId}`)
     
     return {
