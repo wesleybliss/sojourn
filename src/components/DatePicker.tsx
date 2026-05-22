@@ -15,7 +15,7 @@ interface DatePickerProps {
     buttonClassName?: string
     buttonVariant?: 'default' | 'link' | 'outline' | 'destructive' | 'secondary' | 'ghost' | null | undefined
     date?: Date
-    onSelect: (date: Date | undefined) => void
+    onSelect: (date: Date | undefined) => void | Promise<void>
 }
 
 const DatePicker = ({

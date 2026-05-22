@@ -1,3 +1,3 @@
-import TripEditor from 'src/components/TripEditor/TripEditor'
+import TripEditor from '@/components/TripEditor/TripEditor'
 
 export default TripEditor

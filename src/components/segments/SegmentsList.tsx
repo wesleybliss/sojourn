@@ -29,7 +29,7 @@ interface SegmentsListProps {
     getCumulativeDaysPerSegment: (index: number) => number
     getSegmentPlanned: (segment: Segment) => boolean
     getSegmentCompleted: (segment: Segment) => boolean
-    shufflePlaceCoverPhoto: (placeId: ID | undefined, topic?: string) => void
+    shufflePlaceCoverPhoto: (placeId: ID, topic?: string) => Promise<void>
 }
 
 const SegmentsList = ({

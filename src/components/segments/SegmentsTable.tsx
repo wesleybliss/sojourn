@@ -34,7 +34,7 @@ import { ID, Segment } from '@/types'
 
 interface SegmentsTableProps {
     segments: Segment[]
-    updateSegment: (id: ID, field: keyof Segment) => (value: string | boolean | Date | undefined) => void
+    updateSegment: (id: ID, field: keyof Segment) => (e: string | number | boolean | Date | undefined) => Promise<void>
     deleteSegments: (ids: ID[]) => Promise<void>
     getTotalDaysPerSegment: (segment: Segment) => number
     getCumulativeDaysPerSegment: (index: number) => number

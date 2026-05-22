@@ -82,7 +82,7 @@ export type TTripEditorViewModel = {
     // Actions
     updateTrip: (field: string) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string | number) => Promise<void>
     addSegment: () => Promise<void>
-    updateSegment: (id: ID, field: keyof Segment) => (value: string | boolean | Date | undefined) => void
+    updateSegment: (id: ID, field: keyof Segment) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string | number | boolean | Date | undefined) => Promise<void>
     deleteSegments: (ids: ID[]) => Promise<void>
     getTotalDaysPerSegment: (segment: Segment) => number
     getCumulativeDaysPerSegment: (index: number) => number
@@ -92,7 +92,7 @@ export type TTripEditorViewModel = {
     renamePlan: (planIdToRename: ID) => Promise<void>
     deletePlan: (planIdToDelete: ID) => Promise<void>
     updatePlanMutation: UseMutationResult<unknown, Error, UpdatePlanBody, unknown>
-    shufflePlaceCoverPhoto: (placeId: ID | undefined, topic?: string) => Promise<void>
+    shufflePlaceCoverPhoto: (placeId: ID, topic?: string) => Promise<void>
 
     // Loading/error states
     isLoading: boolean
@@ -268,12 +268,12 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         
     }, [currentPlan, tripId, segments, addSegmentMutation])
     
-    const updateSegment = useCallback((id: ID, field: string) => async (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string | number) => {
+    const updateSegment = useCallback((id: ID, field: keyof Segment) => async (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string | number | boolean | Date | undefined) => {
         
         if (!trip || !currentPlan)
             return console.warn('updateSegment: no current trip or plan')
         
-        const value = typeof e === 'object' && e !== null && 'target' in e
+        const value = e === undefined ? undefined : e instanceof Date ? e.toISOString().split('T')[0] : typeof e === 'object' && e !== null && 'target' in e
             ? e.target.value
             : e
         
@@ -370,7 +370,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         
     }, [deletePlanMutation, tripId, router])
     
-    const shufflePlaceCoverPhoto = useCallback(async (placeId: ID, topic: string) => {
+    const shufflePlaceCoverPhoto = useCallback(async (placeId: ID, topic?: string) => {
         
         if (!placeId || !topic?.length)
             return console.error('useTripEditorViewModel#shufflePlaceCoverPhoto missing params', { placeId, topic })
@@ -393,7 +393,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
             },
         })
         
-    }, [shufflePlaceCoverPhotoMutation])
+    }, [shufflePlaceCoverPhotoMutation, updatePlace])
     
     useEffect(() => {
         

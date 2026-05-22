@@ -34,7 +34,7 @@ interface LeftImageCardProps {
     imageWidth?: string
     contentWidth?: string
     placeId?: ID
-    shufflePlaceCoverPhoto: (placeId: ID | undefined, topic?: string) => void
+    shufflePlaceCoverPhoto: (placeId: ID, topic?: string) => Promise<void>
 }
 
 const LeftImageCard = ({
@@ -60,9 +60,10 @@ const LeftImageCard = ({
         
         const customTopic = prompt('Please enter a custom topic for the image (optional):')
         
-        if (!customTopic?.trim()?.length) return
+        if (!customTopic?.trim()?.length || !placeId) return
         
         shufflePlaceCoverPhoto(placeId, customTopic)
+            .catch(e => console.error('shufflePlaceCoverPhotoCustom', e))
         
     }, [placeId, shufflePlaceCoverPhoto])
     
@@ -83,13 +84,13 @@ const LeftImageCard = ({
                             alt={imageAlt} />
                     </ContextMenuTrigger>
                     <ContextMenuContent className="w-52">
-                        <ContextMenuItem inset onClick={() => shufflePlaceCoverPhoto(placeId, title)}>
-                            Shuffle Image
-                        </ContextMenuItem>
-                        <ContextMenuItem inset onClick={shufflePlaceCoverPhotoCustom}>
-                            Shuffle Image (Custom)
-                        </ContextMenuItem>
-                    </ContextMenuContent>
+                         <ContextMenuItem inset disabled={!placeId} onClick={() => placeId && shufflePlaceCoverPhoto(placeId, title)}>
+                             Shuffle Image
+                         </ContextMenuItem>
+                         <ContextMenuItem inset disabled={!placeId} onClick={shufflePlaceCoverPhotoCustom}>
+                             Shuffle Image (Custom)
+                         </ContextMenuItem>
+                     </ContextMenuContent>
                 </ContextMenu>
                 {/* <img
                     className={`w-full h-full object-cover ${imageClassName}`}
