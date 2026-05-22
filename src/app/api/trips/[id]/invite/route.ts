@@ -9,34 +9,34 @@ import tripsRepo from '@/db/repos/trips'
  * POST /api/trips/invite
  * Adds another user to a trip.
  */
-export const POST = withAuth(async (request, { params, auth }) => {
+export const POST = withAuth<{ id: string }>(async (request, { params, auth }) => {
     
     try {
         
         const { id } = await params
-        const { inviteeEmail } = await requeston()
+        const { inviteeEmail } = await request.json()
         
         if (!inviteeEmail?.length)
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: 'Param "inviteeEmail" is required' },
                 { status: 422 })
         
-        const isMember = await isUserTripMember(auth, id)
+        const isMember = await isUserTripMember(auth, parseInt(id, 10))
         
         if (!isMember)
-            return NextResponseon({ success: false, error: 'Forbidden' }, { status: 403 })
+            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
         
         const invitee = await usersRepo.findOneByEmail(inviteeEmail)
         
         if (!invitee)
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: 'Invitee not found' },
                 { status: 404 })
         
-        const trip = await tripsRepo.findOneById(id)
+        const trip = await tripsRepo.findOneById(parseInt(id, 10))
         
         if (!trip)
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: 'Trip not found' },
                 { status: 404 })
         
@@ -45,7 +45,7 @@ export const POST = withAuth(async (request, { params, auth }) => {
             tripId: trip.id,
         })
         
-        return NextResponseon({
+        return NextResponse.json({
             success: true,
             data: { inviteeEmail, trip },
         })
@@ -53,8 +53,8 @@ export const POST = withAuth(async (request, { params, auth }) => {
     } catch (e) {
         
         console.error('Error inviting user to trip:', e)
-        return NextResponseon(
-            { success: false, error: e.message },
+        return NextResponse.json(
+            { success: false, error: (e as Error).message },
             { status: 500 },
         )
         

@@ -11,21 +11,21 @@ export const POST = withAuth(async (request: NextRequest, { auth }) => {
         const { userId } = auth
         
         if (!userId)
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: 'Unauthorized' },
                 { status: 401 })
         
         const user = await usersRepo.findOneById(userId)
         
         if (!user)
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: 'User not found' },
                 { status: 404 })
         
-        const { name, contentType, base64Data } = await requeston()
+        const { name, contentType, base64Data } = await request.json()
         
         if (!base64Data)
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: 'Param "base64Data" is required' },
                 { status: 422 })
         
@@ -41,14 +41,14 @@ export const POST = withAuth(async (request: NextRequest, { auth }) => {
         
         const res = await putPlaceImageBuffer(name, contentType, buffer)
         
-        return NextResponseon(
+        return NextResponse.json(
             { success: true, ...res },
             { status: 200 })
         
     } catch (e) {
         
         console.error('Error uploading image to blob storage:', e)
-        return NextResponseon(
+        return NextResponse.json(
             { success: false, error: e instanceof Error ? e.message : 'Unknown error' },
             { status: 500 })
         

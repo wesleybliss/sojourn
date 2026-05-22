@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
 import dayjs from 'dayjs'
-import pkg from '@/../packageon'
+import pkg from '@/../package.json'
 
 export async function GET() {
     
-    return NextResponseon({
+    return NextResponse.json({
         success: true,
         data: {
             ok: true,

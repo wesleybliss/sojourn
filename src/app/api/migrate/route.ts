@@ -56,14 +56,14 @@ export async function POST() {
             })
         }
         
-        return NextResponseon({
+        return NextResponse.json({
             success: true,
             data: migrationResults,
             message: `Migration completed. ${migrationResults.length} trips processed.`,
         })
     } catch (e) {
         console.error('Error during migration:', e)
-        return NextResponseon(
+        return NextResponse.json(
             { success: false, error: (e as Error).message },
             { status: 500 },
         )

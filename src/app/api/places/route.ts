@@ -13,14 +13,14 @@ export const GET = withAuth(async () => {
         
         const places = await placesRepo.findAll()
         
-        return NextResponseon(
+        return NextResponse.json(
             { success: true, data: places },
             { status: 200 })
         
     } catch (e) {
         
         console.error('Error getting places:', e)
-        return NextResponseon({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
         
     }
     
@@ -30,11 +30,11 @@ export const POST = withAuth(async request => {
     
     try {
         
-        const body = await requeston()
+        const body = await request.json()
         const { name } = body
         
         if (!name?.length)
-            return NextResponseon({
+            return NextResponse.json({
                 success: false,
                 error: 'Param "name" required',
             }, { status: 422 })
@@ -46,14 +46,14 @@ export const POST = withAuth(async request => {
             coverImageUrl,
         })
         
-        return NextResponseon(
+        return NextResponse.json(
             { success: true, data: newPlace },
             { status: 200 })
         
     } catch (e) {
         
         console.error('Error creating new place:', e)
-        return NextResponseon({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
         
     }
     

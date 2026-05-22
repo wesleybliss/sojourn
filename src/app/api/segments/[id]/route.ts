@@ -5,20 +5,22 @@ import { eq } from 'drizzle-orm'
 import segmentsRepo from '@/db/repos/segments'
 import { convertStringDates, getUpdatePayload } from '@/utils'
 import dayjs from 'dayjs'
+import { withAuth } from '@/lib/auth'
+import { ID, SegmentInsert } from '@/types'
 
-export async function PUT(request, opts) {
+export const PUT = withAuth<{ id: string }>(async (request, { params }) => {
     
-    const params = await opts.params
+    const paramsObj = await params
+    const id = parseInt(paramsObj.id, 10)
     
     try {
         
-        const id = parseInt(params.id, 10)
         const segment = await segmentsRepo.findOneById(id)
         
         if (segment?.id !== id)
-            return NextResponseon({ success: false, error: 'Segment not found' }, { status: 404 })
+            return NextResponse.json({ success: false, error: 'Segment not found' }, { status: 404 })
         
-        const segmentData = await requeston()
+        const segmentData = await request.json()
         const { cascadeEnabled } = segmentData
         
         let payload = getUpdatePayload(segment, segmentData, ['tripId', 'planId', 'cascadeEnabled'])
@@ -32,14 +34,15 @@ export async function PUT(request, opts) {
             const targetIndex = segments.findIndex(s => s.id === id)
             
             if (targetIndex === -1)
-                return NextResponseon({ success: false, error: 'Segment not found' }, { status: 404 })
+                return NextResponse.json({ success: false, error: 'Segment not found' }, { status: 404 })
             
             const currentSegment = segments[targetIndex]
-            const originalDuration = dayjs(currentSegment.endDate).diff(dayjs(currentSegment.startDate), 'day')
+            const originalDuration = dayjs(currentSegment.endDate as Date)
+                .diff(dayjs(currentSegment.startDate as Date), 'day')
             
-            const updates = []
+            const updates: Array<Partial<SegmentInsert> & { id: ID }> = []
             
-            let newStartDate = payload.startDate ? dayjs(payload.startDate) : dayjs(currentSegment.startDate)
+            let newStartDate = payload.startDate ? dayjs(payload.startDate) : dayjs(currentSegment.startDate as Date)
             let newEndDate = payload.endDate ? dayjs(payload.endDate) : newStartDate.add(originalDuration, 'day')
             
             updates.push({ id: currentSegment.id, startDate: newStartDate.toDate(), endDate: newEndDate.toDate() })
@@ -48,7 +51,7 @@ export async function PUT(request, opts) {
             
             for (let i = targetIndex + 1; i < segments.length; i++) {
                 const seg = segments[i]
-                const dur = dayjs(seg.endDate).diff(dayjs(seg.startDate), 'day')
+                const dur = dayjs(seg.endDate as Date).diff(dayjs(seg.startDate as Date), 'day')
                 const sStart = prevEnd
                 const sEnd = sStart.add(dur, 'day')
                 
@@ -66,7 +69,7 @@ export async function PUT(request, opts) {
             
             const [reloaded] = await db.select().from(schemas.segments).where(eq(schemas.segments.id, id))
             
-            return NextResponseon({
+            return NextResponse.json({
                 success: true,
                 data: reloaded, message: 'Segment dates updated successfully',
             })
@@ -80,16 +83,16 @@ export async function PUT(request, opts) {
             .returning()
         
         if (!updatedSegment)
-            return NextResponseon({ success: false, error: 'Segment not found' }, { status: 404 })
+            return NextResponse.json({ success: false, error: 'Segment not found' }, { status: 404 })
         
-        return NextResponseon({ success: true, data: updatedSegment, message: 'Segment updated successfully' })
+        return NextResponse.json({ success: true, data: updatedSegment, message: 'Segment updated successfully' })
         
     } catch (e) {
         
-        console.error(`Error updating segment ${params.id}:`, e)
+        console.error(`Error updating segment ${id}:`, e)
         
-        return NextResponseon({ success: false, error: e.message }, { status: 500 })
+        return NextResponse.json({ success: false, error: (e as Error).message }, { status: 500 })
         
     }
     
-}
+})

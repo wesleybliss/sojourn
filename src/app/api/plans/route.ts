@@ -7,26 +7,26 @@ const handler = async (request: NextRequest, { auth }: { auth: AuthContext }) =>
     
     try {
         
-        const body = await requeston()
+        const body = await request.json()
         
         const tripId = body.tripId
         const name = body.name?.trim() || ''
         const description = body.description?.trim() || null
         
         if (!tripId)
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: 'Param tripId is required' },
                 { status: 422 })
         
         if (!name)
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: 'Name is required' },
                 { status: 422 })
         
         const isMember = await isUserTripMember(auth, tripId)
         
         if (!isMember)
-            return NextResponseon({ success: false, error: 'Forbidden' }, { status: 403 })
+            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
         
         const [createdPlan] = await db
             .insert(schemas.plans)
@@ -37,14 +37,14 @@ const handler = async (request: NextRequest, { auth }: { auth: AuthContext }) =>
             })
             .returning()
         
-        return NextResponseon(
+        return NextResponse.json(
             { success: true, data: createdPlan, message: 'Plan created successfully' },
             { status: 201 })
         
     } catch (e) {
         
         console.error('Error creating plan:', e)
-        return NextResponseon({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
         
     }
     

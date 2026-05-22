@@ -60,7 +60,7 @@ export const tripSchema = {
 }
 
 export const tripsWithPlansSchema = {
-    $id: 'trip-backuponschema',
+    $id: 'trip-backup.jsonschema',
     type: 'object',
     properties: {
         type: { type: 'string' },

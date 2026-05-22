@@ -7,9 +7,10 @@ import plansRepo from '@/db/repos/plans'
  * GET /api/trips/[id]
  * Returns a single trip by ID.
  */
-export const GET = withAuth(async (request, { params, auth }) => {
+export const GET = withAuth<{ id: string }>(async (request, { params, auth }) => {
     
-    const { id } = await params
+    const paramsObj = await params
+    const id = parseInt(paramsObj.id, 10)
     
     try {
         
@@ -19,18 +20,18 @@ export const GET = withAuth(async (request, { params, auth }) => {
         const isMember = await isUserTripMember(auth, id)
         
         if (!isMember)
-            return NextResponseon({ success: false, error: 'Forbidden' }, { status: 403 })
+            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
         
         const trip = withDetails
             ? await tripsRepo.findOneWithDetails(id, plansRepo)
             : await tripsRepo.findOneById(id)
         
         if (!trip)
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: 'Trip not found' },
                 { status: 404 })
         
-        return NextResponseon({
+        return NextResponse.json({
             success: true,
             data: trip,
         })
@@ -38,8 +39,8 @@ export const GET = withAuth(async (request, { params, auth }) => {
     } catch (e) {
         
         console.error(`Error getting trip ${id}:`, e)
-        return NextResponseon(
-            { success: false, error: e.message },
+        return NextResponse.json(
+            { success: false, error: (e as Error).message },
             { status: 500 })
         
     }
@@ -50,27 +51,28 @@ export const GET = withAuth(async (request, { params, auth }) => {
  * PUT /api/trips/[id]
  * Updates a trip by ID.
  */
-export const PUT = withAuth(async (request, { params, auth }) => {
+export const PUT = withAuth<{ id: string }>(async (request, { params, auth }) => {
     
-    const { id } = await params
+    const paramsObj = await params
+    const id = parseInt(paramsObj.id, 10)
     
     try {
         
-        const body = await requeston()
+        const body = await request.json()
         
         const isMember = await isUserTripMember(auth, id)
         
         if (!isMember)
-            return NextResponseon({ success: false, error: 'Forbidden' }, { status: 403 })
+            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
         
         const updatedTrip = await tripsRepo.updateById(id, body)
         
         if (!updatedTrip)
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: 'Trip not found' },
                 { status: 404 })
         
-        return NextResponseon({
+        return NextResponse.json({
             success: true,
             data: updatedTrip,
             message: 'Trip updated successfully',
@@ -79,8 +81,8 @@ export const PUT = withAuth(async (request, { params, auth }) => {
     } catch (e) {
         
         console.error(`Error updating trip ${id}:`, e)
-        return NextResponseon(
-            { success: false, error: e.message },
+        return NextResponse.json(
+            { success: false, error: (e as Error).message },
             { status: 500 })
         
     }
@@ -91,20 +93,21 @@ export const PUT = withAuth(async (request, { params, auth }) => {
  * DELETE /api/trips/[id]
  * Deletes a trip by ID.
  */
-export const DELETE = withAuth(async (request, { params, auth }) => {
+export const DELETE = withAuth<{ id: string }>(async (request, { params, auth }) => {
     
-    const { id } = await params
+    const paramsObj = await params
+    const id = parseInt(paramsObj.id, 10)
     
     try {
         
         const isMember = await isUserTripMember(auth, id)
         
         if (!isMember)
-            return NextResponseon({ success: false, error: 'Forbidden' }, { status: 403 })
+            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
         
         await tripsRepo.deleteById(id)
         
-        return NextResponseon({
+        return NextResponse.json({
             success: true,
             message: 'Trip deleted successfully',
         })
@@ -112,8 +115,8 @@ export const DELETE = withAuth(async (request, { params, auth }) => {
     } catch (e) {
         
         console.error(`Error deleting trip ${id}:`, e)
-        return NextResponseon(
-            { success: false, error: e.message },
+        return NextResponse.json(
+            { success: false, error: (e as Error).message },
             { status: 500 })
         
     }

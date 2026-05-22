@@ -17,7 +17,7 @@ export const POST = withAuth(async (request, { auth }) => {
         const user = await usersRepo.findOneById(userId)
         
         if (!user)
-            return NextResponseon({ success: false, error: 'User not found' }, { status: 404 })
+            return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 })
         
         console.log('Clearing all database data...')
         
@@ -31,7 +31,7 @@ export const POST = withAuth(async (request, { auth }) => {
         await db.delete(schemas.trips)
         console.log('✅ Cleared trips table')
         
-        return NextResponseon({
+        return NextResponse.json({
             success: true,
             message: 'Database cleared successfully',
         })
@@ -39,7 +39,7 @@ export const POST = withAuth(async (request, { auth }) => {
     } catch (e) {
         
         console.error('❌ Error clearing database:', e)
-        return NextResponseon(
+        return NextResponse.json(
             { success: false, error: (e as Error).message },
             { status: 500 },
         )

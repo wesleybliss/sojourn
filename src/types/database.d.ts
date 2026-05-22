@@ -13,6 +13,7 @@ export const tripSelectSchema = createSelectSchema(schemas.trips)
 export const tripInsertSchema = createInsertSchema(schemas.trips)
 export type Trip = InferSelectModel<typeof schemas.trips> & {
     plans?: Plan[]
+    segments?: Segment[]
 }
 export type TripSelect = z.infer<typeof tripSelectSchema>
 export type TripInsert = z.infer<typeof tripInsertSchema>

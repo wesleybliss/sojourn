@@ -24,7 +24,7 @@ export const GET = withAuth(async (request, { auth }) => {
             ? await tripsRepo.findAllByUserIdWithSegmentCount(userId, segmentsRepo)
             : await tripsRepo.findAllByUserId(userId)
         
-        return NextResponseon({
+        return NextResponse.json({
             success: true,
             data: trips,
             count: trips.length,
@@ -33,7 +33,7 @@ export const GET = withAuth(async (request, { auth }) => {
     } catch (e) {
         
         console.error('Error getting trips:', e)
-        return NextResponseon(
+        return NextResponse.json(
             { success: false, error: (e as Error).message },
             { status: 500 },
         )
@@ -52,7 +52,7 @@ export const POST = withAuth(async (request, { auth }) => {
         
         const { userId } = auth
         
-        const tripData = await requeston()
+        const tripData = await request.json()
         
         const newTripPayload = {
             userId,
@@ -93,7 +93,7 @@ export const POST = withAuth(async (request, { auth }) => {
         
         const newTrip = trip
         
-        return NextResponseon(
+        return NextResponse.json(
             {
                 success: true,
                 data: newTrip,
@@ -104,7 +104,7 @@ export const POST = withAuth(async (request, { auth }) => {
     } catch (e) {
         
         console.error('Error creating trip:', e)
-        return NextResponseon(
+        return NextResponse.json(
             { success: false, error: (e as Error).message },
             { status: 500 })
         

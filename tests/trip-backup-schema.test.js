@@ -2,7 +2,7 @@ import { test } from '@jest/globals'
 import fs from 'fs'
 import path from 'path'
 import Ajv from 'ajv'
-import schema from '../src/lib/json-schemas/trip-backuponschema'
+import schema from '../src/lib/json-schemas/trip-backup.jsonschema'
 import dayjs from 'dayjs'
 
 // import { fileURLToPath } from 'url'

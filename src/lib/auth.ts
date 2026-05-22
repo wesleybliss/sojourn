@@ -124,22 +124,22 @@ export type AuthContext = {
     userId: ID
 }
 
-export const withAuth = (handler: (req: NextRequest, context: { auth: AuthContext }) => Promise<NextResponse>) => async (request: NextRequest, context: Record<string, unknown> = {}) => {
+export const withAuth = <T,>(handler: (req: NextRequest, context: { auth: AuthContext, params: Promise<T> }) => Promise<NextResponse>) => async (request: NextRequest, context: Record<string, unknown> = {}) => {
     
     try {
         
         const auth = await authorize(request)
-        const newContext = { ...context, auth }
+        const newContext = { ...context, auth, params: context.params as Promise<T> }
         
         return await handler(request, newContext)
         
     } catch (e) {
         
         if (e instanceof HttpError)
-            return NextResponseon({ success: false, error: (e as HttpError).message }, { status: (e as HttpError).status })
+            return NextResponse.json({ success: false, error: (e as HttpError).message }, { status: (e as HttpError).status })
         
         console.error('Authorization error:', e)
-        return NextResponseon({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
         
     }
     

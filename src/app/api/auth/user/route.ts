@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     try {
         const { user } = await authorize(request)
         
-        return NextResponseon({
+        return NextResponse.json({
             success: true,
             user: {
                 id: user.id,
@@ -28,14 +28,14 @@ export async function GET(request: NextRequest) {
         })
     } catch (e: unknown) {
         if (e instanceof HttpError) {
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: (e as Error).message },
                 { status: e.status },
             )
         }
         
         console.error('Error in GET /api/auth/user:', e)
-        return NextResponseon(
+        return NextResponse.json(
             { success: false, error: 'Internal Server Error' },
             { status: 500 },
         )
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     try {
         const { user } = await authorize(request)
         
-        const body = await requeston()
+        const body = await request.json()
         const { inviteCode } = body
         
         if (!inviteCode) {
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
         
         // User already enabled - no action needed
         if (user.enabled) {
-            return NextResponseon({
+            return NextResponse.json({
                 success: true,
                 message: 'User already enabled',
                 user: {
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
             .where(eq(schemas.users.id, user.id))
             .returning()
         
-        return NextResponseon({
+        return NextResponse.json({
             success: true,
             message: 'Account enabled successfully',
             user: {
@@ -109,14 +109,14 @@ export async function POST(request: NextRequest) {
         })
     } catch (e: unknown) {
         if (e instanceof HttpError) {
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: (e as Error).message },
                 { status: e.status },
             )
         }
         
         console.error('Error in POST /api/auth/user:', e)
-        return NextResponseon(
+        return NextResponse.json(
             { success: false, error: 'Internal Server Error' },
             { status: 500 },
         )

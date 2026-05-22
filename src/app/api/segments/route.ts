@@ -12,7 +12,7 @@ export const POST = withAuth(async (request, { auth }) => {
     
     try {
         
-        const body = await requeston()
+        const body = await request.json()
         
         const {
             tripId,
@@ -24,34 +24,34 @@ export const POST = withAuth(async (request, { auth }) => {
         } = body
         
         if (!tripId)
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: 'Param tripId is required' },
                 { status: 422 })
         
         if (!planId)
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: 'Param planId is required' },
                 { status: 422 })
         
         if (!name?.length)
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: 'Param name is required' },
                 { status: 422 })
         
         if (!startDate?.length)
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: 'Param startDate is required' },
                 { status: 422 })
         
         if (!endDate?.length)
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: 'Param endDate is required' },
                 { status: 422 })
         
         const isMember = await isUserTripMember(auth, tripId)
         
         if (!isMember)
-            return NextResponseon({ success: false, error: 'Forbidden' }, { status: 403 })
+            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
         
         const [createdSegment] = await db
             .insert(schemas.segments)
@@ -65,14 +65,14 @@ export const POST = withAuth(async (request, { auth }) => {
             })
             .returning()
         
-        return NextResponseon(
+        return NextResponse.json(
             { success: true, data: createdSegment, message: 'Segment created successfully' },
             { status: 201 })
         
     } catch (e) {
         
         console.error('Error creating segment:', e)
-        return NextResponseon({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
         
     }
     
@@ -82,28 +82,28 @@ export const DELETE = withAuth(async (request, { auth }) => {
     
     try {
         
-        const body = await requeston()
+        const body = await request.json()
         const { tripId, planId, segmentIds } = body
         
         if (!Array.isArray(segmentIds) || !segmentIds.length)
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: 'Param segmentIds is required and must be non-empty array' },
                 { status: 422 })
         
         if (!tripId)
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: 'Param tripId is required' },
                 { status: 422 })
         
         if (!planId)
-            return NextResponseon(
+            return NextResponse.json(
                 { success: false, error: 'Param planId is required' },
                 { status: 422 })
         
         const isMember = await isUserTripMember(auth, tripId)
         
         if (!isMember)
-            return NextResponseon({ success: false, error: 'Forbidden' }, { status: 403 })
+            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
         
         await db.transaction(async tx => {
             await tx.delete(schemas.segments)
@@ -114,14 +114,14 @@ export const DELETE = withAuth(async (request, { auth }) => {
                 ))
         })
         
-        return NextResponseon(
+        return NextResponse.json(
             { success: true, message: 'Segments deleted successfully' },
             { status: 200 })
         
     } catch (e) {
         
         console.error('Error deleting segments:', e)
-        return NextResponseon({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
         
     }
     

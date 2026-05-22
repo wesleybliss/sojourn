@@ -4,20 +4,21 @@ import * as schemas from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
 import { omit } from '@/utils'
+import { withAuth } from '@/lib/auth'
 
-export async function POST(request, { params }) {
+export const POST = withAuth<{ planId: string }>(async (_, { params }) => {
     
     try {
         
         const { planId } = await params
         
         if (isNaN(parseInt(planId, 10)))
-            return NextResponseon({ success: false, error: 'Invalid plan ID' }, { status: 400 })
+            return NextResponse.json({ success: false, error: 'Invalid plan ID' }, { status: 400 })
         
         const [plan] = await db.select().from(schemas.plans).where(eq(schemas.plans.id, parseInt(planId, 10)))
         
         if (!plan)
-            return NextResponseon({ success: false, error: 'Plan not found' }, { status: 404 })
+            return NextResponse.json({ success: false, error: 'Plan not found' }, { status: 404 })
         
         const result = await db.transaction(async tx => {
             
@@ -37,8 +38,8 @@ export async function POST(request, { params }) {
             const segmentInserts = segments.map(it => tx
                 .insert(schemas.segments)
                 .values({
-                    planId: clonedPlan.id,
                     ...omit(it, ['id', 'planId']),
+                    planId: clonedPlan.id,
                 }))
             
             await Promise.all(segmentInserts)
@@ -47,7 +48,7 @@ export async function POST(request, { params }) {
             
         })
         
-        return NextResponseon(
+        return NextResponse.json(
             { success: true, data: result, message: 'Plan cloned successfully' },
             { status: 201 },
         )
@@ -55,8 +56,8 @@ export async function POST(request, { params }) {
     } catch (e) {
         
         console.error('Error updating plan:', e)
-        return NextResponseon({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
         
     }
     
-}
+})

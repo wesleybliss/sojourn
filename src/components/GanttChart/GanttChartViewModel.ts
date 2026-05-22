@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, DragEvent } from 'react'
 import { /* format, */ addDays, eachDayOfInterval, startOfDay, differenceInDays } from 'date-fns'
-import { ID, ItemWithId } from '@/types'
+import { GanttChartItemPrimitive, ID } from '@/types'
 import { GanttChartSharedProps } from '@/components/GanttChart/GanttChart'
 
 type ResizeTask = {
@@ -8,7 +8,7 @@ type ResizeTask = {
     edge: 'start' | 'end'
 }
 
-const GanttChartViewModel = <T extends ItemWithId>(props: GanttChartSharedProps<T>) => {
+const GanttChartViewModel = <T extends GanttChartItemPrimitive>(props: GanttChartSharedProps<T>) => {
     
     const {
         items = [],

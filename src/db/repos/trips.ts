@@ -113,7 +113,7 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
         
     }
 
-    async findOneWithDetails(id: ID, plansRepo: IPlansRepository) {
+    async findOneWithDetails(id: ID, plansRepo: IPlansRepository): Promise<Trip | null> {
         
         try {
             

@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server'
 import db from '@/db/index'
 import * as schemas from '@/db/schema'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import { withAuth } from '@/lib/auth'
+import { SegmentInsert, TripInsert } from '@/types'
 
-const toDate = v => {
+const toDate = (v: string | number | Date | Dayjs | null | undefined) => {
     
     const value = dayjs(v).toDate()
     
@@ -27,10 +28,10 @@ export const POST = withAuth(async (request, { auth }) => {
         
         const { userId } = auth
         
-        const body = await requeston()
+        const body = await request.json()
         
         if (!body || !body.type || !body.trips)
-            return NextResponseon({ success: false, error: 'Invalid backup payload' }, { status: 400 })
+            return NextResponse.json({ success: false, error: 'Invalid backup payload' }, { status: 400 })
         
         const onConflictAction = body.onConflictAction || 'duplicate'
         
@@ -48,16 +49,18 @@ export const POST = withAuth(async (request, { auth }) => {
             
             console.log('Importing trip', tripName)
             
+            const tripInsertData: TripInsert = {
+                userId,
+                name: tripName,
+                description: trip.description || null,
+                /*startDate: trip.startDate || null,
+                endDate: trip.endDate || null,*/
+                coverImageUrl: trip.coverImageUrl || null,
+            }
+            
             const insertedTrips = await db
                 .insert(schemas.trips)
-                .values({
-                    userId,
-                    name: tripName,
-                    description: trip.description || null,
-                    startDate: trip.startDate || null,
-                    endDate: trip.endDate || null,
-                    coverImageUrl: trip.coverImageUrl || null,
-                })
+                .values(tripInsertData)
                 .returning({ id: schemas.trips.id })
             
             const newTrip = insertedTrips[0]
@@ -92,7 +95,8 @@ export const POST = withAuth(async (request, { auth }) => {
                         console.log('Importing', plan.segments.length, 'segments for plan', plan.name)
                         
                         for (const seg of plan.segments) {
-                            await db.insert(schemas.segments).values({
+                            
+                            const segmentInsertData: SegmentInsert = {
                                 tripId: newTrip.id,
                                 planId: newPlan.id,
                                 name: seg.name || 'Imported Segment',
@@ -102,10 +106,13 @@ export const POST = withAuth(async (request, { auth }) => {
                                 coordsLat: seg.coords?.lat ?? null,
                                 coordsLng: seg.coords?.lng ?? null,
                                 color: seg.color || 'bg-blue-500',
-                                flightBooked: seg.flightBooked ? 1 : 0,
-                                stayBooked: seg.stayBooked ? 1 : 0,
-                                isShengenRegion: seg.isShengenRegion ? 1 : 0,
-                            })
+                                flightBooked: seg.flightBooked,
+                                stayBooked: seg.stayBooked,
+                                isShengenRegion: seg.isShengenRegion,
+                            }
+                            
+                            await db.insert(schemas.segments).values(segmentInsertData)
+                            
                         }
                         
                     }
@@ -118,12 +125,12 @@ export const POST = withAuth(async (request, { auth }) => {
             
         }
         
-        return NextResponseon({ success: true, data: results })
+        return NextResponse.json({ success: true, data: results })
         
     } catch (e) {
         
         console.error('Error restoring backup:', e)
-        return NextResponseon({ success: false, error: e.message }, { status: 500 })
+        return NextResponse.json({ success: false, error: (e as Error).message }, { status: 500 })
         
     }
     
