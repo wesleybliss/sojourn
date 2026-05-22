@@ -82,7 +82,7 @@ export type TTripEditorViewModel = {
     // Actions
     updateTrip: (field: string) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string | number) => Promise<void>
     addSegment: () => Promise<void>
-    updateSegment: (id: ID, field: string) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string | number) => Promise<void>
+    updateSegment: (id: ID, field: keyof Segment) => (value: string | boolean | Date | undefined) => void
     deleteSegments: (ids: ID[]) => Promise<void>
     getTotalDaysPerSegment: (segment: Segment) => number
     getCumulativeDaysPerSegment: (index: number) => number
@@ -92,7 +92,7 @@ export type TTripEditorViewModel = {
     renamePlan: (planIdToRename: ID) => Promise<void>
     deletePlan: (planIdToDelete: ID) => Promise<void>
     updatePlanMutation: UseMutationResult<unknown, Error, UpdatePlanBody, unknown>
-    shufflePlaceCoverPhoto: (placeId: ID, topic: string) => Promise<void>
+    shufflePlaceCoverPhoto: (placeId: ID | undefined, topic?: string) => Promise<void>
 
     // Loading/error states
     isLoading: boolean
@@ -225,8 +225,8 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
     
     const updateTrip = useCallback((field: string) => async (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string | number) => {
         
-        const value = typeof e === 'object' && e !== null && 'target' in e 
-            ? e.target.value 
+        const value = typeof e === 'object' && e !== null && 'target' in e
+            ? e.target.value
             : e
         
         // Mutation hook handles invalidation
@@ -273,8 +273,8 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         if (!trip || !currentPlan)
             return console.warn('updateSegment: no current trip or plan')
         
-        const value = typeof e === 'object' && e !== null && 'target' in e 
-            ? e.target.value 
+        const value = typeof e === 'object' && e !== null && 'target' in e
+            ? e.target.value
             : e
         
         const payload = {

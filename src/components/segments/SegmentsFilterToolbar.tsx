@@ -3,11 +3,18 @@ import { Toggle } from '@/components/ui/toggle'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Eye, EyeOff, FolderPen, List, Grid2x2 } from 'lucide-react'
 import { cn } from '@/utils'
+import { TTripEditorViewModel } from '@/components/TripEditor/useTripEditorViewModel'
+import { ListViewMode } from '@/types/ui'
+
+interface SegmentsFilterToolbarProps {
+    className?: string
+    vm: TTripEditorViewModel
+}
 
 const SegmentsFilterToolbar = ({
     className = '',
     vm,
-} = {}) => {
+}: SegmentsFilterToolbarProps) => {
     
     return (
         
@@ -51,7 +58,7 @@ const SegmentsFilterToolbar = ({
                     variant="outline"
                     spacing={2}
                     value={vm.segmentsListViewMode}
-                    onValueChange={vm.setSegmentsListViewMode}>
+                    onValueChange={value => vm.setSegmentsListViewMode(value as ListViewMode)}>
                     <ToggleGroupItem
                         className="data-[state=on]:bg-slate-100 data-[state=on]:*:[svg]:stroke-slate-900"
                         value="list"

@@ -8,8 +8,9 @@ import { backgroundToBorderColors } from '@/lib/colors'
 import SegmentsListDetailsTableHeader from '@/components/segments/SegmentsListDetailsTableHeader'
 import SegmentsListDetailsTableBody from '@/components/segments/SegmentsListDetailsTableBody'
 import { cn } from '@/utils'
+import { ID, Segment } from '@/types'
 
-const SegmentCardDate = ({ date }) => (
+const SegmentCardDate = ({ date }: { date: Date }) => (
     <div className="w-full px-3 py-2 bg-slate-100 rounded-lg">
         <div className="text-sm font-medium text-muted-foreground">
             {dayjs(date).format('dddd')}
@@ -21,6 +22,16 @@ const SegmentCardDate = ({ date }) => (
     </div>
 )
 
+interface SegmentsListProps {
+    segments: any[]
+    segmentsListViewMode: 'grid' | 'list'
+    getTotalDaysPerSegment: (segment: Segment) => number
+    getCumulativeDaysPerSegment: (index: number) => number
+    getSegmentPlanned: (segment: Segment) => boolean
+    getSegmentCompleted: (segment: Segment) => boolean
+    shufflePlaceCoverPhoto: (placeId: ID | undefined, topic?: string) => void
+}
+
 const SegmentsList = ({
     segments,
     segmentsListViewMode,
@@ -29,7 +40,7 @@ const SegmentsList = ({
     getSegmentPlanned,
     getSegmentCompleted,
     shufflePlaceCoverPhoto,
-}) => {
+}: SegmentsListProps) => {
     
     const placeNamesToCoverImagesMap = useWireValue(placeNamesToCoverImagesMapWire)
     
@@ -70,7 +81,6 @@ const SegmentsList = ({
                         <Table>
                             <SegmentsListDetailsTableHeader />
                             <SegmentsListDetailsTableBody
-                                endDate={it.endDate}
                                 totalDaysPerSegment={getTotalDaysPerSegment(it)}
                                 cumulativeDaysPerSegment={getCumulativeDaysPerSegment(i)}
                                 flightBooked={it.flightBooked}

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, SetStateAction, Dispatch } from 'react'
+import { useState, useRef, useEffect, DragEvent } from 'react'
 import { /* format, */ addDays, eachDayOfInterval, startOfDay, differenceInDays } from 'date-fns'
 import { ID, ItemWithId } from '@/types'
 import { GanttChartSharedProps } from '@/components/GanttChart/GanttChart'

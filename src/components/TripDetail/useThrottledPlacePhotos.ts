@@ -1,16 +1,37 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, Dispatch, SetStateAction } from 'react'
 import { throttledQueue, seconds } from 'throttled-queue'
 import { usePlacesQuery } from '@/lib/queries/places'
 import { abortableFetch } from '@/utils'
+import { PendingFetchRequest, Place, Segment } from '@/types'
+import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query'
 
 const throttle = throttledQueue({
     maxPerInterval: 3,
     interval: seconds(2),
 })
 
-const useThrottledPlacePhotos = segments => {
+export type TThrottledPlacePhotos = {
+    // State
+    progressMax: number
+    setProgressMax: Dispatch<SetStateAction<number>>
+    progressValue: number
+    setProgressValue: Dispatch<SetStateAction<number>>
     
-    const [progressMax, setProgressMax] = useState(0)
+    // Queries
+    places: Place[]
+    placesError: unknown
+    placesLoading: boolean
+    placesRefetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<any, Error>>
+    
+    // Memos
+    progressPercent: number
+}
+
+const useThrottledPlacePhotos = (
+    segments: Segment[],
+): TThrottledPlacePhotos => {
+    
+    const [progressMax, setProgressMax] = useState<number>(0)
     const [progressValue, setProgressValue] = useState(0)
     
     const {
@@ -36,17 +57,20 @@ const useThrottledPlacePhotos = segments => {
         if (!segments?.length || !places?.length)
             return
         
-        const placeNames = places.map(it => it.name)
+        const placeNames = places.map((it: Place) => it.name)
         const segmentNames = segments.map(it => it.name)
         const missingPlaces = segmentNames
-            .filter(it => console.log(it, (placeNames.includes(it) ? '✓' : 'x'))|| !placeNames.includes(it))
+            .filter(it => {
+                console.log(it, (placeNames.includes(it) ? '✓' : 'x'))
+                return !placeNames.includes(it)
+            })
         
         console.log('throttle pic, missing', missingPlaces.length, 'of', segmentNames.length)
         
         if (!missingPlaces.length)
             return
         
-        const requests = []
+        const requests: PendingFetchRequest[] = []
         
         setProgressMax(missingPlaces.length)
         setProgressValue(0)

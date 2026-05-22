@@ -5,10 +5,15 @@ import { cn } from '@/utils'
 import { Progress } from '@/components/ui/progress'
 import SegmentsFilterToolbar from '@/components/segments/SegmentsFilterToolbar'
 import SadFolderIcon from '@/components/graphics/SadFolderIcon'
+import { TTripEditorViewModel } from '@/components/TripEditor/useTripEditorViewModel'
+
+interface TripDetailProps {
+    vm: TTripEditorViewModel
+}
 
 const TripDetail = ({
     vm,
-} = {}) => {
+}: TripDetailProps) => {
     
     const placePhotosVm = useThrottledPlacePhotos(vm.segments)
     
@@ -71,7 +76,7 @@ const TripDetail = ({
                 
                 </div>
                 
-                {vm.showMap && <MapLibreMap latLng={vm.focusedLatLng} />}
+                {vm.showMap && <MapLibreMap latLng={[vm.focusedLatLng?.lat || 0, vm.focusedLatLng?.lng || 0]} />}
             
             </div>
             

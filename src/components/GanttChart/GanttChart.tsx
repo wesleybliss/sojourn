@@ -1,22 +1,22 @@
-import { Dispatch, DragEventHandler, ReactNode, SetStateAction, useState } from 'react'
+import { Dispatch, ReactNode, SetStateAction, useState } from 'react'
 import useGanttChartViewModel from './GanttChartViewModel'
 import { format, differenceInDays } from 'date-fns'
 import { GripHorizontal } from 'lucide-react'
 import { cn } from '@/utils'
-import { ItemWithId } from '@/types'
+import { GanttChartItemPrimitive } from '@/types'
 
-export interface GanttChartSharedProps<T extends ItemWithId> {
+export interface GanttChartSharedProps<T extends GanttChartItemPrimitive> {
     items: T[]
     setItems: Dispatch<SetStateAction<T[]>>
-    startDateKey: keyof T,
-    endDateKey: keyof T,
+    startDateKey: string & keyof T
+    endDateKey: string & keyof T
 }
 
-export interface GanttChartProps<T extends ItemWithId> extends GanttChartSharedProps<T> {
-    onRenderName?: (name: string, item: any) => ReactNode
+export interface GanttChartProps<T extends GanttChartItemPrimitive> extends GanttChartSharedProps<T> {
+    onRenderName?: (name: string, item: T) => ReactNode
 }
 
-const GanttChart = <T extends ItemWithId,>({
+const GanttChart = <T extends GanttChartItemPrimitive,>({
     items,
     setItems,
     startDateKey,
@@ -99,7 +99,7 @@ const GanttChart = <T extends ItemWithId,>({
                                     ))}
                                     
                                     <div
-                                        className={`absolute h-8 ${it.color} rounded flex items-center cursor-move
+                                        className={`absolute h-8 ${it.color ?? ''} rounded flex items-center cursor-move
                                             ${vm.draggedTask === it.id ? 'opacity-50' : ''}`}
                                         style={{
                                             left: `${taskStart}%`,

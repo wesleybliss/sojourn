@@ -59,7 +59,7 @@ const TripEditor = ({
                 {vm.showMap && <MapLibreMap latLng={[vm.focusedLatLng?.lat || 0, vm.focusedLatLng?.lng || 0]} />}
             </div>
             
-            {vm.trip && vm.segments?.length > 0 && (
+            {vm.trip && vm.currentPlan && vm.segments?.length > 0 && (
                 <div className="mt-4">
                     <h3 className="text-lg font-semibold mb-2">Timeline</h3>
                     <SegmentsGanttChart plan={vm.currentPlan} />

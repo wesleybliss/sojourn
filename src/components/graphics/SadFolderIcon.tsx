@@ -6,10 +6,14 @@ const pathB = '28.4,63.6,63.5,63.6h294c32.7,0,60.1-24.8,63.6-57.3l23.5-216.4C488
 // w-6 h-6 fill-current text-gray-500 hover:text-blue-500 transition-colors
 // size-25 text-red-500
 
+interface SadFolderIconProps {
+    className?: string
+}
+
 const SadFolderIcon = ({
     className,
     ...props
-}) => {
+}: SadFolderIconProps) => {
     
     return (
         

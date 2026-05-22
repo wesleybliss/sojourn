@@ -21,12 +21,16 @@ const SegmentsListDetailsTableHeader = () => {
             <TableRow>
                 <TableHead className="w-5 pl-0 pr-0">
                     <div className="flex items-center">
-                        <CalendarCheck title="Segment Days"/>
+                        <div title="Segment Days">
+                            <CalendarCheck />
+                        </div>
                     </div>
                 </TableHead>
                 <TableHead className="w-5 pl-0 pr-0">
                     <div className="flex items-center">
-                        <CalendarRange title="Cumulative Days" />
+                        <div title="Cumulative Days">
+                            <CalendarRange />
+                        </div>
                     </div>
                 </TableHead>
                 <TableHead className="w-5 pl-2 pr-0">

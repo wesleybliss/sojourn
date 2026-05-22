@@ -10,7 +10,7 @@ export type TCheckItems = {
     setChecked: (idOrIds: (ID | ID[]), override?: boolean) => void
     updateChecked: (fn: (ID[] | ((prev: ID[]) => ID[]))) => void
     toggleChecked: (idOrIds: (ID | ID[])) => void
-    toggleAllChecked: (forceAll?: any) => void
+    toggleAllChecked: (forceAll?: boolean) => void
 }
 
 /**
@@ -117,7 +117,7 @@ const useCheckItems = (items: ItemWithId[]): TCheckItems => {
         
     }, [])
     
-    const toggleAllChecked = useCallback((forceAll = undefined) => {
+    const toggleAllChecked = useCallback((forceAll?: boolean | undefined) => {
         
         if (forceAll === true) {
             setChecked(items.map(it => it.id))

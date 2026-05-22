@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import GanttChart from '@/components/GanttChart'
 import { calculateTotalDays } from '@/utils'
 import dayjs from 'dayjs'
-import { Plan } from '@/types'
+import { Plan, SegmentGanttChart } from '@/types'
 
 interface SegmentsGanttChartProps {
     plan: Plan
@@ -14,17 +14,16 @@ const SegmentsGanttChart = ({
     
     const segments = useMemo(() => plan?.segments || [], [plan])
     
-    /** @type GanttChartItem[] */
-    const items = useMemo(() => {
+    const items = useMemo<SegmentGanttChart[] | null>(() => {
         
         if (!segments || segments.length <= 0)
             return null
         
-        return segments.map(it => ({
+        return segments.map<SegmentGanttChart>(it => ({
             id: it.id,
             name: it.name,
-            startDate: dayjs(it.startDate).toDate(),
-            endDate: dayjs(it.endDate).toDate(),
+            startDate: dayjs(it.startDate as Date).toDate(),
+            endDate: dayjs(it.endDate as Date).toDate(),
             color: it.color,
             totalDays: calculateTotalDays(it.startDate, it.endDate).totalDays,
         }))
@@ -43,6 +42,8 @@ const SegmentsGanttChart = ({
         <GanttChart
             items={items}
             setItems={() => {}}
+            startDateKey="startDate"
+            endDateKey="endDate"
             onRenderName={(name, item) => (
                 <span>
                     {name} <span className="text-xs">({item.totalDays})</span>

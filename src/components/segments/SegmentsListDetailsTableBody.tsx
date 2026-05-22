@@ -2,6 +2,16 @@ import { memo } from 'react'
 import { TableBody, TableRow, TableCell } from '@/components/ui/table'
 import { CircleCheck, CircleAlert, Check, CheckCheck } from 'lucide-react'
 
+interface SegmentsListDetailsTableBodyProps {
+    totalDaysPerSegment?: number
+    cumulativeDaysPerSegment?: number
+    flightBooked?: boolean
+    stayBooked?: boolean
+    isShengenRegion?: boolean
+    isSegmentPlanned?: boolean
+    isSegmentCompleted?: boolean
+}
+
 const SegmentsListDetailsTableBody = ({
     totalDaysPerSegment = 0,
     cumulativeDaysPerSegment = 0,
@@ -10,7 +20,7 @@ const SegmentsListDetailsTableBody = ({
     isShengenRegion = false,
     isSegmentPlanned,
     isSegmentCompleted,
-} = {}) => {
+}: SegmentsListDetailsTableBodyProps) => {
     
     return (
         

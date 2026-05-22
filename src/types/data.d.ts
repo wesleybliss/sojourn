@@ -1,9 +1,25 @@
+import SegmentsGanttChart from '@/components/segments/SegmentsGanttChart'
 
 export type ID = number
 
 export type ItemWithId = unknown & { id: ID }
 
+export type ItemWithName = ItemWithId & { name: string }
+
+export type GanttChartItemPrimitive = ItemWithName & { color?: string }
+
+export type SegmentGanttChart = GanttChartItemPrimitive & {
+    startDate: Date
+    endDate: Date
+    totalDays: number
+}
+
 export type Coords = {
     lat: number
     lng: number
+}
+
+export type PendingFetchRequest = {
+    promise: Promise<Response>
+    abort: () => void
 }

@@ -29,7 +29,7 @@ export const currentSegments = createSelector<Segment[]>({
 //
 
 export const placesWithCoverImages = createWire<Place[]>([])
-export const placeNamesToCoverImagesMap = createSelector<Record<string, string>>({
+export const placeNamesToCoverImagesMap = createSelector<Record<string, { id: ID, url: string }>>({
     get: ({ get }) => get(placesWithCoverImages)?.reduce((acc, it) => ({
         ...acc,
         [it.name]: {

@@ -13,6 +13,7 @@ import {
     ContextMenuItem,
     ContextMenuTrigger,
 } from '@/components/ui/context-menu'
+import { ID } from '@/types'
 
 const emptyImageSrc = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfF' +
     'cSJAAAADUlEQVR4AWJqaGz8DwAAAP//e4lw8wAAAAZJREFUAwAFkwKEpgq4TgAAAABJRU5ErkJggg=='
@@ -32,8 +33,8 @@ interface LeftImageCardProps {
     height?: string
     imageWidth?: string
     contentWidth?: string
-    placeId?: string
-    shufflePlaceCoverPhoto: (placeId: string | undefined, topic?: string) => void
+    placeId?: ID
+    shufflePlaceCoverPhoto: (placeId: ID | undefined, topic?: string) => void
 }
 
 const LeftImageCard = ({
