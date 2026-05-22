@@ -59,7 +59,7 @@ const useNavbarLinks = (
                     const a = document.createElement('a')
                     
                     a.href = url
-                    a.download = `trip-planner-backup-${new Date().toISOString().split('T')[0]}.json`
+                    a.download = `trip-planner-backup-${new Date().toISOString().split('T')[0]}on`
                     
                     // eslint-disable-next-line no-restricted-globals
                     document.body.appendChild(a)

@@ -87,7 +87,7 @@ export default function ImportTripsPage() {
                             ref={fileInputRef}
                             className="hidden"
                             type="file"
-                            accept=".json"
+                            accept="on"
                             onChange={handleFileChange}/>
                         
                         <Button

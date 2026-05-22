@@ -3,7 +3,7 @@
 import useNavbarViewModel from './NavbarViewModel'
 import { cn } from '@/utils'
 import ThemeToggle from '@/components/ThemeToggle'
-import AccountMenu from '@/components/AccountMenu.jsx'
+import AccountMenu from '@/components/AccountMenux'
 import CurrentPlanSelector from '@/components/CurrentPlanSelector'
 import TripActionsDropdown from '@/components/Navbar/TripActionsDropdown'
 import Link from 'next/link'

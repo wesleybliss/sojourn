@@ -1,17 +1,31 @@
 import 'dotenv/config'
 import fs from 'node:fs'
 import path from 'node:path'
-import db from '@/db/index.js'
-import * as schemas from '@/db/schema.js'
+import db from '@/db/index'
+import * as schemas from '@/db/schema'
 import { eq } from 'drizzle-orm'
+import { ID, Plan, Segment, Trip, TripInsert } from '@/types'
 
 const args = process.argv.slice(2)
 const [tripsFile] = args
 
 const script = path.basename(process.argv[0])
-const usage = `USAGE: ${script} <tripsFile.json>`
+const usage = `USAGE: ${script} <tripsFileon>`
 
-const importSegment = async (tripId, plan, segment) => {
+type ImportTripData = {
+    type: 'single' | 'multiple'
+    name: string
+    owner: string // email address
+    description: string | null
+    coverImageUrl: string | null
+    plans?: Plan[] | undefined
+}
+
+const importSegment = async (
+    tripId: ID,
+    plan: Partial<Plan>,
+    segment: Segment,
+) => {
     
     if (!tripId?.toString()?.length)
         throw new Error(`importSegment: Invalid trip ID "${tripId}"`)
@@ -30,10 +44,10 @@ const importSegment = async (tripId, plan, segment) => {
             planId: plan.id,
             name: segment.name,
             description: segment.description,
-            startDate: new Date(segment.startDate),
-            endDate: new Date(segment.endDate),
-            coordsLat: segment.coords.lat,
-            coordsLng: segment.coords.lng,
+            startDate: new Date(segment.startDate as Date),
+            endDate: new Date(segment.endDate as Date),
+            coordsLat: segment.coordsLat,
+            coordsLng: segment.coordsLng,
             color: segment.color,
             flightBooked: segment.flightBooked || false,
             stayBooked: segment.stayBooked || false,
@@ -42,7 +56,7 @@ const importSegment = async (tripId, plan, segment) => {
     
 }
 
-const importTrip = async data => {
+const importTrip = async (data: ImportTripData) => {
     
     if (data.type !== 'single')
         throw new Error('Invalid trip type (not "single") ' + JSON.stringify(data, null, 4))
@@ -80,14 +94,17 @@ const importTrip = async data => {
     if (!user || user.length === 0)
         throw new Error(`User not found with email "${email}"`)
     
+    const tripInsertData: TripInsert = {
+        userId: user[0].id,
+        name,
+        description,
+        coverImageUrl,
+    }
+    
     console.log('Creating trip', name)
     const insertedTrips = await db
         .insert(schemas.trips)
-        .values({
-            name,
-            description,
-            coverImageUrl,
-        })
+        .values(tripInsertData)
         .returning({
             id: schemas.trips.id,
             name: schemas.trips.name,
@@ -101,7 +118,7 @@ const importTrip = async data => {
         tripId: trip.id,
     })
     
-    for (const plan of plans) {
+    for (const plan of plans || []) {
         
         console.log('Creating plan', plan.name)
         const insertedPlans = await db
@@ -116,9 +133,9 @@ const importTrip = async data => {
                 name: schemas.plans.name,
             })
         
-        console.log('Creating', plan.segments.length, 'segments for plan', plan.name)
+        console.log('Creating', plan?.segments?.length, 'segments for plan', plan.name)
         
-        for (const segment of plan.segments) {
+        for (const segment of plan?.segments || []) {
             await importSegment(trip.id, insertedPlans[0], segment)
         }
         
@@ -126,7 +143,10 @@ const importTrip = async data => {
     
 }
 
-const importTrips = async data => {
+const importTrips = async (data: {
+    type: 'single' | 'multiple'
+    trips: Array<Trip & { owner: string }>
+}) => {
     
     for (const trip of data.trips) {
         

@@ -1,9 +1,9 @@
-import './src/envConfig.js'
+import './src/envConfig'
 import { defineConfig } from 'drizzle-kit'
 
 export default defineConfig({
     out: './drizzle',
-    schema: './src/db/schema.js',
+    schema: './src/db/schema',
     dialect: 'turso',
     dbCredentials: {
         url: process.env.TURSO_DATABASE_URL,

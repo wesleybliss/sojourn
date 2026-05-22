@@ -12,12 +12,12 @@ export async function POST(request, { params }) {
         const { planId } = await params
         
         if (isNaN(parseInt(planId, 10)))
-            return NextResponse.json({ success: false, error: 'Invalid plan ID' }, { status: 400 })
+            return NextResponseon({ success: false, error: 'Invalid plan ID' }, { status: 400 })
         
         const [plan] = await db.select().from(schemas.plans).where(eq(schemas.plans.id, parseInt(planId, 10)))
         
         if (!plan)
-            return NextResponse.json({ success: false, error: 'Plan not found' }, { status: 404 })
+            return NextResponseon({ success: false, error: 'Plan not found' }, { status: 404 })
         
         const result = await db.transaction(async tx => {
             
@@ -47,7 +47,7 @@ export async function POST(request, { params }) {
             
         })
         
-        return NextResponse.json(
+        return NextResponseon(
             { success: true, data: result, message: 'Plan cloned successfully' },
             { status: 201 },
         )
@@ -55,7 +55,7 @@ export async function POST(request, { params }) {
     } catch (e) {
         
         console.error('Error updating plan:', e)
-        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return NextResponseon({ success: false, error: 'Internal Server Error' }, { status: 500 })
         
     }
     

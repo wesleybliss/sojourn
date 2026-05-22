@@ -2,11 +2,11 @@
 Agent guidelines for automated agents in this repo.
 
 ## Tech Stack
-- **Framework:** Next.js 15 (App Router), React 19
+- **Framework:** Next 15 (App Router), React 19
 - **Styling:** Tailwind CSS 4, DaisyUI 5, Radix UI Primitives
 - **Database:** Drizzle ORM, LibSQL (Turso)
 - **State Management:** React Query, SWR
-- **Auth:** NextAuth.js v4
+- **Auth:** NextAuth v4
 - **Testing:** Jest, React Testing Library
 - **Linting:** ESLint 9, Stylelint
 
@@ -37,7 +37,7 @@ Agent guidelines for automated agents in this repo.
 - **Semicolons:** None.
 - **Parens:** Arrow function parens only when needed.
 - **Max Line Length:** 120 characters.
-- **Extensions:** `.jsx` for components, `.js` for logic/utilities.
+- **Extensions:** `x` for components, `` for logic/utilities.
 - **Imports:** Use aliases (e.g., `import X from '@/components/X'`) instead of relative paths.
 - **Spacing:**
   - Space before blocks (`if (...) {`).
@@ -47,14 +47,14 @@ Agent guidelines for automated agents in this repo.
 - **React:**
   - Functional components with Hooks.
   - Avoid inline `z-index` (use Tailwind classes or config).
-  - JSDoc types in `typedefs.js` or inline JSDoc.
+  - JSDoc types in `typedefs` or inline JSDoc.
 - **Global Variables:** `Logger` is available globally.
 - **Check Your Work:** Always run `pnpm lint` before committing.
 
 ## Project Structure
-- `src/app`: Next.js App Router pages and layouts.
+- `src/app`: Next App Router pages and layouts.
 - `src/components`: React components (PascalCase).
 - `src/db`: Drizzle schema and DB utilities.
 - `src/lib`: Shared utilities, actions, hooks.
 - `src/store`: Global state stores.
-- `src/constants.js`: Project constants.
+- `src/constants`: Project constants.

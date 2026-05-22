@@ -1,6 +1,6 @@
 import { useRouter } from 'next/navigation'
 import { useCreateTripMutation, useDeleteTripMutation } from '@/lib/queries/trip'
-import { useTripsQuery } from '@/lib/queries/trips.js'
+import { useTripsQuery } from '@/lib/queries/trips'
 import { ID, Trip, TripInsert } from '@/types'
 import { QueryObserverResult, RefetchOptions, UseMutationResult } from '@tanstack/react-query'
 

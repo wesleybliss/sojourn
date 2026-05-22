@@ -53,7 +53,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             })
             
             if (response.ok) {
-                const data = await response.json()
+                const data = await responseon()
                 
                 setUser(data.user)
                 setNeedsInviteCode(data.needsInviteCode || false)

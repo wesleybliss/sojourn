@@ -1,6 +1,6 @@
 # Trip Planner
 
-A comprehensive trip planning application designed to help travelers organize itineraries, visualize schedules, and track important details like Schengen zone days. Built with Next.js 15, Drizzle ORM, and Tailwind CSS.
+A comprehensive trip planning application designed to help travelers organize itineraries, visualize schedules, and track important details like Schengen zone days. Built with Next 15, Drizzle ORM, and Tailwind CSS.
 
 ## Key Features
 
@@ -21,11 +21,11 @@ A comprehensive trip planning application designed to help travelers organize it
 *   **AI Summary:** Intelligent summarization of trip details.
 
 ## Tech Stack
-- **Framework:** Next.js 15 (App Router), React 19
+- **Framework:** Next 15 (App Router), React 19
 - **Styling:** Tailwind CSS 4, DaisyUI 5, Radix UI
 - **Database:** Drizzle ORM, LibSQL (Turso)
 - **State Management:** React Query, SWR
-- **Auth:** NextAuth.js
+- **Auth:** NextAuth
 - **Testing:** Jest
 
 ## Getting Started
@@ -54,7 +54,7 @@ A comprehensive trip planning application designed to help travelers organize it
 - `pnpm db:studio`: Open Drizzle Studio to inspect the database.
 
 ## Project Structure
-- `src/app`: Next.js App Router pages and layouts.
+- `src/app`: Next App Router pages and layouts.
 - `src/components`: Reusable UI components and feature-specific modules (GanttChart, Maps, etc.).
 - `src/db`: Database schema definition (Drizzle) and utilities.
 - `src/lib`: Shared helpers, hooks, and business logic.

@@ -179,11 +179,11 @@ export default [
                     SwitchCase: 1,
                 },
             ],
-            'react/jsx-filename-extension': ['error', { extensions: ['.jsx', '.tsx'] }],
+            'react/jsx-filename-extension': ['error', { extensions: ['x', '.tsx'] }],
             'no-undef': 'off',
         },
     },
     
     // ...oxlint.configs['flat/recommended'], // oxlint should be the last one
-    ...oxlint.buildFromOxlintConfigFile('./.oxlintrc.json'), // oxlint should be the last one
+    ...oxlint.buildFromOxlintConfigFile('./.oxlintrcon'), // oxlint should be the last one
 ]

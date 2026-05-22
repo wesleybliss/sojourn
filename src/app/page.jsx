@@ -1,6 +1,6 @@
 'use client'
 
-import TripsPage from '@/app/trips/TripsPage.jsx'
+import TripsPage from '@/app/trips/TripsPagex'
 import ProtectedRoute from '@/components/ProtectedRoute'
 
 export default function HomePage() {

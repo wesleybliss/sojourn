@@ -136,10 +136,10 @@ export const withAuth = (handler: (req: NextRequest, context: { auth: AuthContex
     } catch (e) {
         
         if (e instanceof HttpError)
-            return NextResponse.json({ success: false, error: (e as HttpError).message }, { status: (e as HttpError).status })
+            return NextResponseon({ success: false, error: (e as HttpError).message }, { status: (e as HttpError).status })
         
         console.error('Authorization error:', e)
-        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return NextResponseon({ success: false, error: 'Internal Server Error' }, { status: 500 })
         
     }
     

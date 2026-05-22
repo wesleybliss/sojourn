@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import db from '@/db/index.js'
-import * as schemas from '@/db/schema.js'
+import db from '@/db/index'
+import * as schemas from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import segmentsRepo from '@/db/repos/segments'
 import { convertStringDates, getUpdatePayload } from '@/utils'
@@ -16,9 +16,9 @@ export async function PUT(request, opts) {
         const segment = await segmentsRepo.findOneById(id)
         
         if (segment?.id !== id)
-            return NextResponse.json({ success: false, error: 'Segment not found' }, { status: 404 })
+            return NextResponseon({ success: false, error: 'Segment not found' }, { status: 404 })
         
-        const segmentData = await request.json()
+        const segmentData = await requeston()
         const { cascadeEnabled } = segmentData
         
         let payload = getUpdatePayload(segment, segmentData, ['tripId', 'planId', 'cascadeEnabled'])
@@ -32,7 +32,7 @@ export async function PUT(request, opts) {
             const targetIndex = segments.findIndex(s => s.id === id)
             
             if (targetIndex === -1)
-                return NextResponse.json({ success: false, error: 'Segment not found' }, { status: 404 })
+                return NextResponseon({ success: false, error: 'Segment not found' }, { status: 404 })
             
             const currentSegment = segments[targetIndex]
             const originalDuration = dayjs(currentSegment.endDate).diff(dayjs(currentSegment.startDate), 'day')
@@ -66,7 +66,7 @@ export async function PUT(request, opts) {
             
             const [reloaded] = await db.select().from(schemas.segments).where(eq(schemas.segments.id, id))
             
-            return NextResponse.json({
+            return NextResponseon({
                 success: true,
                 data: reloaded, message: 'Segment dates updated successfully',
             })
@@ -80,15 +80,15 @@ export async function PUT(request, opts) {
             .returning()
         
         if (!updatedSegment)
-            return NextResponse.json({ success: false, error: 'Segment not found' }, { status: 404 })
+            return NextResponseon({ success: false, error: 'Segment not found' }, { status: 404 })
         
-        return NextResponse.json({ success: true, data: updatedSegment, message: 'Segment updated successfully' })
+        return NextResponseon({ success: true, data: updatedSegment, message: 'Segment updated successfully' })
         
     } catch (e) {
         
         console.error(`Error updating segment ${params.id}:`, e)
         
-        return NextResponse.json({ success: false, error: e.message }, { status: 500 })
+        return NextResponseon({ success: false, error: e.message }, { status: 500 })
         
     }
     

@@ -1,8 +1,8 @@
 import 'dotenv/config'
 import path from 'node:path'
-import db from '@/db/index.js'
-import * as schemas from '@/db/schema.js'
-import { hashPassword } from '../../lib/utils.js'
+import db from '@/db/index'
+import * as schemas from '@/db/schema'
+import { hashPassword } from '@/utils'
 
 const args = process.argv.slice(2)
 const [email, password] = args

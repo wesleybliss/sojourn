@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
-import db from '@/db/index.js'
-import * as schemas from '@/db/schema.js'
+import db from '@/db/index'
+import * as schemas from '@/db/schema'
 import dayjs from 'dayjs'
-import { withAuth } from '@/lib/auth.js'
+import { withAuth } from '@/lib/auth'
 
 const toDate = v => {
     
@@ -27,10 +27,10 @@ export const POST = withAuth(async (request, { auth }) => {
         
         const { userId } = auth
         
-        const body = await request.json()
+        const body = await requeston()
         
         if (!body || !body.type || !body.trips)
-            return NextResponse.json({ success: false, error: 'Invalid backup payload' }, { status: 400 })
+            return NextResponseon({ success: false, error: 'Invalid backup payload' }, { status: 400 })
         
         const onConflictAction = body.onConflictAction || 'duplicate'
         
@@ -118,12 +118,12 @@ export const POST = withAuth(async (request, { auth }) => {
             
         }
         
-        return NextResponse.json({ success: true, data: results })
+        return NextResponseon({ success: true, data: results })
         
     } catch (e) {
         
         console.error('Error restoring backup:', e)
-        return NextResponse.json({ success: false, error: e.message }, { status: 500 })
+        return NextResponseon({ success: false, error: e.message }, { status: 500 })
         
     }
     

@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
 import tripsRepo from '@/db/repos/trips'
 import segmentsRepo from '@/db/repos/segments'
-import db from '@/db/index.js'
-import * as schemas from '@/db/schema.js'
+import db from '@/db/index'
+import * as schemas from '@/db/schema'
 import { eq } from 'drizzle-orm'
 
 /**
@@ -56,14 +56,14 @@ export async function POST() {
             })
         }
         
-        return NextResponse.json({
+        return NextResponseon({
             success: true,
             data: migrationResults,
             message: `Migration completed. ${migrationResults.length} trips processed.`,
         })
     } catch (e) {
         console.error('Error during migration:', e)
-        return NextResponse.json(
+        return NextResponseon(
             { success: false, error: (e as Error).message },
             { status: 500 },
         )

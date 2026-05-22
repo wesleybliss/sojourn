@@ -1,6 +1,6 @@
 import 'dotenv/config'
 
-import aliases from './config/aliases.js'
+import aliases from './config/aliases'
 import path from 'path'
 import { fileURLToPath } from 'url'
 

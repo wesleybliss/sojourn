@@ -4,14 +4,14 @@ import { getRandomUnsplashImageUrl } from '@/utils'
 
 export const POST = withAuth(async (request/* , { params } */) => {
     
-    const body = await request.json()
+    const body = await requeston()
     const { topic } = body
     
     try {
         
         const url = await getRandomUnsplashImageUrl(topic)
         
-        return NextResponse.json({
+        return NextResponseon({
             success: true,
             data: url,
         })
@@ -19,7 +19,7 @@ export const POST = withAuth(async (request/* , { params } */) => {
     } catch (e) {
         
         console.error(`Error getting random photo with topic ${topic}:`, e)
-        return NextResponse.json(
+        return NextResponseon(
             { success: false, error: e.message },
             { status: 500 })
         

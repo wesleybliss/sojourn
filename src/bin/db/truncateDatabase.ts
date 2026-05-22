@@ -1,6 +1,8 @@
+// noinspection SqlNoDataSourceInspection
+
 import 'dotenv/config'
-import db from '@/db/index.js'
-import * as schemas from '@/db/schema.js'
+import db from '@/db/index'
+import * as schemas from '@/db/schema'
 import { sql } from 'drizzle-orm'
 
 const main = async () => {
@@ -17,6 +19,7 @@ const main = async () => {
     
     await Promise.allSettled(Object.keys(schemas).map(async it => {
         if (it === 'users') return
+        // @ts-ignore
         await db.delete(schemas[it])
         await db.run(sql`DELETE FROM sqlite_sequence WHERE name = '${it}'`)
     }))

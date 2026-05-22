@@ -1,4 +1,4 @@
-import LoadingSpinner from '@/components/LoadingSpinner.jsx'
+import LoadingSpinner from '@/components/LoadingSpinnerx'
 
 const Loading = () => {
     

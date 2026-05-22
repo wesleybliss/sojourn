@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useWireValue } from '@forminator/react-wire'
-import * as store from '@/store/index.js'
-import { themes } from '@/constants.js'
+import * as store from '@/store/index'
+import { themes } from '@/constants'
 
 const useTheme = () => {
     

@@ -21,7 +21,7 @@ export const eventBus = createSelector<EventBusPayload | null>({
 /**
  * Post a new event to the event bus
  *
- * @param {string} name - must be one of `constants.js#EVENTS`
+ * @param {string} name - must be one of `constants#EVENTS`
  * @param {*} [data] - optional data payload
  */
 export const postEvent = (name: string, data: unknown) => {

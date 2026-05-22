@@ -1,8 +1,8 @@
-# Task: Integrate Turso Local-First Offline Sync in Next.js Trip Planner
+# Task: Integrate Turso Local-First Offline Sync in Next Trip Planner
 
 ## Overview
 
-Migrate the Next.js trip planner app from server-side REST API data fetching to Turso's local-first offline-sync architecture using `@libsql/wasm`. This enables offline reads/writes with bi-directional sync to Turso cloud, while keeping authentication and special operations server-side.
+Migrate the Next trip planner app from server-side REST API data fetching to Turso's local-first offline-sync architecture using `@libsql/wasm`. This enables offline reads/writes with bi-directional sync to Turso cloud, while keeping authentication and special operations server-side.
 
 ## Architecture
 
@@ -36,7 +36,7 @@ Server API Routes (unchanged):
 
 ## Prerequisites
 
-- Node.js >=18 (current: 22.13.1)
+- Node >=18 (current: 22.13.1)
 - Existing Turso database (already configured: trip-planner)
 - Environment variables already set in `.env`:
   - `TURSO_DATABASE_URL`
@@ -65,7 +65,7 @@ NEXT_PUBLIC_TURSO_AUTH_TOKEN="<your-token>"
 
 **Security Note**: This approach is acceptable for development but should be replaced with server-issued short-lived replication tokens in production.
 
-### 3. Create Local-First Client (`src/db/clientDb.js`)
+### 3. Create Local-First Client (`src/db/clientDb`)
 
 Create a singleton WASM client for browser with IndexedDB persistence:
 
@@ -145,7 +145,7 @@ console.log(res.rows.map(r => r.name))
 Since existing repos use Drizzle, create browser Drizzle instance:
 
 ```js
-// src/db/drizzleClient.js
+// src/db/drizzleClient
 import { drizzle } from 'drizzle-orm/libsql'
 import * as schema from '@/db/schema'
 import { getClientDb } from '@/db/clientDb'
@@ -172,10 +172,10 @@ Refactor `src/db/repos/*` to work with client DB. The existing repos use Drizzle
 
 ### 7. Migrate React Query Hooks
 
-Update `src/lib/queries/*.js` to use repos instead of REST fetches:
+Update `src/lib/queries/*` to use repos instead of REST fetches:
 
 ```js
-// src/lib/queries/trips.js
+// src/lib/queries/trips
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import tripsRepo from '@/db/repos/trips'
 import { syncDb } from '@/db/clientDb'
@@ -206,7 +206,7 @@ export const useCreateTripMutation = () => {
 Create hook for connectivity status:
 
 ```js
-// src/hooks/useOnlineStatus.js
+// src/hooks/useOnlineStatus
 import { useEffect, useState } from 'react'
 
 export const useOnlineStatus = () => {
@@ -234,7 +234,7 @@ export const useOnlineStatus = () => {
 Create hook to sync when coming back online:
 
 ```js
-// src/hooks/useAutoSync.js
+// src/hooks/useAutoSync
 import { useEffect, useRef } from 'react'
 import { useOnlineStatus } from '@/hooks/useOnlineStatus'
 import { syncDb } from '@/db/clientDb'
@@ -272,7 +272,7 @@ Disable or hide when `useOnlineStatus()` returns `false`, with tooltip:
 Add sync button component:
 
 ```jsx
-// src/components/SyncButton.jsx
+// src/components/SyncButtonx
 import { useState } from 'react'
 import { syncDb } from '@/db/clientDb'
 import { useOnlineStatus } from '@/hooks/useOnlineStatus'
@@ -312,7 +312,7 @@ export const SyncButton = () => {
 - ES7 syntax
 - Arrow parens only when needed
 - Functional components with hooks
-- `.jsx` extension for React components
+- `x` extension for React components
 
 ## Testing Checklist
 
@@ -351,7 +351,7 @@ export const SyncButton = () => {
 ## Rollout Strategy
 
 1. **Docs first**: Update all documentation (this file + what-migrated.md)
-2. **Client DB**: Implement clientDb.js and verification
+2. **Client DB**: Implement clientDb and verification
 3. **Read queries**: Migrate GET operations to local-first
 4. **Write mutations**: Migrate POST/PUT/DELETE to local-first
 5. **Sync + offline**: Add online/offline detection and auto-sync

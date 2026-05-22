@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import db from '@/db/index.js'
-import * as schemas from '@/db/schema.js'
+import db from '@/db/index'
+import * as schemas from '@/db/schema'
 import { withAuth, isUserTripMember } from '@/lib/auth'
 import { eq, and, inArray } from 'drizzle-orm'
 
@@ -12,7 +12,7 @@ export const POST = withAuth(async (request, { auth }) => {
     
     try {
         
-        const body = await request.json()
+        const body = await requeston()
         
         const {
             tripId,
@@ -24,34 +24,34 @@ export const POST = withAuth(async (request, { auth }) => {
         } = body
         
         if (!tripId)
-            return NextResponse.json(
+            return NextResponseon(
                 { success: false, error: 'Param tripId is required' },
                 { status: 422 })
         
         if (!planId)
-            return NextResponse.json(
+            return NextResponseon(
                 { success: false, error: 'Param planId is required' },
                 { status: 422 })
         
         if (!name?.length)
-            return NextResponse.json(
+            return NextResponseon(
                 { success: false, error: 'Param name is required' },
                 { status: 422 })
         
         if (!startDate?.length)
-            return NextResponse.json(
+            return NextResponseon(
                 { success: false, error: 'Param startDate is required' },
                 { status: 422 })
         
         if (!endDate?.length)
-            return NextResponse.json(
+            return NextResponseon(
                 { success: false, error: 'Param endDate is required' },
                 { status: 422 })
         
         const isMember = await isUserTripMember(auth, tripId)
         
         if (!isMember)
-            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
+            return NextResponseon({ success: false, error: 'Forbidden' }, { status: 403 })
         
         const [createdSegment] = await db
             .insert(schemas.segments)
@@ -65,14 +65,14 @@ export const POST = withAuth(async (request, { auth }) => {
             })
             .returning()
         
-        return NextResponse.json(
+        return NextResponseon(
             { success: true, data: createdSegment, message: 'Segment created successfully' },
             { status: 201 })
         
     } catch (e) {
         
         console.error('Error creating segment:', e)
-        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return NextResponseon({ success: false, error: 'Internal Server Error' }, { status: 500 })
         
     }
     
@@ -82,28 +82,28 @@ export const DELETE = withAuth(async (request, { auth }) => {
     
     try {
         
-        const body = await request.json()
+        const body = await requeston()
         const { tripId, planId, segmentIds } = body
         
         if (!Array.isArray(segmentIds) || !segmentIds.length)
-            return NextResponse.json(
+            return NextResponseon(
                 { success: false, error: 'Param segmentIds is required and must be non-empty array' },
                 { status: 422 })
         
         if (!tripId)
-            return NextResponse.json(
+            return NextResponseon(
                 { success: false, error: 'Param tripId is required' },
                 { status: 422 })
         
         if (!planId)
-            return NextResponse.json(
+            return NextResponseon(
                 { success: false, error: 'Param planId is required' },
                 { status: 422 })
         
         const isMember = await isUserTripMember(auth, tripId)
         
         if (!isMember)
-            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
+            return NextResponseon({ success: false, error: 'Forbidden' }, { status: 403 })
         
         await db.transaction(async tx => {
             await tx.delete(schemas.segments)
@@ -114,14 +114,14 @@ export const DELETE = withAuth(async (request, { auth }) => {
                 ))
         })
         
-        return NextResponse.json(
+        return NextResponseon(
             { success: true, message: 'Segments deleted successfully' },
             { status: 200 })
         
     } catch (e) {
         
         console.error('Error deleting segments:', e)
-        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return NextResponseon({ success: false, error: 'Internal Server Error' }, { status: 500 })
         
     }
     

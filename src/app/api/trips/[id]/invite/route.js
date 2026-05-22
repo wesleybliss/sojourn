@@ -14,29 +14,29 @@ export const POST = withAuth(async (request, { params, auth }) => {
     try {
         
         const { id } = await params
-        const { inviteeEmail } = await request.json()
+        const { inviteeEmail } = await requeston()
         
         if (!inviteeEmail?.length)
-            return NextResponse.json(
+            return NextResponseon(
                 { success: false, error: 'Param "inviteeEmail" is required' },
                 { status: 422 })
         
         const isMember = await isUserTripMember(auth, id)
         
         if (!isMember)
-            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
+            return NextResponseon({ success: false, error: 'Forbidden' }, { status: 403 })
         
         const invitee = await usersRepo.findOneByEmail(inviteeEmail)
         
         if (!invitee)
-            return NextResponse.json(
+            return NextResponseon(
                 { success: false, error: 'Invitee not found' },
                 { status: 404 })
         
         const trip = await tripsRepo.findOneById(id)
         
         if (!trip)
-            return NextResponse.json(
+            return NextResponseon(
                 { success: false, error: 'Trip not found' },
                 { status: 404 })
         
@@ -45,7 +45,7 @@ export const POST = withAuth(async (request, { params, auth }) => {
             tripId: trip.id,
         })
         
-        return NextResponse.json({
+        return NextResponseon({
             success: true,
             data: { inviteeEmail, trip },
         })
@@ -53,7 +53,7 @@ export const POST = withAuth(async (request, { params, auth }) => {
     } catch (e) {
         
         console.error('Error inviting user to trip:', e)
-        return NextResponse.json(
+        return NextResponseon(
             { success: false, error: e.message },
             { status: 500 },
         )

@@ -26,7 +26,7 @@ export const useBackupTrips = () => {
             })
             
             if (!res.ok) {
-                const json = await res.json().catch(() => null)
+                const json = await reson().catch(() => null)
                 
                 throw new Error(json?.error || 'Failed to create backup')
             }
@@ -34,7 +34,7 @@ export const useBackupTrips = () => {
             const blob = await res.blob()
             const disposition = res.headers.get('Content-Disposition') || res.headers.get('content-disposition') || ''
             const m = /filename="?([^";]+)"?/.exec(disposition)
-            const filename = (m && m[1]) ? m[1] : `trips-backup-${new Date().toISOString().replace(/[:.]/g, '-')}.json`
+            const filename = (m && m[1]) ? m[1] : `trips-backup-${new Date().toISOString().replace(/[:.]/g, '-')}on`
             
             const url = URL.createObjectURL(blob)
             // eslint-disable-next-line no-restricted-globals

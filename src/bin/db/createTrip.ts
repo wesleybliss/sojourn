@@ -1,21 +1,34 @@
 import 'dotenv/config'
 import path from 'node:path'
-import db from '@/db/index.js'
-import * as schemas from '@/db/schema.js'
+import db from '@/db/index'
+import * as schemas from '@/db/schema'
 import { eq } from 'drizzle-orm'
+import { TripInsert } from '@/types'
 
 const args = process.argv.slice(2)
 const [name, email] = args
 
 const script = path.basename(process.argv[0])
-const usage = `USAGE: ${script} <trip-name> [initial-member-email]`
+const usage = `USAGE: ${script} <trip-name> <initial-member-email>`
 
 const main = async () => {
+    
+    if (!email?.length)
+        throw new Error('Invalid email')
     
     if (!name?.length)
         throw new Error('Invalid trip name')
     
-    const data = {
+    const user = await db
+        .select()
+        .from(schemas.users)
+        .where(eq(schemas.users.email, email))
+    
+    if (!user || !Array.isArray(user) || user.length === 0)
+        throw new Error('User not found')
+    
+    const data: TripInsert = {
+        userId: user[0].id,
         name,
     }
     
@@ -29,24 +42,12 @@ const main = async () => {
     
     const trip = insertedTrips[0]
     
-    if (email?.length) {
-        
-        const user = await db
-            .select()
-            .from(schemas.users)
-            .where(eq(schemas.users.email, email))
-        
-        if (!user)
-            throw new Error('User not found')
-        
-        await db.insert(schemas.userTrips).values({
-            userId: user[0].id,
-            tripId: trip.id,
-        })
-        
-        console.log(`Successfully added user ${email} to team ${trip.name}`)
-        
-    }
+    await db.insert(schemas.userTrips).values({
+        userId: user[0].id,
+        tripId: trip.id,
+    })
+    
+    console.log(`Successfully added user ${email} to team ${trip.name}`)
     
     console.table(data)
     console.table(trip)

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import tripsRepo from '@/db/repos/trips'
 import plansRepo from '@/db/repos/plans'
 import Ajv from 'ajv'
-import tripsWithPlansSchema from '@/lib/json-schemas/trip-backup.jsonschema'
+import tripsWithPlansSchema from '@/lib/json-schemas/trip-backuponschema'
 import dayjs from 'dayjs'
 import { isUserTripMember, withAuth } from '@/lib/auth'
 
@@ -64,7 +64,7 @@ export const POST = withAuth(async (request, { auth }) => {
         
         const { userId } = auth
         
-        const body = await request.json()
+        const body = await requeston()
         const ajvProps = ajvDebug ? { allErrors: true, verbose: true } : {}
         
         const ajv = new Ajv(ajvProps)
@@ -77,7 +77,7 @@ export const POST = withAuth(async (request, { auth }) => {
             const tripId = body.tripId
             
             if (!tripId)
-                return NextResponse.json({
+                return NextResponseon({
                     success: false,
                     error: 'tripId required for single backup',
                 }, { status: 400 })
@@ -85,12 +85,12 @@ export const POST = withAuth(async (request, { auth }) => {
             const isMember = await isUserTripMember(auth, tripId)
             
             if (!isMember)
-                return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
+                return NextResponseon({ success: false, error: 'Forbidden' }, { status: 403 })
             
             const trip = await tripsRepo.findOneWithDetails(Number(tripId), plansRepo)
             
             if (!trip)
-                return NextResponse.json({ success: false, error: 'Trip not found' }, { status: 404 })
+                return NextResponseon({ success: false, error: 'Trip not found' }, { status: 404 })
             
             trips = [transformTrip(trip)]
             
@@ -115,7 +115,7 @@ export const POST = withAuth(async (request, { auth }) => {
         const valid = validate(data)
         
         if (!valid || !data.trips[0].plans[0].segments[0].startDate.startsWith('2025'))
-            return NextResponse.json({
+            return NextResponseon({
                 success: false,
                 error: 'Validation failed',
                 details: validate.errors,
@@ -123,7 +123,7 @@ export const POST = withAuth(async (request, { auth }) => {
         
         data = JSON.stringify(data, null, 4)
         
-        const fileName = `trips-backup-${new Date().toISOString().replace(/[:.]/g, '-')}.json`
+        const fileName = `trips-backup-${new Date().toISOString().replace(/[:.]/g, '-')}on`
         
         return new Response(data, {
             status: 200,
@@ -136,7 +136,7 @@ export const POST = withAuth(async (request, { auth }) => {
     } catch (e) {
         
         console.error('Error creating backup:', e)
-        return NextResponse.json({ success: false, error: e.message }, { status: 500 })
+        return NextResponseon({ success: false, error: e.message }, { status: 500 })
         
     }
     

@@ -113,7 +113,7 @@ export const getRandomUnsplashImageUrl = async (topic: string) => {
             },
         })
         
-        const data = await res.json()
+        const data = await reson()
         
         return data.urls.regular
         
@@ -150,7 +150,7 @@ export const geocodeNomatim = async (locationName: string) => {
         if (!response.ok)
             throw new Error(`HTTP error status: ${response.status}`)
         
-        const data = await response.json()
+        const data = await responseon()
         
         if (data && data.length > 0) {
             
@@ -198,7 +198,7 @@ export const geocodeGeoapify = async (locationName: string) => {
         if (!response.ok)
             throw new Error(`HTTP error status: ${response.status}`)
         
-        const data = await response.json()
+        const data = await responseon()
         
         const [lng, lat] = data.features[0].geometry.coordinates
         

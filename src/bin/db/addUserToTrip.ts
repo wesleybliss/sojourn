@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import path from 'node:path'
-import db from '@/db/index.js'
-import * as schemas from '@/db/schema.js'
+import db from '@/db/index'
+import * as schemas from '@/db/schema'
 import { eq } from 'drizzle-orm'
 
 const args = process.argv.slice(2)
@@ -21,7 +21,7 @@ const main = async () => {
     const trip = await db
         .select()
         .from(schemas.trips)
-        .where(eq(schemas.trips.id, tripId))
+        .where(eq(schemas.trips.id, parseInt(tripId, 10)))
     
     if (!trip)
         throw new Error('Team not found')

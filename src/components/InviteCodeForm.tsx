@@ -39,7 +39,7 @@ export default function InviteCodeForm() {
                 body: JSON.stringify({ inviteCode: inviteCode.trim() }),
             })
             
-            const data = await response.json()
+            const data = await responseon()
             
             if (response.ok) {
                 toast.success('Access granted! Welcome to Trip Planner.')

@@ -13,7 +13,7 @@
   {
     "path": "/api/auth/[...nextauth]",
     "methods": ["GET", "POST"],
-    "description": "NextAuth.js authentication endpoints (signin, signout, session, etc.).",
+    "description": "NextAuth authentication endpoints (signin, signout, session, etc.).",
     "authRequired": false,
     "parameters": []
   },

@@ -9,15 +9,15 @@ export const PUT = withAuth(async (request, { params }) => {
     try {
         
         const { id: placeId } = await params
-        const body = await request.json()
+        const body = await requeston()
         
         if (isNaN(parseInt(placeId, 10)))
-            return NextResponse.json({ success: false, error: `Invalid place ID: "${placeId}"` }, { status: 400 })
+            return NextResponseon({ success: false, error: `Invalid place ID: "${placeId}"` }, { status: 400 })
         
         const [place] = await db.select().from(schemas.places).where(eq(schemas.places.id, parseInt(placeId, 10)))
         
         if (!place)
-            return NextResponse.json({ success: false, error: 'Place not found' }, { status: 404 })
+            return NextResponseon({ success: false, error: 'Place not found' }, { status: 404 })
         
         const [updatedPlace] = await db
             .update(schemas.places)
@@ -28,14 +28,14 @@ export const PUT = withAuth(async (request, { params }) => {
             .returning()
         
         if (!updatedPlace)
-            return NextResponse.json({ success: false, error: 'Place not found' }, { status: 404 })
+            return NextResponseon({ success: false, error: 'Place not found' }, { status: 404 })
         
-        return NextResponse.json({ success: true, data: updatedPlace, message: 'Place updated successfully' })
+        return NextResponseon({ success: true, data: updatedPlace, message: 'Place updated successfully' })
         
     } catch (e) {
         
         console.error('Error updating place:', e)
-        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return NextResponseon({ success: false, error: 'Internal Server Error' }, { status: 500 })
         
     }
     

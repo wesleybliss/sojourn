@@ -1,14 +1,14 @@
 import 'dotenv/config'
-import db from '@/db/index.js'
-import * as schemas from '@/db/schema.js'
+import db from '@/db/index'
+import * as schemas from '@/db/schema'
 
 const main = async () => {
     
-    const users = await db
+    const plans = await db
         .select()
-        .from(schemas.users)
+        .from(schemas.plans)
     
-    console.table(users)
+    console.table(plans)
     
 }
 

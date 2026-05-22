@@ -1,6 +1,6 @@
 import 'dotenv/config'
-import db from '@/db/index.js'
-import * as schemas from '@/db/schema.js'
+import db from '@/db/index'
+import * as schemas from '@/db/schema'
 
 const main = async () => {
     

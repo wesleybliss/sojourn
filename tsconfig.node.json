@@ -1,5 +1,5 @@
 {
-    "extends": "./tsconfig.json",
+    "extends": "./tsconfigon",
     "compilerOptions": {
         "tsBuildInfoFile": "./node_modules/.cache/tsbuildinfo/api.tsbuildinfo",
         "declarationDir": "./node_modules/.cache/dts/api",
@@ -20,8 +20,8 @@
     "include": [
         "src/app/api/**/*.ts",
         "src/app/api/**/*.tsx",
-        "src/app/api/**/*.js",
-        "src/app/api/**/*.jsx"
+        "src/app/api/**/*",
+        "src/app/api/**/*x"
     ],
     "exclude": ["node_modules", "task/**"]
 }

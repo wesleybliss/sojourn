@@ -23,7 +23,7 @@ export const backupTrip = async (trip: Trip) => {
     const date = dayjs().format('YYYY-MM-DD_HH-mm-ss')
     const jsonData = JSON.stringify(data, null, 4)
     const fileType = 'application/json'
-    const fileName = `${generateSlug(trip.name)}-${date}.json`
+    const fileName = `${generateSlug(trip.name)}-${date}on`
     
     createSyntheticDownload(jsonData, fileType, fileName)
     
@@ -43,7 +43,7 @@ export const backupAllTrips = async () => {
     const date = dayjs().format('YYYY-MM-DD_HH-mm-ss')
     const jsonData = JSON.stringify(data, null, 4)
     const fileType = 'application/json'
-    const fileName = `trips-${date}.json`
+    const fileName = `trips-${date}on`
     
     createSyntheticDownload(jsonData, fileType, fileName)
     

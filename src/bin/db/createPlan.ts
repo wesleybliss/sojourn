@@ -1,8 +1,9 @@
 import 'dotenv/config'
 import path from 'node:path'
-import db from '@/db/index.js'
-import * as schemas from '@/db/schema.js'
+import db from '@/db/index'
+import * as schemas from '@/db/schema'
 import { eq } from 'drizzle-orm'
+import { PlanInsert } from '@/types'
 
 const args = process.argv.slice(2)
 const [tripId, name] = args
@@ -21,13 +22,13 @@ const main = async () => {
     const trip = await db
         .select()
         .from(schemas.trips)
-        .where(eq(schemas.trips.id, tripId))
+        .where(eq(schemas.trips.id, parseInt(tripId, 10)))
     
     if (!trip)
         throw new Error('Trip not found')
     
-    const data = {
-        tripId,
+    const data: PlanInsert = {
+        tripId: parseInt(tripId, 10),
         name,
     }
     

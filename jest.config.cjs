@@ -1,7 +1,7 @@
 const nextJest = require('next/jest')
 
 /**
- * Create a custom Jest config to use Next.js testing utilities
+ * Create a custom Jest config to use Next testing utilities
  */
 const createJestConfig = nextJest({
   dir: './',
@@ -9,7 +9,7 @@ const createJestConfig = nextJest({
 
 /** @type {import('jest').Config} */
 const customJestConfig = {
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },

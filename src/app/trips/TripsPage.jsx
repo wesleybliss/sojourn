@@ -1,6 +1,6 @@
 'use client'
 
-import LoadingSpinner from '@/components/LoadingSpinner.jsx'
+import LoadingSpinner from '@/components/LoadingSpinnerx'
 import useTripsPageViewModel from './TripsPageViewModel'
 import TripCard from '@/components/TripCard'
 import { Button } from '@/components/ui/button'

@@ -1,5 +1,5 @@
 import Repository from '@/db/repos/repo'
-import * as schemas from '@/db/schema.js'
+import * as schemas from '@/db/schema'
 import { eq, asc } from 'drizzle-orm'
 import database from '@/db'
 import { Plan, PlanInsert, PlanSelect } from '@/types/database'

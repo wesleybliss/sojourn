@@ -13,29 +13,29 @@ export const GET = withAuth(async (request, { params, auth }) => {
     try {
         
         const { planId } = await params
-        const body = await request.json()
+        const body = await requeston()
         
         const { tripId } = body
         
         const isMember = await isUserTripMember(auth, tripId)
         
         if (!isMember)
-            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
+            return NextResponseon({ success: false, error: 'Forbidden' }, { status: 403 })
         
         if (isNaN(parseInt(planId, 10)))
-            return NextResponse.json({ success: false, error: 'Invalid plan ID' }, { status: 400 })
+            return NextResponseon({ success: false, error: 'Invalid plan ID' }, { status: 400 })
         
         const [plan] = await db.select().from(schemas.plans).where(eq(schemas.plans.id, parseInt(planId, 10)))
         
         if (!plan)
-            return NextResponse.json({ success: false, error: 'Plan not found' }, { status: 404 })
+            return NextResponseon({ success: false, error: 'Plan not found' }, { status: 404 })
         
-        return NextResponse.json({ success: true, data: plan })
+        return NextResponseon({ success: true, data: plan })
         
     } catch (e) {
         
         console.error('Error fetching plan:', e)
-        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return NextResponseon({ success: false, error: 'Internal Server Error' }, { status: 500 })
         
     }
     
@@ -50,22 +50,22 @@ export const PUT = withAuth(async (request, { params, auth }) => {
     try {
         
         const { planId } = await params
-        const body = await request.json()
+        const body = await requeston()
         
         const tripId = body.tripId
         
         if (isNaN(parseInt(planId, 10)))
-            return NextResponse.json({ success: false, error: 'Invalid plan ID' }, { status: 400 })
+            return NextResponseon({ success: false, error: 'Invalid plan ID' }, { status: 400 })
         
         const isMember = await isUserTripMember(auth, tripId)
         
         if (!isMember)
-            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
+            return NextResponseon({ success: false, error: 'Forbidden' }, { status: 403 })
         
         const [plan] = await db.select().from(schemas.plans).where(eq(schemas.plans.id, parseInt(planId, 10)))
         
         if (!plan)
-            return NextResponse.json({ success: false, error: 'Plan not found' }, { status: 404 })
+            return NextResponseon({ success: false, error: 'Plan not found' }, { status: 404 })
         
         const [updatedPlan] = await db
             .update(schemas.plans)
@@ -77,14 +77,14 @@ export const PUT = withAuth(async (request, { params, auth }) => {
             .returning()
         
         if (!updatedPlan)
-            return NextResponse.json({ success: false, error: 'Plan not found' }, { status: 404 })
+            return NextResponseon({ success: false, error: 'Plan not found' }, { status: 404 })
         
-        return NextResponse.json({ success: true, data: updatedPlan, message: 'Plan updated successfully' })
+        return NextResponseon({ success: true, data: updatedPlan, message: 'Plan updated successfully' })
         
     } catch (e) {
         
         console.error('Error updating plan:', e)
-        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return NextResponseon({ success: false, error: 'Internal Server Error' }, { status: 500 })
         
     }
     
@@ -101,7 +101,7 @@ export const DELETE = withAuth(async (request, { params, auth }) => {
         const { planId } = await params
         
         if (isNaN(parseInt(planId, 10)))
-            return NextResponse.json({ success: false, error: 'Invalid plan ID' }, { status: 400 })
+            return NextResponseon({ success: false, error: 'Invalid plan ID' }, { status: 400 })
         
         const [plan] = await db
             .select()
@@ -109,12 +109,12 @@ export const DELETE = withAuth(async (request, { params, auth }) => {
             .where(eq(schemas.plans.id, parseInt(planId, 10)))
         
         if (!plan)
-            return NextResponse.json({ success: false, error: 'Plan not found' }, { status: 404 })
+            return NextResponseon({ success: false, error: 'Plan not found' }, { status: 404 })
         
         const isMember = await isUserTripMember(auth, plan.tripId)
         
         if (!isMember)
-            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
+            return NextResponseon({ success: false, error: 'Forbidden' }, { status: 403 })
         
         const [deletedPlan] = await db
             .delete(schemas.plans)
@@ -122,14 +122,14 @@ export const DELETE = withAuth(async (request, { params, auth }) => {
             .returning()
         
         if (!deletedPlan)
-            return NextResponse.json({ success: false, error: 'Plan not found' }, { status: 404 })
+            return NextResponseon({ success: false, error: 'Plan not found' }, { status: 404 })
         
-        return NextResponse.json({ success: true, message: 'Plan deleted successfully' })
+        return NextResponseon({ success: true, message: 'Plan deleted successfully' })
         
     } catch (e) {
         
         console.error('Error deleting plan:', e)
-        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return NextResponseon({ success: false, error: 'Internal Server Error' }, { status: 500 })
         
     }
     
