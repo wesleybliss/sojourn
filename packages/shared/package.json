@@ -1,0 +1,103 @@
+{
+    "name": "@repo/shared",
+    "version": "0.0.1",
+    "main": "./src/index.ts",
+    "types": "./src/index.ts",
+    "scripts": {
+        "build": "tsc -b && tsc-alias -p tsconfig.json",
+        "check1": "pnpm tsc -p tsconfig.typecheck.json --skipLibCheck",
+        "check": "pnpm tsc -p tsconfig.json --skipLibCheck",
+        "lint": "oxlint && eslint .",
+        "lint:dry": "oxlint && eslint --fix-dry-run .",
+        "lint:fix": "oxlint --fix && eslint --fix .",
+        "eslint": "eslint .",
+        "eslint:dry": "eslint --fix-dry-run .",
+        "eslint:fix": "eslint --fix .",
+        "test": "vitest"
+    },
+    "exports": {
+        "./*": {
+            "import": "./src/*.ts",
+            "types": "./src/*.ts"
+        },
+        "./types": {
+            "browser": {
+                "import": "./dist/types/index.ts",
+                "types": "./dist/types/index.d.ts"
+            },
+            "import": {
+                "types": "./dist/types/index.d.ts",
+                "import": "./dist/types/index.ts"
+            }
+        },
+        "./constants": {
+            "browser": {
+                "import": "./dist/constants/index.ts",
+                "types": "./dist/constants/index.d.ts"
+            },
+            "import": {
+                "types": "./dist/constants/index.d.ts",
+                "import": "./dist/constants/index.ts"
+            }
+        },
+        "./utils": {
+            "browser": {
+                "import": "./dist/utils/index.ts",
+                "types": "./dist/utils/index.d.ts"
+            },
+            "import": {
+                "types": "./dist/utils/index.d.ts",
+                "import": "./dist/utils/index.ts"
+            }
+        },
+        "./errors": {
+            "browser": {
+                "import": "./dist/errors/index.ts",
+                "types": "./dist/errors/index.d.ts"
+            },
+            "import": {
+                "types": "./dist/errors/index.d.ts",
+                "import": "./dist/errors/index.ts"
+            }
+        },
+        "./db": {
+            "browser": {
+                "types": "./dist/db/index.d.ts",
+                "import": "./dist/db/index.ts"
+            },
+            "import": {
+                "types": "./dist/db/index.d.ts",
+                "import": "./dist/db/index.ts"
+            }
+        },
+        "./firebase": {
+            "browser": {
+                "import": "./dist/firebase/index.ts",
+                "types": "./dist/firebase/index.d.ts"
+            },
+            "import": {
+                "types": "./dist/firebase/index.d.ts",
+                "import": "./dist/firebase/index.ts"
+            }
+        }
+    },
+    "dependencies": {
+        "@forminator/react-wire": "^0.7.0",
+        "@libsql/client": "^0.17.3",
+        "@vercel/blob": "^2.4.0",
+        "bcryptjs": "^3.0.3",
+        "clsx": "^2.1.1",
+        "dayjs": "^1.11.20",
+        "firebase": "^12.13.0",
+        "firebase-admin": "^13.10.0",
+        "nanoid": "^5.1.11",
+        "next": "16.2.6",
+        "react-wire-persisted": "^3.1.0",
+        "tailwind-merge": "^3.6.0"
+    },
+    "devDependencies": {
+        "@types/node": "^25.9.1",
+        "@types/react": "19.2.14",
+        "@types/react-dom": "^19.2.3"
+    }
+}
