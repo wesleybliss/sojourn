@@ -36,10 +36,10 @@ export async function fetchJSON(url: string, options: RequestInit = {}) {
     })
     
     if (!response.ok) {
-        const error = await responseon().catch(() => ({ error: 'Request failed' }))
+        const error = await response.json().catch(() => ({ error: 'Request failed' }))
         
         throw new Error(error.error || `HTTP ${response.status}`)
     }
     
-    return responseon()
+    return response.json()
 }

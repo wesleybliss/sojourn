@@ -110,7 +110,7 @@ export const useUpdateSegment = () => {
             })
             
             // Attach tripId to the response for onSettled
-            return { ..on, tripId }
+            return { ...json, tripId }
         },
         // Optimistic update: immediately update the cache before the server responds
         onMutate: async ({ segmentId, tripId, planId, cascadeEnabled, ...updates }) => {

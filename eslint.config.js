@@ -115,7 +115,7 @@ export default [
             'apps/api/node_modules/**',
             'apps/web/node_modules/**',
             'components/ui/**',
-            'src/components/ui/**',
+            '**/src/components/ui/**',
             'apps/web/src/components/ui/**',
             'task/**',
         ],

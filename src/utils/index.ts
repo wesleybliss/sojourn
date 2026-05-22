@@ -150,7 +150,7 @@ export const geocodeNomatim = async (locationName: string) => {
         if (!response.ok)
             throw new Error(`HTTP error status: ${response.status}`)
         
-        const data = await responseon()
+        const data = await response.json()
         
         if (data && data.length > 0) {
             
@@ -198,7 +198,7 @@ export const geocodeGeoapify = async (locationName: string) => {
         if (!response.ok)
             throw new Error(`HTTP error status: ${response.status}`)
         
-        const data = await responseon()
+        const data = await response.json()
         
         const [lng, lat] = data.features[0].geometry.coordinates
         
