@@ -1,12 +1,10 @@
 {
     "compilerOptions": {
-        "composite": true,
         "noEmit": true,
         "allowJs": false,
         "skipLibCheck": true,
         "strict": true,
         "allowSyntheticDefaultImports": true,
-        "emitDeclarationOnly": true,
         "esModuleInterop": true,
         "module": "esnext",
         "moduleResolution": "bundler",

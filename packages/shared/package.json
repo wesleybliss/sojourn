@@ -21,28 +21,28 @@
             "default": "./src/*.ts"
         },
         "./types": {
-            "types": "./dist/types/index.ts",
-            "default": "./dist/types/index.ts"
+            "types": "./src/types/index.ts",
+            "default": "./src/types/index.ts"
         },
         "./constants": {
-            "types": "./dist/constants/index.ts",
-            "default": "./dist/constants/index.ts"
+            "types": "./src/constants/index.ts",
+            "default": "./src/constants/index.ts"
         },
         "./utils": {
-            "types": "./dist/utils/index.ts",
-            "default": "./dist/utils/index.ts"
+            "types": "./src/utils/index.ts",
+            "default": "./src/utils/index.ts"
         },
         "./errors": {
-            "types": "./dist/errors/index.ts",
-            "default": "./dist/errors/index.ts"
+            "types": "./src/errors/index.ts",
+            "default": "./src/errors/index.ts"
         },
         "./db": {
-            "types": "./dist/db/index.ts",
-            "default": "./dist/db/index.ts"
+            "types": "./src/db/index.ts",
+            "default": "./src/db/index.ts"
         },
         "./firebase": {
-            "types": "./dist/firebase/index.ts",
-            "default": "./dist/firebase/index.ts"
+            "types": "./src/firebase/index.ts",
+            "default": "./src/firebase/index.ts"
         }
     },
     "dependencies": {

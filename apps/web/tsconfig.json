@@ -1,6 +1,9 @@
 {
     "extends": "../../tsconfig.base.json",
     "compilerOptions": {
+        "tsBuildInfoFile": "./node_modules/.cache/tsbuildinfo/web.tsbuildinfo",
+        "declarationDir": "./node_modules/.cache/dts/web",
+        "composite": true,
         "noEmit": true,
         "skipLibCheck": true,
         "strict": true,
@@ -23,5 +26,6 @@
     "include": [
         "src/**/*.ts",
         "src/**/*.tsx"
-    ]
+    ],
+    "references": [{ "path": "../../packages/shared" }]
 }

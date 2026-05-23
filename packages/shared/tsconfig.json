@@ -1,6 +1,9 @@
 {
     "extends": "../../tsconfig.base.json",
     "compilerOptions": {
+        "tsBuildInfoFile": "./node_modules/.cache/tsbuildinfo/shared.tsbuildinfo",
+        "declarationDir": "./node_modules/.cache/dts/shared",
+        "composite": true,
         "noEmit": false,
         "skipLibCheck": true,
         "strict": true,
