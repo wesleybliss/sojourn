@@ -1,42 +1,26 @@
 {
-    "extends": "../../tsconfig.base.json",
     "compilerOptions": {
-        "composite": true,
-        "tsBuildInfoFile": "./node_modules/.cache/tsbuildinfo/web.tsbuildinfo",
-        "declarationDir": "./node_modules/.cache/dts/web",
-        "lib": [
-            "ES2023",
-            "DOM"
-        ],
+        "noEmit": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
         "target": "es2017",
         "jsx": "react-jsx",
-        "types": [
-            "vite/client"
-        ],
+        "lib": ["ES2023", "DOM"],
+        "types": ["node", "vite/client"],
         "paths": {
-            "@/*": [
-                "./src/*"
-            ],
-            "@repo/shared/*": [
-                "../../packages/shared/src/*.ts"
-            ],
-            "@repo/shared": [
-                "../../packages/shared/src/index.ts"
-            ]
+            "@/*": ["./src/*"],
+            "@repo/shared/*": ["../../packages/shared/src/*.ts"],
+            "@repo/shared": ["../../packages/shared/src/index.ts"]
         }
     },
-    "plugins": [
-        {
-            "name": "next"
-        }
-    ],
     "include": [
-        "**/*.ts",
-        "**/*.tsx",
-        ".next/types/**/*.ts",
-        ".next/dev/types/**/*.ts"
-    ],
-    "references": [
-        { "path": "../../packages/shared" }
+        "src/**/*.ts",
+        "src/**/*.tsx"
     ]
 }

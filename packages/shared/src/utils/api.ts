@@ -1,4 +1,4 @@
-import { auth } from '@repo/shared/utils/firebase/client'
+import { auth } from '@/utils/firebase/client'
 
 /**
  * Makes an authenticated API request with Firebase ID token

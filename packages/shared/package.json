@@ -17,68 +17,32 @@
     },
     "exports": {
         "./*": {
-            "import": "./src/*.ts",
-            "types": "./src/*.ts"
+            "types": "./src/*.ts",
+            "default": "./src/*.ts"
         },
         "./types": {
-            "browser": {
-                "import": "./dist/types/index.ts",
-                "types": "./dist/types/index.d.ts"
-            },
-            "import": {
-                "types": "./dist/types/index.d.ts",
-                "import": "./dist/types/index.ts"
-            }
+            "types": "./dist/types/index.ts",
+            "default": "./dist/types/index.ts"
         },
         "./constants": {
-            "browser": {
-                "import": "./dist/constants/index.ts",
-                "types": "./dist/constants/index.d.ts"
-            },
-            "import": {
-                "types": "./dist/constants/index.d.ts",
-                "import": "./dist/constants/index.ts"
-            }
+            "types": "./dist/constants/index.ts",
+            "default": "./dist/constants/index.ts"
         },
         "./utils": {
-            "browser": {
-                "import": "./dist/utils/index.ts",
-                "types": "./dist/utils/index.d.ts"
-            },
-            "import": {
-                "types": "./dist/utils/index.d.ts",
-                "import": "./dist/utils/index.ts"
-            }
+            "types": "./dist/utils/index.ts",
+            "default": "./dist/utils/index.ts"
         },
         "./errors": {
-            "browser": {
-                "import": "./dist/errors/index.ts",
-                "types": "./dist/errors/index.d.ts"
-            },
-            "import": {
-                "types": "./dist/errors/index.d.ts",
-                "import": "./dist/errors/index.ts"
-            }
+            "types": "./dist/errors/index.ts",
+            "default": "./dist/errors/index.ts"
         },
         "./db": {
-            "browser": {
-                "types": "./dist/db/index.d.ts",
-                "import": "./dist/db/index.ts"
-            },
-            "import": {
-                "types": "./dist/db/index.d.ts",
-                "import": "./dist/db/index.ts"
-            }
+            "types": "./dist/db/index.ts",
+            "default": "./dist/db/index.ts"
         },
         "./firebase": {
-            "browser": {
-                "import": "./dist/firebase/index.ts",
-                "types": "./dist/firebase/index.d.ts"
-            },
-            "import": {
-                "types": "./dist/firebase/index.d.ts",
-                "import": "./dist/firebase/index.ts"
-            }
+            "types": "./dist/firebase/index.ts",
+            "default": "./dist/firebase/index.ts"
         }
     },
     "dependencies": {
@@ -98,6 +62,7 @@
     "devDependencies": {
         "@types/node": "^25.9.1",
         "@types/react": "19.2.14",
-        "@types/react-dom": "^19.2.3"
+        "@types/react-dom": "^19.2.3",
+        "vite": "^8.0.14"
     }
 }

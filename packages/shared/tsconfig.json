@@ -1,24 +1,28 @@
 {
-    "extends": "../../tsconfig.base.json",
     "compilerOptions": {
-        "tsBuildInfoFile": "./node_modules/.cache/tsbuildinfo/shared.tsbuildinfo",
-        "declarationDir": "./node_modules/.cache/dts/shared",
-        "lib": ["es2015", "DOM"],
-        "target": "ES2022",
-        "types": ["node"],
         "noEmit": false,
+        "skipLibCheck": true,
+        "strict": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "target": "ES2022",
+        "lib": ["es2015", "DOM"],
+        "types": ["node", "vite/client"],
         "paths": {
-            "@/*": [
-                "./src/*"
-            ],
+            "@/*": ["./src/*"],
             "@repo/shared": ["./src/index.ts"],
             "@repo/shared/*": ["./src/*"]
         }
     },
     "include": [
         "**/*.ts",
-        "**/*.tsx",
-        "**/*",
-        "**/*x"
+        "**/*.tsx"
+    ],
+    "exclude": [
+        "src/types/**/*.d.ts"
     ]
 }

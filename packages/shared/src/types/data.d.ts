@@ -1,4 +1,3 @@
-import SegmentsGanttChart from '@/components/segments/SegmentsGanttChart'
 
 export type ID = number
 
