@@ -1,6 +1,6 @@
 import { CSSProperties, JSX, ReactNode, useMemo, useState } from 'react'
 import { loadImageAsync } from '@repo/shared/utils'
-import useAbortableFetch from '@repo/shared/utils/hooks/useAbortableFetch'
+import useAbortableFetch from '@/hooks/useAbortableFetch'
 import { cn } from '@repo/shared/utils'
 import md5 from 'md5'
 import { User } from '@repo/shared/types/database'

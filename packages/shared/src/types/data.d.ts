@@ -1,7 +1,7 @@
 
 export type ID = number
 
-export type ItemWithId = unknown & { id: ID }
+export type ItemWithId = Record<string, unknown> & { id: ID }
 
 export type ItemWithName = ItemWithId & { name: string }
 

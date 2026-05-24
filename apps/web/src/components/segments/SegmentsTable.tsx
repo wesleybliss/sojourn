@@ -30,7 +30,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@repo/shared/utils'
 import dayjs from 'dayjs'
-import { ID, Segment } from '@repo/shared/types'
+import { ID, ItemWithId, Segment } from '@repo/shared/types'
 
 interface SegmentsTableProps {
     segments: Segment[]
@@ -60,7 +60,7 @@ const SegmentsTable = ({
         hasChecked,
         toggleChecked,
         toggleAllChecked,
-    } = useCheckItems(segments)
+    } = useCheckItems(segments as ItemWithId[])
     
     const updateCheckedSegments = useCallback((field: keyof Segment) => async (e: boolean) => {
         

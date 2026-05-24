@@ -5,7 +5,7 @@ import { Plan, PlanInsert } from '@repo/shared/types/database'
 import { keepPreviousData } from '@tanstack/react-query'
 import { ClonePlanBody, CreatePlanBody, UpdatePlanBody } from '@repo/shared/types/mutations'
 /* import * as store from '@/store'
-import { updateItemArray } from '@repo/shared/utils/storeUtils' */
+import { updateItemArray } from '@/lib/storeUtils' */
 
 const plansQueryKey = (tripId: ID, exclusive = false) =>
     exclusive ? [tripId] : ['trips', tripId, 'plans']

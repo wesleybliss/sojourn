@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { useAuth } from '@/components/providers/AuthProvider'
-import ErrorWithCode from '@/errors/ErrorWithCode'
+import ErrorWithCode from '@repo/shared/errors/ErrorWithCode'
 
 export default function LoginForm() {
     

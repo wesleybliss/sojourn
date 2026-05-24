@@ -12,12 +12,12 @@ const [tripsFile] = args
 const script = path.basename(process.argv[0])
 const usage = `USAGE: ${script} <tripsFileon>`
 
-type ImportTripData = {
+export type ImportTripData = {
     type: 'single' | 'multiple'
     name: string
     owner: string // email address
-    description: string | null
-    coverImageUrl: string | null
+    description?: string
+    coverImageUrl?: string
     plans?: Plan[] | undefined
 }
 
@@ -150,7 +150,13 @@ const importTrips = async (data: {
     
     for (const trip of data.trips) {
         
-        await importTrip({ ...trip, type: 'single' })
+        const importTripData: ImportTripData = {
+            type: 'single',
+            name: trip.name,
+            ...trip,
+        }
+        
+        await importTrip(importTripData)
         
     }
     

@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, SetStateAction } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { ID, ItemWithId } from '@repo/shared/types/data'
 
 export type TCheckItems = {
@@ -6,7 +6,7 @@ export type TCheckItems = {
     allChecked: boolean
     someChecked: boolean
     anyChecked: boolean
-    hasChecked: (idOrIds: (ID | ID[])) => (boolean)
+    hasChecked: (idOrIds: (ID | ID[])) => boolean
     setChecked: (idOrIds: (ID | ID[]), override?: boolean) => void
     updateChecked: (fn: (ID[] | ((prev: ID[]) => ID[]))) => void
     toggleChecked: (idOrIds: (ID | ID[])) => void
@@ -17,7 +17,7 @@ export type TCheckItems = {
  * Custom hook to manage the state of checkable items, providing utilities
  * for handling checked items in a list.
  */
-const useCheckItems = (items: ItemWithId[]): TCheckItems => {
+const useCheckItems = <T extends ItemWithId,>(items: T[]): TCheckItems => {
     
     const [checked, setChecked] = useState<ID[]>([])
     
