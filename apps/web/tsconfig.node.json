@@ -20,8 +20,7 @@
         }
     },
     "include": [
-        "src/app/api/**/*",
-        "src/app/api/**/*",
+        "src/app/api/**/*.ts",
     ],
     "references": [
         { "path": "../../packages/shared" }
