@@ -91,12 +91,10 @@ export const POST = withAuth(async (request, { auth }) => {
             color: 'bg-blue-500',
         })
         
-        const newTrip = trip
-        
         return NextResponse.json(
             {
                 success: true,
-                data: newTrip,
+                data: trip,
                 message: 'Trip created successfully',
             },
             { status: 201 })

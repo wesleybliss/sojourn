@@ -52,12 +52,5 @@
     "dependencies": {
         "drizzle-kit": "1.0.0-beta.22",
         "drizzle-orm": "1.0.0-beta.22"
-    },
-    "pnpm": {
-        "onlyBuiltDependencies": [
-            "esbuild",
-            "msw",
-            "protobufjs"
-        ]
     }
 }
