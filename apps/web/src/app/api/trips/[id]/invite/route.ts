@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
-import { withAuth, isUserTripMember } from '@/lib/auth'
-import db from '@/db/index'
-import * as schemas from '@/db/schema'
-import usersRepo from '@/db/repos/users'
-import tripsRepo from '@/db/repos/trips'
+import { withAuth, isUserTripMember } from '@repo/shared/utils/auth'
+import db from '@repo/shared/db/index'
+import * as schemas from '@repo/shared/db/schema'
+import usersRepo from '@repo/shared/db/repos/users'
+import tripsRepo from '@repo/shared/db/repos/trips'
 
 /**
  * POST /api/trips/invite

@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import path from 'node:path'
-import db from '@/db/index'
-import * as schemas from '@/db/schema'
+import db from '@repo/shared/db/index'
+import * as schemas from '@repo/shared/db/schema'
 import { eq } from 'drizzle-orm'
 import { PlanInsert } from '@repo/shared/types'
 

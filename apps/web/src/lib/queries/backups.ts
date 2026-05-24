@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { fetchWithAuth, fetchJSON } from '@/lib/api'
+import { fetchWithAuth, fetchJSON } from '@repo/shared/utils/api'
 import { ItemWithId } from '@repo/shared/types/data'
 import { BackupTripsBody } from '@repo/shared/types/mutations'
 

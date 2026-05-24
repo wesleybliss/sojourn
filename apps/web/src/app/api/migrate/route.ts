@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
-import tripsRepo from '@/db/repos/trips'
-import segmentsRepo from '@/db/repos/segments'
-import db from '@/db/index'
-import * as schemas from '@/db/schema'
+import tripsRepo from '@repo/shared/db/repos/trips'
+import segmentsRepo from '@repo/shared/db/repos/segments'
+import db from '@repo/shared/db/index'
+import * as schemas from '@repo/shared/db/schema'
 import { eq } from 'drizzle-orm'
 
 /**

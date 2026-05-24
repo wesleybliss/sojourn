@@ -1,8 +1,8 @@
 import 'dotenv/config'
 import fs from 'node:fs'
 import path from 'node:path'
-import db from '@/db/index'
-import * as schemas from '@/db/schema'
+import db from '@repo/shared/db/index'
+import * as schemas from '@repo/shared/db/schema'
 import { eq } from 'drizzle-orm'
 import { ID, Plan, Segment, Trip, TripInsert } from '@repo/shared/types'
 

@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
-import db from '@/db/index'
-import * as schemas from '@/db/schema'
+import db from '@repo/shared/db/index'
+import * as schemas from '@repo/shared/db/schema'
 import { eq } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
 import { omit } from '@repo/shared/utils'
-import { withAuth } from '@/lib/auth'
+import { withAuth } from '@repo/shared/utils/auth'
 
 export const POST = withAuth<{ planId: string }>(async (_, { params }) => {
     

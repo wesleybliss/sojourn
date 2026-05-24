@@ -1,6 +1,6 @@
 import * as store from '@/store'
-import tripsRepo from '@/db/repos/trips'
-import segmentsRepo from '@/db/repos/segments'
+import tripsRepo from '@repo/shared/db/repos/trips'
+import segmentsRepo from '@repo/shared/db/repos/segments'
 import {
     generateSlug,
     createSyntheticDownload,

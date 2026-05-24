@@ -8,7 +8,7 @@ import {
     User as FirebaseUser,
     UserCredential,
 } from 'firebase/auth'
-import { auth, googleProvider } from '@/lib/firebase/client'
+import { auth, googleProvider } from '@repo/shared/utils/firebase/client'
 import { User } from '@repo/shared/types/database'
 
 interface TAuthContext {

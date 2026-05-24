@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
-import db from '@/db/index'
-import * as schemas from '@/db/schema'
+import db from '@repo/shared/db/index'
+import * as schemas from '@repo/shared/db/schema'
 import dayjs, { Dayjs } from 'dayjs'
-import { withAuth } from '@/lib/auth'
+import { withAuth } from '@repo/shared/utils/auth'
 import { SegmentInsert, TripInsert } from '@repo/shared/types'
 
 const toDate = (v: string | number | Date | Dayjs | null | undefined) => {

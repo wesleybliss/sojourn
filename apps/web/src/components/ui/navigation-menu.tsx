@@ -3,7 +3,7 @@ import { cva } from "class-variance-authority"
 import { ChevronDownIcon } from "lucide-react"
 import { NavigationMenu as NavigationMenuPrimitive } from "radix-ui"
 
-import { cn } from "@/utils/index"
+import { cn } from "@repo/shared/utils"
 
 function NavigationMenu({
   className,

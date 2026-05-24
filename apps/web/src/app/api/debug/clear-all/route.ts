@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
-import { withAuth } from '@/lib/auth'
-import usersRepo from '@/db/repos/users'
-import db from '@/db/index'
-import * as schemas from '@/db/schema'
+import { withAuth } from '@repo/shared/utils/auth'
+import usersRepo from '@repo/shared/db/repos/users'
+import db from '@repo/shared/db/index'
+import * as schemas from '@repo/shared/db/schema'
 
 /**
  * POST /api/debug/clear-all

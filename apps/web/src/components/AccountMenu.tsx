@@ -15,7 +15,7 @@ import { useTripsQuery } from '@/lib/queries/trips'
 import { useState } from 'react'
 import { useBackupTrips } from '@/lib/queries/backups'
 import { toast } from 'sonner'
-import { fetchJSON } from '@/lib/api'
+import { fetchJSON } from '@repo/shared/utils/api'
 import { Trip } from '@repo/shared/types/database'
 
 const debugDumpData = (trips: Trip[] | null) => (e: MouseEvent) => {

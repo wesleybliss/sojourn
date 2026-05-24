@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import * as store from '@/store'
-import { fetchJSON } from '@/lib/api'
+import { fetchJSON } from '@repo/shared/utils/api'
 import { keepPreviousData } from '@tanstack/react-query'
 
 export const useTripsQuery = (opts = {}) => useQuery({

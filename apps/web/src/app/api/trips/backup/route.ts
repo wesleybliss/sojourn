@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
-import tripsRepo from '@/db/repos/trips'
-import plansRepo from '@/db/repos/plans'
+import tripsRepo from '@repo/shared/db/repos/trips'
+import plansRepo from '@repo/shared/db/repos/plans'
 import Ajv from 'ajv'
-import tripsWithPlansSchema from '@/lib/json-schemas/trip-backup.jsonschema'
+import tripsWithPlansSchema from '@repo/shared/utils/json-schemas/trip-backup.jsonschema'
 import dayjs from 'dayjs'
-import { isUserTripMember, withAuth } from '@/lib/auth'
+import { isUserTripMember, withAuth } from '@repo/shared/utils/auth'
 import { Plan, Segment, Trip } from '@repo/shared/types'
 
 const ajvDebug = true

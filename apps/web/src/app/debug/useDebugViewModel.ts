@@ -1,9 +1,9 @@
 import { Dispatch, SetStateAction, SyntheticEvent, useState } from 'react'
 import { parseFormData } from '@repo/shared/utils'
-import { toBase64 } from '@/lib/storage/vercel-blob'
+import { toBase64 } from '@repo/shared/utils/storage/vercel-blob'
 import { usePlacesQuery } from '@/lib/queries/places'
 import { QueryObserverResult, RefetchOptions, useQueryClient } from '@tanstack/react-query'
-import { fetchJSON } from '@/lib/api'
+import { fetchJSON } from '@repo/shared/utils/api'
 import { Place } from '@repo/shared/types'
 
 export type TDebugViewModel = {

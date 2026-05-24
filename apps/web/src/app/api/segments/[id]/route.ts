@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
-import db from '@/db/index'
-import * as schemas from '@/db/schema'
+import db from '@repo/shared/db/index'
+import * as schemas from '@repo/shared/db/schema'
 import { eq } from 'drizzle-orm'
-import segmentsRepo from '@/db/repos/segments'
+import segmentsRepo from '@repo/shared/db/repos/segments'
 import { convertStringDates, getUpdatePayload } from '@repo/shared/utils'
 import dayjs from 'dayjs'
-import { withAuth } from '@/lib/auth'
+import { withAuth } from '@repo/shared/utils/auth'
 import { ID, SegmentInsert } from '@repo/shared/types'
 
 export const PUT = withAuth<{ id: string }>(async (request, { params }) => {

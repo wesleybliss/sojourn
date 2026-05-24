@@ -1,8 +1,8 @@
 import { useCallback } from 'react'
 import { useWireValue } from '@forminator/react-wire'
 import * as store from '@/store'
-import segmentsRepo from '@/db/repos/segments'
-import { EVENT_CREATE_SEGMENT } from '@/constants'
+import segmentsRepo from '@repo/shared/db/repos/segments'
+import { EVENT_CREATE_SEGMENT } from '@repo/shared/constants'
 import useEventSubscription from '@/hooks/useEventSubscription'
 import { toast } from 'sonner'
 
