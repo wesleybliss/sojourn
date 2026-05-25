@@ -4,6 +4,8 @@
         "tsBuildInfoFile": "./node_modules/.cache/tsbuildinfo/api.tsbuildinfo",
         "declarationDir": "./node_modules/.cache/dts/api",
         "composite": true,
+        "skipLibCheck": true,
+        "strict": true,
         "target": "ES2022",
         "lib": ["ES2023", "DOM"],
         "types": ["node"],
