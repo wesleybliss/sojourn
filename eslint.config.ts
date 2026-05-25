@@ -94,6 +94,7 @@ const baseRules = {
     '@stylistic/keyword-spacing': ['error', { before: true, after: true }],
     '@stylistic/object-curly-spacing': ['error', 'always'],
     'indent-empty-lines/indent-empty-lines': ['error', 4],
+    'preserve-caught-error': 'off',
 }
 
 /** @type {import('eslint').Linter.Config[]} */

@@ -52,7 +52,7 @@ export const timestampSeconds = (name: string) => customType({
 
 // Creates a default timestamp field
 export const ts = (name: string) => timestampSeconds(name)
-    .default(sql`(unixepoch())`).notNull()
+    .default(sql.raw('(unixepoch())')).notNull()
 
 export const timestamps = {
     updatedAt: ts('updatedAt'),
