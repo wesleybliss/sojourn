@@ -2,7 +2,7 @@
 
 import { FolderUp } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useRef, useState } from 'react'
+import { ChangeEvent, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
@@ -17,7 +17,7 @@ import { Progress } from '@/components/ui/progress'
 import { useRestoreTrips } from '@/lib/queries/backups'
 
 export default function ImportTripsPage() {
-    const fileInputRef = useRef()
+    const fileInputRef = useRef<HTMLInputElement>(null)
     const router = useRouter()
     
     const [isImporting, setIsImporting] = useState(false)
@@ -25,14 +25,15 @@ export default function ImportTripsPage() {
     const [progressPercent, setProgressPercent] = useState(0)
     
     const startRestoreTrip = () => {
-        fileInputRef.current.value = null
+        if (!fileInputRef.current) return
+        fileInputRef.current.value = ''
         fileInputRef.current.click()
     }
     
     const restoreMutation = useRestoreTrips()
     
-    const handleFileChange = async event => {
-        const file = event.target.files[0]
+    const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0]
         
         if (!file) return
         
@@ -57,8 +58,8 @@ export default function ImportTripsPage() {
             
         } catch (error) {
             console.error('Import error:', error)
-            setImportStatus(`Import failed: ${error.message}`)
-            toast.error(`Import failed: ${error.message}`)
+            setImportStatus(`Import failed: ${(error as Error).message}`)
+            toast.error(`Import failed: ${(error as Error).message}`)
         } finally {
             setTimeout(() => {
                 setIsImporting(false)

@@ -1,5 +1,5 @@
 import { Wire } from '@forminator/react-wire'
-import { ID, ItemWithId } from '@repo/shared/types/data'
+import { ItemWithId } from '@repo/shared/types/data'
 import deepmerge from 'deepmerge'
 
 export const addItemObject = (wire: Wire<Record<string, ItemWithId>>, item: ItemWithId) =>
@@ -8,9 +8,9 @@ export const addItemObject = (wire: Wire<Record<string, ItemWithId>>, item: Item
         [item.id]: item,
     })
 
-export const addItemArray = (wire: Wire<unknown[]>, item: unknown[]) =>
+export const addItemArray = <T extends ItemWithId>(wire: Wire<T[] | null>, item: T) =>
     wire.setValue([
-        ...wire.getValue(),
+        ...(wire.getValue() || []),
         item,
     ])
 
@@ -36,7 +36,7 @@ export const updateItemObject = (wire: Wire<Record<string, ItemWithId>>, item: I
     
 }
 
-export const updateItemArray = <T extends { id: ID }>(wire: Wire<T[]>, item: T) => {
+export const updateItemArray = <T extends ItemWithId>(wire: Wire<T[] | null>, item: T) => {
     
     const prev = wire.getValue() || []
     const index = prev.findIndex(it => it.id === item.id)

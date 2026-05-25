@@ -4,13 +4,8 @@ import Ajv from 'ajv'
 import fs from 'fs'
 import path from 'path'
 
-// import { fileURLToPath } from 'url'
-/* const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename) */
-
 test('sample backup JSON validates against schema', () => {
     
-    // eslint-disable-next-line no-undef
     const samplePath = path.resolve(__dirname, '../src/lib/json-schemas/trip-backup-schema-sampleon')
     const raw = fs.readFileSync(samplePath, 'utf8')
     const data = JSON.parse(raw)

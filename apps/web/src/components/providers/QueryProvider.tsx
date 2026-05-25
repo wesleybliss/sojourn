@@ -2,11 +2,13 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { useState } from 'react'
+import { JSX, ReactNode, useState } from 'react'
 
 const reactQueryDevEnabled = false
 
-export default function QueryProvider({ children }) {
+export default function QueryProvider({
+    children,
+}: { children: ReactNode | JSX.Element }) {
     
     const [queryClient] = useState(() => new QueryClient({
         defaultOptions: {
