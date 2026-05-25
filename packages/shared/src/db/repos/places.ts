@@ -4,7 +4,7 @@ import * as schemas from '@/db/schema'
 import { Place } from '@/types/database'
 // import { eq, asc } from 'drizzle-orm'
 
-export interface IPlacesRepository extends Repository<Place, typeof schemas.places> {}
+export type IPlacesRepository = Repository<Place, typeof schemas.places>
 
 export class PlacesRepository extends Repository<Place, typeof schemas.places> {
     

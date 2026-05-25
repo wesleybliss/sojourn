@@ -86,10 +86,10 @@ const sqliteTableObject = sqliteTable as <
     TTableName extends string,
     TColumnsMap extends Record<string, ColumnBuilderBase>,
 >(
-    name: TTableName,
-    columns: TColumnsMap,
-    extraConfig?: (
-        self: BuildColumns<
+    _name: TTableName,
+    _columns: TColumnsMap,
+    _extraConfig?: (
+        _self: BuildColumns<
             TTableName,
             TColumnsMap,
             'sqlite'
@@ -114,7 +114,7 @@ export const table = <
     name: TTableName,
     columns: TColumnsMap,
     extraConfig?: (
-        self: BuildColumns<
+        _self: BuildColumns<
             TTableName,
             WithId<
                 Omit<TColumnsMap, 'id'> & typeof timestamps,

@@ -1,13 +1,9 @@
-import { AnyColumn, desc, eq, inArray, InferInsertModel, InferSelectModel } from 'drizzle-orm'
+import { AnyColumn, desc, eq, inArray } from 'drizzle-orm'
 import { SQLiteTable } from 'drizzle-orm/sqlite-core'
 
 import database from '@/db'
 import { ID } from '@/types/data'
-
-type Database = typeof database
-
-type Insert<T extends SQLiteTable> = InferInsertModel<T>
-type Select<T extends SQLiteTable> = InferSelectModel<T>
+import { Database, Insert, Select } from '@/types'
 
 /**
  * Generic repository with the specified name, plural form, schema, and database connection.
@@ -42,8 +38,8 @@ class Repository<TModel, TSchema extends SQLiteTable> {
         
     }
     
-    // eslint-disable-next-line no-unused-vars
-    tx(transaction: Database): Repository<TModel, TSchema> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    tx(_transaction: Database): Repository<TModel, TSchema> {
         
         throw new Error('Method not implemented.')
         
@@ -164,9 +160,9 @@ class Repository<TModel, TSchema extends SQLiteTable> {
         
     }
     
-    async updateById(
+    async updateById<K extends Insert<TSchema>>(
         id: ID,
-        data: Partial<Insert<TSchema>>,
+        data: Partial<K>,
     ): Promise<Select<TSchema>> {
         
         try {

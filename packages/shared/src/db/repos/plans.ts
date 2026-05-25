@@ -4,13 +4,13 @@ import database from '@/db'
 import Repository from '@/db/repos/repo'
 import * as schemas from '@/db/schema'
 import { ID } from '@/types/data'
-import { Plan, PlanInsert, PlanSelect } from '@/types/database'
+import { Plan, PlanInsert, PlanSelect, Select } from '@/types/database'
 
 export interface IPlansRepository extends Repository<Plan, typeof schemas.plans> {
     findAllByTripId(tripId: ID): Promise<PlanSelect[]>
 }
 
-export class PlansRepository extends Repository<Plan, typeof schemas.plans> implements IPlansRepository {
+export class PlansRepository extends Repository<Plan, typeof schemas.plans> /*implements IPlansRepository*/ {
     
     constructor(db?: typeof database) {
         
@@ -34,7 +34,7 @@ export class PlansRepository extends Repository<Plan, typeof schemas.plans> impl
         
     }
     
-    async findAllByTripId(tripId: ID) {
+    async findAllByTripId(tripId: ID): Promise<PlanSelect[]> {
         
         try {
             
@@ -49,7 +49,7 @@ export class PlansRepository extends Repository<Plan, typeof schemas.plans> impl
                 .orderBy(asc(schemas.plans.id), asc(schemas.segments.startDate))
             
             // Group segments by plan
-            const plansMap = new Map()
+            const plansMap = new Map<ID, Plan>()
             
             plansWithSegments.forEach(({ plan, segment }) => {
                 
@@ -60,7 +60,7 @@ export class PlansRepository extends Repository<Plan, typeof schemas.plans> impl
                     })
                 
                 if (segment)
-                    plansMap.get(plan.id).segments.push({
+                    plansMap.get(plan.id)?.segments?.push({
                         ...segment,
                         startDate: this.normalizeDateValue(segment.startDate),
                         endDate: this.normalizeDateValue(segment.endDate),
@@ -79,7 +79,7 @@ export class PlansRepository extends Repository<Plan, typeof schemas.plans> impl
         
     }
     
-    async updateById(id: ID, data: Partial<PlanInsert>) {
+    async updateById<PlanInsert>(id: ID, data: Partial<PlanInsert>): Promise<PlanSelect[]> {
         
         return super.updateById(id, {
             name: data.name,

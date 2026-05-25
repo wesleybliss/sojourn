@@ -1,8 +1,15 @@
-import { InferSelectModel } from 'drizzle-orm'
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm'
 import { createInsertSchema,createSelectSchema } from 'drizzle-orm/zod'
 import { z } from 'zod'
+import database from '@/db'
 
 import * as schemas from '@/db/schema'
+import { SQLiteTable } from 'drizzle-orm/sqlite-core'
+
+export type Database = typeof database
+
+export type Insert<T extends SQLiteTable> = InferInsertModel<T>
+export type Select<T extends SQLiteTable> = InferSelectModel<T>
 
 export const userSelectSchema = createSelectSchema(schemas.users)
 export const userInsertSchema = createInsertSchema(schemas.users)

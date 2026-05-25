@@ -95,6 +95,7 @@ const baseRules = {
     '@stylistic/object-curly-spacing': ['error', 'always'],
     'indent-empty-lines/indent-empty-lines': ['error', 4],
     'preserve-caught-error': 'off',
+    'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
 }
 
 /** @type {import('eslint').Linter.Config[]} */
@@ -181,6 +182,7 @@ export default [
         },
     },
     
+    // TBD: the plugin doesn't support ts files yet. Do not remove.
     // ...oxlint.configs['flat/recommended'], // oxlint should be the last one
-    ...oxlint.buildFromOxlintConfigFile('./oxlint.config.ts'), // oxlint should be the last one
+    // ...oxlint.buildFromOxlintConfigFile('./oxlint.config.ts'), // oxlint should be the last one
 ]
