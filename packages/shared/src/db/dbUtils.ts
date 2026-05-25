@@ -10,45 +10,22 @@ import {
     UpdateDeleteAction,
 } from 'drizzle-orm/sqlite-core'
 
-export const timestampSeconds = (name: string) => customType({
-    dataType() {
-        return 'integer'
-    },
-    toDriver(value: unknown) {
-        
-        // console.log('toDriver input:', value, (value instanceof Date) ? 'date' : typeof value)
-        const seconds = dayjs(value as number).unix()
-        
-        if (value instanceof Date) {
-            // console.log('toDriver output (Date):', seconds, '->', lendbg(seconds))
-            return seconds
-        }
-        
-        if (typeof value === 'number') {
-            // console.log('toDriver output (number):', seconds, '->', lendbg(seconds))
-            return seconds
-        }
-        
-        if (typeof value === 'string') {
-            // console.log('toDriver output (string):', seconds, '->', lendbg(seconds))
-            return seconds
-        }
-        
-        console.warn('toDriver unexpected input:', value)
-        return value
-        
-    },
-    fromDriver(value: unknown) {
-        
-        // console.log('fromDriver input:', value, (value instanceof Date) ? 'date' : typeof value)
-        const date = dayjs.unix(value as number).toDate()
-        
-        // console.log('fromDriver output:', date)
-        
-        return date
-        
-    },
-})(name)
+export const timestampSeconds = (name: string) =>
+    customType<{ data: Date; driverData: number }>({
+        dataType() {
+            return 'integer'
+        },
+        toDriver(value: Date | number | string) {
+            if (value instanceof Date) return dayjs(value).unix()
+            if (typeof value === 'number') return dayjs.unix(value).unix()
+            if (typeof value === 'string') return dayjs(value).unix()
+            console.warn('toDriver unexpected input:', value)
+            return value as number
+        },
+        fromDriver(value: number) {
+            return dayjs.unix(value).toDate()
+        },
+    })(name)
 
 // Creates a default timestamp field
 export const ts = (name: string) => timestampSeconds(name)
@@ -57,7 +34,9 @@ export const ts = (name: string) => timestampSeconds(name)
 export const timestamps = {
     updatedAt: ts('updatedAt'),
     createdAt: ts('createdAt'),
-    // deletedAt: timestamp(),
+} as {
+    updatedAt: ReturnType<typeof ts> & { $type: Date }
+    createdAt: ReturnType<typeof ts> & { $type: Date }
 }
 
 const idColumn = () => integer('id').primaryKey({ autoIncrement: true })

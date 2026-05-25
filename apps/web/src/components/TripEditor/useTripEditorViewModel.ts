@@ -59,9 +59,9 @@ export type TTripEditorViewModel = {
     setSegmentsListShowCompleted: Dispatch<SetStateAction<boolean>>
     
     // Global State
-    trip: Trip | undefined
-    currentTrip: Trip | undefined
-    currentPlan: Plan | undefined
+    trip: Trip | null | undefined
+    currentTrip: Trip | null | undefined
+    currentPlan: Plan | null | undefined
     plans: Plan[]
     segments: Segment[]
     cascadeEnabled: boolean
@@ -75,7 +75,7 @@ export type TTripEditorViewModel = {
     filteredSegments: Segment[]
     shengenData: ShengenData | null
     summaryTripText: string
-    totalDaysPerSegmentByIndex: number
+    totalDaysPerSegmentByIndex: number[]
     
     // Hooks
     navigate: (href: string) => void,
@@ -355,7 +355,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
             toast.error('Failed to create backup')
         }
         
-    }, [tripId])
+    }, [backupMutation, tripId])
     
     const renamePlan = useCallback(async (planIdToRename: ID) => {
         

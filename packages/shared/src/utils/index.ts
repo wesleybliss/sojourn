@@ -352,12 +352,18 @@ export const copyToClipboard = async (text: string) => {
     
 }
 
-export const sortArrByUpdatedAt = <T extends Record<string, unknown>>(
-    arr: Array<T & { updatedAt: Date }>,
+export const sortArrByUpdatedAt = <T extends { updatedAt: Date }>(
+    arr: T[],
     ascending: boolean = false,
-) => [...arr].sort((a, b) => ascending
-    ? dayjs(a.updatedAt).valueOf() - dayjs(b.updatedAt).valueOf()
-    : dayjs(b.updatedAt).valueOf() - dayjs(a.updatedAt).valueOf())
+): T[] => {
+    
+    return [...arr].sort((a, b) => {
+        return ascending
+            ? dayjs(a.updatedAt).valueOf() - dayjs(b.updatedAt).valueOf()
+            : dayjs(b.updatedAt).valueOf() - dayjs(a.updatedAt).valueOf()
+    }) as T[]
+    
+}
 
 export const getTripSegmentNames = async (plan: Plan | null | undefined) => {
     
