@@ -10,21 +10,31 @@ export type Database = typeof database
 
 export type Insert<T extends SQLiteTable> = InferInsertModel<T>
 export type Select<T extends SQLiteTable> = InferSelectModel<T>
-
-export const userSelectSchema = createSelectSchema(schemas.users)
 export const userInsertSchema = createInsertSchema(schemas.users)
 export type User = InferSelectModel<typeof schemas.users>
+export const userSelectSchema = createSelectSchema(schemas.users)
 export type UserSelect = z.infer<typeof userSelectSchema>
 export type UserInsert = z.infer<typeof userInsertSchema>
 
 export const tripSelectSchema = createSelectSchema(schemas.trips)
 export const tripInsertSchema = createInsertSchema(schemas.trips)
 export type Trip = InferSelectModel<typeof schemas.trips> & {
+    updatedAt: Date
+    createdAt: Date
     plans?: Plan[]
     segments?: Segment[]
 }
-export type TripSelect = z.infer<typeof tripSelectSchema>
-export type TripInsert = z.infer<typeof tripInsertSchema>
+export type TripSelect = z.infer<typeof tripSelectSchema> & {
+    updatedAt: Date
+    createdAt: Date
+}
+export type TripInsert = {
+    userId: number
+    name: string
+    description?: string | null
+    coverImageUrl?: string | null
+    id?: number
+}
 export const createTripRequestSchema = tripInsertSchema.omit({
     id: true,
     userId: true,
@@ -40,16 +50,48 @@ export const userTripInsertSchema = createInsertSchema(schemas.userTrips)
 export const planSelectSchema = createSelectSchema(schemas.plans)
 export const planInsertSchema = createInsertSchema(schemas.plans)
 export type Plan = InferSelectModel<typeof schemas.plans> & {
+    updatedAt: Date
+    createdAt: Date
     segments?: Segment[]
 }
-export type PlanSelect = z.infer<typeof planSelectSchema>
-export type PlanInsert = z.infer<typeof planInsertSchema>
+export type PlanSelect = z.infer<typeof planSelectSchema> & {
+    updatedAt: Date
+    createdAt: Date
+}
+export type PlanInsert = {
+    name: string
+    tripId: number
+    description?: string | null
+    id?: number
+}
 
 export const segmentSelectSchema = createSelectSchema(schemas.segments)
 export const segmentInsertSchema = createInsertSchema(schemas.segments)
-export type Segment = InferSelectModel<typeof schemas.segments>
-export type SegmentSelect = z.infer<typeof segmentSelectSchema>
-export type SegmentInsert = z.infer<typeof segmentInsertSchema>
+export type Segment = InferSelectModel<typeof schemas.segments> & {
+    startDate: Date
+    endDate: Date
+}
+export type SegmentSelect = z.infer<typeof segmentSelectSchema> & {
+    startDate: Date
+    endDate: Date
+    updatedAt: Date
+    createdAt: Date
+}
+export type SegmentInsert = {
+    name: string
+    tripId: number
+    planId: number
+    startDate: Date | number | string
+    endDate: Date | number | string
+    color: string
+    description?: string | null
+    coordsLat?: number | null
+    coordsLng?: number | null
+    flightBooked?: boolean
+    stayBooked?: boolean
+    isShengenRegion?: boolean
+    id?: number
+}
 
 export const placeSelectSchema = createSelectSchema(schemas.places)
 export const placeInsertSchema = createInsertSchema(schemas.places)
@@ -67,11 +109,11 @@ export type RequiredPartialPlan = Partial<Plan> & {
     tripId: number
 }
 
-export type RequiredPartialSegment = Partial<Segment> & {
+export type RequiredPartialSegment = Omit<Partial<Segment>, 'startDate' | 'endDate'> & {
     name: string
     tripId: number
     planId: number
-    startDate: unknown
-    endDate: unknown
+    startDate: Date
+    endDate: Date
     color: string
 }

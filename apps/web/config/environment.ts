@@ -9,7 +9,7 @@ export const getEnvironmentVars = () => {
     
     if (process.env.IS_CI) {
         const { parsed } = dotenv.config({ path: sampleEnv })
-        return Object.keys(parsed).reduce((acc, it) => ({
+        return Object.keys(parsed ?? {}).reduce((acc, it) => ({
             ...acc,
             [it]: process.env[it],
         }), {})
@@ -30,10 +30,13 @@ export const loadEnvironment = (existingEnv = null) => {
     
     const env = existingEnv || getEnvironmentVars()
     
+    if (!env)
+        return {}
+    
     // For Vite, these need to be the fully qualified process notation
-    return Object.keys(env).reduce((acc, it) => ({
-        ...acc,
-        [`process.env.${it}`]: JSON.stringify(env[it]),
-    }), {})
+    const result: Record<string, string> = {}
+    for (const it of Object.keys(env))
+        result[`process.env.${it}`] = JSON.stringify(env[it as keyof typeof env])
+    return result
     
 }

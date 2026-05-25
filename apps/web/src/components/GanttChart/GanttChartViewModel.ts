@@ -1,6 +1,6 @@
 import { GanttChartItemPrimitive, ID } from '@repo/shared/types'
 import { /* format, */ addDays, differenceInDays,eachDayOfInterval, startOfDay } from 'date-fns'
-import { DragEvent,useEffect, useRef, useState } from 'react'
+import { DragEvent, useCallback, useEffect, useRef, useState } from 'react'
 
 import { GanttChartSharedProps } from '@/components/GanttChart/GanttChart'
 
@@ -52,7 +52,7 @@ const GanttChartViewModel = <T extends GanttChartItemPrimitive>(props: GanttChar
     /**
      * Get the date from the mouse position
      */
-    const getDateFromPosition = (clientX: number): Date | null => {
+    const getDateFromPosition = useCallback((clientX: number): Date | null => {
         
         if (!timelineRef.current) return null
         
@@ -72,7 +72,7 @@ const GanttChartViewModel = <T extends GanttChartItemPrimitive>(props: GanttChar
         
         return days[Math.max(0, Math.min(dayIndex, days.length - 1))]
         
-    }
+    }, [days])
     
     /**
      * Handle the drag start event

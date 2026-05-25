@@ -3,13 +3,9 @@ import { asc,eq } from 'drizzle-orm'
 import Repository from '@/db/repos/repo'
 import * as schemas from '@/db/schema'
 import { ID } from '@/types/data'
-import { Database, Plan, PlanInsert, PlanSelect } from '@/types/database'
+import { Database, Plan, PlanSelect } from '@/types/database'
 
-export abstract class APlansRepository extends Repository<Plan, typeof schemas.plans> {
-    abstract findAllByTripId(_tripId: ID): Promise<PlanSelect[]>
-}
-
-export class PlansRepository extends APlansRepository {
+export class PlansRepository extends Repository<Plan, typeof schemas.plans> {
     
     constructor(db?: Database) {
         
@@ -17,23 +13,13 @@ export class PlansRepository extends APlansRepository {
         
     }
     
-    tx(transaction: Database) {
+    tx(transaction: Database): PlansRepository {
         
         return new PlansRepository(transaction)
         
     }
     
-    async create(data: PlanInsert): Promise<PlanSelect> {
-        
-        return super.create({
-            name: data.name,
-            description: data.description,
-            tripId: data.tripId,
-        })
-        
-    }
-    
-    async findAllByTripId(_tripId: ID): Promise<PlanSelect[]> {
+    async findAllByTripId(tripId: ID): Promise<PlanSelect[]> {
         
         try {
             
@@ -44,7 +30,7 @@ export class PlansRepository extends APlansRepository {
                 })
                 .from(schemas.plans)
                 .leftJoin(schemas.segments, eq(schemas.segments.planId, schemas.plans.id))
-                .where(eq(schemas.plans.tripId, _tripId))
+                .where(eq(schemas.plans.tripId, tripId))
                 .orderBy(asc(schemas.plans.id), asc(schemas.segments.startDate))
             
             // Group segments by plan
@@ -56,6 +42,8 @@ export class PlansRepository extends APlansRepository {
                     plansMap.set(plan.id, {
                         ...plan,
                         segments: [],
+                        updatedAt: plan.updatedAt as Date,
+                        createdAt: plan.createdAt as Date,
                     })
                 
                 if (segment)
@@ -71,19 +59,10 @@ export class PlansRepository extends APlansRepository {
             
         } catch (e) {
             
-            console.error(`Error fetching ${this.plural} for trip ${_tripId}:`, e)
+            console.error(`Error fetching ${this.plural} for trip ${tripId}:`, e)
             throw new Error(`Failed to fetch ${this.plural}`)
             
         }
-        
-    }
-    
-    async updateById<K extends PlanInsert>(
-        id: ID,
-        data: Partial<K>,
-    ): Promise<PlanSelect> {
-        
-        return super.updateById(id, data)
         
     }
     

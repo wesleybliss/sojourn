@@ -35,7 +35,8 @@ const PlanActionsViewModel = (
             onSuccess: newPlan => {
                 toast('Plan created')
                 // queryClient.invalidateQueries(['trip', currentTrip.id])
-                router.push(`/trips/${currentTrip.id}/plans/${newPlan.id}`)
+                if (newPlan)
+                    router.push(`/trips/${currentTrip.id}/plans/${newPlan.id}`)
             },
         })
         
@@ -90,7 +91,8 @@ const PlanActionsViewModel = (
             onSuccess: clonedPlan => {
                 toast('Plan cloned')
                 // queryClient.invalidateQueries(['trip', currentTrip.id])
-                router.push(`/trips/${currentTrip.id}/plans/${clonedPlan.data.id}`)
+                if (clonedPlan)
+                    router.push(`/trips/${currentTrip.id}/plans/${clonedPlan.id}`)
             },
         })
         

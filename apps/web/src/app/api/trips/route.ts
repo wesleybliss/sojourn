@@ -89,8 +89,8 @@ export const POST = withAuth(async (request, { auth }) => {
             name: 'First Stop',
             description: '',
             // order: 1,
-            startDate: dayjs().format('YYYY-MM-DD'),
-            endDate: dayjs().add(5, 'day').format('YYYY-MM-DD'),
+            startDate: dayjs().toDate(),
+            endDate: dayjs().add(5, 'day').toDate(),
             color: 'bg-blue-500',
         })
         

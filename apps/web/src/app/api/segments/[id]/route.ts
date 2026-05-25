@@ -62,7 +62,10 @@ export const PUT = withAuth<{ id: string }>(async (request, { params }) => {
             await db.transaction(async tx => {
                 for (const u of updates) {
                     await tx.update(schemas.segments)
-                        .set({ startDate: u.startDate, endDate: u.endDate })
+                        .set({
+                            startDate: u.startDate as Date,
+                            endDate: u.endDate as Date,
+                        })
                         .where(eq(schemas.segments.id, u.id))
                 }
             })

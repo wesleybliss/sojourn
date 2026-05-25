@@ -5,12 +5,7 @@ import * as schemas from '@/db/schema'
 import { ID } from '@/types/data'
 import { Database, Segment, SegmentInsert, SegmentSelect } from '@/types/database'
 
-export abstract class ASegmentsRepository extends Repository<Segment, typeof schemas.segments> {
-    abstract findAllByTripId(_tripId: ID): Promise<SegmentSelect[]>
-    abstract findAllByPlanId(_planId: ID): Promise<SegmentSelect[]>
-}
-
-export class SegmentsRepository extends ASegmentsRepository {
+export class SegmentsRepository extends Repository<Segment, typeof schemas.segments> {
     
     constructor(db?: Database) {
         
@@ -18,28 +13,9 @@ export class SegmentsRepository extends ASegmentsRepository {
         
     }
     
-    tx(transaction: Database) {
+    tx(transaction: Database): SegmentsRepository {
         
         return new SegmentsRepository(transaction)
-        
-    }
-    
-    async create(data: SegmentInsert): Promise<SegmentSelect> {
-        
-        return super.create({
-            tripId: data.tripId,
-            planId: data.planId,
-            name: data.name,
-            description: data.description,
-            startDate: data.startDate,
-            endDate: data.endDate,
-            coordsLat: data.coordsLat,
-            coordsLng: data.coordsLng,
-            color: data.color,
-            flightBooked: data.flightBooked,
-            stayBooked: data.stayBooked,
-            isShengenRegion: data.isShengenRegion,
-        })
         
     }
     
@@ -103,23 +79,6 @@ export class SegmentsRepository extends ASegmentsRepository {
             throw new Error(`Failed to fetch ${this.plural}`)
             
         }
-        
-    }
-    
-    async updateById(id: ID, data: Partial<SegmentInsert>) {
-        
-        return await super.updateById(id, {
-            name: data.name,
-            description: data.description,
-            startDate: data.startDate,
-            endDate: data.endDate,
-            coordsLat: data.coordsLat,
-            coordsLng: data.coordsLng,
-            color: data.color,
-            flightBooked: data.flightBooked,
-            stayBooked: data.stayBooked,
-            isShengenRegion: data.isShengenRegion,
-        })
         
     }
     

@@ -96,13 +96,16 @@ export const POST = withAuth(async (request, { auth }) => {
                         
                         for (const seg of plan.segments) {
                             
-                            const segmentInsertData: SegmentInsert = {
+                            const segmentInsertData: SegmentInsert & {
+                                startDate: Date
+                                endDate: Date
+                            } = {
                                 tripId: newTrip.id,
                                 planId: newPlan.id,
                                 name: seg.name || 'Imported Segment',
                                 description: seg.description || null,
-                                startDate: toDate(seg.startDate),
-                                endDate: toDate(seg.endDate),
+                                startDate: toDate(seg.startDate) as Date,
+                                endDate: toDate(seg.endDate) as Date,
                                 coordsLat: seg.coords?.lat ?? null,
                                 coordsLng: seg.coords?.lng ?? null,
                                 color: seg.color || 'bg-blue-500',

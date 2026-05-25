@@ -12,6 +12,7 @@
         "dev:api": "pnpm --filter api serve",
         "dev": "pnpm --parallel --stream dev:web dev:api",
         "build": "pnpm --filter @repo/shared build && pnpm --filter @repo/web --filter @repo/api build",
+        "validate": "pnpm check && pnpm lint:fix",
         "check": "pnpm -r check",
         "lint": "pnpm -r lint",
         "lint:dry": "pnpm -r lint:dry",

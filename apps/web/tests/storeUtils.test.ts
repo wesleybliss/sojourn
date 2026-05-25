@@ -50,7 +50,7 @@ describe('updateItemArray', () => {
         
         const updatedItem = { id: 2, name: 'Trip B Updated', description: 'New description' }
         
-        updateItemArray(wire, updatedItem)
+        updateItemArray<MockTrip, MockTrip[] | null>(wire, updatedItem)
         
         const result = wire.getValue()
         
@@ -169,7 +169,7 @@ describe('updateItemArray', () => {
             ],
         }
         
-        updateItemArray(wire, detailedTrip)
+        updateItemArray<MockTrip, MockTrip[] | null>(wire, detailedTrip)
         
         const result = wire.getValue()
         

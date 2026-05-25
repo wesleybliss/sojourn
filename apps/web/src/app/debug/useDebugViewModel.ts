@@ -26,7 +26,7 @@ export type TDebugViewModel = {
     places: Place[]
     placesError: Error | null
     placesLoading: boolean
-    placesRefetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<Place[], Error>>
+    placesRefetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<Place[] | null, Error>>
 }
 
 const useDebugViewModel = (): TDebugViewModel => {
@@ -122,7 +122,7 @@ const useDebugViewModel = (): TDebugViewModel => {
                 }),
             })
             
-            const { url } = json
+            const { url } = json as { url: string }
             
             console.log('uploadSampleImageBlob', json)
             
@@ -151,11 +151,11 @@ const useDebugViewModel = (): TDebugViewModel => {
             
             const result = await fetchJSON('/api/migrate', {
                 method: 'POST',
-            })
+            }) as Record<string, unknown>
             
             setResult(result)
             
-            if (result.success) {
+            if ((result.success as boolean) ?? false) {
                 console.log('Migration completed:', result.message)
                 console.log('Migration results:', result.data)
             } else {
@@ -195,7 +195,7 @@ const useDebugViewModel = (): TDebugViewModel => {
         migrateTripsToPlans,
         
         // Queries
-        places,
+        places: places ?? [],
         placesError,
         placesLoading,
         placesRefetch,

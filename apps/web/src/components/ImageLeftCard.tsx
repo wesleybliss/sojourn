@@ -85,7 +85,10 @@ const LeftImageCard = ({
                             alt={imageAlt} />
                     </ContextMenuTrigger>
                     <ContextMenuContent className="w-52">
-                        <ContextMenuItem inset disabled={!placeId} onClick={() => placeId && shufflePlaceCoverPhoto(placeId, title)}>
+                        <ContextMenuItem
+                            inset
+                            disabled={!placeId}
+                            onClick={() => placeId && shufflePlaceCoverPhoto(placeId, title)}>
                             Shuffle Image
                         </ContextMenuItem>
                         <ContextMenuItem inset disabled={!placeId} onClick={shufflePlaceCoverPhotoCustom}>

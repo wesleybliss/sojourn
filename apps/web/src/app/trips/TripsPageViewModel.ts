@@ -11,10 +11,10 @@ type TTripsPageViewModel = {
     trips: Trip[]
     tripsError: Error | null
     tripsLoading: boolean
-    tripsRefetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<Trip[], Error>>
+    tripsRefetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<Trip[] | null, Error>>
     
     // Mutations
-    createTripMutation: UseMutationResult<Trip, Error, Partial<TripInsert>, unknown>
+    createTripMutation: UseMutationResult<Trip | null, Error, Partial<TripInsert>, unknown>
     deleteTripMutation: UseMutationResult<void, Error, number, unknown>
     
     // Methods
@@ -52,7 +52,8 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
             // setTrips(prevTrips => [...prevTrips, newTrip])
             await tripsRefetch()
             
-            router.push(`/trips/${newTrip.id}`)
+            if (newTrip)
+                router.push(`/trips/${newTrip.id}`)
             
         } catch (e) {
             
@@ -89,7 +90,7 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     return {
         
         // Queries
-        trips,
+        trips: trips ?? [],
         tripsError,
         tripsLoading,
         tripsRefetch,

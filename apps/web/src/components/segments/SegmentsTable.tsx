@@ -161,7 +161,8 @@ const SegmentsTable = ({
                     <TableRow
                         key={it.id}
                         data-id={it?.id}
-                        className={dayjs(it.startDate as Date).isAfter(dayjs(it.endDate as Date)) ? 'border border-red-500' : ''}>
+                        className={dayjs(it.startDate as Date)
+                            .isAfter(dayjs(it.endDate as Date)) ? 'border border-red-500' : ''}>
                         
                         <TableCell className="w-5">
                             <Checkbox

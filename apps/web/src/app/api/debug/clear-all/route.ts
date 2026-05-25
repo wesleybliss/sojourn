@@ -8,7 +8,7 @@ import { NextResponse } from 'next/server'
  * POST /api/debug/clear-all
  * Clears all data from the database (for debugging purposes)
  */
-export const POST = withAuth(async (request, { auth }) => {
+export const POST = withAuth(async (_request, { auth }) => {
     
     try {
         

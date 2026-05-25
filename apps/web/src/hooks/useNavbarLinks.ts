@@ -12,7 +12,7 @@ export type NavbarLink = [
 
 const useNavbarLinks = (
     user: User | null,
-    trips: { data: Trip[] },
+    trips: Trip[] | null | undefined,
     backupMutation: UseMutationResult<{
         filename: string
     }, Error, BackupTripsBody, unknown>,
@@ -22,7 +22,7 @@ const useNavbarLinks = (
     
     return useMemo<NavbarLink[]>(() => {
         
-        if (!user || !trips?.data)
+        if (!user || !trips)
             return [
                 ['/', 'Home'],
                 ['/login', 'Login'],
@@ -34,7 +34,7 @@ const useNavbarLinks = (
             ['/', 'Home'],
             ['/trips', 'Trips'],
             ['/debug', 'Debug'],
-            ['#debug:dump', 'Debug/Dump', debugDumpData(trips?.data)],
+            ['#debug:dump', 'Debug/Dump', debugDumpData(trips)],
             ['#debug:clear', 'Debug/Clear', (e: MouseEvent) => {
                 e.preventDefault()
                 setDeleteDatabaseDialogOpen(true)
@@ -88,7 +88,7 @@ const useNavbarLinks = (
                 }
             }],
         ]
-    }, [trips, user, backupMutation])
+    }, [user, trips, debugDumpData, setDeleteDatabaseDialogOpen, backupMutation])
     
 }
 

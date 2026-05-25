@@ -1,25 +1,15 @@
 import { desc,eq } from 'drizzle-orm'
 
-import { APlansRepository } from '@/db/repos/plans'
 import Repository from '@/db/repos/repo'
-import { ASegmentsRepository } from '@/db/repos/segments'
 import * as schemas from '@/db/schema'
 import { TripWithSegmentCount } from '@/types'
 import { ID } from '@/types/data'
-import { Database, Trip, TripInsert, TripSelect } from '@/types/database'
+import { Database, Trip, TripSelect } from '@/types/database'
 
-export abstract class ATripsRepository extends Repository<Trip, typeof schemas.trips> {
-    abstract findAllByUserId(_userId: ID): Promise<TripSelect[]>
-    abstract findOneByName(_name: string, _withDetails?: boolean, _plansRepo?: APlansRepository): Promise<Trip | null>
-    abstract findAllByUserIdWithSegmentCount(
-        _userId: ID,
-        _segmentsRepo: ASegmentsRepository,
-    ): Promise<TripWithSegmentCount[] | null>
-    
-    abstract findOneWithDetails(_id: ID, _plansRepo: APlansRepository): Promise<Trip | null>
-}
+import PlansRepository from './plans'
+import SegmentsRepository from './segments'
 
-export class TripsRepository extends ATripsRepository {
+export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
     
     constructor(db?: Database) {
         
@@ -27,22 +17,9 @@ export class TripsRepository extends ATripsRepository {
         
     }
     
-    tx(transaction: Database) {
+    tx(transaction: Database): TripsRepository {
         
         return new TripsRepository(transaction)
-        
-    }
-    
-    async create(
-        data: TripInsert,
-    ): Promise<TripSelect> {
-        
-        return super.create({
-            userId: data.userId,
-            name: data.name,
-            description: data.description,
-            coverImageUrl: data.coverImageUrl,
-        })
         
     }
     
@@ -60,7 +37,11 @@ export class TripsRepository extends ATripsRepository {
                 .where(eq(schemas.userTrips.userId, userId))
                 .orderBy(desc(this.schema.id))
             
-            return trips.map(result => result.trip) as TripSelect[]
+            return trips.map(result => ({
+                ...result.trip,
+                updatedAt: result.trip.updatedAt as Date,
+                createdAt: result.trip.createdAt as Date,
+            })) as TripSelect[]
             
         } catch (e) {
             
@@ -71,10 +52,7 @@ export class TripsRepository extends ATripsRepository {
         
     }
     
-    async findOneByName(name: string, withDetails?: boolean, plansRepo?: APlansRepository): Promise<Trip | null> {
-        
-        if (withDetails && !plansRepo)
-            throw new Error('Plans repository is required when fetching trip details')
+    async findOneByName(name: string, withDetails?: boolean, plansRepo = PlansRepository): Promise<Trip | null> {
         
         try {
             
@@ -83,7 +61,7 @@ export class TripsRepository extends ATripsRepository {
             if (!trip) return null
             if (!withDetails) return trip
             
-            const plans = await plansRepo!.findAllByTripId(trip.id)
+            const plans = await plansRepo.findAllByTripId(trip.id)
             
             return {
                 ...trip,
@@ -101,7 +79,7 @@ export class TripsRepository extends ATripsRepository {
     
     async findAllByUserIdWithSegmentCount(
         userId: ID,
-        segmentsRepo: ASegmentsRepository,
+        segmentsRepo = SegmentsRepository,
     ): Promise<TripWithSegmentCount[] | null> {
         
         try {
@@ -128,7 +106,7 @@ export class TripsRepository extends ATripsRepository {
         
     }
     
-    async findOneWithDetails(id: ID, plansRepo: APlansRepository): Promise<Trip | null> {
+    async findOneWithDetails(id: ID, plansRepo = PlansRepository): Promise<Trip | null> {
         
         try {
             
@@ -149,19 +127,6 @@ export class TripsRepository extends ATripsRepository {
             throw new Error(`Failed to fetch ${this.name} details`)
             
         }
-        
-    }
-    
-    async updateById<K extends TripInsert>(
-        id: ID,
-        data: Partial<K>,
-    ): Promise<TripSelect> {
-        
-        return await super.updateById(id, {
-            name: data.name,
-            description: data.description,
-            coverImageUrl: data.coverImageUrl,
-        })
         
     }
     

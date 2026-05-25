@@ -38,7 +38,7 @@ const Gravatar = ({
         
         return hash ? `https://www.gravatar.com/avatar/${hash}?s=${size}&d=404` : null
         
-    }, [size])
+    }, [size, user?.email])
     
     useAbortableFetch(() => {
         

@@ -27,7 +27,8 @@ const useEventSubscription = (
         }
         
         // eslint-disable-next-line react-compiler/react-compiler
-    }, [eventName, callback].concat(dependencies)))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [callback, eventName, ...dependencies]))
     
 }
 

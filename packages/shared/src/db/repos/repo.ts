@@ -38,21 +38,20 @@ class Repository<TModel, TSchema extends SQLiteTable> {
         
     }
     
-    
     tx(_transaction: Database): Repository<TModel, TSchema> {
         
         throw new Error('Method not implemented.')
         
     }
     
-    normalizeDateValue(value: unknown | null | undefined) {
+    normalizeDateValue(value: Date | string | number | null | undefined): Date {
         
-        if (!value) return null
-        if (typeof value === 'string') return value
-        if (value instanceof Date) return value.getTime()
+        if (!value) return new Date(0)
+        if (typeof value === 'string') return new Date(value)
+        if (value instanceof Date) return value
         
         if (typeof value === 'number')
-            return value < 1e12 ? value * 1000 : value
+            return new Date(value < 1e12 ? value * 1000 : value)
         
         return value
         
@@ -160,9 +159,9 @@ class Repository<TModel, TSchema extends SQLiteTable> {
         
     }
     
-    async updateById<K extends Insert<TSchema>>(
+    async updateById(
         id: ID,
-        data: Partial<K>,
+        data: Partial<Insert<TSchema>>,
     ): Promise<Select<TSchema>> {
         
         try {

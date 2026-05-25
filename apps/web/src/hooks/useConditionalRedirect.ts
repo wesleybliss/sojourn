@@ -14,7 +14,7 @@ const useConditionalRedirect = (
         if (conditionFn())
             router.push(target)
         
-    }, [observable])
+    }, [conditionFn, observable, router, target])
     
 }
 

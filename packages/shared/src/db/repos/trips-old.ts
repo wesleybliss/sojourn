@@ -1,4 +1,4 @@
-import { asc, desc, eq, inArray } from 'drizzle-orm'
+import { asc, desc, eq, inArray, InferInsertModel } from 'drizzle-orm'
 
 import db from '@/db'
 import * as schemas from '@/db/schema'
@@ -224,15 +224,15 @@ export const updateSegment = async (id: ID, segmentData: Partial<SegmentInsert>)
             .set({
                 name: segmentData.name,
                 description: segmentData.description,
-                startDate: segmentData.startDate,
-                endDate: segmentData.endDate,
+                startDate: segmentData.startDate ? new Date(segmentData.startDate) : undefined,
+                endDate: segmentData.endDate ? new Date(segmentData.endDate) : undefined,
                 coordsLat: segmentData.coordsLat,
                 coordsLng: segmentData.coordsLng,
                 color: segmentData.color,
                 flightBooked: segmentData.flightBooked,
                 stayBooked: segmentData.stayBooked,
                 isShengenRegion: segmentData.isShengenRegion,
-            })
+            } as Partial<InferInsertModel<typeof schemas.segments>>)
             .where(eq(schemas.segments.id, id))
             .returning()
         

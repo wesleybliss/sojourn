@@ -94,7 +94,7 @@ export const PUT = withAuth<{ planId: string }>(async (request, { params, auth }
  * DELETE /api/plans/[planId]
  * Deletes a plan.
  */
-export const DELETE = withAuth<{ planId: string }>(async (request, { params, auth }) => {
+export const DELETE = withAuth<{ planId: string }>(async (_request, { params, auth }) => {
     
     try {
         

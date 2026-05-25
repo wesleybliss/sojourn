@@ -69,7 +69,7 @@ const ThemeToggle = ({
         
         return () => mediaQuery.removeEventListener('change', handleChange)
         
-    }, [theme])
+    }, [setTheme, theme])
     
     // Prevent rendering theme-specific content until mounted
     if (!isMounted) {

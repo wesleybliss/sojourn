@@ -93,7 +93,7 @@ export const PUT = withAuth<{ id: string }>(async (request, { params, auth }) =>
  * DELETE /api/trips/[id]
  * Deletes a trip by ID.
  */
-export const DELETE = withAuth<{ id: string }>(async (request, { params, auth }) => {
+export const DELETE = withAuth<{ id: string }>(async (_request, { params, auth }) => {
     
     const paramsObj = await params
     const id = parseInt(paramsObj.id, 10)
