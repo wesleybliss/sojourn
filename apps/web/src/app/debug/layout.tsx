@@ -1,5 +1,6 @@
-import DebugSidebar from '@/app/debug/DebugSidebar'
 import { ReactNode } from 'react'
+
+import DebugSidebar from '@/app/debug/DebugSidebar'
 
 interface DebugLayoutProps {
     children: ReactNode

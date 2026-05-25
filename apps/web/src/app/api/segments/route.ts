@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server'
 import db from '@repo/shared/db/index'
 import * as schemas from '@repo/shared/db/schema'
-import { withAuth, isUserTripMember } from '@repo/shared/utils/auth'
-import { eq, and, inArray } from 'drizzle-orm'
+import { isUserTripMember,withAuth } from '@repo/shared/utils/auth'
+import { and, eq, inArray } from 'drizzle-orm'
+import { NextResponse } from 'next/server'
 
 /**
  * POST /api/segments

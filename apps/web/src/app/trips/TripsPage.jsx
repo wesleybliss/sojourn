@@ -1,11 +1,13 @@
 'use client'
 
+import { cn } from '@repo/shared/utils'
+import { FolderUp,MapPinPlus } from 'lucide-react'
+
 import LoadingSpinner from '@/components/LoadingSpinnerx'
-import useTripsPageViewModel from './TripsPageViewModel'
 import TripCard from '@/components/TripCard'
 import { Button } from '@/components/ui/button'
-import { MapPinPlus, FolderUp } from 'lucide-react'
-import { cn } from '@repo/shared/utils'
+
+import useTripsPageViewModel from './TripsPageViewModel'
 
 const TripsPage = () => {
     

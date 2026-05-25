@@ -1,6 +1,7 @@
 'use client'
 
-import { createContext, JSX, ReactNode, useContext, useEffect, useState } from 'react'
+import { User } from '@repo/shared/types/database'
+import { auth, googleProvider } from '@repo/shared/utils/firebase/client'
 import {
     onAuthStateChanged,
     signInWithPopup,
@@ -8,8 +9,7 @@ import {
     User as FirebaseUser,
     UserCredential,
 } from 'firebase/auth'
-import { auth, googleProvider } from '@repo/shared/utils/firebase/client'
-import { User } from '@repo/shared/types/database'
+import { createContext, JSX, ReactNode, useContext, useEffect, useState } from 'react'
 
 interface TAuthContext {
     user: User | null

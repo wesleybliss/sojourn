@@ -1,4 +1,9 @@
+import { Trip } from '@repo/shared/types/database'
+import dayjs from 'dayjs'
+import { BookX } from 'lucide-react'
 import React from 'react'
+
+import { Button } from '@/components/ui/button'
 import {
     Card,
     CardContent,
@@ -7,10 +12,6 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { BookX } from 'lucide-react'
-import dayjs from 'dayjs'
-import { Trip } from '@repo/shared/types/database'
 
 interface TripCardProps {
     trip: Trip

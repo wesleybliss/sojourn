@@ -1,5 +1,7 @@
-import { ReactNode, useCallback } from 'react'
+import { ID } from '@repo/shared/types'
 import { cn } from '@repo/shared/utils'
+import { ReactNode, useCallback } from 'react'
+
 import {
     Card,
     CardContent,
@@ -13,7 +15,6 @@ import {
     ContextMenuItem,
     ContextMenuTrigger,
 } from '@/components/ui/context-menu'
-import { ID } from '@repo/shared/types'
 
 const emptyImageSrc = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfF' +
     'cSJAAAADUlEQVR4AWJqaGz8DwAAAP//e4lw8wAAAAZJREFUAwAFkwKEpgq4TgAAAABJRU5ErkJggg=='
@@ -84,13 +85,13 @@ const LeftImageCard = ({
                             alt={imageAlt} />
                     </ContextMenuTrigger>
                     <ContextMenuContent className="w-52">
-                         <ContextMenuItem inset disabled={!placeId} onClick={() => placeId && shufflePlaceCoverPhoto(placeId, title)}>
-                             Shuffle Image
-                         </ContextMenuItem>
-                         <ContextMenuItem inset disabled={!placeId} onClick={shufflePlaceCoverPhotoCustom}>
-                             Shuffle Image (Custom)
-                         </ContextMenuItem>
-                     </ContextMenuContent>
+                        <ContextMenuItem inset disabled={!placeId} onClick={() => placeId && shufflePlaceCoverPhoto(placeId, title)}>
+                            Shuffle Image
+                        </ContextMenuItem>
+                        <ContextMenuItem inset disabled={!placeId} onClick={shufflePlaceCoverPhotoCustom}>
+                            Shuffle Image (Custom)
+                        </ContextMenuItem>
+                    </ContextMenuContent>
                 </ContextMenu>
                 {/* <img
                     className={`w-full h-full object-cover ${imageClassName}`}

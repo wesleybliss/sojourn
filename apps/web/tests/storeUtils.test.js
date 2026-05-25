@@ -1,8 +1,9 @@
-import { describe, test, expect, beforeEach } from '@jest/globals'
+import { beforeEach,describe, expect, test } from '@jest/globals'
+
 import {
-    updateItemArray,
     addItemArray,
     removeItemArray,
+    updateItemArray,
 } from '../src/lib/storeUtils'
 
 // Mock wire implementation for testing

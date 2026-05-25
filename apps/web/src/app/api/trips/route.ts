@@ -1,12 +1,12 @@
-import { NextResponse } from 'next/server'
-import { withAuth } from '@repo/shared/utils/auth'
-import tripsRepo from '@repo/shared/db/repos/trips'
+import db from '@repo/shared/db/index'
 import plansRepo from '@repo/shared/db/repos/plans'
 import segmentsRepo from '@repo/shared/db/repos/segments'
-import db from '@repo/shared/db/index'
+import tripsRepo from '@repo/shared/db/repos/trips'
 import * as schemas from '@repo/shared/db/schema'
+import { createTripRequestSchema } from '@repo/shared/types'
+import { withAuth } from '@repo/shared/utils/auth'
 import dayjs from 'dayjs'
-import { createTripRequestSchema, tripInsertSchema } from '@repo/shared/types'
+import { NextResponse } from 'next/server'
 
 /**
  * GET /api/trips
@@ -28,7 +28,7 @@ export const GET = withAuth(async (request, { auth }) => {
         return NextResponse.json({
             success: true,
             data: trips,
-            count: trips.length,
+            count: trips?.length || 0,
         })
         
     } catch (e) {
@@ -54,7 +54,7 @@ export const POST = withAuth(async (request, { auth }) => {
         const { userId } = auth
         
         const tripData = createTripRequestSchema.parse(
-            await request.json()
+            await request.json(),
         )
         
         const newTripPayload = {

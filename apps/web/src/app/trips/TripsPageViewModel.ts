@@ -1,8 +1,9 @@
-import { useRouter } from 'next/navigation'
-import { useCreateTripMutation, useDeleteTripMutation } from '@/lib/queries/trip'
-import { useTripsQuery } from '@/lib/queries/trips'
 import { ID, Trip, TripInsert } from '@repo/shared/types'
 import { QueryObserverResult, RefetchOptions, UseMutationResult } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
+
+import { useCreateTripMutation, useDeleteTripMutation } from '@/lib/queries/trip'
+import { useTripsQuery } from '@/lib/queries/trips'
 
 type TTripsPageViewModel = {
     // Queries

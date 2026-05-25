@@ -1,21 +1,22 @@
 import 'dotenv/config'
 
-import aliases from './config/aliases'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import type { NextConfig } from 'next'
+import * as path from 'path'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+// import { fileURLToPath } from 'url'
+import aliases from './config/aliases'
+
+/*const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)*/
 
 const resolvedAliases = Object.fromEntries(
     Object.entries(aliases).map(([key, value]) => [
         key,
         path.resolve(__dirname, value),
-    ])
+    ]),
 )
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
     reactStrictMode: true,
     turbopack: {
         resolveAlias: resolvedAliases,

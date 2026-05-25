@@ -1,9 +1,9 @@
 
-const initialAliases = {
+const initialAliases: Record<string, string> = {
     '@': './src',
 }
 
-const aliases = [
+const aliases: Record<string, string> = [
     'styles',
     'lib',
     'store',

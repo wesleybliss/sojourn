@@ -109,7 +109,9 @@ const getOrCreateUser = async (firebaseUser: DecodedIdToken): Promise<UserSelect
  * Authorizes a user based on Firebase ID token from request.
  * Verifies Firebase token, gets or creates user in the database, and returns auth context.
  */
-export const authorize = async (request: NextRequest): Promise<{ user: UserSelect; firebaseToken: DecodedIdToken; userId: ID }> => {
+export const authorize = async (
+    request: NextRequest,
+): Promise<{ user: UserSelect; firebaseToken: DecodedIdToken; userId: ID }> => {
     
     const firebaseToken = await verifyFirebaseToken(request)
     
@@ -125,7 +127,9 @@ export type AuthContext = {
     userId: ID
 }
 
-export const withAuth = <T>(handler: (req: NextRequest, context: { auth: AuthContext, params: Promise<T> }) => Promise<NextResponse>) => async (request: NextRequest, context: Record<string, unknown> = {}) => {
+export const withAuth = <T>(
+    handler: (_req: NextRequest, _context: { auth: AuthContext, params: Promise<T> }) => Promise<NextResponse>,
+) => async (request: NextRequest, context: Record<string, unknown> = {}) => {
     
     try {
         
@@ -137,7 +141,10 @@ export const withAuth = <T>(handler: (req: NextRequest, context: { auth: AuthCon
     } catch (e) {
         
         if (e instanceof HttpError)
-            return NextResponse.json({ success: false, error: (e as HttpError).message }, { status: (e as HttpError).status })
+            return NextResponse.json({
+                success: false,
+                error: (e as HttpError).message,
+            }, { status: (e as HttpError).status })
         
         console.error('Authorization error:', e)
         return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })

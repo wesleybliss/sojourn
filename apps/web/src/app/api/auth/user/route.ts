@@ -1,9 +1,9 @@
-import { type NextRequest, NextResponse } from 'next/server'
-import { authorize } from '@repo/shared/utils/auth'
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
-import { eq } from 'drizzle-orm'
 import HttpError from '@repo/shared/errors/HttpError'
+import { authorize } from '@repo/shared/utils/auth'
+import { eq } from 'drizzle-orm'
+import { type NextRequest, NextResponse } from 'next/server'
 
 /**
  * GET /api/auth/user

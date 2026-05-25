@@ -2,8 +2,8 @@ import { AnyColumn, desc, eq, inArray } from 'drizzle-orm'
 import { SQLiteTable } from 'drizzle-orm/sqlite-core'
 
 import database from '@/db'
-import { ID } from '@/types/data'
 import { Database, Insert, Select } from '@/types'
+import { ID } from '@/types/data'
 
 /**
  * Generic repository with the specified name, plural form, schema, and database connection.
@@ -38,7 +38,7 @@ class Repository<TModel, TSchema extends SQLiteTable> {
         
     }
     
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    
     tx(_transaction: Database): Repository<TModel, TSchema> {
         
         throw new Error('Method not implemented.')

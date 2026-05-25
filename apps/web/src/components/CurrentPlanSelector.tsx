@@ -1,18 +1,19 @@
 'use client'
 
-import { useEffect } from 'react'
 import { useWireValue } from '@forminator/react-wire'
-import * as store from '@/store'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+
 import {
     Select,
     SelectContent,
     SelectGroup,
-    SelectLabel,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import * as store from '@/store'
 
 const CurrentPlanSelector = () => {
     

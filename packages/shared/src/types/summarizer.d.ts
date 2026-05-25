@@ -1,6 +1,6 @@
 
 interface SummarizerMonitor {
-    ondownloadprogress?(event: ProgressEvent): void
+    ondownloadprogress?(_event: ProgressEvent): void
 }
 
 export interface SummarizerOptions {
@@ -16,11 +16,11 @@ export type SummarizerAvailability =
     | 'ready'
 
 export interface SummarizerInstance {
-    summarize(text: string): Promise<string>
+    summarize(_text: string): Promise<string>
 }
 
 export interface SummarizerStatic {
-    create(options?: SummarizerOptions): Promise<SummarizerInstance>
+    create(_options?: SummarizerOptions): Promise<SummarizerInstance>
     availability(): Promise<SummarizerAvailability>
 }
 

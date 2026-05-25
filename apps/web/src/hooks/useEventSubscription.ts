@@ -1,7 +1,8 @@
-import { useCallback } from 'react'
 import { useSubscribe } from '@forminator/react-wire'
-import { eventBus as storeEventBus } from '@/lib/eventBus'
 import { EVENTS } from '@repo/shared/constants'
+import { useCallback } from 'react'
+
+import { eventBus as storeEventBus } from '@/lib/eventBus'
 
 const useEventSubscription = (
     eventName: string,

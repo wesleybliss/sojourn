@@ -1,3 +1,5 @@
+import type { Config } from 'stylelint'
+
 // @todo investigate these
 // https://github.com/stylelint/awesome-stylelint
 
@@ -233,4 +235,4 @@ export default {
         
     },
     
-}
+} satisfies Config

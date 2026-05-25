@@ -1,11 +1,12 @@
+import { Plan, Trip } from '@repo/shared/types'
+import { useQueryClient } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
 import { ChangeEvent, useState } from 'react'
 import { useCallback } from 'react'
 import { toast } from 'sonner'
+
+import { useClonePlan, useCreatePlan,useUpdatePlan } from '@/lib/queries/plans'
 import { useDeletePlan } from '@/lib/queries/trip'
-import { useUpdatePlan, useClonePlan, useCreatePlan } from '@/lib/queries/plans'
-import { useQueryClient } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
-import { Plan, Trip } from '@repo/shared/types'
 
 const PlanActionsViewModel = (
     currentTrip: Trip | null,

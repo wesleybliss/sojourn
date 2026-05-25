@@ -1,13 +1,15 @@
 'use client'
 
-import useNavbarViewModel from './NavbarViewModel'
 import { cn } from '@repo/shared/utils'
-import ThemeToggle from '@/components/ThemeToggle'
+import Link from 'next/link'
+
 import AccountMenu from '@/components/AccountMenu'
 import CurrentPlanSelector from '@/components/CurrentPlanSelector'
 import TripActionsDropdown from '@/components/Navbar/TripActionsDropdown'
-import Link from 'next/link'
+import ThemeToggle from '@/components/ThemeToggle'
 import { Badge } from '@/components/ui/badge'
+
+import useNavbarViewModel from './NavbarViewModel'
 
 const Navbar = () => {
     

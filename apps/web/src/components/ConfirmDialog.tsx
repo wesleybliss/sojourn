@@ -1,3 +1,5 @@
+import { JSX, MouseEventHandler, ReactNode } from 'react'
+
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -9,7 +11,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog'
-import { JSX, MouseEventHandler, ReactNode } from 'react'
 
 interface ConfirmDialogProps {
     open: boolean | null | undefined

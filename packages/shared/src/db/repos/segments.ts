@@ -1,25 +1,24 @@
 import { asc,eq } from 'drizzle-orm'
 
-import database from '@/db'
 import Repository from '@/db/repos/repo'
 import * as schemas from '@/db/schema'
 import { ID } from '@/types/data'
-import { Segment, SegmentInsert, SegmentSelect } from '@/types/database'
+import { Database, Segment, SegmentInsert, SegmentSelect } from '@/types/database'
 
-export interface ISegmentsRepository extends Repository<Segment, typeof schemas.segments> {
-    findAllByTripId(tripId: ID): Promise<SegmentSelect[]>
-    findAllByPlanId(planId: ID): Promise<SegmentSelect[]>
+export abstract class ASegmentsRepository extends Repository<Segment, typeof schemas.segments> {
+    abstract findAllByTripId(_tripId: ID): Promise<SegmentSelect[]>
+    abstract findAllByPlanId(_planId: ID): Promise<SegmentSelect[]>
 }
 
-export class SegmentsRepository extends Repository<Segment, typeof schemas.segments> implements ISegmentsRepository {
+export class SegmentsRepository extends ASegmentsRepository {
     
-    constructor(db?: typeof database) {
+    constructor(db?: Database) {
         
         super('segment', 'segments', schemas.segments, db)
         
     }
     
-    tx(transaction: typeof database) {
+    tx(transaction: Database) {
         
         return new SegmentsRepository(transaction)
         

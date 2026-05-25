@@ -1,37 +1,38 @@
-import { useEffect } from 'react'
 import { useWireState } from '@forminator/react-wire'
-import * as store from '@/store'
+import { Plan, Trip } from '@repo/shared/types'
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuLabel,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuCheckboxItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Button } from '@/components/ui/button'
-import {
-    Ellipsis,
-    FolderPen,
-    FilePlus,
-    FolderDown,
-    FilePen,
-    FileX,
-    Files,
+    Bug,
     ClipboardCopy,
+    Ellipsis,
+    FilePen,
+    FilePlus,
+    Files,
+    FileX,
+    FolderDown,
+    FolderPen,
     ListEnd,
     Map,
     MapPinPlus,
-    Bug,
 } from 'lucide-react'
+import { useEffect } from 'react'
+
 import InputDialog from '@/components/InputDialog'
-import useUIOptionsViewModel from '@/components/Navbar/UIOptionsViewModel'
-import useTripActionsViewModel from '@/components/Navbar/TripActionsViewModel'
 import usePlanActionsViewModel from '@/components/Navbar/PlanActionsViewModel'
 import useSegmentActionsViewModel from '@/components/Navbar/SegmentActionsViewModel'
-import { Plan, Trip } from '@repo/shared/types'
+import useTripActionsViewModel from '@/components/Navbar/TripActionsViewModel'
+import useUIOptionsViewModel from '@/components/Navbar/UIOptionsViewModel'
+import { Button } from '@/components/ui/button'
+import {
+    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import * as store from '@/store'
 
 interface TripActionsDropdownProps {
     trip: Trip | null

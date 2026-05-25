@@ -1,8 +1,9 @@
-import { useMemo } from 'react'
-import GanttChart from '@/components/GanttChart'
+import { Plan, SegmentGanttChart } from '@repo/shared/types'
 import { calculateTotalDays } from '@repo/shared/utils'
 import dayjs from 'dayjs'
-import { Plan, SegmentGanttChart } from '@repo/shared/types'
+import { useMemo } from 'react'
+
+import GanttChart from '@/components/GanttChart'
 
 interface SegmentsGanttChartProps {
     plan: Plan

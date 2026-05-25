@@ -1,24 +1,23 @@
 import { asc,eq } from 'drizzle-orm'
 
-import database from '@/db'
 import Repository from '@/db/repos/repo'
 import * as schemas from '@/db/schema'
 import { ID } from '@/types/data'
-import { Plan, PlanInsert, PlanSelect, Select } from '@/types/database'
+import { Database, Plan, PlanInsert, PlanSelect } from '@/types/database'
 
-export interface IPlansRepository extends Repository<Plan, typeof schemas.plans> {
-    findAllByTripId(tripId: ID): Promise<PlanSelect[]>
+export abstract class APlansRepository extends Repository<Plan, typeof schemas.plans> {
+    abstract findAllByTripId(_tripId: ID): Promise<PlanSelect[]>
 }
 
-export class PlansRepository extends Repository<Plan, typeof schemas.plans> /*implements IPlansRepository*/ {
+export class PlansRepository extends APlansRepository {
     
-    constructor(db?: typeof database) {
+    constructor(db?: Database) {
         
         super('plan', 'plans', schemas.plans, db)
         
     }
     
-    tx(transaction: typeof database) {
+    tx(transaction: Database) {
         
         return new PlansRepository(transaction)
         
@@ -34,7 +33,7 @@ export class PlansRepository extends Repository<Plan, typeof schemas.plans> /*im
         
     }
     
-    async findAllByTripId(tripId: ID): Promise<PlanSelect[]> {
+    async findAllByTripId(_tripId: ID): Promise<PlanSelect[]> {
         
         try {
             
@@ -45,7 +44,7 @@ export class PlansRepository extends Repository<Plan, typeof schemas.plans> /*im
                 })
                 .from(schemas.plans)
                 .leftJoin(schemas.segments, eq(schemas.segments.planId, schemas.plans.id))
-                .where(eq(schemas.plans.tripId, tripId))
+                .where(eq(schemas.plans.tripId, _tripId))
                 .orderBy(asc(schemas.plans.id), asc(schemas.segments.startDate))
             
             // Group segments by plan
@@ -72,19 +71,19 @@ export class PlansRepository extends Repository<Plan, typeof schemas.plans> /*im
             
         } catch (e) {
             
-            console.error(`Error fetching ${this.plural} for trip ${tripId}:`, e)
+            console.error(`Error fetching ${this.plural} for trip ${_tripId}:`, e)
             throw new Error(`Failed to fetch ${this.plural}`)
             
         }
         
     }
     
-    async updateById<PlanInsert>(id: ID, data: Partial<PlanInsert>): Promise<PlanSelect[]> {
+    async updateById<K extends PlanInsert>(
+        id: ID,
+        data: Partial<K>,
+    ): Promise<PlanSelect> {
         
-        return super.updateById(id, {
-            name: data.name,
-            description: data.description,
-        })
+        return super.updateById(id, data)
         
     }
     

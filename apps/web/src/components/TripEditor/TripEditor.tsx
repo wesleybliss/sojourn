@@ -1,19 +1,20 @@
 'use client'
 
-import { useState } from 'react'
-import SegmentsTable from '@/components/segments/SegmentsTable'
-import SegmentsGanttChart from '@/components/segments/SegmentsGanttChart'
-import MapLibreMap from '@/components/MapLibreMap'
-import { Button } from '@/components/ui/button'
 import { ChevronsUpDown } from 'lucide-react'
+import { useState } from 'react'
+
+import CollapsibleTree from '@/components/CollapsibleTree'
+import LoadingSpinner from '@/components/LoadingSpinner'
+import MapLibreMap from '@/components/MapLibreMap'
+import SegmentsGanttChart from '@/components/segments/SegmentsGanttChart'
+import SegmentsTable from '@/components/segments/SegmentsTable'
+import { TTripEditorViewModel } from '@/components/TripEditor/useTripEditorViewModel'
+import { Button } from '@/components/ui/button'
 import {
     Collapsible,
     CollapsibleContent,
     CollapsibleTrigger,
 } from '@/components/ui/collapsible'
-import LoadingSpinner from '@/components/LoadingSpinner'
-import CollapsibleTree from '@/components/CollapsibleTree'
-import { TTripEditorViewModel } from '@/components/TripEditor/useTripEditorViewModel'
 
 interface TripEditorProps {
     vm: TTripEditorViewModel

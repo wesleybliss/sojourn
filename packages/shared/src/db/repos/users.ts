@@ -1,23 +1,20 @@
-import database from '@/db'
 import Repository from '@/db/repos/repo'
 import * as schemas from '@/db/schema'
-import { User, UserSelect } from '@/types/database'
+import { Database, User, UserSelect } from '@/types/database'
 
-export interface IUsersRepository extends Repository<User, typeof schemas.users> {
-    
-    findOneByEmail(email: string): Promise<UserSelect | null>
-    
+export abstract class AUsersRepository extends Repository<User, typeof schemas.users> {
+    abstract findOneByEmail(_email: string): Promise<UserSelect | null>
 }
 
-export class UsersRepository extends Repository<User, typeof schemas.users> implements IUsersRepository {
+export class UsersRepository extends AUsersRepository {
     
-    constructor(db?: typeof database) {
+    constructor(db?: Database) {
         
         super('user', 'users', schemas.users, db)
         
     }
     
-    tx(transaction: typeof database) {
+    tx(transaction: Database) {
         
         return new UsersRepository(transaction)
         

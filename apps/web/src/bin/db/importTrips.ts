@@ -1,10 +1,12 @@
 import 'dotenv/config'
+
 import * as fs from 'node:fs'
 import * as path from 'node:path'
+
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
-import { eq } from 'drizzle-orm'
 import { ID, Plan, Segment, Trip, TripInsert } from '@repo/shared/types'
+import { eq } from 'drizzle-orm'
 
 const args = process.argv.slice(2)
 const [tripsFile] = args

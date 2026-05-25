@@ -1,14 +1,15 @@
-import * as store from '@/store'
-import tripsRepo from '@repo/shared/db/repos/trips'
 import segmentsRepo from '@repo/shared/db/repos/segments'
+import tripsRepo from '@repo/shared/db/repos/trips'
+import { ID } from '@repo/shared/types/data'
+import { RequiredPartialSegment, RequiredPartialTrip, Segment, Trip } from '@repo/shared/types/database'
 import {
-    generateSlug,
     createSyntheticDownload,
+    generateSlug,
     getRandomUnsplashImageUrl,
 } from '@repo/shared/utils'
 import dayjs from 'dayjs'
-import { RequiredPartialSegment, RequiredPartialTrip, Segment, Trip } from '@repo/shared/types/database'
-import { ID } from '@repo/shared/types/data'
+
+import * as store from '@/store'
 
 export const backupTrip = async (trip: Trip) => {
     

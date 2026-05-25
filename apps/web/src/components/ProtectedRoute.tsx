@@ -1,10 +1,11 @@
 'use client'
 
-import { useAuth } from '@/components/providers/AuthProvider'
 import { useRouter } from 'next/navigation'
 import { ReactNode, useEffect } from 'react'
-import LoadingSpinner from '@/components/LoadingSpinner'
+
 import InviteCodeForm from '@/components/InviteCodeForm'
+import LoadingSpinner from '@/components/LoadingSpinner'
+import { useAuth } from '@/components/providers/AuthProvider'
 
 interface ProtectedRouteProps {
     children: ReactNode

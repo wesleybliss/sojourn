@@ -1,10 +1,10 @@
-import { createWire, createSelector } from '@forminator/react-wire'
-import { createPersistedWire } from 'react-wire-persisted'
+import { createSelector,createWire } from '@forminator/react-wire'
 import { keys } from '@repo/shared/constants'
-import { calculateTotalDays } from '@repo/shared/utils'
 import { ShengenData, Theme } from '@repo/shared/types'
 import { ID } from '@repo/shared/types/data'
 import { Place, Plan, Segment, Trip } from '@repo/shared/types/database'
+import { calculateTotalDays } from '@repo/shared/utils'
+import { createPersistedWire } from 'react-wire-persisted'
 
 export const theme = createPersistedWire<Theme>(keys.theme, 'light')
 

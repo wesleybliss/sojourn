@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from 'react'
 import { SummarizerOptions } from '@repo/shared/types/summarizer'
+import { useCallback, useMemo, useState } from 'react'
 
 interface AISummaryProps extends SummarizerOptions {
     text: string
@@ -57,7 +57,7 @@ export function AISummary({
             setState(
                 availability === 'downloadable'
                     ? 'downloading'
-                    : 'ready'
+                    : 'ready',
             )
             
             const summarizer = await Summarizer!.create({

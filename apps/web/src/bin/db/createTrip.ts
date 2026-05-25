@@ -1,9 +1,11 @@
 import 'dotenv/config'
+
 import path from 'node:path'
+
 import db from '@repo/shared/db/index'
 import * as schemas from '@repo/shared/db/schema'
-import { eq } from 'drizzle-orm'
 import { TripInsert } from '@repo/shared/types'
+import { eq } from 'drizzle-orm'
 
 const args = process.argv.slice(2)
 const [name, email] = args

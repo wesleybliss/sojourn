@@ -1,8 +1,8 @@
+import { Trip, User } from '@repo/shared/types/database'
+import { BackupTripsBody } from '@repo/shared/types/mutations'
+import { UseMutationResult } from '@tanstack/react-query'
 import { Dispatch, SetStateAction, useMemo } from 'react'
 import { toast } from 'sonner'
-import { Trip, User } from '@repo/shared/types/database'
-import { UseMutationResult } from '@tanstack/react-query'
-import { BackupTripsBody } from '@repo/shared/types/mutations'
 
 export type NavbarLink = [
     string,

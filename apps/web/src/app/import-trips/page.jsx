@@ -1,7 +1,10 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { FolderUp } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useRef, useState } from 'react'
+import { toast } from 'sonner'
+
 import { Button } from '@/components/ui/button'
 import {
     Card,
@@ -11,8 +14,6 @@ import {
     CardTitle,
 } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
-import { FolderUp } from 'lucide-react'
-import { toast } from 'sonner'
 import { useRestoreTrips } from '@/lib/queries/backups'
 
 export default function ImportTripsPage() {

@@ -1,6 +1,7 @@
-import { useRef, useEffect } from 'react'
-import maplibregl, { Marker, Popup } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
+
+import maplibregl, { Marker, Popup } from 'maplibre-gl'
+import { useEffect,useRef } from 'react'
 
 const tileUrls = {
     demo: 'https://demotiles.maplibre.org/styleon',

@@ -1,10 +1,11 @@
-import { useCallback } from 'react'
 import { useWireValue } from '@forminator/react-wire'
-import * as store from '@/store'
-import segmentsRepo from '@repo/shared/db/repos/segments'
 import { EVENT_CREATE_SEGMENT } from '@repo/shared/constants'
-import useEventSubscription from '@/hooks/useEventSubscription'
+import segmentsRepo from '@repo/shared/db/repos/segments'
+import { useCallback } from 'react'
 import { toast } from 'sonner'
+
+import useEventSubscription from '@/hooks/useEventSubscription'
+import * as store from '@/store'
 
 const useGlobalEvents = () => {
     

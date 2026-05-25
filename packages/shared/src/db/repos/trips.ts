@@ -1,22 +1,33 @@
 import { desc,eq } from 'drizzle-orm'
 
-import database from '@/db'
-import { IPlansRepository } from '@/db/repos/plans'
+import { APlansRepository } from '@/db/repos/plans'
 import Repository from '@/db/repos/repo'
-import { ISegmentsRepository } from '@/db/repos/segments'
+import { ASegmentsRepository } from '@/db/repos/segments'
 import * as schemas from '@/db/schema'
+import { TripWithSegmentCount } from '@/types'
 import { ID } from '@/types/data'
-import { Trip, TripInsert, TripSelect } from '@/types/database'
+import { Database, Trip, TripInsert, TripSelect } from '@/types/database'
 
-export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
+export abstract class ATripsRepository extends Repository<Trip, typeof schemas.trips> {
+    abstract findAllByUserId(_userId: ID): Promise<TripSelect[]>
+    abstract findOneByName(_name: string, _withDetails?: boolean, _plansRepo?: APlansRepository): Promise<Trip | null>
+    abstract findAllByUserIdWithSegmentCount(
+        _userId: ID,
+        _segmentsRepo: ASegmentsRepository,
+    ): Promise<TripWithSegmentCount[] | null>
     
-    constructor(db?: typeof database) {
+    abstract findOneWithDetails(_id: ID, _plansRepo: APlansRepository): Promise<Trip | null>
+}
+
+export class TripsRepository extends ATripsRepository {
+    
+    constructor(db?: Database) {
         
         super('trip', 'trips', schemas.trips, db)
         
     }
     
-    tx(transaction: typeof database) {
+    tx(transaction: Database) {
         
         return new TripsRepository(transaction)
         
@@ -60,7 +71,7 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
         
     }
     
-    async findOneByName(name: string, withDetails?: boolean, plansRepo?: IPlansRepository): Promise<Trip | null> {
+    async findOneByName(name: string, withDetails?: boolean, plansRepo?: APlansRepository): Promise<Trip | null> {
         
         if (withDetails && !plansRepo)
             throw new Error('Plans repository is required when fetching trip details')
@@ -88,7 +99,10 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
         
     }
     
-    async findAllByUserIdWithSegmentCount(userId: ID, segmentsRepo: ISegmentsRepository) {
+    async findAllByUserIdWithSegmentCount(
+        userId: ID,
+        segmentsRepo: ASegmentsRepository,
+    ): Promise<TripWithSegmentCount[] | null> {
         
         try {
             
@@ -114,7 +128,7 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
         
     }
     
-    async findOneWithDetails(id: ID, plansRepo: IPlansRepository): Promise<Trip | null> {
+    async findOneWithDetails(id: ID, plansRepo: APlansRepository): Promise<Trip | null> {
         
         try {
             
@@ -138,7 +152,10 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
         
     }
     
-    async updateById(id: ID, data: Partial<TripInsert>) {
+    async updateById<K extends TripInsert>(
+        id: ID,
+        data: Partial<K>,
+    ): Promise<TripSelect> {
         
         return await super.updateById(id, {
             name: data.name,

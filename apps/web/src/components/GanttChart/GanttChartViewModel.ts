@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect, DragEvent } from 'react'
-import { /* format, */ addDays, eachDayOfInterval, startOfDay, differenceInDays } from 'date-fns'
 import { GanttChartItemPrimitive, ID } from '@repo/shared/types'
+import { /* format, */ addDays, differenceInDays,eachDayOfInterval, startOfDay } from 'date-fns'
+import { DragEvent,useEffect, useRef, useState } from 'react'
+
 import { GanttChartSharedProps } from '@/components/GanttChart/GanttChart'
 
 type ResizeTask = {

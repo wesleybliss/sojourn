@@ -1,5 +1,5 @@
-import { DefaultError, DefinedInitialDataOptions, QueryKey, useQuery } from '@tanstack/react-query'
 import { useWireState, Wire } from '@forminator/react-wire'
+import { DefaultError, DefinedInitialDataOptions, QueryKey, useQuery } from '@tanstack/react-query'
 
 const useGlobalStateQuery = <
     T,

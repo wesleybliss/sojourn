@@ -1,8 +1,9 @@
 import { useWireValue } from '@forminator/react-wire'
-import * as store from '@/store'
-import useDebug from '@/hooks/useDebug'
-import { useAuth } from '@/components/providers/AuthProvider'
 import { Plan, Segment, ShengenData, Trip, User } from '@repo/shared/types'
+
+import { useAuth } from '@/components/providers/AuthProvider'
+import useDebug from '@/hooks/useDebug'
+import * as store from '@/store'
 
 export type TNavbarViewModel = {
     user: User | null

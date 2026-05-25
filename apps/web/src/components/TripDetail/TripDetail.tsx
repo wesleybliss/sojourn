@@ -1,11 +1,13 @@
-import useThrottledPlacePhotos from './useThrottledPlacePhotos'
-import MapLibreMap from '@/components/MapLibreMap'
-import SegmentsList from '@/components/segments/SegmentsList'
 import { cn } from '@repo/shared/utils'
-import { Progress } from '@/components/ui/progress'
-import SegmentsFilterToolbar from '@/components/segments/SegmentsFilterToolbar'
+
 import SadFolderIcon from '@/components/graphics/SadFolderIcon'
+import MapLibreMap from '@/components/MapLibreMap'
+import SegmentsFilterToolbar from '@/components/segments/SegmentsFilterToolbar'
+import SegmentsList from '@/components/segments/SegmentsList'
 import { TTripEditorViewModel } from '@/components/TripEditor/useTripEditorViewModel'
+import { Progress } from '@/components/ui/progress'
+
+import useThrottledPlacePhotos from './useThrottledPlacePhotos'
 
 interface TripDetailProps {
     vm: TTripEditorViewModel

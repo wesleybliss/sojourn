@@ -1,17 +1,18 @@
+import {
+    BedDouble,
+    CalendarCheck,
+    CalendarRange,
+    Clock,
+    Globe,
+    Plane,
+} from 'lucide-react'
 import { memo } from 'react'
+
 import {
     TableHead,
     TableHeader,
     TableRow,
 } from '@/components/ui/table'
-import {
-    CalendarCheck,
-    CalendarRange,
-    Plane,
-    BedDouble,
-    Globe,
-    Clock,
-} from 'lucide-react'
 
 const SegmentsListDetailsTableHeader = () => {
     

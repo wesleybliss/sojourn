@@ -1,6 +1,12 @@
-import useNavbarLinks, { NavbarLink } from '@/hooks/useNavbarLinks'
+import { Trip } from '@repo/shared/types/database'
+import { fetchJSON } from '@repo/shared/utils/api'
 import Link from 'next/link'
+import { useState } from 'react'
+import { toast } from 'sonner'
+
+import ConfirmDialog from '@/components/ConfirmDialog'
 import Gravatar from '@/components/Gravatar'
+import { useAuth } from '@/components/providers/AuthProvider'
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -9,14 +15,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import ConfirmDialog from '@/components/ConfirmDialog'
-import { useAuth } from '@/components/providers/AuthProvider'
-import { useTripsQuery } from '@/lib/queries/trips'
-import { useState } from 'react'
+import useNavbarLinks, { NavbarLink } from '@/hooks/useNavbarLinks'
 import { useBackupTrips } from '@/lib/queries/backups'
-import { toast } from 'sonner'
-import { fetchJSON } from '@repo/shared/utils/api'
-import { Trip } from '@repo/shared/types/database'
+import { useTripsQuery } from '@/lib/queries/trips'
 
 const debugDumpData = (trips: Trip[] | null) => (e: MouseEvent) => {
     

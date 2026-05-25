@@ -1,29 +1,30 @@
-import { useState, useMemo, useCallback, useEffect, Dispatch, SetStateAction, ChangeEvent } from 'react'
 import { useWireState } from '@forminator/react-wire'
-import * as store from '@/store'
-import { useParams, useRouter } from 'next/navigation'
-import {
-    useTripQuery,
-    useUpdateTrip,
-    useAddSegment,
-    useUpdateSegment,
-    useDeleteSegments,
-    useRenamePlan,
-    useDeletePlan,
-} from '@/lib/queries/trip'
-import { useShufflePlaceCoverPhoto } from '@/lib/queries/places'
-import { useBackupTrips } from '@/lib/queries/backups'
-import { toast } from 'sonner'
-import dayjs from 'dayjs'
-import { sortArrByUpdatedAt, calculateTotalDays } from '@repo/shared/utils'
-import { useUpdatePlan } from '@/lib/queries/plans'
-import { useUpdatePlace } from '@/lib/queries/places'
-import { Plan, Segment, Trip } from '@repo/shared/types/database'
-import { Coords, ID } from '@repo/shared/types/data'
-import { UseMutationResult } from '@tanstack/react-query'
 import { ShengenData } from '@repo/shared/types'
+import { Coords, ID } from '@repo/shared/types/data'
+import { Plan, Segment, Trip } from '@repo/shared/types/database'
 import { UpdatePlanBody } from '@repo/shared/types/mutations'
 import { ListViewMode } from '@repo/shared/types/ui'
+import { calculateTotalDays,sortArrByUpdatedAt } from '@repo/shared/utils'
+import { UseMutationResult } from '@tanstack/react-query'
+import dayjs from 'dayjs'
+import { useParams, useRouter } from 'next/navigation'
+import { ChangeEvent,Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
+
+import { useBackupTrips } from '@/lib/queries/backups'
+import { useShufflePlaceCoverPhoto } from '@/lib/queries/places'
+import { useUpdatePlace } from '@/lib/queries/places'
+import { useUpdatePlan } from '@/lib/queries/plans'
+import {
+    useAddSegment,
+    useDeletePlan,
+    useDeleteSegments,
+    useRenamePlan,
+    useTripQuery,
+    useUpdateSegment,
+    useUpdateTrip,
+} from '@/lib/queries/trip'
+import * as store from '@/store'
 
 const matchesDate = (date: Date | string, query: string) => {
     
@@ -93,7 +94,7 @@ export type TTripEditorViewModel = {
     deletePlan: (planIdToDelete: ID) => Promise<void>
     updatePlanMutation: UseMutationResult<unknown, Error, UpdatePlanBody, unknown>
     shufflePlaceCoverPhoto: (placeId: ID, topic?: string) => Promise<void>
-
+    
     // Loading/error states
     isLoading: boolean
     isFetching: boolean

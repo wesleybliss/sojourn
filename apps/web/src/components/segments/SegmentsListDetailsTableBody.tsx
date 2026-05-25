@@ -1,6 +1,7 @@
+import { Check, CheckCheck,CircleAlert, CircleCheck } from 'lucide-react'
 import { memo } from 'react'
-import { TableBody, TableRow, TableCell } from '@/components/ui/table'
-import { CircleCheck, CircleAlert, Check, CheckCheck } from 'lucide-react'
+
+import { TableBody, TableCell,TableRow } from '@/components/ui/table'
 
 interface SegmentsListDetailsTableBodyProps {
     totalDaysPerSegment?: number

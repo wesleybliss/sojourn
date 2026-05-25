@@ -1,10 +1,11 @@
+import { ListViewMode } from '@repo/shared/types/ui'
+import { cn } from '@repo/shared/utils'
+import { Eye, EyeOff, FolderPen, Grid2x2,List } from 'lucide-react'
+
+import { TTripEditorViewModel } from '@/components/TripEditor/useTripEditorViewModel'
 import { Input } from '@/components/ui/input'
 import { Toggle } from '@/components/ui/toggle'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { Eye, EyeOff, FolderPen, List, Grid2x2 } from 'lucide-react'
-import { cn } from '@repo/shared/utils'
-import { TTripEditorViewModel } from '@/components/TripEditor/useTripEditorViewModel'
-import { ListViewMode } from '@repo/shared/types/ui'
 
 interface SegmentsFilterToolbarProps {
     className?: string

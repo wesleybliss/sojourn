@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Marker } from 'react-leaflet'
+import { MapContainer, Marker,TileLayer } from 'react-leaflet'
 
 /*const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">' +
     'OpenStreetMap</a> contributors'*/
@@ -10,7 +10,7 @@ const LeafletMap = () => {
         <MapContainer
             bounds={[51.505, -0.09]}
             boundsOptions={{
-                zoomScale: 13
+                zoomScale: 13,
             }}
             style={{ width: '100%', height: '100%' }}>
             

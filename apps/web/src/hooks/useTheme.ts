@@ -1,7 +1,8 @@
-import { useEffect } from 'react'
 import { useWireValue } from '@forminator/react-wire'
-import * as store from '@/store/index'
 import { themes } from '@repo/shared/constants'
+import { useEffect } from 'react'
+
+import * as store from '@/store/index'
 
 const useTheme = () => {
     
@@ -11,13 +12,13 @@ const useTheme = () => {
         
         themes.forEach(it => {
             
-            // eslint-disable-next-line no-restricted-globals
+            
             if (document.documentElement.classList.contains(it))
-                // eslint-disable-next-line no-restricted-globals
+                
                 document.documentElement.classList.remove(it)
         })
         
-        // eslint-disable-next-line no-restricted-globals
+        
         document.documentElement.classList.add(theme)
         
     }

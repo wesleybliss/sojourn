@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useWireState } from '@forminator/react-wire'
-import * as store from '@/store'
+import { Theme } from '@repo/shared/types'
 import { Moon, Sun } from 'lucide-react'
+import { useEffect, useState } from 'react'
+
 import { Button } from '@/components/ui/button'
 import {
     DropdownMenu,
@@ -11,7 +12,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Theme } from '@repo/shared/types'
+import * as store from '@/store'
 
 interface ThemeToggleProps {
     variant?: 'outline' | 'ghost' | 'default' | 'destructive' | 'link' | 'secondary' | null | undefined
@@ -30,7 +31,7 @@ const ThemeToggle = ({
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
         const isDark = newTheme === 'dark' || (newTheme === 'system' && prefersDark)
         
-        // eslint-disable-next-line no-restricted-globals
+        
         document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light')
         
     }

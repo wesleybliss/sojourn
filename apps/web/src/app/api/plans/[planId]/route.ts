@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server'
 import db from '@repo/shared/db/index'
 import * as schemas from '@repo/shared/db/schema'
+import { isUserTripMember,withAuth } from '@repo/shared/utils/auth'
 import { eq } from 'drizzle-orm'
-import { withAuth, isUserTripMember } from '@repo/shared/utils/auth'
+import { NextResponse } from 'next/server'
 
 /**
  * GET /api/plans/[planId]

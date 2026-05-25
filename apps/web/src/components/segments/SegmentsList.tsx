@@ -1,14 +1,15 @@
 import { useWireValue } from '@forminator/react-wire'
-import { placeNamesToCoverImagesMap as placeNamesToCoverImagesMapWire } from '@/store'
-import { Table } from '@/components/ui/table'
-import { ArrowRight } from 'lucide-react'
-import dayjs from '@repo/shared/utils/dayjs'
-import LeftImageCard from '@/components/ImageLeftCard'
-import { backgroundToBorderColors } from '@repo/shared/utils/colors'
-import SegmentsListDetailsTableHeader from '@/components/segments/SegmentsListDetailsTableHeader'
-import SegmentsListDetailsTableBody from '@/components/segments/SegmentsListDetailsTableBody'
-import { cn } from '@repo/shared/utils'
 import { ID, Segment } from '@repo/shared/types'
+import { cn } from '@repo/shared/utils'
+import { backgroundToBorderColors } from '@repo/shared/utils/colors'
+import dayjs from '@repo/shared/utils/dayjs'
+import { ArrowRight } from 'lucide-react'
+
+import LeftImageCard from '@/components/ImageLeftCard'
+import SegmentsListDetailsTableBody from '@/components/segments/SegmentsListDetailsTableBody'
+import SegmentsListDetailsTableHeader from '@/components/segments/SegmentsListDetailsTableHeader'
+import { Table } from '@/components/ui/table'
+import { placeNamesToCoverImagesMap as placeNamesToCoverImagesMapWire } from '@/store'
 
 const SegmentCardDate = ({ date }: { date: Date }) => (
     <div className="w-full px-3 py-2 bg-slate-100 rounded-lg">

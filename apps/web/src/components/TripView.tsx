@@ -1,8 +1,8 @@
 'use client'
 
-import useTripEditorViewModel from '@/components/TripEditor/useTripEditorViewModel'
-import TripEditor from '@/components/TripEditor'
 import TripDetail from '@/components/TripDetail'
+import TripEditor from '@/components/TripEditor'
+import useTripEditorViewModel from '@/components/TripEditor/useTripEditorViewModel'
 
 const TripView = () => {
     

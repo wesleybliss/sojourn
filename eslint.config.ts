@@ -2,7 +2,7 @@ import { createRequire } from 'node:module'
 
 import eslintJs from '@eslint/js'
 import stylistic from '@stylistic/eslint-plugin'
-import oxlint from 'eslint-plugin-oxlint'
+// import oxlint from 'eslint-plugin-oxlint'
 import reactPlugin from 'eslint-plugin-react'
 import reactCompiler from 'eslint-plugin-react-compiler'
 import reactHooksPlugin from 'eslint-plugin-react-hooks'
@@ -95,11 +95,12 @@ const baseRules = {
     '@stylistic/object-curly-spacing': ['error', 'always'],
     'indent-empty-lines/indent-empty-lines': ['error', 4],
     'preserve-caught-error': 'off',
-    'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    'no-unused-vars': 'off',
 }
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
+    ...tseslint.configs.recommended,
     // global ignores
     {
         ignores: [
@@ -124,6 +125,8 @@ export default [
             sourceType: 'module',
             ecmaVersion: 'latest',
             parserOptions: {
+                // Allow checking Next & Jest configs
+                projectService: true,
                 ecmaFeatures: {
                     jsx: true,
                 },
@@ -159,12 +162,11 @@ export default [
             ecmaVersion: 'latest',
             parser: tseslint.parser,
             parserOptions: {
+                // Allow checking Next & Jest configs
+                projectService: true,
                 ecmaFeatures: {
                     jsx: true,
                 },
-                // Enables type-aware lint rules (e.g. no-floating-promises).
-                // Point at your root tsconfig; project-references are followed automatically.
-                projectService: true,
                 tsconfigRootDir: import.meta.dirname,
             },
             globals: sharedGlobals,
@@ -179,6 +181,14 @@ export default [
             ...baseRules,
             'no-undef': 'off',
             'react-hooks/exhaustive-deps': strictMode ? 'error' : 'warn',
+            '@typescript-eslint/no-unused-vars': [
+                'warn',
+                {
+                    vars: 'all',
+                    args: 'none',          // tsc catches these instead
+                    ignoreRestSiblings: true,
+                },
+            ],
         },
     },
     

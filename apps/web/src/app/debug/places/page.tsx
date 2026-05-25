@@ -1,8 +1,8 @@
 'use client'
 
 import useDebugViewModel from '@/app/debug/useDebugViewModel'
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 const DebugPlacesListPage = () => {
     

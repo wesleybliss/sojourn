@@ -1,10 +1,11 @@
+import { Plan, Segment, Trip } from '@repo/shared/types'
+import { getTripSegmentNames } from '@repo/shared/utils'
+import { useQueryClient } from '@tanstack/react-query'
+import dayjs from 'dayjs'
 import { useCallback } from 'react'
 import { toast } from 'sonner'
+
 import { useAddSegment } from '@/lib/queries/trip'
-import { useQueryClient } from '@tanstack/react-query'
-import { getTripSegmentNames } from '@repo/shared/utils'
-import dayjs from 'dayjs'
-import { Plan, Segment, Trip } from '@repo/shared/types'
 
 const SegmentActionsViewModel = (
     currentTrip: Trip | null,

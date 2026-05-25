@@ -1,12 +1,12 @@
-import { NextResponse } from 'next/server'
 import db from '@repo/shared/db/index'
-import * as schemas from '@repo/shared/db/schema'
-import { eq } from 'drizzle-orm'
 import segmentsRepo from '@repo/shared/db/repos/segments'
-import { convertStringDates, getUpdatePayload } from '@repo/shared/utils'
-import dayjs from 'dayjs'
-import { withAuth } from '@repo/shared/utils/auth'
+import * as schemas from '@repo/shared/db/schema'
 import { ID, SegmentInsert } from '@repo/shared/types'
+import { convertStringDates, getUpdatePayload } from '@repo/shared/utils'
+import { withAuth } from '@repo/shared/utils/auth'
+import dayjs from 'dayjs'
+import { eq } from 'drizzle-orm'
+import { NextResponse } from 'next/server'
 
 export const PUT = withAuth<{ id: string }>(async (request, { params }) => {
     
@@ -42,8 +42,8 @@ export const PUT = withAuth<{ id: string }>(async (request, { params }) => {
             
             const updates: Array<Partial<SegmentInsert> & { id: ID }> = []
             
-            let newStartDate = payload.startDate ? dayjs(payload.startDate) : dayjs(currentSegment.startDate as Date)
-            let newEndDate = payload.endDate ? dayjs(payload.endDate) : newStartDate.add(originalDuration, 'day')
+            const newStartDate = payload.startDate ? dayjs(payload.startDate) : dayjs(currentSegment.startDate as Date)
+            const newEndDate = payload.endDate ? dayjs(payload.endDate) : newStartDate.add(originalDuration, 'day')
             
             updates.push({ id: currentSegment.id, startDate: newStartDate.toDate(), endDate: newEndDate.toDate() })
             

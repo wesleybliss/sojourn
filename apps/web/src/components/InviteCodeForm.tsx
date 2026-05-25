@@ -1,13 +1,14 @@
 'use client'
 
 import { SubmitEventHandler, useState } from 'react'
+import { toast } from 'sonner'
+
+import LoadingSpinner from '@/components/LoadingSpinner'
+import { useAuth } from '@/components/providers/AuthProvider'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { toast } from 'sonner'
-import { useAuth } from '@/components/providers/AuthProvider'
-import LoadingSpinner from '@/components/LoadingSpinner'
 
 export default function InviteCodeForm() {
     

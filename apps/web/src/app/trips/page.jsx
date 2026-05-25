@@ -1,7 +1,8 @@
 'use client'
 
-import TripsPage from './TripsPagex'
 import ProtectedRoute from '@/components/ProtectedRoute'
+
+import TripsPage from './TripsPagex'
 
 export default function TripsRoute() {
     

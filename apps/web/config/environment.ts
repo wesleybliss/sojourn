@@ -1,6 +1,6 @@
+import * as dotenv from 'dotenv'
 import * as fs from 'fs'
 import * as path from 'path'
-import dotenv from 'dotenv'
 
 export const getEnvironmentVars = () => {
     

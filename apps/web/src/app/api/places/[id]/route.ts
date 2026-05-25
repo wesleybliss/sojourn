@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server'
-import { withAuth } from '@repo/shared/utils/auth'
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
+import { withAuth } from '@repo/shared/utils/auth'
 import { eq } from 'drizzle-orm'
+import { NextResponse } from 'next/server'
 
 export const PUT = withAuth<{ id: string }>(async (request, { params }) => {
     

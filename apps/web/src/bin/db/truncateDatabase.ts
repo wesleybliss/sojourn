@@ -1,6 +1,7 @@
 // noinspection SqlNoDataSourceInspection
 
 import 'dotenv/config'
+
 import db from '@repo/shared/db/index'
 import * as schemas from '@repo/shared/db/schema'
 import { sql } from 'drizzle-orm'

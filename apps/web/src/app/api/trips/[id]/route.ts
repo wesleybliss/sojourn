@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server'
-import { withAuth, isUserTripMember } from '@repo/shared/utils/auth'
-import tripsRepo from '@repo/shared/db/repos/trips'
 import plansRepo from '@repo/shared/db/repos/plans'
+import tripsRepo from '@repo/shared/db/repos/trips'
+import { isUserTripMember, withAuth } from '@repo/shared/utils/auth'
+import { NextResponse } from 'next/server'
 
 /**
  * GET /api/trips/[id]

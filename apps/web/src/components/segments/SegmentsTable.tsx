@@ -1,36 +1,37 @@
+import { ID, ItemWithId, Segment } from '@repo/shared/types'
+import { cn } from '@repo/shared/utils'
+import dayjs from 'dayjs'
+import {
+    BedDouble,
+    CalendarCheck,
+    CalendarRange,
+    Check,
+    CheckCheck,
+    Clock,
+    Globe,
+    Plane,
+    SquareArrowDown,
+    SquareArrowUp,
+} from 'lucide-react'
 import { useCallback } from 'react'
-import useCheckItems from '@/hooks/useCheckItems'
-import { Checkbox } from '@/components/ui/checkbox'
+
+import ConfirmDeleteSegmentsDialog from '@/components/ConfirmDeleteSegmentsDialog'
+import DatePicker from '@/components/DatePicker'
 import EditableTextField from '@/components/EditableTextField'
+import TailwindPrimaryColorPicker from '@/components/TailwindPrimaryColorPicker'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Switch } from '@/components/ui/switch'
 import {
     Table,
     TableBody,
+    TableCell,
     // TableCaption,
     TableHead,
     TableHeader,
     TableRow,
-    TableCell,
 } from '@/components/ui/table'
-import { Switch } from '@/components/ui/switch'
-import DatePicker from '@/components/DatePicker'
-import TailwindPrimaryColorPicker from '@/components/TailwindPrimaryColorPicker'
-import ConfirmDeleteSegmentsDialog from '@/components/ConfirmDeleteSegmentsDialog'
-import {
-    CalendarCheck,
-    CalendarRange,
-    Plane,
-    BedDouble,
-    SquareArrowUp,
-    SquareArrowDown,
-    Globe,
-    CheckCheck,
-    Check,
-    Clock,
-} from 'lucide-react'
-import { cn } from '@repo/shared/utils'
-import dayjs from 'dayjs'
-import { ID, ItemWithId, Segment } from '@repo/shared/types'
+import useCheckItems from '@/hooks/useCheckItems'
 
 interface SegmentsTableProps {
     segments: Segment[]

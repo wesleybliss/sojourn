@@ -1,8 +1,8 @@
 import { test } from '@jest/globals'
+import schema from '@repo/shared/utils/json-schemas/trip-backup.jsonschema'
+import Ajv from 'ajv'
 import fs from 'fs'
 import path from 'path'
-import Ajv from 'ajv'
-import schema from '@repo/shared/utils/json-schemas/trip-backup.jsonschema'
 
 // import { fileURLToPath } from 'url'
 /* const __filename = fileURLToPath(import.meta.url)

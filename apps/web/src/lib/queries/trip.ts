@@ -1,17 +1,18 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import * as store from '@/store'
-import { updateItemArray } from '@/lib/storeUtils'
-import { fetchJSON } from '@repo/shared/utils/api'
 import { ID } from '@repo/shared/types/data'
-import { keepPreviousData } from '@tanstack/react-query'
 import { Segment, SegmentInsert, Trip, TripInsert } from '@repo/shared/types/database'
 import {
     DeletePlanBody,
     DeleteSegmentsBody,
     RenamePlanBody,
     UpdateSegmentBody,
-    UpdateTripBody
+    UpdateTripBody,
 } from '@repo/shared/types/mutations'
+import { fetchJSON } from '@repo/shared/utils/api'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData } from '@tanstack/react-query'
+
+import { updateItemArray } from '@/lib/storeUtils'
+import * as store from '@/store'
 
 export const useTripQuery = (tripId: ID) => useQuery({
     queryKey: ['trip', tripId],
@@ -102,7 +103,7 @@ export const useUpdateSegment = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        // eslint-disable-next-line no-unused-vars
+        
         mutationFn: async ({ segmentId, tripId, planId, ...segmentData }: UpdateSegmentBody) => {
             const json = await fetchJSON(`/api/segments/${segmentId}`, {
                 method: 'PUT',

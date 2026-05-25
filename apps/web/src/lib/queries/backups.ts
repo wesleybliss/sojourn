@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { fetchWithAuth, fetchJSON } from '@repo/shared/utils/api'
 import { ItemWithId } from '@repo/shared/types/data'
 import { BackupTripsBody } from '@repo/shared/types/mutations'
+import { fetchJSON,fetchWithAuth } from '@repo/shared/utils/api'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 const idToInt = (obj: ItemWithId | null) => obj?.id ?? null
 
@@ -37,17 +37,17 @@ export const useBackupTrips = () => {
             const filename = (m && m[1]) ? m[1] : `trips-backup-${new Date().toISOString().replace(/[:.]/g, '-')}on`
             
             const url = URL.createObjectURL(blob)
-            // eslint-disable-next-line no-restricted-globals
+            
             const a = document.createElement('a')
             
             a.href = url
             a.download = filename
             
-            // eslint-disable-next-line no-restricted-globals
+            
             document.body.appendChild(a)
             a.click()
             
-            // eslint-disable-next-line no-restricted-globals
+            
             document.body.removeChild(a)
             URL.revokeObjectURL(url)
             

@@ -1,5 +1,5 @@
-import useSWR from 'swr'
 import { fetchJSON } from '@repo/shared/utils/api'
+import useSWR from 'swr'
 
 /**
  * Client hook to fetch trips via SWR from our Next API route.

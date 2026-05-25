@@ -1,9 +1,10 @@
-import { Dispatch, ReactNode, SetStateAction, useState } from 'react'
-import useGanttChartViewModel from './GanttChartViewModel'
-import { format, differenceInDays } from 'date-fns'
-import { GripHorizontal } from 'lucide-react'
-import { cn } from '@repo/shared/utils'
 import { GanttChartItemPrimitive } from '@repo/shared/types'
+import { cn } from '@repo/shared/utils'
+import { differenceInDays,format } from 'date-fns'
+import { GripHorizontal } from 'lucide-react'
+import { Dispatch, ReactNode, SetStateAction, useState } from 'react'
+
+import useGanttChartViewModel from './GanttChartViewModel'
 
 export interface GanttChartSharedProps<T extends GanttChartItemPrimitive> {
     items: T[]

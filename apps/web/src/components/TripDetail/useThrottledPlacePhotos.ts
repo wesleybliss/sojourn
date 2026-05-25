@@ -1,9 +1,10 @@
-import { useState, useMemo, useEffect, Dispatch, SetStateAction } from 'react'
-import { throttledQueue, seconds } from 'throttled-queue'
-import { usePlacesQuery } from '@/lib/queries/places'
-import { abortableFetch } from '@repo/shared/utils'
 import { PendingFetchRequest, Place, Segment } from '@repo/shared/types'
+import { abortableFetch } from '@repo/shared/utils'
 import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query'
+import { Dispatch, SetStateAction,useEffect, useMemo, useState } from 'react'
+import { seconds,throttledQueue } from 'throttled-queue'
+
+import { usePlacesQuery } from '@/lib/queries/places'
 
 const throttle = throttledQueue({
     maxPerInterval: 3,

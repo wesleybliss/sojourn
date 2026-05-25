@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
 import db from '@repo/shared/db/index'
 import * as schemas from '@repo/shared/db/schema'
-import { withAuth, isUserTripMember, AuthContext } from '@repo/shared/utils/auth'
+import { AuthContext,isUserTripMember, withAuth } from '@repo/shared/utils/auth'
+import { NextRequest, NextResponse } from 'next/server'
 
 const handler = async (request: NextRequest, { auth }: { auth: AuthContext }) => {
     

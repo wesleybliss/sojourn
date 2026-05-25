@@ -1,12 +1,14 @@
 import '../envConfig'
 import './globals.css'
-import { Inter } from 'next/font/google'
+
 import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
-import Navbar from '@/components/Navbar'
-import QueryProvider from '@/components/providers/QueryProvider'
-import { AuthProvider } from '@/components/providers/AuthProvider'
+import { Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
+
+import Navbar from '@/components/Navbar'
+import { AuthProvider } from '@/components/providers/AuthProvider'
+import QueryProvider from '@/components/providers/QueryProvider'
 
 dayjs.extend(advancedFormat)
 
