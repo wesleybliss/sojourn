@@ -4,7 +4,7 @@
         "tsBuildInfoFile": "./node_modules/.cache/tsbuildinfo/shared.tsbuildinfo",
         "declarationDir": "./node_modules/.cache/dts/shared",
         "composite": true,
-        "noEmit": false,
+        "noEmit": true,
         "skipLibCheck": true,
         "strict": true,
         "allowSyntheticDefaultImports": true,
@@ -13,20 +13,21 @@
         "moduleResolution": "bundler",
         "resolveJsonModule": true,
         "isolatedModules": true,
-        "target": "ES2022",
-        "lib": ["es2015", "DOM"],
+        "target": "es2017",
+        "jsx": "react-jsx",
+        "lib": ["ES2023", "DOM"],
         "types": ["node", "vite/client"],
         "paths": {
             "@/*": ["./src/*"],
-            "@repo/shared": ["./src/index.ts"],
-            "@repo/shared/*": ["./src/*"]
+            "@repo/shared/*": ["../../packages/shared/src/*"],
+            "@repo/shared": ["../../packages/shared/src/index.ts"]
         }
     },
     "include": [
-        "**/*.ts",
-        "**/*.tsx"
+        "next-env.d.ts",
+        ".next/types/**/*.ts",
+        "src/**/*.ts",
+        "src/**/*.tsx"
     ],
-    "exclude": [
-        "src/types/**/*.d.ts"
-    ]
+    "references": [{ "path": "../../packages/shared" }]
 }

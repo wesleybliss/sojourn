@@ -6,6 +6,7 @@ import segmentsRepo from '@repo/shared/db/repos/segments'
 import db from '@repo/shared/db/index'
 import * as schemas from '@repo/shared/db/schema'
 import dayjs from 'dayjs'
+import { createTripRequestSchema, tripInsertSchema } from '@repo/shared/types'
 
 /**
  * GET /api/trips
@@ -52,7 +53,9 @@ export const POST = withAuth(async (request, { auth }) => {
         
         const { userId } = auth
         
-        const tripData = await request.json()
+        const tripData = createTripRequestSchema.parse(
+            await request.json()
+        )
         
         const newTripPayload = {
             userId,

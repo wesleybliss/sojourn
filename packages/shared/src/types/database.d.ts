@@ -17,6 +17,14 @@ export type Trip = InferSelectModel<typeof schemas.trips> & {
 }
 export type TripSelect = z.infer<typeof tripSelectSchema>
 export type TripInsert = z.infer<typeof tripInsertSchema>
+export const createTripRequestSchema = tripInsertSchema.omit({
+    id: true,
+    userId: true,
+    createdAt: true,
+    updatedAt: true,
+})
+export type CreateTripRequest =
+    z.infer<typeof createTripRequestSchema>
 
 export const userTripSelectSchema = createSelectSchema(schemas.userTrips)
 export const userTripInsertSchema = createInsertSchema(schemas.userTrips)

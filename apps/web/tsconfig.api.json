@@ -1,0 +1,17 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "tsBuildInfoFile": "./node_modules/.cache/tsbuildinfo/api.tsbuildinfo",
+    "declarationDir": "./node_modules/.cache/dts/api",
+    "compilerOptions": {
+        "composite": true,
+        "target": "ES2022",
+        "lib": ["ES2023"],
+        "types": ["node"]
+    },
+    "include": [
+        "src/app/api/**/*.ts"
+    ],
+    "exclude": [
+        "../web/src/**/*.tsx"
+    ]
+}
