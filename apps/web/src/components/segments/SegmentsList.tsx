@@ -69,11 +69,11 @@ const SegmentsList = ({
                     title={it.name}
                     description={
                         <div className="flex justify-between items-center gap-4">
-                            <SegmentCardDate date={it.startDate} />
+                            <SegmentCardDate date={it.startDate as Date} />
                             <div className="flex flex-col justify-center items-center content-center">
                                 <ArrowRight className="opacity-50" />
                             </div>
-                            <SegmentCardDate date={it.endDate} />
+                            <SegmentCardDate date={it.endDate as Date} />
                         </div>
                     }
                     placeId={placeNamesToCoverImagesMap[it.name]?.id}

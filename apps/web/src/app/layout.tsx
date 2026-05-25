@@ -9,12 +9,13 @@ import { Toaster } from 'sonner'
 import Navbar from '@/components/Navbar'
 import { AuthProvider } from '@/components/providers/AuthProvider'
 import QueryProvider from '@/components/providers/QueryProvider'
+import { JSX, ReactNode } from 'react'
 
 dayjs.extend(advancedFormat)
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: ReactNode | JSX.Element }) {
     
     return (
         
