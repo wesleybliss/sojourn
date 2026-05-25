@@ -61,8 +61,8 @@ export const POST = withAuth(async (request, { auth }) => {
             userId,
             name: tripData.name || 'Untitled Trip',
             description: tripData.description || '',
-            startDate: tripData.startDate || null,
-            endDate: tripData.endDate || null,
+            /*startDate: tripData.startDate || null,
+            endDate: tripData.endDate || null,*/
             coverImageUrl: tripData.coverImageUrl || null,
         }
         

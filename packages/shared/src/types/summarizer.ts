@@ -1,10 +1,14 @@
 export {}
 
+interface SummarizerMonitor {
+    ondownloadprogress?(event: ProgressEvent): void
+}
+
 export interface SummarizerOptions {
     type?: 'key-points' | 'tldr' | 'teaser' | 'headline'
     length?: 'short' | 'medium' | 'long'
     format?: 'plain-text' | 'markdown'
-    monitor?
+    monitor?: SummarizerMonitor
 }
 
 export type SummarizerAvailability =

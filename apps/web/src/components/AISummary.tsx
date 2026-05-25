@@ -65,15 +65,12 @@ export function AISummary({
                 length,
                 format,
                 
-                monitor(m: any) {
-                    m.addEventListener(
-                        'downloadprogress',
-                        (e: any) => {
-                            setDownloadProgress(
-                                Math.round(e.loaded * 100)
-                            )
-                        },
-                    )
+                monitor: {
+                    ondownloadprogress(e: any) {
+                        setDownloadProgress(
+                            Math.round(e.loaded * 100)
+                        )
+                    },
                 },
             })
             

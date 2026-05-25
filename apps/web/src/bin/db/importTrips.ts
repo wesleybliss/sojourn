@@ -1,7 +1,7 @@
 import 'dotenv/config'
-import fs from 'node:fs'
-import path from 'node:path'
-import db from '@repo/shared/db/index'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
+import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import { eq } from 'drizzle-orm'
 import { ID, Plan, Segment, Trip, TripInsert } from '@repo/shared/types'
@@ -16,8 +16,8 @@ export type ImportTripData = {
     type: 'single' | 'multiple'
     name: string
     owner: string // email address
-    description?: string
-    coverImageUrl?: string
+    description?: string | null
+    coverImageUrl?: string | null
     plans?: Plan[] | undefined
 }
 
@@ -152,7 +152,6 @@ const importTrips = async (data: {
         
         const importTripData: ImportTripData = {
             type: 'single',
-            name: trip.name,
             ...trip,
         }
         
