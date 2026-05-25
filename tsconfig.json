@@ -1,8 +1,12 @@
 {
+    "extends": "./tsconfig.base.json",
     "files": [],
     "references": [
         { "path": "./apps/web/tsconfig.web.json" },
         { "path": "./apps/web/tsconfig.api.json" },
         { "path": "./packages/shared" }
+    ],
+    "include": [
+        "eslint.config.ts"
     ]
 }
