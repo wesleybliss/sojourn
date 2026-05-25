@@ -1,5 +1,5 @@
 import { ID } from '@repo/shared/types/data'
-import { Segment, SegmentInsert, Trip, TripInsert } from '@repo/shared/types/database'
+import { Plan, Segment, SegmentInsert, Trip, TripInsert } from '@repo/shared/types/database'
 import {
     DeletePlanBody,
     DeleteSegmentsBody,
@@ -20,16 +20,17 @@ export const useTripQuery = (tripId: ID) => useQuery({
         
         try {
             
-            const { data } = await fetchJSON(`/api/trips/${tripId}?withDetails=true`)
+            const data = await fetchJSON<Trip>(`/api/trips/${tripId}?withDetails=true`)
             
             // @todo need to handle this better
-            try {
-                updateItemArray(store.trips, data)
-                // store.currentTripId.setValue(idToInt(data))
-                store.currentTripId.setValue(data.id)
-            } catch (e) {
-                console.warn('useTripQuery: updateItemArray failed', e)
-            }
+            if (data !== null)
+                try {
+                    updateItemArray(store.trips, data)
+                    // store.currentTripId.setValue(idToInt(data))
+                    store.currentTripId.setValue(data.id)
+                } catch (e) {
+                    console.warn('useTripQuery: updateItemArray failed', e)
+                }
             
             return data
             
@@ -52,12 +53,10 @@ export const useCreateTripMutation = () => {
     
     return useMutation({
         mutationFn: async (tripData: Partial<TripInsert>) => {
-            const { data } = await fetchJSON('/api/trips', {
+            return await fetchJSON<Trip | null>('/api/trips', {
                 method: 'POST',
                 body: JSON.stringify(tripData),
             })
-            
-            return data
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['trips'] })
@@ -71,47 +70,50 @@ export const useUpdateTrip = () => {
     
     return useMutation({
         mutationFn: async ({ tripId, ...tripData }: UpdateTripBody) => {
-            return fetchJSON(`/api/trips/${tripId}`, {
+            return fetchJSON<Trip | null>(`/api/trips/${tripId}`, {
                 method: 'PUT',
                 body: JSON.stringify(tripData),
             })
         },
-        onSuccess: (_data: Trip, variables) => {
+        onSuccess: (_data: Trip | null, variables) => {
             queryClient.invalidateQueries({ queryKey: ['trip', variables.tripId] })
         },
     })
 }
 
-export const useAddSegment = (): UseMutationResult<Segment, Error, SegmentInsert, unknown> => {
+export const useAddSegment = (): UseMutationResult<Segment | null, Error, SegmentInsert, unknown> => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async (segmentData: SegmentInsert) => {
-            return fetchJSON('/api/segments', {
+        mutationFn: async (segmentData: SegmentInsert): Promise<Segment | null> => {
+            return fetchJSON<Segment>('/api/segments', {
                 method: 'POST',
                 body: JSON.stringify(segmentData),
             })
         },
-        onSuccess: data => {
-            queryClient.invalidateQueries({ queryKey: ['trip', data.tripId] })
+        onSuccess: (data: Segment | null) => {
+            queryClient.invalidateQueries({ queryKey: ['trip', data?.tripId] })
         },
     })
 }
 
-export const useUpdateSegment = (): UseMutationResult<Segment | undefined, Error, UpdateSegmentBody, unknown> => {
+export const useUpdateSegment = (): UseMutationResult<Segment | null, Error, UpdateSegmentBody, unknown> => {
     
     const queryClient = useQueryClient()
     
     return useMutation({
         
-        mutationFn: async ({ segmentId, tripId, ...segmentData }: UpdateSegmentBody) => {
-            const json = await fetchJSON(`/api/segments/${segmentId}`, {
+        mutationFn: async ({ segmentId, tripId, ...segmentData }: UpdateSegmentBody): Promise<Segment | null> => {
+            const data = await fetchJSON<Segment>(`/api/segments/${segmentId}`, {
                 method: 'PUT',
                 body: JSON.stringify(segmentData),
             })
             
+            if (!data?.tripId)
+                return null
+            
             // Attach tripId to the response for onSettled
-            return { ...json, tripId }
+            return { ...data, tripId } as Segment
         },
         // Optimistic update: immediately update the cache before the server responds
         onMutate: async ({ segmentId, tripId, planId, cascadeEnabled, ...updates }) => {
@@ -157,7 +159,7 @@ export const useUpdateSegment = (): UseMutationResult<Segment | undefined, Error
             
         },
         // Always refetch after error or success to ensure server state is correct
-        onSettled: (data: Segment | undefined, error, variables) => {
+        onSettled: (data, error, variables) => {
             
             if (error)
                 console.error('useUpdateSegment', error)
@@ -177,13 +179,13 @@ export const useDeleteSegments = () => {
     
     return useMutation({
         mutationFn: async ({ tripId, planId, segmentIds }: DeleteSegmentsBody) => {
-            return fetchJSON('/api/segments', {
+            return fetchJSON<Segment>('/api/segments', {
                 method: 'DELETE',
                 body: JSON.stringify({ tripId, planId, segmentIds }),
             })
         },
         onSuccess: data => {
-            queryClient.invalidateQueries({ queryKey: ['trip', data.tripId] })
+            queryClient.invalidateQueries({ queryKey: ['trip', data?.tripId] })
         },
     })
 }
@@ -196,13 +198,13 @@ export const useRenamePlan = () => {
     
     return useMutation({
         mutationFn: async ({ planId, name }: RenamePlanBody) => {
-            return fetchJSON(`/api/plans/${planId}`, {
+            return fetchJSON<Plan>(`/api/plans/${planId}`, {
                 method: 'PUT',
                 body: JSON.stringify({ name }),
             })
         },
         onSuccess: data => {
-            queryClient.invalidateQueries({ queryKey: ['trip', data.tripId] })
+            queryClient.invalidateQueries({ queryKey: ['trip', data?.tripId] })
         },
     })
 }
@@ -213,12 +215,12 @@ export const useDeletePlan = () => {
     
     return useMutation({
         mutationFn: async ({ planId }: DeletePlanBody) => {
-            return fetchJSON(`/api/plans/${planId}`, {
+            return fetchJSON<Plan>(`/api/plans/${planId}`, {
                 method: 'DELETE',
             })
         },
         onSuccess: data => {
-            queryClient.invalidateQueries({ queryKey: ['trip', data.tripId] })
+            queryClient.invalidateQueries({ queryKey: ['trip', data?.tripId] })
         },
     })
     
@@ -230,7 +232,7 @@ export const useDeleteTripMutation = () => {
     
     return useMutation({
         mutationFn: async (tripId: ID) => {
-            await fetchJSON(`/api/trips/${tripId}`, {
+            await fetchJSON<Trip>(`/api/trips/${tripId}`, {
                 method: 'DELETE',
             })
         },

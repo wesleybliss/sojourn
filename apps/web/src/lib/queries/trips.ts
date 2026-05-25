@@ -3,14 +3,28 @@ import { useQuery } from '@tanstack/react-query'
 import { keepPreviousData } from '@tanstack/react-query'
 
 import * as store from '@/store'
+import { Trip } from '@repo/shared/types'
 
 export const useTripsQuery = (opts = {}) => useQuery({
     queryKey: ['trips'],
-    queryFn: () => fetchJSON('/api/trips')
-        .then(it => {
-            store.trips.setValue(it.data)
-            return it
-        }),
+    queryFn: async () => {
+        
+        try {
+            
+            const data = await fetchJSON<Trip[]>('/api/trips')
+            
+            store.trips.setValue(data || [])
+            
+            return data
+            
+        } catch (e) {
+            
+            console.error('queries/trips', e)
+            throw e
+            
+        }
+        
+    },
     enabled: true,
     placeholderData: keepPreviousData,
     retry: 3,

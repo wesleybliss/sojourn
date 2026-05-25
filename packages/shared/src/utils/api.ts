@@ -27,7 +27,7 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
 /**
  * Makes an authenticated API request and returns JSON
  */
-export async function fetchJSON(url: string, options: RequestInit = {}) {
+export async function fetchJSON<T>(url: string, options: RequestInit = {}): Promise<T | null> {
     
     const response = await fetchWithAuth(url, {
         ...options,

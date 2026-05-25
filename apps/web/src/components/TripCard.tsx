@@ -1,6 +1,6 @@
 import { Trip } from '@repo/shared/types/database'
 import { BookX } from 'lucide-react'
-import React from 'react'
+import { MouseEventHandler } from 'react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -15,7 +15,7 @@ import {
 interface TripCardProps {
     trip: Trip
     onClick: () => void
-    onDeleteTripClick: () => void
+    onDeleteTripClick: MouseEventHandler<HTMLButtonElement>
 }
 
 const TripCard = ({
@@ -40,7 +40,7 @@ const TripCard = ({
             
             <CardContent>
                 {(trip.coverImageUrl?.length || 0) > 0 ? (
-                    <img src={trip.coverImageUrl!} />
+                    <img src={trip.coverImageUrl!} alt="Trip Cover Image" />
                 ) : (
                     /* Placeholder for header graphic */
                     <div className="bg-gray-200 h-32 w-full mb-4"></div>

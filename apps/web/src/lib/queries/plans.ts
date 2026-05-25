@@ -26,17 +26,17 @@ export const usePlanQuery = (planId: ID, opts = {}) => useQuery({
     ...opts,
 })
 
-export const useCreatePlan = (): UseMutationResult<Plan, Error, CreatePlanBody, unknown> => {
+export const useCreatePlan = (): UseMutationResult<Plan | null, Error, CreatePlanBody, unknown> => {
     const queryClient = useQueryClient()
     
     return useMutation({
         mutationFn: async ({ tripId, ...planData }: CreatePlanBody) => {
-            return fetchJSON('/api/plans', {
+            return fetchJSON<Plan>('/api/plans', {
                 method: 'POST',
                 body: JSON.stringify({ tripId, ...planData }),
             })
         },
-        onSuccess: (_data: Plan, variables) => {
+        onSuccess: (_data: Plan | null, variables) => {
             // @todo do something with _data
             
             // queryClient.invalidateQueries({ queryKey: plansQueryKey(variables.tripId) })
@@ -45,33 +45,33 @@ export const useCreatePlan = (): UseMutationResult<Plan, Error, CreatePlanBody, 
     })
 }
 
-export const useUpdatePlan = (): UseMutationResult<Plan | undefined, Error, UpdatePlanBody, unknown> => {
+export const useUpdatePlan = (): UseMutationResult<Plan | null, Error, UpdatePlanBody, unknown> => {
     const queryClient = useQueryClient()
     
     return useMutation({
         mutationFn: async ({ /* tripId, */ planId, ...planData }: UpdatePlanBody) => {
-            return fetchJSON(`/api/plans/${planId}`, {
+            return fetchJSON<Plan>(`/api/plans/${planId}`, {
                 method: 'PUT',
                 body: JSON.stringify(planData),
             })
         },
-        onSuccess: (_data: Plan | undefined, _variables) => {
+        onSuccess: (_data: Plan | null, _variables) => {
             // @todo do something with _data
             queryClient.invalidateQueries({ queryKey: ['trip', 'trips'] })
         },
     })
 }
 
-export const useDeletePlan = (): UseMutationResult<Plan | undefined, Error, Plan, unknown> => {
+export const useDeletePlan = (): UseMutationResult<Plan | null, Error, Plan, unknown> => {
     const queryClient = useQueryClient()
     
     return useMutation({
         mutationFn: async (plan: Plan) => {
-            return fetchJSON(`/api/plans/${plan.id}`, {
+            return fetchJSON<Plan>(`/api/plans/${plan.id}`, {
                 method: 'DELETE',
             })
         },
-        onSuccess: (_data: Plan | undefined, variables) => {
+        onSuccess: (_data: Plan | null, variables) => {
             // @todo use _data
             queryClient.invalidateQueries({ queryKey: ['trip', variables.tripId] })
         },
@@ -83,12 +83,12 @@ export const useClonePlan = () => {
     
     return useMutation({
         mutationFn: async ({ planId }: ClonePlanBody) => {
-            return fetchJSON(`/api/plans/${planId}/clone`, {
+            return fetchJSON<Plan>(`/api/plans/${planId}/clone`, {
                 method: 'POST',
             })
         },
-        onSuccess: data => {
-            queryClient.invalidateQueries({ queryKey: ['trip', data.tripId] })
+        onSuccess: (data: Plan | null) => {
+            queryClient.invalidateQueries({ queryKey: ['trip', data?.tripId] })
         },
     })
 }

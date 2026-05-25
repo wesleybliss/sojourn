@@ -1,3 +1,4 @@
+import { Place } from '@repo/shared/types'
 import { UpdatePlaceBody } from '@repo/shared/types/mutations'
 import { fetchJSON } from '@repo/shared/utils/api'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -15,7 +16,7 @@ export const usePlacesQuery = () => useQuery({
         
         try {
             
-            const { data } = await fetchJSON('/api/places')
+            const data = await fetchJSON<Place[]>('/api/places')
             
             if (data?.length)
                 placesWithCoverImages.setValue(data)

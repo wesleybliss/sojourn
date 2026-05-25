@@ -3,7 +3,7 @@
 import { cn } from '@repo/shared/utils'
 import { FolderUp,MapPinPlus } from 'lucide-react'
 
-import LoadingSpinner from '@/components/LoadingSpinnerx'
+import LoadingSpinner from '@/components/LoadingSpinner'
 import TripCard from '@/components/TripCard'
 import { Button } from '@/components/ui/button'
 
@@ -28,10 +28,10 @@ const TripsPage = () => {
                 <div className="flex items-center justify-end gap-2">
                     <Button
                         variant="default"
-                        disabled={vm.createTripMutation.isLoading}
+                        disabled={vm.createTripMutation.isPending}
                         onClick={vm.createNewTrip}>
                         <MapPinPlus />
-                        {vm.createTripMutation.isLoading ? 'Creating...' : 'New Trip'}
+                        {vm.createTripMutation.isPending ? 'Creating...' : 'New Trip'}
                     </Button>
                     <Button
                         variant="secondary"
@@ -42,19 +42,19 @@ const TripsPage = () => {
                 </div>
             </header>
             
-            {!vm.trips?.data?.length && (
+            {!vm.trips?.length && (
                 <div>
                     <i>No trips found.</i>
                 </div>
             )}
             
             <div className={cn('grid gap-2 grid-cols-1 md:grid-cols-4')}>
-                {vm.trips?.data?.map(trip => (
+                {vm.trips?.map(trip => (
                     <TripCard
                         key={trip.id}
                         trip={trip}
                         onClick={() => vm.handleTripClick(trip.id)}
-                        onDeleteTripClick={vm.onDeleteTripClick(trip.id)}/>
+                        onDeleteTripClick={e => vm.onDeleteTripClick(trip.id)(e)} />
                 ))}
             </div>
         

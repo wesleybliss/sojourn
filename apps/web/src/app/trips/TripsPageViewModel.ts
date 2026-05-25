@@ -1,6 +1,7 @@
 import { ID, Trip, TripInsert } from '@repo/shared/types'
 import { QueryObserverResult, RefetchOptions, UseMutationResult } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
+import { SyntheticEvent } from 'react'
 
 import { useCreateTripMutation, useDeleteTripMutation } from '@/lib/queries/trip'
 import { useTripsQuery } from '@/lib/queries/trips'
@@ -18,7 +19,7 @@ type TTripsPageViewModel = {
     
     // Methods
     createNewTrip: () => Promise<void>
-    onDeleteTripClick: (id: ID) => (e: MouseEvent) => Promise<void>
+    onDeleteTripClick: (id: ID) => (e: SyntheticEvent) => Promise<void>
     navigateToImportTrips: () => void
     handleTripClick: (tripId: ID) => void
 }
@@ -61,7 +62,7 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
         
     }
     
-    const onDeleteTripClick = (id: ID) => async (e: MouseEvent) => {
+    const onDeleteTripClick = (id: ID) => async (e: SyntheticEvent) => {
         
         e.preventDefault()
         e.stopPropagation()

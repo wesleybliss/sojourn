@@ -2,7 +2,7 @@
 
 import ProtectedRoute from '@/components/ProtectedRoute'
 
-import TripsPage from './TripsPagex'
+import TripsPage from './TripsPage'
 
 export default function TripsRoute() {
     
