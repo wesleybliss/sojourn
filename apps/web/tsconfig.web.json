@@ -33,6 +33,7 @@
     ],
     "exclude": [
         "node_modules",
+        ".next",
         "src/app/api/**/*"
     ],
     "references": [{ "path": "../../packages/shared" }]
