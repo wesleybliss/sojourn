@@ -5,8 +5,7 @@
     "types": "./src/index.ts",
     "scripts": {
         "build": "tsc -b && tsc-alias -p tsconfig.json",
-        "check1": "pnpm tsc -p tsconfig.typecheck.json --skipLibCheck",
-        "check": "pnpm tsc -p tsconfig.json --skipLibCheck",
+        "check": "tsc -p tsconfig.json",
         "lint": "oxlint && eslint .",
         "lint:dry": "oxlint && eslint --fix-dry-run .",
         "lint:fix": "oxlint --fix && eslint --fix .",

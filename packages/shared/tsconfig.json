@@ -4,7 +4,8 @@
         "tsBuildInfoFile": "./node_modules/.cache/tsbuildinfo/shared.tsbuildinfo",
         "declarationDir": "./node_modules/.cache/dts/shared",
         "composite": true,
-        "noEmit": true,
+        "noEmit": false,
+        "emitDeclarationOnly": true,
         "skipLibCheck": true,
         "strict": true,
         "allowSyntheticDefaultImports": true,
@@ -29,5 +30,7 @@
         "src/**/*.ts",
         "src/**/*.tsx"
     ],
-    "references": [{ "path": "../../packages/shared" }]
+    "exclude": [
+        "node_modules",
+    ]
 }
