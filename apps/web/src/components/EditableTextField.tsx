@@ -5,7 +5,7 @@ interface EditableTextFieldProps {
     value?: string
     onChange: (value: string) => void
     as?: keyof JSX.IntrinsicElements
-    elementProps?: Record<string, any>
+    elementProps?: Record<string, unknown>
     placeholder?: string
     children?: ReactNode
 }
@@ -28,7 +28,7 @@ const EditableTextField = ({
         onChange(pendingValue)
         setIsEditing(false)
         
-    }, [pendingValue])
+    }, [pendingValue, onChange])
     
     return isEditing ? (
         <Input

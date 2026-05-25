@@ -66,9 +66,9 @@ export function AISummary({
                 format,
                 
                 monitor: {
-                    ondownloadprogress(e: any) {
+                    ondownloadprogress(e: { loaded: number }) {
                         setDownloadProgress(
-                            Math.round(e.loaded * 100)
+                            Math.round(e.loaded * 100),
                         )
                     },
                 },

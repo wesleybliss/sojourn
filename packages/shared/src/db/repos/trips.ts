@@ -1,43 +1,44 @@
+import { desc,eq } from 'drizzle-orm'
+
 import database from '@/db'
-import Repository from '@/db/repos/repo'
-import * as schemas from '@/db/schema'
-import { eq, desc } from 'drizzle-orm'
-import { Trip, TripInsert, TripSelect } from '@/types/database'
-import { ID } from '@/types/data'
-import { ISegmentsRepository } from '@/db/repos/segments'
 import { IPlansRepository } from '@/db/repos/plans'
+import Repository from '@/db/repos/repo'
+import { ISegmentsRepository } from '@/db/repos/segments'
+import * as schemas from '@/db/schema'
+import { ID } from '@/types/data'
+import { Trip, TripInsert, TripSelect } from '@/types/database'
 
 export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
-
+    
     constructor(db?: typeof database) {
-
+        
         super('trip', 'trips', schemas.trips, db)
-
+        
     }
     
     tx(transaction: typeof database) {
-
+        
         return new TripsRepository(transaction)
-
+        
     }
-
+    
     async create(
         data: TripInsert,
     ): Promise<TripSelect> {
-
+        
         return super.create({
             userId: data.userId,
             name: data.name,
             description: data.description,
             coverImageUrl: data.coverImageUrl,
         })
-
+        
     }
-
+    
     async findAllByUserId(userId: ID): Promise<TripSelect[]> {
-
+        
         try {
-
+            
             const trips = await this.db
                 .select({ trip: this.schema })
                 .from(this.schema)
@@ -47,16 +48,16 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
                 )
                 .where(eq(schemas.userTrips.userId, userId))
                 .orderBy(desc(this.schema.id))
-
+            
             return trips.map(result => result.trip) as TripSelect[]
-
+            
         } catch (e) {
             
             console.error(`Error fetching ${this.plural} for user ${userId}:`, e)
             throw new Error(`Failed to fetch ${this.plural}`)
             
         }
-
+        
     }
     
     async findOneByName(name: string, withDetails?: boolean, plansRepo?: IPlansRepository): Promise<Trip | null> {
@@ -112,7 +113,7 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
         }
         
     }
-
+    
     async findOneWithDetails(id: ID, plansRepo: IPlansRepository): Promise<Trip | null> {
         
         try {

@@ -23,7 +23,7 @@ const SegmentCardDate = ({ date }: { date: Date }) => (
 )
 
 interface SegmentsListProps {
-    segments: any[]
+    segments: Segment[]
     segmentsListViewMode: 'grid' | 'list'
     getTotalDaysPerSegment: (segment: Segment) => number
     getCumulativeDaysPerSegment: (index: number) => number

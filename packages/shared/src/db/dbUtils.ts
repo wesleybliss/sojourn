@@ -1,14 +1,14 @@
+import dayjs from 'dayjs'
 import { AnyColumn, BuildColumns, ColumnBuilderBase, SQL, sql } from 'drizzle-orm'
 import {
-    sqliteTable,
-    integer,
     customType,
-    SQLiteTableWithColumns,
-    SQLiteTableExtraConfigValue,
-    UpdateDeleteAction,
+    integer,
+    sqliteTable,
     SQLiteTableExtraConfig,
+    SQLiteTableExtraConfigValue,
+    SQLiteTableWithColumns,
+    UpdateDeleteAction,
 } from 'drizzle-orm/sqlite-core'
-import dayjs from 'dayjs'
 
 export const timestampSeconds = (name: string) => customType({
     dataType() {
@@ -93,8 +93,8 @@ const sqliteTableObject = sqliteTable as <
             TTableName,
             TColumnsMap,
             'sqlite'
-        >
-    ) => SQLiteTableExtraConfig | SQLiteTableExtraConfigValue[]
+        >,
+    ) => SQLiteTableExtraConfig | SQLiteTableExtraConfigValue[],
 ) => SQLiteTableWithColumns<{
     name: TTableName
     schema: undefined
@@ -121,18 +121,18 @@ export const table = <
                 THasId
             >,
             'sqlite'
-        >
-    ) => SQLiteTableExtraConfig | SQLiteTableExtraConfigValue[]
+        >,
+    ) => SQLiteTableExtraConfig | SQLiteTableExtraConfigValue[],
 ) => {
     
     if (!name?.length)
         throw new Error('Table name required')
-
+    
     if (!Object.keys(columns).length)
         throw new Error('Table properties required')
-
+    
     const { id, ...rest } = columns
-
+    
     const finalColumns = {
         ...(id === false ? {} : { id: idColumn() }),
         ...timestamps,

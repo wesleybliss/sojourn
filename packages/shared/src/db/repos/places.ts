@@ -1,6 +1,6 @@
+import database from '@/db'
 import Repository from '@/db/repos/repo'
 import * as schemas from '@/db/schema'
-import database from '@/db'
 import { Place } from '@/types/database'
 // import { eq, asc } from 'drizzle-orm'
 

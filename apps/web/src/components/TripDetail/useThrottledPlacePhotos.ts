@@ -21,7 +21,7 @@ export type TThrottledPlacePhotos = {
     places: Place[]
     placesError: unknown
     placesLoading: boolean
-    placesRefetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<any, Error>>
+    placesRefetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<Place[], Error>>
     
     // Memos
     progressPercent: number

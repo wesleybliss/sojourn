@@ -1,5 +1,6 @@
-import { primaryKey, uniqueIndex, text, integer, real } from 'drizzle-orm/sqlite-core'
-import { timestamps, table, lower, optsCascadeAll, timestampSeconds } from './dbUtils'
+import { integer, primaryKey, real,text, uniqueIndex } from 'drizzle-orm/sqlite-core'
+
+import { lower, optsCascadeAll, table, timestamps, timestampSeconds } from './dbUtils'
 
 export const users = table('users', {
     email: text('email').notNull(),

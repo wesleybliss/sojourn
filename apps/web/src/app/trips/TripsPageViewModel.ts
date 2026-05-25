@@ -9,7 +9,7 @@ type TTripsPageViewModel = {
     trips: Trip[]
     tripsError: Error | null
     tripsLoading: boolean
-    tripsRefetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<any, Error>>
+    tripsRefetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<Trip[], Error>>
     
     // Mutations
     createTripMutation: UseMutationResult<Trip, Error, Partial<TripInsert>, unknown>

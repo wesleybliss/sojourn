@@ -1,6 +1,7 @@
+import { asc, desc, eq, inArray } from 'drizzle-orm'
+
 import db from '@/db'
 import * as schemas from '@/db/schema'
-import { eq, desc, asc, inArray } from 'drizzle-orm'
 import { ID, PlanInsert, Segment, SegmentInsert, TripInsert } from '@/types'
 
 const normalizeDateValue = (v: Date | string | number | null) => {

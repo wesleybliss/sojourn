@@ -1,11 +1,12 @@
-import { clsx } from 'clsx'
-import { twMerge } from 'tailwind-merge'
-import dayjs, { Dayjs } from 'dayjs'
-import bcrypt from 'bcryptjs'
-import { nanoid } from 'nanoid'
 import type { Plan } from '@repo/shared/types'
-import { Segment } from '@/types'
+import bcrypt from 'bcryptjs'
+import { clsx } from 'clsx'
+import dayjs, { Dayjs } from 'dayjs'
+import { nanoid } from 'nanoid'
 import { ChangeEvent, SyntheticEvent } from 'react'
+import { twMerge } from 'tailwind-merge'
+
+import { Segment } from '@/types'
 
 export const requireKeys = (
     source: NodeJS.ProcessEnv | ImportMetaEnv | Record<string, string>,
@@ -80,13 +81,13 @@ export const createSyntheticDownload = (
     
     const url = window.URL.createObjectURL(blob)
     
-    // eslint-disable-next-line no-restricted-globals
+    
     const link = document.createElement('a')
     
     link.href = url
     link.setAttribute('download', fileName)
     
-    // eslint-disable-next-line no-restricted-globals
+    
     document.body.appendChild(link)
     link.click()
     
@@ -253,7 +254,7 @@ export const checkPassword = async (
     
 }
 
-export const omit = <T extends Record<string, unknown>,>(
+export const omit = <T extends Record<string, unknown>>(
     obj: T,
     keys: Array<keyof T> = [],
 ) => {
@@ -269,7 +270,7 @@ export const omit = <T extends Record<string, unknown>,>(
     
 }
 
-export const keep = <T extends Record<string, unknown>,>(
+export const keep = <T extends Record<string, unknown>>(
     obj: T,
     keys: Array<keyof T> = [],
 ) => {
@@ -285,7 +286,7 @@ export const keep = <T extends Record<string, unknown>,>(
     
 }
 
-export const getUpdatePayload = <T extends Record<string, unknown>,>(
+export const getUpdatePayload = <T extends Record<string, unknown>>(
     control: T,
     data: T,
     omitKeys: Array<keyof T> = [],
@@ -334,24 +335,24 @@ export const copyToClipboard = async (text: string) => {
     }
     
     // Fallback for older browsers
-    // eslint-disable-next-line no-restricted-globals
+    
     const textarea = document.createElement('textarea')
     
     textarea.value = text
     
-    // eslint-disable-next-line no-restricted-globals
+    
     document.body.appendChild(textarea)
     textarea.select()
     
-    // eslint-disable-next-line no-restricted-globals
+    
     document.execCommand('copy')
     
-    // eslint-disable-next-line no-restricted-globals
+    
     document.body.removeChild(textarea)
     
 }
 
-export const sortArrByUpdatedAt = <T extends Record<string, unknown>,>(
+export const sortArrByUpdatedAt = <T extends Record<string, unknown>>(
     arr: Array<T & { updatedAt: Date }>,
     ascending: boolean = false,
 ) => [...arr].sort((a, b) => ascending
@@ -442,7 +443,7 @@ export const formatDate = (date = new Date(), customFormat = 'ddd MMM D, YYYY') 
 
 export const parseFormData = <T extends string>(
     e: SubmitEvent | ChangeEvent<HTMLFormElement> | SyntheticEvent<HTMLFormElement, SubmitEvent>,
-    fields: T[] = []
+    fields: T[] = [],
 ): Record<T, FormDataEntryValue | string | null> => {
     
     const form = 'nativeEvent' in e

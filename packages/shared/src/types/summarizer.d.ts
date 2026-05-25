@@ -1,4 +1,3 @@
-export {}
 
 interface SummarizerMonitor {
     ondownloadprogress?(event: ProgressEvent): void

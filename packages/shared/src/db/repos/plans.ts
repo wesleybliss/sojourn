@@ -1,9 +1,10 @@
+import { asc,eq } from 'drizzle-orm'
+
+import database from '@/db'
 import Repository from '@/db/repos/repo'
 import * as schemas from '@/db/schema'
-import { eq, asc } from 'drizzle-orm'
-import database from '@/db'
-import { Plan, PlanInsert, PlanSelect } from '@/types/database'
 import { ID } from '@/types/data'
+import { Plan, PlanInsert, PlanSelect } from '@/types/database'
 
 export interface IPlansRepository extends Repository<Plan, typeof schemas.plans> {
     findAllByTripId(tripId: ID): Promise<PlanSelect[]>

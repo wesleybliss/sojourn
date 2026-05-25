@@ -25,7 +25,7 @@ export type TDebugViewModel = {
     places: Place[]
     placesError: Error | null
     placesLoading: boolean
-    placesRefetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<any, Error>>
+    placesRefetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<Place[], Error>>
 }
 
 const useDebugViewModel = (): TDebugViewModel => {

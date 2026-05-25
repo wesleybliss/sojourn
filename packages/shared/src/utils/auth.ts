@@ -1,12 +1,13 @@
+import { and, eq, sql } from 'drizzle-orm'
+import { DecodedIdToken } from 'firebase-admin/auth'
+import { NextRequest, NextResponse } from 'next/server'
+
 import db from '@/db/index'
 import * as schemas from '@/db/schema'
-import { eq, and, sql } from 'drizzle-orm'
-import { adminAuth } from '@/utils/firebase/admin'
 import HttpError from '@/errors/HttpError'
-import { NextRequest, NextResponse } from 'next/server'
 import { ID } from '@/types/data'
-import { DecodedIdToken } from 'firebase-admin/auth'
 import { UserSelect } from '@/types/database'
+import { adminAuth } from '@/utils/firebase/admin'
 
 /**
  * Extracts and verifies Firebase ID token from request Authorization header.
@@ -124,7 +125,7 @@ export type AuthContext = {
     userId: ID
 }
 
-export const withAuth = <T,>(handler: (req: NextRequest, context: { auth: AuthContext, params: Promise<T> }) => Promise<NextResponse>) => async (request: NextRequest, context: Record<string, unknown> = {}) => {
+export const withAuth = <T>(handler: (req: NextRequest, context: { auth: AuthContext, params: Promise<T> }) => Promise<NextResponse>) => async (request: NextRequest, context: Record<string, unknown> = {}) => {
     
     try {
         
@@ -149,7 +150,7 @@ export const isUserTripMember = async ({ userId }: AuthContext, tripId: ID): Pro
     try {
         if (!userId || !tripId)
             return false
-
+        
         const rows = await db
             .select()
             .from(schemas.userTrips)
@@ -157,11 +158,11 @@ export const isUserTripMember = async ({ userId }: AuthContext, tripId: ID): Pro
                 eq(schemas.userTrips.userId, userId),
                 eq(schemas.userTrips.tripId, tripId),
             ))
-
+        
         return Array.isArray(rows) &&
             rows.length > 0 &&
             rows[0].tripId === tripId
-
+        
     } catch (e) {
         console.error('isUserTripMember', e)
         return false

@@ -39,6 +39,7 @@ const reactSettings = {
 const basePlugins = {
     react: reactPlugin,
     'react-compiler': reactCompiler,
+    'react-hooks': reactHooksPlugin,
     'indent-empty-lines': indentEmptyLinesPlugin,
     'simple-import-sort': simpleImportSort,
 }
@@ -112,13 +113,6 @@ export default [
             'task/**',
         ],
     },
-    
-    // react-hooks preset handles its own plugin registration; we override
-    // exhaustive-deps in the block below to apply strictMode
-    ...(Array.isArray(reactHooksPlugin.configs['recommended-latest'])
-        ? reactHooksPlugin.configs['recommended-latest']
-        : [reactHooksPlugin.configs['recommended-latest']]),
-    
     {
         files: ['**/*.{ts,tsx,js,jsx,mjs,cjs}'],
         linterOptions: {
@@ -141,7 +135,7 @@ export default [
         settings: reactSettings,
         rules: {
             ...baseRules,
-            'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
+            'react-hooks/rules-of-hooks': 'error',
             'react-hooks/exhaustive-deps': strictMode ? 'error' : 'warn',
         },
     },
@@ -181,12 +175,11 @@ export default [
         settings: reactSettings,
         rules: {
             ...baseRules,
-            'react/jsx-filename-extension': ['error', { extensions: ['.jsx', '.tsx'] }],
             'no-undef': 'off',
             'react-hooks/exhaustive-deps': strictMode ? 'error' : 'warn',
         },
     },
     
     // ...oxlint.configs['flat/recommended'], // oxlint should be the last one
-    ...oxlint.buildFromOxlintConfigFile('./.oxlintrc.json'), // oxlint should be the last one
+    ...oxlint.buildFromOxlintConfigFile('./oxlint.config.ts'), // oxlint should be the last one
 ]

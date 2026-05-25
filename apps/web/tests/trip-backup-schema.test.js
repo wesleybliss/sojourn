@@ -2,8 +2,7 @@ import { test } from '@jest/globals'
 import fs from 'fs'
 import path from 'path'
 import Ajv from 'ajv'
-import schema from '../src/lib/json-schemas/trip-backup.jsonschema'
-import dayjs from 'dayjs'
+import schema from '@repo/shared/utils/json-schemas/trip-backup.jsonschema'
 
 // import { fileURLToPath } from 'url'
 /* const __filename = fileURLToPath(import.meta.url)
@@ -23,7 +22,7 @@ test('sample backup JSON validates against schema', () => {
     if (!valid)
         throw new Error('Schema validation failed: ' + JSON.stringify(validate.errors, null, 2))
     
-    const sampleSegment = data.trips[0].plans[0].segments[0]
+    // const sampleSegment = data.trips[0].plans[0].segments[0]
     
     /* const dateInputExpectPairs = [
         [dayjs(sampleSegment.startDate).format('YYYY-MM-DD hh:mm:ss')],

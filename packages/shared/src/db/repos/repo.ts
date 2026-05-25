@@ -1,6 +1,7 @@
-import database from '@/db'
 import { AnyColumn, desc, eq, inArray, InferInsertModel, InferSelectModel } from 'drizzle-orm'
 import { SQLiteTable } from 'drizzle-orm/sqlite-core'
+
+import database from '@/db'
 import { ID } from '@/types/data'
 
 type Database = typeof database
@@ -12,57 +13,57 @@ type Select<T extends SQLiteTable> = InferSelectModel<T>
  * Generic repository with the specified name, plural form, schema, and database connection.
  */
 class Repository<TModel, TSchema extends SQLiteTable> {
-
+    
     public name: string
     public plural: string
     public schema: TSchema
     public db: Database
     
     constructor(name: string, plural: string, schema: TSchema, db?: Database) {
-
+        
         this.name = name
         this.plural = plural
         this.schema = schema
         this.db = db ?? database
-
+        
     }
-
+    
     //region Helpers
-
+    
     private get idColumn() {
-
+        
         return (this.schema as unknown as { id: AnyColumn }).id
-
+        
     }
-
+    
     private get createdAtColumn() {
-
+        
         return (this.schema as unknown as { createdAt: AnyColumn }).createdAt
-
+        
     }
-
+    
     // eslint-disable-next-line no-unused-vars
     tx(transaction: Database): Repository<TModel, TSchema> {
-
+        
         throw new Error('Method not implemented.')
-
+        
     }
-
+    
     normalizeDateValue(value: unknown | null | undefined) {
-
+        
         if (!value) return null
         if (typeof value === 'string') return value
         if (value instanceof Date) return value.getTime()
-
+        
         if (typeof value === 'number')
             return value < 1e12 ? value * 1000 : value
-
+        
         return value
-
+        
     }
-
+    
     //endregion Helpers
-
+    
     async create(
         data: Insert<TSchema>,
     ): Promise<Select<TSchema>> {
@@ -84,7 +85,7 @@ class Repository<TModel, TSchema extends SQLiteTable> {
         }
         
     }
-
+    
     async findAll(): Promise<Select<TSchema>[]> {
         
         try {
@@ -104,7 +105,7 @@ class Repository<TModel, TSchema extends SQLiteTable> {
     }
     
     async findAllBy<
-        TKey extends keyof Select<TSchema>
+        TKey extends keyof Select<TSchema>,
     >(
         key: TKey,
         value: Select<TSchema>[TKey],
@@ -128,9 +129,9 @@ class Repository<TModel, TSchema extends SQLiteTable> {
         }
         
     }
-
+    
     async findOneBy<
-        TKey extends keyof Select<TSchema>
+        TKey extends keyof Select<TSchema>,
     >(
         key: TKey,
         value: Select<TSchema>[TKey],
@@ -156,60 +157,60 @@ class Repository<TModel, TSchema extends SQLiteTable> {
         }
         
     }
-
+    
     async findOneById(id: ID): Promise<TModel | null> {
         
         return await this.findOneBy('id', id) as TModel | null
-
+        
     }
-
+    
     async updateById(
         id: ID,
         data: Partial<Insert<TSchema>>,
     ): Promise<Select<TSchema>> {
-
+        
         try {
-
+            
             const result = await this.db
                 .update(this.schema)
                 .set(data as Partial<Insert<TSchema>>)
                 .where(eq(this.idColumn, id))
                 .returning() as Select<TSchema>[]
-
+            
             return result[0]
-
+            
         } catch (e) {
-
+            
             console.error(`Error updating ${this.name} by ID ${id}:`, e)
             throw new Error(`Failed to update ${this.name}`)
-
+            
         }
-
+        
     }
-
+    
     async deleteByIds(ids: ID[]) {
-
+        
         try {
-
+            
             await this.db
                 .delete(this.schema)
                 .where(inArray(this.idColumn, ids))
-
+            
         } catch (e) {
-
+            
             console.error(`Error deleting ${ids.length} ${this.plural}:`, e)
             throw new Error(`Failed to delete ${this.plural}`)
-
+            
         }
-
+        
     }
-
+    
     async deleteById(id: ID) {
         
         return await this.deleteByIds([id])
         
     }
-
+    
 }
 
 export default Repository

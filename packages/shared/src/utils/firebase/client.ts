@@ -1,5 +1,6 @@
-import { initializeApp, getApps, getApp } from 'firebase/app'
+import { getApp,getApps, initializeApp } from 'firebase/app'
 import { getAuth, GoogleAuthProvider } from 'firebase/auth'
+
 import { FirebaseInitConfig } from '@/types/firebase'
 import { requireKeys } from '@/utils'
 

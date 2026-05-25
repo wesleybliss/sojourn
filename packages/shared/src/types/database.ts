@@ -1,7 +1,8 @@
-import { z } from 'zod'
-import { createSelectSchema, createInsertSchema } from 'drizzle-orm/zod'
-import * as schemas from '@/db/schema'
 import { InferSelectModel } from 'drizzle-orm'
+import { createInsertSchema,createSelectSchema } from 'drizzle-orm/zod'
+import { z } from 'zod'
+
+import * as schemas from '@/db/schema'
 
 export const userSelectSchema = createSelectSchema(schemas.users)
 export const userInsertSchema = createInsertSchema(schemas.users)
