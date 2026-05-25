@@ -156,7 +156,7 @@ const GanttChartViewModel = <T extends GanttChartItemPrimitive>(props: GanttChar
             window.removeEventListener('mousemove', handleMouseMove)
             window.removeEventListener('mouseup', handleMouseUp)
         }
-    }, [resizeTask])
+    }, [endDateKey, getDateFromPosition, resizeTask, setItems, startDateKey])
     
     return {
         

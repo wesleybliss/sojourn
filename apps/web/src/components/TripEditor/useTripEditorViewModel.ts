@@ -228,16 +228,19 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         
     }, [trip, currentPlan, segments])
     
-    const updateTrip = useCallback((field: string) => async (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string | number) => {
-        
-        const value = typeof e === 'object' && e !== null && 'target' in e
-            ? e.target.value
-            : e
-        
-        // Mutation hook handles invalidation
-        updateTripMutation.mutate({ tripId, [field]: value }, {
-            onSuccess: () => toast('Trip updated'),
-        })
+    const updateTrip = useCallback((field: string) => {
+        return async (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string | number) => {
+            
+            const value = typeof e === 'object' && e !== null && 'target' in e
+                ? e.target.value
+                : e
+            
+            // Mutation hook handles invalidation
+            updateTripMutation.mutate({ tripId, [field]: value }, {
+                onSuccess: () => toast('Trip updated'),
+            })
+            
+        }
         
     }, [tripId, updateTripMutation])
     
@@ -273,28 +276,35 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         
     }, [currentPlan, tripId, segments, addSegmentMutation])
     
-    const updateSegment = useCallback((id: ID, field: keyof Segment) => async (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string | number | boolean | Date | undefined) => {
-        
-        if (!trip || !currentPlan)
-            return console.warn('updateSegment: no current trip or plan')
-        
-        const value = e === undefined ? undefined : e instanceof Date ? e.toISOString().split('T')[0] : typeof e === 'object' && e !== null && 'target' in e
-            ? e.target.value
-            : e
-        
-        const payload = {
-            segmentId: id,
-            tripId,
-            planId: currentPlan.id,
-            [field]: value,
-            cascadeEnabled,
+    const updateSegment = useCallback((id: ID, field: keyof Segment) => {
+        return async (e: | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+                | string | number | boolean | Date | undefined) => {
+            
+            if (!trip || !currentPlan)
+                return console.warn('updateSegment: no current trip or plan')
+            
+            const value = e === undefined
+                ? undefined
+                : e instanceof Date
+                    ? e.toISOString().split('T')[0]
+                    : typeof e === 'object' && e !== null && 'target' in e
+                        ? e.target.value
+                        : e
+            
+            const payload = {
+                segmentId: id,
+                tripId,
+                planId: currentPlan.id,
+                [field]: value,
+                cascadeEnabled,
+            }
+            
+            // Mutation hook handles optimistic updates and invalidation
+            updateSegmentMutation.mutate(payload, {
+                onSuccess: () => toast('Segment updated'),
+            })
+            
         }
-        
-        // Mutation hook handles optimistic updates and invalidation
-        updateSegmentMutation.mutate(payload, {
-            onSuccess: () => toast('Segment updated'),
-        })
-        
     }, [trip, tripId, currentPlan, updateSegmentMutation, cascadeEnabled])
     
     const deleteSegments = useCallback(async (ids: ID[]) => {
@@ -385,6 +395,10 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         shufflePlaceCoverPhotoMutation.mutate({ topic }, {
             onSuccess: data => {
                 console.log('shufflePlaceCoverPhoto', data)
+                if (!data?.data?.length) {
+                    console.warn('shufflePlaceCoverPhoto empty data')
+                    return
+                }
                 
                 return updatePlace.mutate({ id: placeId, coverImageUrl: data.data }, {
                     onSuccess: () => {

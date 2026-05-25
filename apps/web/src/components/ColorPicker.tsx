@@ -29,7 +29,7 @@ const ColorPicker = ({
     
     const [open, setOpen] = useState(false)
     
-    const colors = useMemo(() => staticColors || generateHueColors(steps), [steps])
+    const colors = useMemo(() => staticColors || generateHueColors(steps), [staticColors, steps])
     
     return (
         

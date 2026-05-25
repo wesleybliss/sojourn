@@ -4,12 +4,12 @@ import './globals.css'
 import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 import { Inter } from 'next/font/google'
+import { JSX, ReactNode } from 'react'
 import { Toaster } from 'sonner'
 
 import Navbar from '@/components/Navbar'
 import { AuthProvider } from '@/components/providers/AuthProvider'
 import QueryProvider from '@/components/providers/QueryProvider'
-import { JSX, ReactNode } from 'react'
 
 dayjs.extend(advancedFormat)
 

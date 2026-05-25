@@ -58,7 +58,7 @@ export const useShufflePlaceCoverPhoto = () => {
     return useMutation({
         mutationFn: async ({ topic }: ShufflePlaceCoverPhotoBody) => {
             console.log('useShufflePlaceCoverPhoto.mutate', { topic })
-            return fetchJSON('/api/utils/random-photo', {
+            return fetchJSON<{ data: string }>('/api/utils/random-photo', {
                 method: 'POST',
                 body: JSON.stringify({ topic }),
             })

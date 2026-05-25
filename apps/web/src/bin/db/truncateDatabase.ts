@@ -20,7 +20,7 @@ const main = async () => {
     
     await Promise.allSettled(Object.keys(schemas).map(async it => {
         if (it === 'users') return
-        // @ts-ignore
+        // @ts-expect-error - TS doesn't like the dynamic key
         await db.delete(schemas[it])
         await db.run(sql`DELETE FROM sqlite_sequence WHERE name = '${it}'`)
     }))

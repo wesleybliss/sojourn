@@ -67,9 +67,11 @@ const GanttChart = <T extends GanttChartItemPrimitive,>({
                     {vm.items.map((it, itemIndex) => {
                         // console.log('gantt', it)
                         // Calculate the day index where this task starts
-                        const startDayIndex = Math.max(0, differenceInDays(it[startDateKey] as number | Date, vm.days[0]))
+                        const startDayIndex = Math.max(0,
+                            differenceInDays(it[startDateKey] as number | Date, vm.days[0]))
                         // Calculate task duration in days
-                        const taskDuration = differenceInDays(it[endDateKey] as number | Date, it[startDateKey] as number | Date) + 1
+                        const taskDuration = differenceInDays(it[endDateKey] as number | Date,
+                            it[startDateKey] as number | Date) + 1
                         
                         // Calculate percentage values for positioning
                         const taskStart = (startDayIndex / vm.days.length) * 100

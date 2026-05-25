@@ -50,7 +50,7 @@ const TripActionsViewModel = (currentTrip: Trip | null): TTripActionsViewModel =
             },
         })
         
-    }, [currentTrip, updateTripMutation, queryClient])
+    }, [currentTrip, updateTripMutation])
     
     const backupTrip = useCallback(async () => {
         
@@ -64,7 +64,7 @@ const TripActionsViewModel = (currentTrip: Trip | null): TTripActionsViewModel =
             toast.error('Failed to create backup')
         }
         
-    }, [currentTrip])
+    }, [backupMutation, currentTrip])
     
     return {
         
