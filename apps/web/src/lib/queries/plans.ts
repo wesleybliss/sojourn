@@ -1,8 +1,8 @@
 import { ID } from '@repo/shared/types/data'
-import { Plan, PlanInsert } from '@repo/shared/types/database'
+import { Plan } from '@repo/shared/types/database'
 import { ClonePlanBody, CreatePlanBody, UpdatePlanBody } from '@repo/shared/types/mutations'
 import { fetchJSON } from '@repo/shared/utils/api'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query'
 import { keepPreviousData } from '@tanstack/react-query'
 /* import * as store from '@/store'
 import { updateItemArray } from '@/lib/storeUtils' */
@@ -26,7 +26,7 @@ export const usePlanQuery = (planId: ID, opts = {}) => useQuery({
     ...opts,
 })
 
-export const useCreatePlan = () => {
+export const useCreatePlan = (): UseMutationResult<Plan, Error, CreatePlanBody, unknown> => {
     const queryClient = useQueryClient()
     
     return useMutation({
@@ -36,14 +36,16 @@ export const useCreatePlan = () => {
                 body: JSON.stringify({ tripId, ...planData }),
             })
         },
-        onSuccess: (data, variables) => {
+        onSuccess: (_data: Plan, variables) => {
+            // @todo do something with _data
+            
             // queryClient.invalidateQueries({ queryKey: plansQueryKey(variables.tripId) })
             queryClient.invalidateQueries({ queryKey: ['trip', variables.tripId] })
         },
     })
 }
 
-export const useUpdatePlan = () => {
+export const useUpdatePlan = (): UseMutationResult<Plan | undefined, Error, UpdatePlanBody, unknown> => {
     const queryClient = useQueryClient()
     
     return useMutation({
@@ -53,13 +55,14 @@ export const useUpdatePlan = () => {
                 body: JSON.stringify(planData),
             })
         },
-        onSuccess: (data, variables) => {
+        onSuccess: (_data: Plan | undefined, _variables) => {
+            // @todo do something with _data
             queryClient.invalidateQueries({ queryKey: ['trip', 'trips'] })
         },
     })
 }
 
-export const useDeletePlan = () => {
+export const useDeletePlan = (): UseMutationResult<Plan | undefined, Error, Plan, unknown> => {
     const queryClient = useQueryClient()
     
     return useMutation({
@@ -68,7 +71,8 @@ export const useDeletePlan = () => {
                 method: 'DELETE',
             })
         },
-        onSuccess: (data, variables) => {
+        onSuccess: (_data: Plan | undefined, variables) => {
+            // @todo use _data
             queryClient.invalidateQueries({ queryKey: ['trip', variables.tripId] })
         },
     })

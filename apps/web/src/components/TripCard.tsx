@@ -1,5 +1,4 @@
 import { Trip } from '@repo/shared/types/database'
-import dayjs from 'dayjs'
 import { BookX } from 'lucide-react'
 import React from 'react'
 

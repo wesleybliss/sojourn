@@ -8,7 +8,7 @@ import {
     UpdateTripBody,
 } from '@repo/shared/types/mutations'
 import { fetchJSON } from '@repo/shared/utils/api'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query'
 import { keepPreviousData } from '@tanstack/react-query'
 
 import { updateItemArray } from '@/lib/storeUtils'
@@ -76,13 +76,13 @@ export const useUpdateTrip = () => {
                 body: JSON.stringify(tripData),
             })
         },
-        onSuccess: (data, variables) => {
+        onSuccess: (_data: Trip, variables) => {
             queryClient.invalidateQueries({ queryKey: ['trip', variables.tripId] })
         },
     })
 }
 
-export const useAddSegment = () => {
+export const useAddSegment = (): UseMutationResult<Segment, Error, SegmentInsert, unknown> => {
     const queryClient = useQueryClient()
     
     return useMutation({
@@ -98,13 +98,13 @@ export const useAddSegment = () => {
     })
 }
 
-export const useUpdateSegment = () => {
+export const useUpdateSegment = (): UseMutationResult<Segment | undefined, Error, UpdateSegmentBody, unknown> => {
     
     const queryClient = useQueryClient()
     
     return useMutation({
         
-        mutationFn: async ({ segmentId, tripId, planId, ...segmentData }: UpdateSegmentBody) => {
+        mutationFn: async ({ segmentId, tripId, ...segmentData }: UpdateSegmentBody) => {
             const json = await fetchJSON(`/api/segments/${segmentId}`, {
                 method: 'PUT',
                 body: JSON.stringify(segmentData),
@@ -148,17 +148,25 @@ export const useUpdateSegment = () => {
         },
         // If mutation fails, rollback to the previous value
         onError: (err, variables, context) => {
-            if (context?.previousTrip) {
+            
+            console.error('useUpdateSegment', err)
+            console.log('useUpdateSegment', variables)
+            
+            if (context?.previousTrip)
                 queryClient.setQueryData(['trip', context.tripId], context.previousTrip)
-            }
+            
         },
         // Always refetch after error or success to ensure server state is correct
-        onSettled: (data, error, variables) => {
+        onSettled: (data: Segment | undefined, error, variables) => {
+            
+            if (error)
+                console.error('useUpdateSegment', error)
+            
             const tid = data?.tripId || variables?.tripId
             
-            if (tid) {
+            if (tid)
                 queryClient.invalidateQueries({ queryKey: ['trip', tid] })
-            }
+            
         },
     })
     
@@ -182,7 +190,6 @@ export const useDeleteSegments = () => {
 
 /**
  * @deprecated
- * @returns {UseMutationResult<any, DefaultError, {readonly planId?: *, readonly name?: *}, unknown>}
  */
 export const useRenamePlan = () => {
     const queryClient = useQueryClient()

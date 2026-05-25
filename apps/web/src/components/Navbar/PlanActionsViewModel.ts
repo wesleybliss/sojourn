@@ -35,11 +35,11 @@ const PlanActionsViewModel = (
             onSuccess: newPlan => {
                 toast('Plan created')
                 // queryClient.invalidateQueries(['trip', currentTrip.id])
-                router.push(`/trips/${currentTrip.id}/plans/${newPlan.data.id}`)
+                router.push(`/trips/${currentTrip.id}/plans/${newPlan.id}`)
             },
         })
         
-    }, [createPlanMutation, queryClient, currentTrip, currentPlan, router])
+    }, [createPlanMutation, currentTrip, router])
     
     const updatePlan = useCallback((field: string) => async (e: string | ChangeEvent<HTMLInputElement>) => {
         
@@ -59,7 +59,7 @@ const PlanActionsViewModel = (
             },
         })
         
-    }, [updatePlanMutation, queryClient, currentTrip, currentPlan])
+    }, [updatePlanMutation, currentTrip, currentPlan])
     
     const deletePlan = useCallback(async () => {
         
@@ -80,7 +80,7 @@ const PlanActionsViewModel = (
             },
         })
         
-    }, [deletePlanMutation, queryClient, currentTrip, currentPlan, router])
+    }, [deletePlanMutation, currentTrip, currentPlan, router])
     
     const clonePlan = useCallback(async () => {
         
@@ -94,7 +94,7 @@ const PlanActionsViewModel = (
             },
         })
         
-    }, [clonePlanMutation, currentPlan, queryClient, currentTrip, router])
+    }, [clonePlanMutation, currentPlan, currentTrip, router])
     
     return {
         

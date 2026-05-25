@@ -56,7 +56,7 @@ const TripActionsDropdown = ({
         if (trip?.name && !tripActionsViewModel.newTripName.length)
             tripActionsViewModel.setNewTripName(trip.name)
         
-    }, [trip, tripActionsViewModel.newTripName])
+    }, [trip, tripActionsViewModel, tripActionsViewModel.newTripName])
     
     return (<>
         

@@ -41,7 +41,7 @@ const MapLibreMap = ({
             mapRef.current = null
         }
         
-    }, [])
+    }, [latLng, points])
     
     // Update center when latLng changes
     useEffect(() => {

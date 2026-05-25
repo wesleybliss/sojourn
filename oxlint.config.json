@@ -1,0 +1,49 @@
+{
+  "plugins": ["typescript", "react"],
+  "categories": {
+    "correctness": "error"
+  },
+  "env": {
+    "es2026": true,
+    "browser": true,
+    "jest": true
+  },
+  "globals": {
+    "process": "readonly",
+    "Logger": "readonly"
+  },
+  "settings": {
+    "react": {
+      "version": "19.0"
+    }
+  },
+  "ignorePatterns": [
+    "**/dist/**",
+    "**/build/**",
+    "**/.next/**",
+    "**/node_modules/**",
+    "**/src/components/ui/**",
+    "**/components/ui/**",
+    "task/**"
+  ],
+  "rules": {
+    "no-restricted-globals": "off",
+    "no-eq-null": "error",
+    "radix": ["error", "always"],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "off",
+    "react-compiler/react-compiler": "error",
+    "preserve-caught-error": "off"
+  },
+  "jsPlugins": ["eslint-plugin-react-compiler"],
+  "overrides": [
+    {
+      "files": ["**/*.{ts,tsx}"],
+      "rules": {
+        "no-undef": "off",
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-explicit-any": "error"
+      }
+    }
+  ]
+}

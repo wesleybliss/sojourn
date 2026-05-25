@@ -1,6 +1,6 @@
 'use client'
 
-import { SubmitEventHandler, useState } from 'react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 
 import LoadingSpinner from '@/components/LoadingSpinner'

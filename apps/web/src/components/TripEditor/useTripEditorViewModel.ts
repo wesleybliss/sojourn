@@ -81,9 +81,13 @@ export type TTripEditorViewModel = {
     navigate: (href: string) => void,
     
     // Actions
-    updateTrip: (field: string) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string | number) => Promise<void>
+    updateTrip: (field: string) => (
+        e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string | number,
+    ) => Promise<void>
     addSegment: () => Promise<void>
-    updateSegment: (id: ID, field: keyof Segment) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string | number | boolean | Date | undefined) => Promise<void>
+    updateSegment: (id: ID, field: keyof Segment) => (
+        e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string | number | boolean | Date | undefined,
+    ) => Promise<void>
     deleteSegments: (ids: ID[]) => Promise<void>
     getTotalDaysPerSegment: (segment: Segment) => number
     getCumulativeDaysPerSegment: (index: number) => number
@@ -431,7 +435,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         if (focusedLatLng) return
         if (!segments?.length) return
         
-        if (segments[0].coordsLat && segments[0].coordsLat) {
+        if (segments[0].coordsLat && segments[0].coordsLng) {
             
             const coords: Coords = {
                 lat: segments[0].coordsLat,

@@ -1,4 +1,4 @@
-import { useEffect,useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -32,7 +32,7 @@ const InputDialog = ({
     description = '',
     inputFieldLabel = '',
     initialValue = '',
-    onSubmit = async (value: string) => {},
+    onSubmit = async (_value: string) => {},
 }: InputDialogProps) => {
     
     const [value, setValue] = useState('')

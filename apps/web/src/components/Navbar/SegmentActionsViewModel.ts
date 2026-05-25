@@ -16,7 +16,7 @@ const SegmentActionsViewModel = (
     const queryClient = useQueryClient()
     const addSegmentMutation = useAddSegment()
     
-    const segments = currentPlan?.segments || []
+    const segments = currentPlan?.segments
     
     const addSegment = useCallback(async () => {
         
