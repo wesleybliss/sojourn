@@ -1,7 +1,8 @@
 import db from '@repo/shared/db/index'
 import * as schemas from '@repo/shared/db/schema'
+import { apiResponse } from '@repo/shared/utils/api'
 import { AuthContext,isUserTripMember, withAuth } from '@repo/shared/utils/auth'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 
 const handler = async (request: NextRequest, { auth }: { auth: AuthContext }) => {
     
@@ -14,19 +15,15 @@ const handler = async (request: NextRequest, { auth }: { auth: AuthContext }) =>
         const description = body.description?.trim() || null
         
         if (!tripId)
-            return NextResponse.json(
-                { success: false, error: 'Param tripId is required' },
-                { status: 422 })
+            return apiResponse.invalidParams('Trip ID is required')
         
         if (!name)
-            return NextResponse.json(
-                { success: false, error: 'Name is required' },
-                { status: 422 })
+            return apiResponse.invalidParams('Name is required')
         
         const isMember = await isUserTripMember(auth, tripId)
         
         if (!isMember)
-            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
+            return apiResponse.forbidden()
         
         const [createdPlan] = await db
             .insert(schemas.plans)
@@ -37,14 +34,15 @@ const handler = async (request: NextRequest, { auth }: { auth: AuthContext }) =>
             })
             .returning()
         
-        return NextResponse.json(
-            { success: true, data: createdPlan, message: 'Plan created successfully' },
-            { status: 201 })
+        return apiResponse.ok({
+            message: 'Plan created successfully',
+            data: createdPlan,
+        })
         
     } catch (e) {
         
         console.error('Error creating plan:', e)
-        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return apiResponse.internalServerError()
         
     }
     

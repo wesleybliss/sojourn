@@ -1,7 +1,7 @@
 import placesRepo from '@repo/shared/db/repos/places'
 import { getRandomUnsplashImageUrl } from '@repo/shared/utils'
+import { apiResponse } from '@repo/shared/utils/api'
 import { withAuth } from '@repo/shared/utils/auth'
-import { NextResponse } from 'next/server'
 
 /**
  * POST /api/places
@@ -13,14 +13,12 @@ export const GET = withAuth(async () => {
         
         const places = await placesRepo.findAll()
         
-        return NextResponse.json(
-            { success: true, data: places },
-            { status: 200 })
+        return apiResponse.ok({ data: places })
         
     } catch (e) {
         
         console.error('Error getting places:', e)
-        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return apiResponse.internalServerError()
         
     }
     
@@ -34,10 +32,7 @@ export const POST = withAuth(async request => {
         const { name } = body
         
         if (!name?.length)
-            return NextResponse.json({
-                success: false,
-                error: 'Param "name" required',
-            }, { status: 422 })
+            return apiResponse.invalidParams('Param "name" required')
         
         const coverImageUrl = await getRandomUnsplashImageUrl(name)
         
@@ -46,14 +41,12 @@ export const POST = withAuth(async request => {
             coverImageUrl,
         })
         
-        return NextResponse.json(
-            { success: true, data: newPlace },
-            { status: 200 })
+        return apiResponse.ok({ data: newPlace })
         
     } catch (e) {
         
         console.error('Error creating new place:', e)
-        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return apiResponse.internalServerError()
         
     }
     

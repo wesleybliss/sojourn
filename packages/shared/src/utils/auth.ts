@@ -1,13 +1,12 @@
+import db from '@shared/db/index'
+import * as schemas from '@shared/db/schema'
+import HttpError from '@shared/errors/HttpError'
+import { ID } from '@shared/types/data'
+import { UserSelect } from '@shared/types/database'
+import { adminAuth } from '@shared/utils/firebase/admin'
 import { and, eq, sql } from 'drizzle-orm'
 import { DecodedIdToken } from 'firebase-admin/auth'
 import { NextRequest, NextResponse } from 'next/server'
-
-import db from '@/db/index'
-import * as schemas from '@/db/schema'
-import HttpError from '@/errors/HttpError'
-import { ID } from '@/types/data'
-import { UserSelect } from '@/types/database'
-import { adminAuth } from '@/utils/firebase/admin'
 
 /**
  * Extracts and verifies Firebase ID token from request Authorization header.

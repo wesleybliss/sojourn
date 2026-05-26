@@ -11,11 +11,11 @@ export const useTripsQuery = (opts = {}) => useQuery({
         
         try {
             
-            const data = await fetchJSON<Trip[]>('/api/trips')
+            const result = await fetchJSON<Trip[]>('/api/trips')
             
-            store.trips.setValue(data || [])
+            store.trips.setValue(result.data || [])
             
-            return data
+            return result.data
             
         } catch (e) {
             

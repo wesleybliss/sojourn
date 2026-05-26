@@ -1,6 +1,7 @@
 import plansRepo from '@repo/shared/db/repos/plans'
 import tripsRepo from '@repo/shared/db/repos/trips'
 import { Plan, Segment, Trip } from '@repo/shared/types'
+import { apiResponse } from '@repo/shared/utils/api'
 import { isUserTripMember, withAuth } from '@repo/shared/utils/auth'
 import tripsWithPlansSchema from '@repo/shared/utils/json-schemas/trip-backup.jsonschema'
 import Ajv from 'ajv'
@@ -78,20 +79,17 @@ export const POST = withAuth(async (request, { auth }) => {
             const tripId = body.tripId
             
             if (!tripId)
-                return NextResponse.json({
-                    success: false,
-                    error: 'tripId required for single backup',
-                }, { status: 400 })
+                return apiResponse.invalidParams('tripId required for single backup')
             
             const isMember = await isUserTripMember(auth, tripId)
             
             if (!isMember)
-                return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
+                return apiResponse.forbidden()
             
             const trip = await tripsRepo.findOneWithDetails(Number(tripId), plansRepo)
             
             if (!trip)
-                return NextResponse.json({ success: false, error: 'Trip not found' }, { status: 404 })
+                return apiResponse.notFound('Trip not found')
             
             trips = [transformTrip(trip)]
             
@@ -118,13 +116,14 @@ export const POST = withAuth(async (request, { auth }) => {
         const data = { type: 'multiple', trips }
         
         const valid = validate(data)
+        const currentYear = new Date().getFullYear().toString()
         
-        if (!valid || !data.trips[0].plans[0].segments[0].startDate.startsWith('2025'))
-            return NextResponse.json({
-                success: false,
-                error: 'Validation failed',
-                details: validate.errors,
-            }, { status: 400 })
+        if (!valid || !data.trips[0].plans[0].segments[0].startDate.startsWith(currentYear))
+            return apiResponse.fail('Validation failed', 400, {
+                data: {
+                    details: validate.errors,
+                },
+            })
         
         const dataStr = JSON.stringify(data, null, 4)
         
@@ -141,7 +140,7 @@ export const POST = withAuth(async (request, { auth }) => {
     } catch (e) {
         
         console.error('Error creating backup:', e)
-        return NextResponse.json({ success: false, error: (e as Error).message }, { status: 500 })
+        return apiResponse.internalServerError()
         
     }
     

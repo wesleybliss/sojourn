@@ -22,3 +22,9 @@ export type PendingFetchRequest = {
     promise: Promise<Response>
     abort: () => void
 }
+
+export interface ApiResult<T> {
+    data?: T | null
+    error?: string | null
+    count?: number
+}

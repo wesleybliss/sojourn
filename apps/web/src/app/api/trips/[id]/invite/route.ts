@@ -1,9 +1,9 @@
-import db from '@repo/shared/db/index'
+import db from '@repo/shared/db'
 import tripsRepo from '@repo/shared/db/repos/trips'
 import usersRepo from '@repo/shared/db/repos/users'
 import * as schemas from '@repo/shared/db/schema'
+import { apiResponse } from '@repo/shared/utils/api'
 import { isUserTripMember,withAuth } from '@repo/shared/utils/auth'
-import { NextResponse } from 'next/server'
 
 /**
  * POST /api/trips/invite
@@ -17,46 +17,39 @@ export const POST = withAuth<{ id: string }>(async (request, { params, auth }) =
         const { inviteeEmail } = await request.json()
         
         if (!inviteeEmail?.length)
-            return NextResponse.json(
-                { success: false, error: 'Param "inviteeEmail" is required' },
-                { status: 422 })
+            return apiResponse.invalidParams('Param "inviteeEmail" is required')
         
         const isMember = await isUserTripMember(auth, parseInt(id, 10))
         
         if (!isMember)
-            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
+            return apiResponse.forbidden()
         
         const invitee = await usersRepo.findOneByEmail(inviteeEmail)
         
         if (!invitee)
-            return NextResponse.json(
-                { success: false, error: 'Invitee not found' },
-                { status: 404 })
+            return apiResponse.notFound('Invitee not found')
         
         const trip = await tripsRepo.findOneById(parseInt(id, 10))
         
         if (!trip)
-            return NextResponse.json(
-                { success: false, error: 'Trip not found' },
-                { status: 404 })
+            return apiResponse.notFound('Trip not found')
         
         await db.insert(schemas.userTrips).values({
             userId: invitee.id,
             tripId: trip.id,
         })
         
-        return NextResponse.json({
-            success: true,
-            data: { inviteeEmail, trip },
+        return apiResponse.ok({
+            data: {
+                trip,
+                inviteeEmail,
+            },
         })
         
     } catch (e) {
         
         console.error('Error inviting user to trip:', e)
-        return NextResponse.json(
-            { success: false, error: (e as Error).message },
-            { status: 500 },
-        )
+        return apiResponse.internalServerError()
         
     }
     

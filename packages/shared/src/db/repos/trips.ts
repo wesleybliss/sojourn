@@ -1,10 +1,9 @@
+import Repository from '@shared/db/repos/repo'
+import * as schemas from '@shared/db/schema'
+import { TripWithSegmentCount } from '@shared/types'
+import { ID } from '@shared/types/data'
+import { Database, Trip, TripSelect } from '@shared/types/database'
 import { desc,eq } from 'drizzle-orm'
-
-import Repository from '@/db/repos/repo'
-import * as schemas from '@/db/schema'
-import { TripWithSegmentCount } from '@/types'
-import { ID } from '@/types/data'
-import { Database, Trip, TripSelect } from '@/types/database'
 
 import PlansRepository from './plans'
 import SegmentsRepository from './segments'

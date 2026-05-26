@@ -4,9 +4,9 @@ import segmentsRepo from '@repo/shared/db/repos/segments'
 import tripsRepo from '@repo/shared/db/repos/trips'
 import * as schemas from '@repo/shared/db/schema'
 import { createTripRequestSchema } from '@repo/shared/types'
+import { apiResponse } from '@repo/shared/utils/api'
 import { withAuth } from '@repo/shared/utils/auth'
 import dayjs from 'dayjs'
-import { NextResponse } from 'next/server'
 
 /**
  * GET /api/trips
@@ -25,8 +25,7 @@ export const GET = withAuth(async (request, { auth }) => {
             ? await tripsRepo.findAllByUserIdWithSegmentCount(userId, segmentsRepo)
             : await tripsRepo.findAllByUserId(userId)
         
-        return NextResponse.json({
-            success: true,
+        return apiResponse.ok({
             data: trips,
             count: trips?.length || 0,
         })
@@ -34,10 +33,7 @@ export const GET = withAuth(async (request, { auth }) => {
     } catch (e) {
         
         console.error('Error getting trips:', e)
-        return NextResponse.json(
-            { success: false, error: (e as Error).message },
-            { status: 500 },
-        )
+        return apiResponse.internalServerError()
         
     }
     
@@ -94,20 +90,15 @@ export const POST = withAuth(async (request, { auth }) => {
             color: 'bg-blue-500',
         })
         
-        return NextResponse.json(
-            {
-                success: true,
-                data: trip,
-                message: 'Trip created successfully',
-            },
-            { status: 201 })
+        return apiResponse.ok({
+            data: trip,
+            message: 'Trip created successfully',
+        }, 201)
         
     } catch (e) {
         
         console.error('Error creating trip:', e)
-        return NextResponse.json(
-            { success: false, error: (e as Error).message },
-            { status: 500 })
+        return apiResponse.internalServerError()
         
     }
     

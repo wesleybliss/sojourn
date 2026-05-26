@@ -2,8 +2,8 @@ import db from '@repo/shared/db/index'
 import segmentsRepo from '@repo/shared/db/repos/segments'
 import tripsRepo from '@repo/shared/db/repos/trips'
 import * as schemas from '@repo/shared/db/schema'
+import { apiResponse } from '@repo/shared/utils/api'
 import { eq } from 'drizzle-orm'
-import { NextResponse } from 'next/server'
 
 /**
  * POST /api/migrate
@@ -56,16 +56,13 @@ export async function POST() {
             })
         }
         
-        return NextResponse.json({
-            success: true,
+        return apiResponse.ok({
             data: migrationResults,
             message: `Migration completed. ${migrationResults.length} trips processed.`,
         })
+        
     } catch (e) {
         console.error('Error during migration:', e)
-        return NextResponse.json(
-            { success: false, error: (e as Error).message },
-            { status: 500 },
-        )
+        return apiResponse.internalServerError()
     }
 }

@@ -19,7 +19,7 @@
         "lib": ["ES2023", "DOM"],
         "types": ["node", "vite/client"],
         "paths": {
-            "@/*": ["./src/*"],
+            "@shared/*": ["./src/*"],
             "@repo/shared/*": ["../../packages/shared/src/*"],
             "@repo/shared": ["../../packages/shared/src/index.ts"]
         }

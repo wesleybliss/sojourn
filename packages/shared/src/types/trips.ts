@@ -1,6 +1,5 @@
+import type { Trip } from '@shared/types/database'
 import type { Dayjs } from 'dayjs'
-
-import type { Trip } from '@/types/database'
 
 export type TripWithSegmentCount = Trip & {
     segmentCount: number

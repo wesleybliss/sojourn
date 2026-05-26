@@ -1,9 +1,8 @@
+import database from '@shared/db'
+import { Database, Insert, Select } from '@shared/types'
+import { ID } from '@shared/types/data'
 import { AnyColumn, desc, eq, inArray } from 'drizzle-orm'
 import { SQLiteTable } from 'drizzle-orm/sqlite-core'
-
-import database from '@/db'
-import { Database, Insert, Select } from '@/types'
-import { ID } from '@/types/data'
 
 /**
  * Generic repository with the specified name, plural form, schema, and database connection.

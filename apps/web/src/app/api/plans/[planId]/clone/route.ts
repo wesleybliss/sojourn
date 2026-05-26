@@ -1,10 +1,10 @@
 import db from '@repo/shared/db/index'
 import * as schemas from '@repo/shared/db/schema'
 import { omit } from '@repo/shared/utils'
+import { apiResponse } from '@repo/shared/utils/api'
 import { withAuth } from '@repo/shared/utils/auth'
 import { eq } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
-import { NextResponse } from 'next/server'
 
 export const POST = withAuth<{ planId: string }>(async (_, { params }) => {
     
@@ -13,12 +13,14 @@ export const POST = withAuth<{ planId: string }>(async (_, { params }) => {
         const { planId } = await params
         
         if (isNaN(parseInt(planId, 10)))
-            return NextResponse.json({ success: false, error: 'Invalid plan ID' }, { status: 400 })
+            return apiResponse.badRequest(`Invalid plan ID: "${planId}"`)
         
-        const [plan] = await db.select().from(schemas.plans).where(eq(schemas.plans.id, parseInt(planId, 10)))
+        const [plan] = await db.select()
+            .from(schemas.plans)
+            .where(eq(schemas.plans.id, parseInt(planId, 10)))
         
         if (!plan)
-            return NextResponse.json({ success: false, error: 'Plan not found' }, { status: 404 })
+            return apiResponse.notFound('Plan')
         
         const result = await db.transaction(async tx => {
             
@@ -48,15 +50,15 @@ export const POST = withAuth<{ planId: string }>(async (_, { params }) => {
             
         })
         
-        return NextResponse.json(
-            { success: true, data: result, message: 'Plan cloned successfully' },
-            { status: 201 },
-        )
+        return apiResponse.ok({
+            message: 'Plan cloned successfully',
+            data: result,
+        })
         
     } catch (e) {
         
         console.error('Error updating plan:', e)
-        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return apiResponse.internalServerError()
         
     }
     

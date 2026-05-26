@@ -1,8 +1,7 @@
+import db from '@shared/db'
+import * as schemas from '@shared/db/schema'
+import { ID, PlanInsert, Segment, SegmentInsert, TripInsert } from '@shared/types'
 import { asc, desc, eq, inArray, InferInsertModel } from 'drizzle-orm'
-
-import db from '@/db'
-import * as schemas from '@/db/schema'
-import { ID, PlanInsert, Segment, SegmentInsert, TripInsert } from '@/types'
 
 const normalizeDateValue = (v: Date | string | number | null) => {
     if (!v) return null

@@ -3,10 +3,10 @@ import segmentsRepo from '@repo/shared/db/repos/segments'
 import * as schemas from '@repo/shared/db/schema'
 import { ID, SegmentInsert } from '@repo/shared/types'
 import { convertStringDates, getUpdatePayload } from '@repo/shared/utils'
+import { apiResponse } from '@repo/shared/utils/api'
 import { withAuth } from '@repo/shared/utils/auth'
 import dayjs from 'dayjs'
 import { eq } from 'drizzle-orm'
-import { NextResponse } from 'next/server'
 
 export const PUT = withAuth<{ id: string }>(async (request, { params }) => {
     
@@ -18,7 +18,7 @@ export const PUT = withAuth<{ id: string }>(async (request, { params }) => {
         const segment = await segmentsRepo.findOneById(id)
         
         if (segment?.id !== id)
-            return NextResponse.json({ success: false, error: 'Segment not found' }, { status: 404 })
+            return apiResponse.notFound('Segment')
         
         const segmentData = await request.json()
         const { cascadeEnabled } = segmentData
@@ -34,7 +34,7 @@ export const PUT = withAuth<{ id: string }>(async (request, { params }) => {
             const targetIndex = segments.findIndex(s => s.id === id)
             
             if (targetIndex === -1)
-                return NextResponse.json({ success: false, error: 'Segment not found' }, { status: 404 })
+                return apiResponse.notFound('Segment not found in plan')
             
             const currentSegment = segments[targetIndex]
             const originalDuration = dayjs(currentSegment.endDate as Date)
@@ -72,9 +72,9 @@ export const PUT = withAuth<{ id: string }>(async (request, { params }) => {
             
             const [reloaded] = await db.select().from(schemas.segments).where(eq(schemas.segments.id, id))
             
-            return NextResponse.json({
-                success: true,
-                data: reloaded, message: 'Segment dates updated successfully',
+            return apiResponse.ok({
+                message: 'Segment dates updated successfully',
+                data: reloaded,
             })
             
         }
@@ -86,15 +86,18 @@ export const PUT = withAuth<{ id: string }>(async (request, { params }) => {
             .returning()
         
         if (!updatedSegment)
-            return NextResponse.json({ success: false, error: 'Segment not found' }, { status: 404 })
+            return apiResponse.notFound('Updated segment not found')
         
-        return NextResponse.json({ success: true, data: updatedSegment, message: 'Segment updated successfully' })
+        return apiResponse.ok({
+            message: 'Segment updated successfully',
+            data: updatedSegment,
+        })
         
     } catch (e) {
         
         console.error(`Error updating segment ${id}:`, e)
         
-        return NextResponse.json({ success: false, error: (e as Error).message }, { status: 500 })
+        return apiResponse.internalServerError()
         
     }
     

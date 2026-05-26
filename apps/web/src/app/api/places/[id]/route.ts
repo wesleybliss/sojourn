@@ -1,8 +1,8 @@
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
+import { apiResponse } from '@repo/shared/utils/api'
 import { withAuth } from '@repo/shared/utils/auth'
 import { eq } from 'drizzle-orm'
-import { NextResponse } from 'next/server'
 
 export const PUT = withAuth<{ id: string }>(async (request, { params }) => {
     
@@ -14,12 +14,14 @@ export const PUT = withAuth<{ id: string }>(async (request, { params }) => {
         const body = await request.json()
         
         if (!placeId)
-            return NextResponse.json({ success: false, error: `Invalid place ID: "${placeId}"` }, { status: 400 })
+            return apiResponse.badRequest(`Invalid place ID: "${placeId}"`)
         
-        const [place] = await db.select().from(schemas.places).where(eq(schemas.places.id, placeId))
+        const [place] = await db.select()
+            .from(schemas.places)
+            .where(eq(schemas.places.id, placeId))
         
         if (!place)
-            return NextResponse.json({ success: false, error: 'Place not found' }, { status: 404 })
+            return apiResponse.notFound('Place')
         
         const [updatedPlace] = await db
             .update(schemas.places)
@@ -30,14 +32,19 @@ export const PUT = withAuth<{ id: string }>(async (request, { params }) => {
             .returning()
         
         if (!updatedPlace)
-            return NextResponse.json({ success: false, error: 'Place not found' }, { status: 404 })
+            return apiResponse.notFound('Place')
         
-        return NextResponse.json({ success: true, data: updatedPlace, message: 'Place updated successfully' })
+        return apiResponse.ok({
+            message: 'Place updated successfully',
+            data: {
+                place: updatedPlace,
+            },
+        })
         
     } catch (e) {
         
         console.error('Error updating place:', e)
-        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return apiResponse.internalServerError()
         
     }
     

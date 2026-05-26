@@ -1,4 +1,5 @@
-import type { Plan } from '@repo/shared/types'
+import type { Plan } from '@shared/types'
+import { Segment } from '@shared/types'
 import bcrypt from 'bcryptjs'
 import { clsx } from 'clsx'
 import dayjs, { Dayjs } from 'dayjs'
@@ -6,19 +7,22 @@ import { nanoid } from 'nanoid'
 import { ChangeEvent, SyntheticEvent } from 'react'
 import { twMerge } from 'tailwind-merge'
 
-import { Segment } from '@/types'
-
 export const requireKeys = (
-    source: NodeJS.ProcessEnv | ImportMetaEnv | Record<string, string>,
+    source: NodeJS.ProcessEnv | ImportMetaEnv | Record<string, string | undefined>,
     ...keys: Array<string>
 ): Record<string, string> => {
+    
+    if (source === undefined)
+        throw new Error('utils/index: requireKeys source was undefined')
     
     return keys.reduce((acc: Record<string, string>, it: string) => {
         
         const value: string | undefined = source[it]
         
-        if (!value?.length)
+        if (!value?.length) {
+            console.error('utils/index: requireKeys', source)
             throw new Error(`${it} must be set`)
+        }
         
         acc[it] = value
         
@@ -28,7 +32,7 @@ export const requireKeys = (
     
 }
 
-export const isLocalhost = Boolean(
+export const isLocalhost = typeof window !== 'undefined' && Boolean(
     window.location.hostname === 'localhost' ||
     window.location.hostname === '[::1]' ||
     window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/),

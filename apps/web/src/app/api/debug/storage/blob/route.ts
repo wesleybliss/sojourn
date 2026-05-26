@@ -1,9 +1,10 @@
 import { Buffer } from 'node:buffer'
 
 import usersRepo from '@repo/shared/db/repos/users'
+import { apiResponse } from '@repo/shared/utils/api'
 import { withAuth } from '@repo/shared/utils/auth'
 import { putPlaceImageBuffer } from '@repo/shared/utils/storage/vercel-blob'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 
 export const POST = withAuth(async (request: NextRequest, { auth }) => {
     
@@ -12,23 +13,17 @@ export const POST = withAuth(async (request: NextRequest, { auth }) => {
         const { userId } = auth
         
         if (!userId)
-            return NextResponse.json(
-                { success: false, error: 'Unauthorized' },
-                { status: 401 })
+            return apiResponse.unauthorized()
         
         const user = await usersRepo.findOneById(userId)
         
         if (!user)
-            return NextResponse.json(
-                { success: false, error: 'User not found' },
-                { status: 404 })
+            return apiResponse.notFound('User not found')
         
         const { name, contentType, base64Data } = await request.json()
         
         if (!base64Data)
-            return NextResponse.json(
-                { success: false, error: 'Param "base64Data" is required' },
-                { status: 422 })
+            return apiResponse.invalidParams('Param "base64Data" is required')
         
         // Remove prefix (if any)
         const matches = base64Data.match(/^data:(.+);base64,(.+)$/)
@@ -42,16 +37,12 @@ export const POST = withAuth(async (request: NextRequest, { auth }) => {
         
         const res = await putPlaceImageBuffer(name, contentType, buffer)
         
-        return NextResponse.json(
-            { success: true, ...res },
-            { status: 200 })
+        return apiResponse.ok({ data: res })
         
     } catch (e) {
         
         console.error('Error uploading image to blob storage:', e)
-        return NextResponse.json(
-            { success: false, error: e instanceof Error ? e.message : 'Unknown error' },
-            { status: 500 })
+        return apiResponse.internalServerError()
         
     }
     

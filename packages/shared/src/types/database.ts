@@ -1,10 +1,9 @@
+import database from '@shared/db'
+import * as schemas from '@shared/db/schema'
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm'
 import { SQLiteTable } from 'drizzle-orm/sqlite-core'
 import { createInsertSchema,createSelectSchema } from 'drizzle-orm/zod'
 import { z } from 'zod'
-
-import database from '@/db'
-import * as schemas from '@/db/schema'
 
 export type Database = typeof database
 

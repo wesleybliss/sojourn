@@ -1,7 +1,7 @@
 import plansRepo from '@repo/shared/db/repos/plans'
 import tripsRepo from '@repo/shared/db/repos/trips'
+import { apiResponse } from '@repo/shared/utils/api'
 import { isUserTripMember, withAuth } from '@repo/shared/utils/auth'
-import { NextResponse } from 'next/server'
 
 /**
  * GET /api/trips/[id]
@@ -20,28 +20,21 @@ export const GET = withAuth<{ id: string }>(async (request, { params, auth }) =>
         const isMember = await isUserTripMember(auth, id)
         
         if (!isMember)
-            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
+            return apiResponse.forbidden()
         
         const trip = withDetails
             ? await tripsRepo.findOneWithDetails(id, plansRepo)
             : await tripsRepo.findOneById(id)
         
         if (!trip)
-            return NextResponse.json(
-                { success: false, error: 'Trip not found' },
-                { status: 404 })
+            return apiResponse.notFound('Trip not found')
         
-        return NextResponse.json({
-            success: true,
-            data: trip,
-        })
+        return apiResponse.ok({ data: trip })
         
     } catch (e) {
         
         console.error(`Error getting trip ${id}:`, e)
-        return NextResponse.json(
-            { success: false, error: (e as Error).message },
-            { status: 500 })
+        return apiResponse.internalServerError()
         
     }
     
@@ -63,27 +56,22 @@ export const PUT = withAuth<{ id: string }>(async (request, { params, auth }) =>
         const isMember = await isUserTripMember(auth, id)
         
         if (!isMember)
-            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
+            return apiResponse.forbidden()
         
         const updatedTrip = await tripsRepo.updateById(id, body)
         
         if (!updatedTrip)
-            return NextResponse.json(
-                { success: false, error: 'Trip not found' },
-                { status: 404 })
+            return apiResponse.notFound('Trip not found')
         
-        return NextResponse.json({
-            success: true,
-            data: updatedTrip,
+        return apiResponse.ok({
             message: 'Trip updated successfully',
+            data: updatedTrip,
         })
         
     } catch (e) {
         
         console.error(`Error updating trip ${id}:`, e)
-        return NextResponse.json(
-            { success: false, error: (e as Error).message },
-            { status: 500 })
+        return apiResponse.internalServerError()
         
     }
     
@@ -103,21 +91,16 @@ export const DELETE = withAuth<{ id: string }>(async (_request, { params, auth }
         const isMember = await isUserTripMember(auth, id)
         
         if (!isMember)
-            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
+            return apiResponse.forbidden()
         
         await tripsRepo.deleteById(id)
         
-        return NextResponse.json({
-            success: true,
-            message: 'Trip deleted successfully',
-        })
+        return apiResponse.okMessage('Trip deleted successfully')
         
     } catch (e) {
         
         console.error(`Error deleting trip ${id}:`, e)
-        return NextResponse.json(
-            { success: false, error: (e as Error).message },
-            { status: 500 })
+        return apiResponse.internalServerError()
         
     }
     

@@ -1,9 +1,9 @@
 import db from '@repo/shared/db/index'
 import * as schemas from '@repo/shared/db/schema'
 import { SegmentInsert, TripInsert } from '@repo/shared/types'
+import { apiResponse } from '@repo/shared/utils/api'
 import { withAuth } from '@repo/shared/utils/auth'
 import dayjs, { Dayjs } from 'dayjs'
-import { NextResponse } from 'next/server'
 
 const toDate = (v: string | number | Date | Dayjs | null | undefined) => {
     
@@ -31,7 +31,7 @@ export const POST = withAuth(async (request, { auth }) => {
         const body = await request.json()
         
         if (!body || !body.type || !body.trips)
-            return NextResponse.json({ success: false, error: 'Invalid backup payload' }, { status: 400 })
+            return apiResponse.badRequest('Invalid backup payload')
         
         const onConflictAction = body.onConflictAction || 'duplicate'
         
@@ -128,12 +128,12 @@ export const POST = withAuth(async (request, { auth }) => {
             
         }
         
-        return NextResponse.json({ success: true, data: results })
+        return apiResponse.ok({ data: results })
         
     } catch (e) {
         
         console.error('Error restoring backup:', e)
-        return NextResponse.json({ success: false, error: (e as Error).message }, { status: 500 })
+        return apiResponse.internalServerError()
         
     }
     

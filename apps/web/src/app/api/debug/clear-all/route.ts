@@ -1,8 +1,8 @@
 import db from '@repo/shared/db/index'
 import usersRepo from '@repo/shared/db/repos/users'
 import * as schemas from '@repo/shared/db/schema'
+import { apiResponse } from '@repo/shared/utils/api'
 import { withAuth } from '@repo/shared/utils/auth'
-import { NextResponse } from 'next/server'
 
 /**
  * POST /api/debug/clear-all
@@ -17,7 +17,7 @@ export const POST = withAuth(async (_request, { auth }) => {
         const user = await usersRepo.findOneById(userId)
         
         if (!user)
-            return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 })
+            return apiResponse.notFound('User not found')
         
         console.log('Clearing all database data...')
         
@@ -31,18 +31,12 @@ export const POST = withAuth(async (_request, { auth }) => {
         await db.delete(schemas.trips)
         console.log('✅ Cleared trips table')
         
-        return NextResponse.json({
-            success: true,
-            message: 'Database cleared successfully',
-        })
+        return apiResponse.okMessage('Database cleared successfully')
         
     } catch (e) {
         
         console.error('❌ Error clearing database:', e)
-        return NextResponse.json(
-            { success: false, error: (e as Error).message },
-            { status: 500 },
-        )
+        return apiResponse.internalServerError()
         
     }
     

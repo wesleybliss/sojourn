@@ -1,8 +1,8 @@
-import db from '@repo/shared/db/index'
+import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
+import { apiResponse } from '@repo/shared/utils/api'
 import { isUserTripMember,withAuth } from '@repo/shared/utils/auth'
 import { and, eq, inArray } from 'drizzle-orm'
-import { NextResponse } from 'next/server'
 
 /**
  * POST /api/segments
@@ -24,34 +24,24 @@ export const POST = withAuth(async (request, { auth }) => {
         } = body
         
         if (!tripId)
-            return NextResponse.json(
-                { success: false, error: 'Param tripId is required' },
-                { status: 422 })
+            return apiResponse.invalidParams('Param tripId is required')
         
         if (!planId)
-            return NextResponse.json(
-                { success: false, error: 'Param planId is required' },
-                { status: 422 })
+            return apiResponse.invalidParams('Param planId is required')
         
         if (!name?.length)
-            return NextResponse.json(
-                { success: false, error: 'Param name is required' },
-                { status: 422 })
+            return apiResponse.invalidParams('Param name is required')
         
         if (!startDate?.length)
-            return NextResponse.json(
-                { success: false, error: 'Param startDate is required' },
-                { status: 422 })
+            return apiResponse.invalidParams('Param startDate is required')
         
         if (!endDate?.length)
-            return NextResponse.json(
-                { success: false, error: 'Param endDate is required' },
-                { status: 422 })
+            return apiResponse.invalidParams('Param endDate is required')
         
         const isMember = await isUserTripMember(auth, tripId)
         
         if (!isMember)
-            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
+            return apiResponse.forbidden()
         
         const [createdSegment] = await db
             .insert(schemas.segments)
@@ -65,14 +55,15 @@ export const POST = withAuth(async (request, { auth }) => {
             })
             .returning()
         
-        return NextResponse.json(
-            { success: true, data: createdSegment, message: 'Segment created successfully' },
-            { status: 201 })
+        return apiResponse.ok({
+            message: 'Segment created successfully',
+            data: createdSegment,
+        })
         
     } catch (e) {
         
         console.error('Error creating segment:', e)
-        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return apiResponse.internalServerError()
         
     }
     
@@ -86,24 +77,18 @@ export const DELETE = withAuth(async (request, { auth }) => {
         const { tripId, planId, segmentIds } = body
         
         if (!Array.isArray(segmentIds) || !segmentIds.length)
-            return NextResponse.json(
-                { success: false, error: 'Param segmentIds is required and must be non-empty array' },
-                { status: 422 })
+            return apiResponse.invalidParams('Param segmentIds is required and must be non-empty array')
         
         if (!tripId)
-            return NextResponse.json(
-                { success: false, error: 'Param tripId is required' },
-                { status: 422 })
+            return apiResponse.invalidParams('Param tripId is required')
         
         if (!planId)
-            return NextResponse.json(
-                { success: false, error: 'Param planId is required' },
-                { status: 422 })
+            return apiResponse.invalidParams('Param planId is required')
         
         const isMember = await isUserTripMember(auth, tripId)
         
         if (!isMember)
-            return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
+            return apiResponse.forbidden()
         
         await db.transaction(async tx => {
             await tx.delete(schemas.segments)
@@ -114,14 +99,12 @@ export const DELETE = withAuth(async (request, { auth }) => {
                 ))
         })
         
-        return NextResponse.json(
-            { success: true, message: 'Segments deleted successfully' },
-            { status: 200 })
+        return apiResponse.okMessage('Segments deleted successfully')
         
     } catch (e) {
         
         console.error('Error deleting segments:', e)
-        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return apiResponse.internalServerError()
         
     }
     
