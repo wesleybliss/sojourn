@@ -393,14 +393,14 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         console.log('useTripEditorViewModel#shufflePlaceCoverPhoto', placeId, topic)
         
         shufflePlaceCoverPhotoMutation.mutate({ topic }, {
-            onSuccess: data => {
-                console.log('shufflePlaceCoverPhoto', data)
-                if (!data?.data?.length) {
+            onSuccess: result => {
+                console.log('shufflePlaceCoverPhoto', result)
+                if (!result?.data?.length) {
                     console.warn('shufflePlaceCoverPhoto empty data')
                     return
                 }
                 
-                return updatePlace.mutate({ id: placeId, coverImageUrl: data.data }, {
+                return updatePlace.mutate({ id: placeId, coverImageUrl: result.data }, {
                     onSuccess: () => {
                         toast('Place cover photo updated')
                     },

@@ -32,11 +32,11 @@ const PlanActionsViewModel = (
         if (!name?.length) return console.warn('createPlan empty name')
         
         createPlanMutation.mutate({ tripId: currentTrip.id, name }, {
-            onSuccess: newPlan => {
+            onSuccess: result => {
                 toast('Plan created')
                 // queryClient.invalidateQueries(['trip', currentTrip.id])
-                if (newPlan)
-                    router.push(`/trips/${currentTrip.id}/plans/${newPlan.id}`)
+                if (result.data)
+                    router.push(`/trips/${currentTrip.id}/plans/${result.data.id}`)
             },
         })
         
@@ -88,11 +88,11 @@ const PlanActionsViewModel = (
         if (!currentTrip || !currentPlan) return toast.error('No trip or plan selected to clone')
         
         clonePlanMutation.mutate({ planId: currentPlan.id }, {
-            onSuccess: clonedPlan => {
+            onSuccess: result => {
                 toast('Plan cloned')
                 // queryClient.invalidateQueries(['trip', currentTrip.id])
-                if (clonedPlan)
-                    router.push(`/trips/${currentTrip.id}/plans/${clonedPlan.id}`)
+                if (result.data)
+                    router.push(`/trips/${currentTrip.id}/plans/${result.data.id}`)
             },
         })
         

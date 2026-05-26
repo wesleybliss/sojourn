@@ -27,4 +27,5 @@ export interface ApiResult<T> {
     data?: T | null
     error?: string | null
     count?: number
+    message?: string | undefined
 }

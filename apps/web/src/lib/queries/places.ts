@@ -1,7 +1,7 @@
-import { Place } from '@repo/shared/types'
+import { ApiResult, Place } from '@repo/shared/types'
 import { UpdatePlaceBody } from '@repo/shared/types/mutations'
 import { fetchJSON } from '@repo/shared/utils/api'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query'
 import { keepPreviousData } from '@tanstack/react-query'
 
 import { placesWithCoverImages } from '@/store'
@@ -16,12 +16,12 @@ export const usePlacesQuery = () => useQuery({
         
         try {
             
-            const data = await fetchJSON<Place[]>('/api/places')
+            const result = await fetchJSON<Place[]>('/api/places')
             
-            if (data?.length)
-                placesWithCoverImages.setValue(data)
+            if (result?.data?.length)
+                placesWithCoverImages.setValue(result.data)
             
-            return data
+            return result.data
             
         } catch (e) {
             
@@ -35,7 +35,13 @@ export const usePlacesQuery = () => useQuery({
     retry: 0,
 })
 
-export const useUpdatePlace = () => {
+export const useUpdatePlace = (): UseMutationResult<
+    ApiResult<Place | null>,
+    Error,
+    UpdatePlaceBody,
+    unknown
+> => {
+    
     const queryClient = useQueryClient()
     
     return useMutation({
@@ -52,19 +58,27 @@ export const useUpdatePlace = () => {
             queryClient.invalidateQueries({ queryKey: ['places'] })
         },
     })
+    
 }
 
-export const useShufflePlaceCoverPhoto = () => {
+export const useShufflePlaceCoverPhoto = (): UseMutationResult<
+    ApiResult<string | null>,
+    Error,
+    ShufflePlaceCoverPhotoBody,
+    unknown
+> => {
+    
     return useMutation({
         mutationFn: async ({ topic }: ShufflePlaceCoverPhotoBody) => {
             console.log('useShufflePlaceCoverPhoto.mutate', { topic })
-            return fetchJSON<{ data: string }>('/api/utils/random-photo', {
+            return fetchJSON<string | null>('/api/utils/random-photo', {
                 method: 'POST',
                 body: JSON.stringify({ topic }),
             })
         },
-        onSuccess: data => {
-            console.log('useShufflePlaceCoverPhoto', data)
+        onSuccess: (result: ApiResult<string | null>) => {
+            console.log('useShufflePlaceCoverPhoto', result)
         },
     })
+    
 }

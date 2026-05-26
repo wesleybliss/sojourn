@@ -1,4 +1,4 @@
-import { ID, Trip, TripInsert } from '@repo/shared/types'
+import { ApiResult, ID, Trip, TripInsert } from '@repo/shared/types'
 import { QueryObserverResult, RefetchOptions, UseMutationResult } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { SyntheticEvent } from 'react'
@@ -11,10 +11,11 @@ type TTripsPageViewModel = {
     trips: Trip[]
     tripsError: Error | null
     tripsLoading: boolean
-    tripsRefetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<Trip[] | null, Error>>
+    tripsRefetch: (options?: RefetchOptions | undefined) => Promise<
+        QueryObserverResult<Trip[] | null | undefined, Error>>
     
     // Mutations
-    createTripMutation: UseMutationResult<Trip | null, Error, Partial<TripInsert>, unknown>
+    createTripMutation: UseMutationResult<ApiResult<Trip | null>, Error, Partial<TripInsert>, unknown>
     deleteTripMutation: UseMutationResult<void, Error, number, unknown>
     
     // Methods
@@ -42,7 +43,7 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
         
         try {
             
-            const newTrip = await createTripMutation.mutateAsync({
+            const result = await createTripMutation.mutateAsync({
                 name: 'New Trip',
                 description: '',
                 /*startDate: new Date().toISOString().split('T')[0],
@@ -51,6 +52,8 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
             
             // setTrips(prevTrips => [...prevTrips, newTrip])
             await tripsRefetch()
+            
+            const newTrip = result.data
             
             if (newTrip)
                 router.push(`/trips/${newTrip.id}`)

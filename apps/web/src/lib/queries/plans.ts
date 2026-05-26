@@ -1,4 +1,4 @@
-import { ID } from '@repo/shared/types/data'
+import { ApiResult, ID } from '@repo/shared/types/data'
 import { Plan } from '@repo/shared/types/database'
 import { ClonePlanBody, CreatePlanBody, UpdatePlanBody } from '@repo/shared/types/mutations'
 import { fetchJSON } from '@repo/shared/utils/api'
@@ -26,7 +26,7 @@ export const usePlanQuery = (planId: ID, opts = {}) => useQuery({
     ...opts,
 })
 
-export const useCreatePlan = (): UseMutationResult<Plan | null, Error, CreatePlanBody, unknown> => {
+export const useCreatePlan = (): UseMutationResult<ApiResult<Plan | null>, Error, CreatePlanBody, unknown> => {
     const queryClient = useQueryClient()
     
     return useMutation({
@@ -36,7 +36,7 @@ export const useCreatePlan = (): UseMutationResult<Plan | null, Error, CreatePla
                 body: JSON.stringify({ tripId, ...planData }),
             })
         },
-        onSuccess: (_data: Plan | null, variables) => {
+        onSuccess: (_data: ApiResult<Plan | null>, variables) => {
             // @todo do something with _data
             
             // queryClient.invalidateQueries({ queryKey: plansQueryKey(variables.tripId) })
@@ -45,7 +45,7 @@ export const useCreatePlan = (): UseMutationResult<Plan | null, Error, CreatePla
     })
 }
 
-export const useUpdatePlan = (): UseMutationResult<Plan | null, Error, UpdatePlanBody, unknown> => {
+export const useUpdatePlan = (): UseMutationResult<ApiResult<Plan | null>, Error, UpdatePlanBody, unknown> => {
     const queryClient = useQueryClient()
     
     return useMutation({
@@ -55,14 +55,14 @@ export const useUpdatePlan = (): UseMutationResult<Plan | null, Error, UpdatePla
                 body: JSON.stringify(planData),
             })
         },
-        onSuccess: (_data: Plan | null, _variables) => {
+        onSuccess: (_data: ApiResult<Plan | null>, _variables) => {
             // @todo do something with _data
             queryClient.invalidateQueries({ queryKey: ['trip', 'trips'] })
         },
     })
 }
 
-export const useDeletePlan = (): UseMutationResult<Plan | null, Error, Plan, unknown> => {
+export const useDeletePlan = (): UseMutationResult<ApiResult<Plan | null>, Error, Plan, unknown> => {
     const queryClient = useQueryClient()
     
     return useMutation({
@@ -71,7 +71,7 @@ export const useDeletePlan = (): UseMutationResult<Plan | null, Error, Plan, unk
                 method: 'DELETE',
             })
         },
-        onSuccess: (_data: Plan | null, variables) => {
+        onSuccess: (_data: ApiResult<Plan | null>, variables) => {
             // @todo use _data
             queryClient.invalidateQueries({ queryKey: ['trip', variables.tripId] })
         },
@@ -87,8 +87,8 @@ export const useClonePlan = () => {
                 method: 'POST',
             })
         },
-        onSuccess: (data: Plan | null) => {
-            queryClient.invalidateQueries({ queryKey: ['trip', data?.tripId] })
+        onSuccess: (data: ApiResult<Plan | null>) => {
+            queryClient.invalidateQueries({ queryKey: ['trip', data?.data?.tripId] })
         },
     })
 }
