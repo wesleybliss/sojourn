@@ -107,6 +107,7 @@ export default [
             'dist/**',
             'build/**',
             '.next/**',
+            '**/.next/**',
             'node_modules/**',
             'apps/api/node_modules/**',
             'apps/web/node_modules/**',
