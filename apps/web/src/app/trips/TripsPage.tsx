@@ -21,7 +21,7 @@ const TripsPage = () => {
     
     return (
         
-        <div className="flex flex-col gap-4 p-8">
+        <div data-testid="TripsPage" className="flex flex-col gap-4 p-8">
             
             <header className="flex items-center justify-between">
                 <h1>Trips</h1>

@@ -14,6 +14,11 @@ import { keepPreviousData } from '@tanstack/react-query'
 import { updateItemArray } from '@/lib/storeUtils'
 import * as store from '@/store'
 
+type ShuffleTripCoverPhotoBody = {
+    tripId: ID
+    topic: string
+}
+
 export const useTripQuery = (tripId: ID) => useQuery({
     queryKey: ['trip', tripId],
     queryFn: async () => {
@@ -238,6 +243,51 @@ export const useDeleteTripMutation = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['trips'] })
+        },
+    })
+    
+}
+
+export const useShuffleTripCoverPhoto = (): UseMutationResult<
+    ApiResult<Trip | null>,
+    Error,
+    ShuffleTripCoverPhotoBody,
+    unknown
+> => {
+    
+    const queryClient = useQueryClient()
+    
+    return useMutation({
+        mutationFn: async ({ tripId, topic }: ShuffleTripCoverPhotoBody) => {
+            
+            console.log('useShuffleTripCoverPhoto.mutate', { tripId, topic })
+            
+            const photoResult = await fetchJSON<string | null>('/api/utils/random-photo', {
+                method: 'POST',
+                body: JSON.stringify({ topic }),
+            })
+            
+            if (!photoResult.data) {
+                console.error('Failed to fetch new trip cover photo')
+                return { data: null, error: 'Failed to fetch new trip cover photo' } as ApiResult<Trip>
+            }
+            
+            const result = await fetchJSON<Trip | null>(`/api/trips/${tripId}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    coverImageUrl: photoResult.data,
+                }),
+            })
+            
+            if (result.data)
+                updateItemArray(store.trips, result.data)
+            
+            return result
+            
+        },
+        onSuccess: (result: ApiResult<Trip | null>, variables) => {
+            console.log('useShufflePlaceCoverPhoto', result)
+            queryClient.invalidateQueries({ queryKey: ['trip', variables.tripId] })
         },
     })
     

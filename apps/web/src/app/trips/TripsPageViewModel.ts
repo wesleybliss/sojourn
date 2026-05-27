@@ -1,9 +1,9 @@
 import { ApiResult, ID, Trip, TripInsert } from '@repo/shared/types'
 import { QueryObserverResult, RefetchOptions, UseMutationResult } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { SyntheticEvent } from 'react'
+import { SyntheticEvent, useEffect, useState } from 'react'
 
-import { useCreateTripMutation, useDeleteTripMutation } from '@/lib/queries/trip'
+import { useCreateTripMutation, useDeleteTripMutation, useShuffleTripCoverPhoto } from '@/lib/queries/trip'
 import { useTripsQuery } from '@/lib/queries/trips'
 
 type TTripsPageViewModel = {
@@ -29,6 +29,8 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     
     const router = useRouter()
     
+    const [isUpdatingCoverImages, setIsUpdatingCoverImages] = useState(false)
+    
     const {
         data: trips,
         error: tripsError,
@@ -38,6 +40,7 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     
     const createTripMutation = useCreateTripMutation()
     const deleteTripMutation = useDeleteTripMutation()
+    const shuffleTripCoverPhotoMutation = useShuffleTripCoverPhoto()
     
     const createNewTrip = async () => {
         
@@ -89,6 +92,26 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     
     const handleTripClick = (tripId: ID) =>
         router.push(`/trips/${tripId}`)
+    
+    useEffect(() => {
+        
+        if (!trips?.length || isUpdatingCoverImages) return
+        
+        setIsUpdatingCoverImages(true)
+        
+        const tripsMissingCoverImage = trips.filter(it => !it.coverImageUrl?.length)
+        
+        if (!tripsMissingCoverImage.length) return
+        
+        const promises = tripsMissingCoverImage.map(it => {
+            return shuffleTripCoverPhotoMutation.mutateAsync({ tripId: it.id, topic: it.name })
+        })
+        
+        Promise.all(promises)
+            .catch(e => console.error('Failed to update cover images', e))
+            .finally(() => setIsUpdatingCoverImages(false))
+        
+    }, [isUpdatingCoverImages, shuffleTripCoverPhotoMutation, trips])
     
     return {
         
