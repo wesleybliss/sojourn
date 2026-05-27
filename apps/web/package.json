@@ -20,9 +20,9 @@
     "lint:js:fix:one": "eslint --fix",
     "lint:css": "stylelint --rd --risd --cache './**/*.css'",
     "lint:css:fix": "stylelint --rd --risd --cache --fix './**/*.css'",
-    "db:dump": "turso db shell trip-planner .dump > backups/dump_`ts`.sql",
-    "db:restore": "echo 'turso db shell trip-planner < backups/dump-.sql'",
-    "db:seed": "turso db shell trip-planner < backups/seed.sql"
+    "db:dump": "turso db shell sojourn .dump > backups/dump_`ts`.sql",
+    "db:restore": "echo 'turso db shell sojourn < backups/dump-.sql'",
+    "db:seed": "turso db shell sojourn < backups/seed.sql"
   },
   "dependencies": {
     "@babel/runtime": "^7.29.2",

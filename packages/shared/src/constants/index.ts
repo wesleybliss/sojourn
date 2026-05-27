@@ -1,11 +1,11 @@
 import * as rwp from 'react-wire-persisted'
 
 export const APP_NAME = 'Sojourn'
-export const APP_SLUG = 'trip-planner'
+export const APP_SLUG = 'sojourn'
 
 const { key, getPrefixedKeys } = rwp.utils
 
-export const NS = 'trip-planner-basic'
+export const NS = 'sojourn-basic'
 
 //
 

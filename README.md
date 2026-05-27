@@ -60,6 +60,26 @@ A comprehensive trip planning application designed to help travelers organize it
 - `src/lib`: Shared helpers, hooks, and business logic.
 - `src/store`: Global state management.
 
+## Database Helpers
+
+Start an interactive SQL shell with:
+
+```shell
+turso db shell sojourn
+```
+
+To see information about the database, including a connection URL, run:
+
+```shell
+turso db show sojourn
+```
+
+To get an authentication token for the database, run:
+
+```shell
+turso db tokens create sojourn
+```shell
+
 ## TODO
 
 - [ ] Invite other users to join a trip (UI implementation)

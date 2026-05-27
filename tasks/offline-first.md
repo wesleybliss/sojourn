@@ -37,7 +37,7 @@ Server API Routes (unchanged):
 ## Prerequisites
 
 - Node >=18 (current: 22.13.1)
-- Existing Turso database (already configured: trip-planner)
+- Existing Turso database (already configured: sojourn)
 - Environment variables already set in `.env`:
   - `TURSO_DATABASE_URL`
   - `TURSO_AUTH_TOKEN`
@@ -59,7 +59,7 @@ Add to `.env` (temporary for development):
 ```bash
 # Temporary: expose for browser sync
 # TODO: Replace with server-issued short-lived tokens after OAuth migration
-NEXT_PUBLIC_TURSO_DATABASE_URL="libsql://trip-planner-wesleybliss.aws-us-east-1.turso.io"
+NEXT_PUBLIC_TURSO_DATABASE_URL="libsql://sojourn-wesleybliss.aws-us-east-1.turso.io"
 NEXT_PUBLIC_TURSO_AUTH_TOKEN="<your-token>"
 ```
 
@@ -81,7 +81,7 @@ export const getClientDb = () => {
         throw new Error('clientDb must be used in the browser')
     }
 
-    const url = 'idb:///trip-planner'
+    const url = 'idb:///sojourn'
     const syncUrl = process.env.NEXT_PUBLIC_TURSO_DATABASE_URL
     const authToken = process.env.NEXT_PUBLIC_TURSO_AUTH_TOKEN
 
@@ -121,7 +121,7 @@ export const syncDb = async options => {
 **Approach 1** (if supported by `@libsql/wasm`):
 ```js
 client = createClient({
-    url: 'idb:///trip-planner',
+    url: 'idb:///sojourn',
     syncUrl: process.env.NEXT_PUBLIC_TURSO_DATABASE_URL,
     authToken: process.env.NEXT_PUBLIC_TURSO_AUTH_TOKEN,
     excludeTables: ['users']
@@ -373,7 +373,7 @@ export const SyncButton = () => {
 ### Sync fails with auth error
 - Verify `NEXT_PUBLIC_TURSO_AUTH_TOKEN` is set correctly
 - Check token hasn't expired
-- Regenerate token: `turso db tokens create trip-planner`
+- Regenerate token: `turso db tokens create sojourn`
 
 ### Users table appears in local DB
 - **STOP ROLLOUT IMMEDIATELY**
@@ -383,7 +383,7 @@ export const SyncButton = () => {
 
 ### Data not persisting across reloads
 - Check browser IndexedDB in DevTools
-- Verify `idb:///trip-planner` scheme is used
+- Verify `idb:///sojourn` scheme is used
 - Check for errors in console during DB initialization
 
 ### Conflicts not resolving as expected
