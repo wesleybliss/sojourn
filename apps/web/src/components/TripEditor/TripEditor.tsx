@@ -57,7 +57,11 @@ const TripEditor = ({
                             getSegmentCompleted={vm.getSegmentCompleted} />
                     )}
                 </div>
-                {vm.showMap && <MapLibreMap latLng={[vm.focusedLatLng?.lat || 0, vm.focusedLatLng?.lng || 0]} />}
+                {vm.showMap && (
+                    <MapLibreMap
+                        className="h-[70vh] w-full"
+                        latLng={[vm.focusedLatLng?.lng || 0, vm.focusedLatLng?.lat || 0]} />
+                )}
             </div>
             
             {vm.trip && vm.currentPlan && vm.segments?.length > 0 && (

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { ReactNode, useEffect } from 'react'
 
 import InviteCodeForm from '@/components/InviteCodeForm'
@@ -17,15 +17,20 @@ export default function ProtectedRoute({
     
     const { firebaseUser, loading, needsInviteCode } = useAuth()
     const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
     
     useEffect(() => {
         
         if (!loading && !firebaseUser) {
+            const queryString = searchParams?.toString()
+            const returnTo = queryString ? `${pathname}?${queryString}` : pathname
+            
             console.warn('ProtectedRoute#hook redirecting to login')
-            router.push('/login')
+            router.replace(`/login?returnTo=${encodeURIComponent(returnTo || '/')}`)
         }
         
-    }, [loading, firebaseUser, router])
+    }, [firebaseUser, loading, pathname, router, searchParams])
     
     if (loading)
         return (

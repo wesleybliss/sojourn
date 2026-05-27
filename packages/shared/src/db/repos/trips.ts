@@ -51,6 +51,26 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
         
     }
     
+    async findAllByUserIdWithDetails(userId: ID, plansRepo = PlansRepository): Promise<Trip[]> {
+        
+        try {
+            
+            const trips = await this.findAllByUserId(userId)
+            
+            return await Promise.all(trips.map(async trip => ({
+                ...trip,
+                plans: await plansRepo.findAllByTripId(trip.id),
+            })))
+            
+        } catch (e) {
+            
+            console.error(`Error fetching ${this.plural} with details for user ${userId}:`, e)
+            throw new Error(`Failed to fetch ${this.plural} with details`)
+            
+        }
+        
+    }
+    
     async findOneByName(name: string, withDetails?: boolean, plansRepo = PlansRepository): Promise<Trip | null> {
         
         try {
@@ -102,6 +122,20 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
             throw new Error(`Failed to fetch ${this.plural} with segment counts`)
             
         }
+        
+    }
+    
+    async findAllByUserIdWithDetailsAndSegmentCount(
+        userId: ID,
+        plansRepo = PlansRepository,
+    ): Promise<TripWithSegmentCount[]> {
+        
+        const trips = await this.findAllByUserIdWithDetails(userId, plansRepo)
+        
+        return trips.map(trip => ({
+            ...trip,
+            segmentCount: trip.plans?.reduce((total, plan) => total + (plan.segments?.length || 0), 0) || 0,
+        }))
         
     }
     

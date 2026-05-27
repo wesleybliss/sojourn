@@ -1,4 +1,4 @@
-import { ApiResult, ID, Trip, TripInsert } from '@repo/shared/types'
+import { ApiResult, ID, Trip, TripInsert, TripWithSegmentCount } from '@repo/shared/types'
 import { QueryObserverResult, RefetchOptions, UseMutationResult } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { SyntheticEvent, useEffect, useState } from 'react'
@@ -6,13 +6,15 @@ import { SyntheticEvent, useEffect, useState } from 'react'
 import { useCreateTripMutation, useDeleteTripMutation, useShuffleTripCoverPhoto } from '@/lib/queries/trip'
 import { useTripsQuery } from '@/lib/queries/trips'
 
+type TripListItem = Trip | TripWithSegmentCount
+
 type TTripsPageViewModel = {
     // Queries
-    trips: Trip[]
+    trips: TripListItem[]
     tripsError: Error | null
     tripsLoading: boolean
     tripsRefetch: (options?: RefetchOptions | undefined) => Promise<
-        QueryObserverResult<Trip[] | null | undefined, Error>>
+        QueryObserverResult<TripListItem[] | null | undefined, Error>>
     
     // Mutations
     createTripMutation: UseMutationResult<ApiResult<Trip | null>, Error, Partial<TripInsert>, unknown>
@@ -36,7 +38,10 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
         error: tripsError,
         isLoading: tripsLoading,
         refetch: tripsRefetch,
-    } = useTripsQuery()
+    } = useTripsQuery({
+        withCounts: true,
+        withDetails: true,
+    })
     
     const createTripMutation = useCreateTripMutation()
     const deleteTripMutation = useDeleteTripMutation()
@@ -101,7 +106,10 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
         
         const tripsMissingCoverImage = trips.filter(it => !it.coverImageUrl?.length)
         
-        if (!tripsMissingCoverImage.length) return
+        if (!tripsMissingCoverImage.length) {
+            setIsUpdatingCoverImages(false)
+            return
+        }
         
         const promises = tripsMissingCoverImage.map(it => {
             return shuffleTripCoverPhotoMutation.mutateAsync({ tripId: it.id, topic: it.name })
@@ -116,7 +124,7 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     return {
         
         // Queries
-        trips: trips ?? [],
+        trips: (trips as TripListItem[]) ?? [],
         tripsError,
         tripsLoading,
         tripsRefetch,

@@ -42,13 +42,23 @@ const AccountMenu = () => {
     
     const { user, signOut: firebaseSignOut } = useAuth()
     
-    const { data: trips } = useTripsQuery()
+    const { data: trips } = useTripsQuery({
+        options: {
+            enabled: !!user,
+        },
+    })
     
     const [deleteDatabaseDialogOpen, setDeleteDatabaseDialogOpen] = useState(false)
     
     const backupMutation = useBackupTrips()
     
-    const links = useNavbarLinks(user, trips, backupMutation, debugDumpData, setDeleteDatabaseDialogOpen)
+    const links = useNavbarLinks(
+        user,
+        trips as Trip[] | null | undefined,
+        backupMutation,
+        debugDumpData,
+        setDeleteDatabaseDialogOpen,
+    )
     
     const debugDeleteDatabase = async () => {
         

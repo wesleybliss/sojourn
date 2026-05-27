@@ -27,16 +27,16 @@ const SadFolderIcon = ({
             <path
                 d={`${pathA}${pathB}`}
                 stroke="currentColor"
-                stroke-width="24"
-                stroke-linecap="round"
-                stroke-linejoin="round"/>
+                strokeWidth="24"
+                strokeLinecap="round"
+                strokeLinejoin="round"/>
             
             <path
                 d="M416,147.2V120c0-22.1-17.9-40-40-40H120c-22.1,0-40,17.9-40,40v27.2"
                 stroke="currentColor"
-                stroke-width="24"
-                stroke-linecap="round"
-                stroke-linejoin="round"/>
+                strokeWidth="24"
+                strokeLinecap="round"
+                strokeLinejoin="round"/>
             
             <line x1="135" y1="260" x2="195" y2="320" stroke="currentColor" strokeWidth="24" strokeLinecap="round"/>
             <line x1="195" y1="260" x2="135" y2="320" stroke="currentColor" strokeWidth="24" strokeLinecap="round"/>

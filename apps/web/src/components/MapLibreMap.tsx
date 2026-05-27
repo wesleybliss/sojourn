@@ -1,5 +1,6 @@
 import 'maplibre-gl/dist/maplibre-gl.css'
 
+import { cn } from '@repo/shared/utils'
 import maplibregl, { Marker, Popup } from 'maplibre-gl'
 import { useEffect,useRef } from 'react'
 
@@ -12,11 +13,13 @@ const tileUrls = {
 interface MapLibreMapProps {
     latLng?: [number, number]
     points?: { coords: [number, number]; name?: string }[]
+    className?: string
 }
 
 const MapLibreMap = ({
     latLng = [-74.006, 40.7128],
     points = [],
+    className,
 }: MapLibreMapProps) => {
     
     const mapRef = useRef<maplibregl.Map | null>(null) // Ref for the map instance
@@ -103,10 +106,7 @@ const MapLibreMap = ({
         
         <div
             ref={mapContainerRef}
-            style={{
-                width: '100%',
-                height: '100vh',
-            }} />
+            className={cn('h-[70vh] w-full', className)} />
         
     )
     

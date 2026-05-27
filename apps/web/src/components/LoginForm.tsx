@@ -1,7 +1,7 @@
 'use client'
 
 import ErrorWithCode from '@repo/shared/errors/ErrorWithCode'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 export default function LoginForm() {
     
     const router = useRouter()
+    const searchParams = useSearchParams()
     const { signInWithGoogle } = useAuth()
     const [isLoading, setIsLoading] = useState(false)
     
@@ -23,7 +24,10 @@ export default function LoginForm() {
             
             await signInWithGoogle()
             toast.success('Login successful!')
-            router.push('/')
+            
+            const returnTo = searchParams.get('returnTo')
+            
+            router.push(returnTo?.length ? returnTo : '/')
             
         } catch (e: unknown) {
             

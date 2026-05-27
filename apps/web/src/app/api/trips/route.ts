@@ -20,10 +20,15 @@ export const GET = withAuth(async (request, { auth }) => {
         
         const { searchParams } = new URL(request.url)
         const withCounts = searchParams.get('withCounts') === 'true'
+        const withDetails = searchParams.get('withDetails') === 'true'
         
-        const trips = withCounts
-            ? await tripsRepo.findAllByUserIdWithSegmentCount(userId, segmentsRepo)
-            : await tripsRepo.findAllByUserId(userId)
+        const trips = withDetails
+            ? withCounts
+                ? await tripsRepo.findAllByUserIdWithDetailsAndSegmentCount(userId, plansRepo)
+                : await tripsRepo.findAllByUserIdWithDetails(userId, plansRepo)
+            : withCounts
+                ? await tripsRepo.findAllByUserIdWithSegmentCount(userId, segmentsRepo)
+                : await tripsRepo.findAllByUserId(userId)
         
         return apiResponse.ok({
             data: trips,

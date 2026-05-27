@@ -1,30 +1,52 @@
-import { Trip } from '@repo/shared/types'
+import { Trip, TripWithSegmentCount } from '@repo/shared/types'
 import { fetchJSON } from '@repo/shared/utils/api'
-import { useQuery, UseQueryOptions, UseQueryResult } from '@tanstack/react-query'
-import { keepPreviousData } from '@tanstack/react-query'
+import { keepPreviousData, useQuery, UseQueryOptions, UseQueryResult } from '@tanstack/react-query'
 
 import * as store from '@/store'
 
+type TripsQueryResultData = Array<Trip | TripWithSegmentCount> | null | undefined
+
 type TripsQueryOptions = UseQueryOptions<
-    Trip[] | null | undefined,
+    TripsQueryResultData,
     Error,
-    Trip[] | null | undefined,
-    string[]
+    TripsQueryResultData,
+    (string | Record<string, boolean>)[]
 >
 
-type TripsQueryResult = UseQueryResult<Trip[] | null | undefined, Error>
+type TripsQueryOverrideOptions = Omit<TripsQueryOptions, 'queryFn' | 'queryKey'>
 
-export const useTripsQuery = (
-    options?: TripsQueryOptions,
-): TripsQueryResult => useQuery({
-    queryKey: ['trips'],
+interface UseTripsQueryParams {
+    withCounts?: boolean
+    withDetails?: boolean
+    options?: TripsQueryOverrideOptions
+}
+
+type TripsQueryResult = UseQueryResult<TripsQueryResultData, Error>
+
+export const useTripsQuery = ({
+    withCounts = false,
+    withDetails = false,
+    options,
+}: UseTripsQueryParams = {}): TripsQueryResult => useQuery({
+    queryKey: ['trips', { withCounts, withDetails }],
     queryFn: async () => {
         
         try {
             
-            const result = await fetchJSON<Trip[]>('/api/trips')
+            const searchParams = new URLSearchParams()
             
-            store.trips.setValue(result.data || [])
+            if (withCounts)
+                searchParams.set('withCounts', 'true')
+            
+            if (withDetails)
+                searchParams.set('withDetails', 'true')
+            
+            const queryString = searchParams.toString()
+            const result = await fetchJSON<Array<Trip | TripWithSegmentCount>>(
+                `/api/trips${queryString ? `?${queryString}` : ''}`,
+            )
+            
+            store.trips.setValue((result.data as Trip[]) || [])
             
             return result.data
             

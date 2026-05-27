@@ -26,7 +26,14 @@ export const PUT = withAuth<{ id: string }>(async (request, { params }) => {
         const [updatedPlace] = await db
             .update(schemas.places)
             .set({
+                name: body.name,
                 coverImageUrl: body.coverImageUrl,
+                focus: body.focus,
+                quickTip: body.quickTip,
+                personalNotes: body.personalNotes,
+                region: body.region,
+                travelWindow: body.travelWindow,
+                isBookmarked: body.isBookmarked,
             })
             .where(eq(schemas.places.id, placeId))
             .returning()
@@ -36,9 +43,7 @@ export const PUT = withAuth<{ id: string }>(async (request, { params }) => {
         
         return apiResponse.ok({
             message: 'Place updated successfully',
-            data: {
-                place: updatedPlace,
-            },
+            data: updatedPlace,
         })
         
     } catch (e) {

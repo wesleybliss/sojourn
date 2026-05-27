@@ -59,6 +59,12 @@ export const segments = table('segments', {
 export const places = table('places', {
     name: text('name').notNull(),
     coverImageUrl: text('coverImageUrl'),
+    focus: text('focus'),
+    quickTip: text('quickTip'),
+    personalNotes: text('personalNotes'),
+    region: text('region'),
+    travelWindow: text('travelWindow'),
+    isBookmarked: integer('isBookmarked', { mode: 'boolean' }).default(false).notNull(),
 })
 
 /*

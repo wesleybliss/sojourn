@@ -1,13 +1,33 @@
 import { ApiResult, Place } from '@repo/shared/types'
 import { UpdatePlaceBody } from '@repo/shared/types/mutations'
 import { fetchJSON } from '@repo/shared/utils/api'
-import { useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query'
-import { keepPreviousData } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { placesWithCoverImages } from '@/store'
 
 type ShufflePlaceCoverPhotoBody = {
     topic: string
+}
+
+type ExtendedUpdatePlaceBody = UpdatePlaceBody & {
+    name?: string | null
+    coverImageUrl?: string | null
+    focus?: string | null
+    quickTip?: string | null
+    personalNotes?: string | null
+    region?: string | null
+    travelWindow?: string | null
+    isBookmarked?: boolean
+}
+
+type CreatePlaceBody = {
+    name: string
+    focus?: string
+    quickTip?: string
+    personalNotes?: string
+    region?: string
+    travelWindow?: string
+    isBookmarked?: boolean
 }
 
 export const usePlacesQuery = () => useQuery({
@@ -38,19 +58,42 @@ export const usePlacesQuery = () => useQuery({
 export const useUpdatePlace = (): UseMutationResult<
     ApiResult<Place | null>,
     Error,
-    UpdatePlaceBody,
+    ExtendedUpdatePlaceBody,
     unknown
 > => {
     
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ id, ...placeData }: UpdatePlaceBody) => {
+        mutationFn: async ({ id, ...placeData }: ExtendedUpdatePlaceBody) => {
             if (!id)
                 throw new Error('useUpdatePlace: id is required')
             
             return fetchJSON(`/api/places/${id}`, {
                 method: 'PUT',
+                body: JSON.stringify(placeData),
+            })
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['places'] })
+        },
+    })
+    
+}
+
+export const useCreatePlace = (): UseMutationResult<
+    ApiResult<Place | null>,
+    Error,
+    CreatePlaceBody,
+    unknown
+> => {
+    
+    const queryClient = useQueryClient()
+    
+    return useMutation({
+        mutationFn: async (placeData: CreatePlaceBody) => {
+            return fetchJSON('/api/places', {
+                method: 'POST',
                 body: JSON.stringify(placeData),
             })
         },

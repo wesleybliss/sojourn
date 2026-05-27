@@ -10,6 +10,14 @@ export type BackupTripsBody = {
 
 export type UpdatePlaceBody = Partial<Place> & {
     id: ID
+    name?: string | null
+    coverImageUrl?: string | null
+    focus?: string | null
+    quickTip?: string | null
+    personalNotes?: string | null
+    region?: string | null
+    travelWindow?: string | null
+    isBookmarked?: boolean
 }
 
 export type CreatePlanBody = PlanInsert & {

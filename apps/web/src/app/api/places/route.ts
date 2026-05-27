@@ -29,7 +29,15 @@ export const POST = withAuth(async request => {
     try {
         
         const body = await request.json()
-        const { name } = body
+        const {
+            name,
+            focus,
+            quickTip,
+            personalNotes,
+            region,
+            travelWindow,
+            isBookmarked = false,
+        } = body
         
         if (!name?.length)
             return apiResponse.invalidParams('Param "name" required')
@@ -39,6 +47,12 @@ export const POST = withAuth(async request => {
         const newPlace = await placesRepo.create({
             name,
             coverImageUrl,
+            focus,
+            quickTip,
+            personalNotes,
+            region,
+            travelWindow,
+            isBookmarked,
         })
         
         return apiResponse.ok({ data: newPlace })

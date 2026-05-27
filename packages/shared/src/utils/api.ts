@@ -76,8 +76,9 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
     
     const user = auth.currentUser
     
-    if (!user)
+    if (!user) {
         throw new Error('User not authenticated')
+    }
     
     const token = await user.getIdToken()
     

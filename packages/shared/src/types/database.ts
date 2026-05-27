@@ -94,9 +94,23 @@ export type SegmentInsert = {
 
 export const placeSelectSchema = createSelectSchema(schemas.places)
 export const placeInsertSchema = createInsertSchema(schemas.places)
-export type Place = InferSelectModel<typeof schemas.places>
+export type Place = InferSelectModel<typeof schemas.places> & {
+    focus: string | null
+    quickTip: string | null
+    personalNotes: string | null
+    region: string | null
+    travelWindow: string | null
+    isBookmarked: boolean
+}
 export type PlaceSelect = z.infer<typeof placeSelectSchema>
-export type PlaceInsert = z.infer<typeof placeInsertSchema>
+export type PlaceInsert = z.infer<typeof placeInsertSchema> & {
+    focus?: string | null
+    quickTip?: string | null
+    personalNotes?: string | null
+    region?: string | null
+    travelWindow?: string | null
+    isBookmarked?: boolean
+}
 
 // Helper types
 export type RequiredPartialTrip = Partial<Trip> & {
