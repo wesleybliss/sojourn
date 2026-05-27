@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sojourn - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;family=Inter:wght@400;600&amp;family=JetBrains+Mono:wght@450&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      font-size: 20px;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #e0e3e5;
+      border-radius: 10px;
+    }
+  </style>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-tertiary-fixed": "#131b2e",
+            "error": "#ba1a1a",
+            "on-secondary": "#ffffff",
+            "surface-tint": "#545f73",
+            "outline-variant": "#c5c6cd",
+            "tertiary-fixed-dim": "#bec6e0",
+            "on-tertiary-fixed-variant": "#3f465c",
+            "on-secondary-fixed": "#0d1c2f",
+            "surface-container-highest": "#e0e3e5",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#f2f4f6",
+            "on-error-container": "#93000a",
+            "tertiary-container": "#20283c",
+            "on-surface": "#191c1e",
+            "primary": "#091426",
+            "on-tertiary-container": "#888fa7",
+            "outline": "#75777d",
+            "on-primary-fixed-variant": "#3c475a",
+            "secondary-container": "#d5e3fd",
+            "surface-bright": "#f7f9fb",
+            "surface-variant": "#e0e3e5",
+            "inverse-on-surface": "#eff1f3",
+            "primary-container": "#1e293b",
+            "primary-fixed": "#d8e3fb",
+            "inverse-primary": "#bcc7de",
+            "tertiary-fixed": "#dae2fd",
+            "secondary-fixed": "#d5e3fd",
+            "surface-dim": "#d8dadc",
+            "tertiary": "#0b1426",
+            "on-primary-fixed": "#111c2d",
+            "on-primary-container": "#8590a6",
+            "primary-fixed-dim": "#bcc7de",
+            "on-background": "#191c1e",
+            "surface-container": "#eceef0",
+            "on-surface-variant": "#45474c",
+            "error-container": "#ffdad6",
+            "background": "#f7f9fb",
+            "on-error": "#ffffff",
+            "secondary": "#515f74",
+            "surface-container-high": "#e6e8ea",
+            "surface": "#f7f9fb",
+            "secondary-fixed-dim": "#b9c7e0",
+            "inverse-surface": "#2d3133",
+            "on-primary": "#ffffff",
+            "on-secondary-fixed-variant": "#3a485c",
+            "on-secondary-container": "#57657b",
+            "on-tertiary": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "container-max": "1280px",
+            "gutter": "16px",
+            "margin-desktop": "32px",
+            "unit": "4px",
+            "margin-mobile": "16px"
+          },
+          "fontFamily": {
+            "headline-md": ["Hanken Grotesk"],
+            "data-mono": ["JetBrains Mono"],
+            "body-sm": ["Inter"],
+            "body-base": ["Inter"],
+            "headline-lg-mobile": ["Hanken Grotesk"],
+            "label-caps": ["Inter"],
+            "display-lg": ["Hanken Grotesk"]
+          },
+          "fontSize": {
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "data-mono": ["12px", { "lineHeight": "16px", "fontWeight": "450" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "body-base": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+            "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+          }
+        },
+      },
+    }
+  </script>
+</head>
+<body class="bg-background text-on-background font-body-base antialiased custom-scrollbar">
+<!-- SideNavBar Rail/Sidebar -->
+<aside class="fixed left-0 top-0 h-full z-40 flex flex-col items-center py-gutter docked left h-full w-20 md:w-64 bg-surface-container-low dark:bg-surface-container-lowest border-r border-outline-variant dark:border-outline flat no shadows">
+<div class="mb-10 px-6 w-full flex flex-col items-start gap-1">
+<h1 class="text-headline-md font-headline-md font-extrabold text-primary dark:text-inverse-primary">Sojourn</h1>
+<p class="text-label-caps font-label-caps uppercase tracking-widest text-on-surface-variant opacity-60">Slow Travel</p>
+</div>
+<nav class="flex flex-col w-full gap-2 px-3">
+<!-- Active: My Trips -->
+<a class="flex items-center gap-4 px-3 py-3 w-full transition-colors hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors text-primary dark:text-inverse-primary font-bold border-r-2 border-primary Active: scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+<span class="hidden md:block text-label-caps font-label-caps">My Trips</span>
+</a>
+<a class="flex items-center gap-4 px-3 py-3 w-full text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors Active: scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+<span class="hidden md:block text-label-caps font-label-caps">Places</span>
+</a>
+<a class="flex items-center gap-4 px-3 py-3 w-full text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors Active: scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="hidden md:block text-label-caps font-label-caps">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pb-6 px-6 w-full flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-highest">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A professional close-up portrait of a modern traveler with a minimalist aesthetic, softly lit by natural window light. The background is a clean, neutral-toned interior space. The style is sophisticated and calm, emphasizing a functional minimalist lifestyle with high-end digital clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyAEOOQ8ImKUpu5kLkn05jNQaxbbtgFgkmLqnNTiSBPKsgxhvktApf8qdT6hx9532XS9IXSSgRJHpJ-PgFjr5qtG5sqPkSkC_dSCt_2ni3CO2St4dFx0EZhpy1aPFaFFbabRDJMjuH6qg6NzuvUU-lpw2f5YvExlZoERpT0I46jyS_orQPxGanZigjcs_m_8Em3jYsQST4b6dyvDUyBDr8BzV5yD8tXr56muwCCvDh9ofDeieeqmJq8_b5o6PqgnfHnI38HipCasY"/>
+</div>
+<div class="hidden md:block">
+<p class="text-label-caps font-label-caps text-on-surface font-bold">Alex Rivera</p>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-20 md:ml-64 min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-margin-desktop h-16 sticky top-0 z-30 bg-surface dark:bg-surface border-b border-outline-variant dark:border-outline flat no shadows">
+<div class="flex items-center gap-8">
+<span class="text-headline-md font-headline-md text-on-surface dark:text-on-surface">Trip Planner</span>
+<nav class="hidden md:flex items-center gap-6 h-full mt-1">
+<a class="text-primary dark:text-inverse-primary border-b-2 border-primary pb-1 text-label-caps font-label-caps" href="#">Itinerary</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-inverse-primary text-label-caps font-label-caps" href="#">Trip Map</a>
+</nav>
+</div>
+<div class="flex items-center gap-unit px-2">
+<button class="px-4 py-2 bg-primary text-on-primary text-label-caps font-label-caps rounded flex items-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+          New Trip
+        </button>
+<button class="hidden sm:flex px-4 py-2 border border-outline-variant text-on-surface text-label-caps font-label-caps rounded items-center gap-2 hover:bg-surface-container-low transition-colors ml-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="upload">upload</span>
+          Import
+        </button>
+<div class="h-6 w-[1px] bg-outline-variant mx-4"></div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<section class="p-margin-desktop max-w-container-max w-full mx-auto">
+<header class="mb-8 flex justify-between items-end">
+<div>
+<h2 class="text-display-lg font-display-lg text-on-surface">Ongoing Journeys</h2>
+<p class="text-body-base text-on-surface-variant mt-1">Precision planning for the discerning slow traveler.</p>
+</div>
+<div class="flex gap-2">
+<div class="bg-surface-container-high px-3 py-1.5 rounded-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="filter_list">filter_list</span>
+<span class="text-label-caps font-label-caps text-secondary">Sort by Date</span>
+</div>
+</div>
+</header>
+<!-- Grid of Trips -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Trip Card 1 -->
+<article class="group cursor-pointer">
+<div class="relative aspect-[16/9] overflow-hidden rounded-lg border border-outline-variant bg-surface-container-low transition-all duration-300 group-hover:border-primary/30 group-hover:shadow-lg group-hover:shadow-primary/5">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A wide-angle cinematic shot of a vintage train winding through the Swiss Alps during golden hour. The landscape is lush with deep greens and cool blue mountain peaks under a soft, hazy sky. The style is clean, documentary-like, and sophisticated, reflecting a high-quality travel journal aesthetic with balanced contrast and muted tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGUesOtlcMg43FwlQYIP7AdAbYUcLNovzdCLuKOd3UlC0l9jDpHkCT9DqfwrWRQDzmsAzmPwVK3_pBQJOeq_-MYdijLELLGWTJZzLUPDxW-CMKwPDGKCBd0lUvsVfQchsvOTpncKZ2pmZW6xrYB0C0XhxszWgW0-ADaQNRXeiM_4MX1J7t0Zd3pyFKppzNx9okF70va-k5EnXX0R-HhyuJZ4P7oiyM2HaOYScoI3MtCpgtITNQYiU2WEmXEOxuKGEHtpPixq02Vo8"/>
+<div class="absolute top-3 right-3">
+<div class="bg-white/90 backdrop-blur-md px-2 py-1 rounded text-label-caps font-label-caps text-primary shadow-sm">
+                Active
+              </div>
+</div>
+</div>
+<div class="mt-4 flex justify-between items-start">
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface group-hover:text-primary transition-colors">Europe 2025</h3>
+<p class="text-label-caps font-label-caps text-on-surface-variant mt-1">MAY 12 - JUN 24 • 42 DAYS</p>
+</div>
+<div class="bg-secondary-container/30 px-2 py-1 rounded flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-[14px]" data-icon="segment">segment</span>
+<span class="text-label-caps font-label-caps text-on-secondary-container">12 Segments</span>
+</div>
+</div>
+</article>
+<!-- Trip Card 2 -->
+<article class="group cursor-pointer">
+<div class="relative aspect-[16/9] overflow-hidden rounded-lg border border-outline-variant bg-surface-container-low transition-all duration-300 group-hover:border-primary/30 group-hover:shadow-lg group-hover:shadow-primary/5">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="An ultra-minimalist view of a traditional Japanese ryokan interior overlooking a zen garden in Kyoto during a gentle rainfall. The palette is dominated by warm wood tones, charcoal grays, and deep forest greens. The lighting is soft and diffused, creating a serene, contemplative mood perfect for high-end travel planning." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBf7u24jfhrv6MvyQPbZ9XDgGP5eB4sect4WI8_u2o3DBW33KD18-Vct71UV8SIarVe9bejDW2Euwm-oJ1XUBgfh0_X1mKNM9AY4yXSUpFI6PFcgvJhjU_XQ6fnpJ4y-FRM441G0jIVwdju5Jy12aJVfxaLeEJIornA9aD7eq-LA3yrwvQmjbrqnZKEMk2sQoU9-zVYN3G5Z0bWiy-uRcisH4YlLEEhyf9EbvvffWphnOtieuBZCGjFQM7Ai6wrpSkdejjAYK8GXZU"/>
+<div class="absolute top-3 right-3">
+<div class="bg-white/90 backdrop-blur-md px-2 py-1 rounded text-label-caps font-label-caps text-on-surface-variant shadow-sm">
+                Planning
+              </div>
+</div>
+</div>
+<div class="mt-4 flex justify-between items-start">
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface group-hover:text-primary transition-colors">Kyoto Immersion</h3>
+<p class="text-label-caps font-label-caps text-on-surface-variant mt-1">SEP 05 - SEP 20 • 15 DAYS</p>
+</div>
+<div class="bg-secondary-container/30 px-2 py-1 rounded flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-[14px]" data-icon="segment">segment</span>
+<span class="text-label-caps font-label-caps text-on-secondary-container">8 Segments</span>
+</div>
+</div>
+</article>
+<!-- Trip Card 3 -->
+<article class="group cursor-pointer">
+<div class="relative aspect-[16/9] overflow-hidden rounded-lg border border-outline-variant bg-surface-container-low transition-all duration-300 group-hover:border-primary/30 group-hover:shadow-lg group-hover:shadow-primary/5">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A breathtaking, crisp photograph of the granite spires of Torres del Paine in Patagonia at sunrise. The lighting features sharp morning shadows and intense orange glows on the rock faces. The composition is structured and architectural, with a focus on natural geometry and high information density in the landscape details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBM6sQwfnkHMhRT3ucPnxMANx9LOPtYJLYz8ht2Dul_T2ied6JtUYPQR5V_59Hcm0J3R7KvDvsXKpM77Tdz2Z38TESJ7nmizHBSikf882JsPnkE_OS6Fbl1Igqj4dUmRanBNq-VsvQ4uEeoBsSYjvMvTDVxdz8hL0fHVIUzYaAb8L7JQDh8zACuVdc-ZNU_2Y0hTfDj5QLlOkDD9NT4PlCWOsNJBQ_b0AGZWGt3KaqqiLh2r0o-gujWc-2fgkrqpRWtQ7TlToeh1pY"/>
+<div class="absolute top-3 right-3">
+<div class="bg-white/90 backdrop-blur-md px-2 py-1 rounded text-label-caps font-label-caps text-on-surface-variant shadow-sm">
+                Draft
+              </div>
+</div>
+</div>
+<div class="mt-4 flex justify-between items-start">
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface group-hover:text-primary transition-colors">Patagonia Trek</h3>
+<p class="text-label-caps font-label-caps text-on-surface-variant mt-1">JAN 10 - JAN 25 • 15 DAYS</p>
+</div>
+<div class="bg-secondary-container/30 px-2 py-1 rounded flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-[14px]" data-icon="segment">segment</span>
+<span class="text-label-caps font-label-caps text-on-secondary-container">5 Segments</span>
+</div>
+</div>
+</article>
+<!-- Empty State / New Trip Placeholder -->
+<button class="group border-2 border-dashed border-outline-variant rounded-lg aspect-[16/9] flex flex-col items-center justify-center gap-4 hover:border-primary/50 hover:bg-surface-container transition-all">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</div>
+<span class="text-label-caps font-label-caps text-on-surface-variant group-hover:text-primary">Plan a New Adventure</span>
+</button>
+</div>
+<!-- Recent Activity Table -->
+<div class="mt-16">
+<h3 class="text-headline-md font-headline-md text-on-surface mb-6">Recent Updates</h3>
+<div class="bg-surface-container-lowest border border-outline-variant rounded shadow-sm overflow-hidden">
+<table class="w-full border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="text-left px-4 py-3 text-label-caps font-label-caps text-on-surface-variant uppercase">Trip Name</th>
+<th class="text-left px-4 py-3 text-label-caps font-label-caps text-on-surface-variant uppercase">Last Edit</th>
+<th class="text-left px-4 py-3 text-label-caps font-label-caps text-on-surface-variant uppercase">Segment Changed</th>
+<th class="text-right px-4 py-3 text-label-caps font-label-caps text-on-surface-variant uppercase">Status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-outline-variant/50 hover:bg-surface-container-low/50 transition-colors h-[40px]">
+<td class="px-4 py-2 text-body-base font-semibold">Europe 2025</td>
+<td class="px-4 py-2 text-data-mono font-data-mono text-on-surface-variant">2024-11-20 14:32</td>
+<td class="px-4 py-2 text-body-sm text-on-surface-variant">Bernina Express (St. Moritz)</td>
+<td class="px-4 py-2 text-right">
+<span class="px-2 py-0.5 bg-secondary-container/20 text-on-secondary-container text-label-caps font-label-caps rounded-[2px] border border-secondary-container/50">Confirmed</span>
+</td>
+</tr>
+<tr class="border-b border-outline-variant/50 hover:bg-surface-container-low/50 transition-colors h-[40px]">
+<td class="px-4 py-2 text-body-base font-semibold">Kyoto Immersion</td>
+<td class="px-4 py-2 text-data-mono font-data-mono text-on-surface-variant">2024-11-18 09:15</td>
+<td class="px-4 py-2 text-body-sm text-on-surface-variant">Tawaraya Ryokan Stay</td>
+<td class="px-4 py-2 text-right">
+<span class="px-2 py-0.5 bg-tertiary-fixed/10 text-on-tertiary-fixed-variant text-label-caps font-label-caps rounded-[2px] border border-tertiary-fixed/30">Waitlist</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors h-[40px]">
+<td class="px-4 py-2 text-body-base font-semibold">Patagonia Trek</td>
+<td class="px-4 py-2 text-data-mono font-data-mono text-on-surface-variant">2024-11-15 22:04</td>
+<td class="px-4 py-2 text-body-sm text-on-surface-variant">Torres del Paine (W-Circuit)</td>
+<td class="px-4 py-2 text-right">
+<span class="px-2 py-0.5 bg-error-container/20 text-on-error-container text-label-caps font-label-caps rounded-[2px] border border-error-container/50">Action Needed</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</main>
+<!-- Interactive Atmosphere Effects -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Subtle hover interaction for trip cards
+      const cards = document.querySelectorAll('article');
+      cards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+          card.style.transform = 'translateY(-2px)';
+          card.style.transition = 'transform 0.3s ease';
+        });
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'translateY(0)';
+        });
+      });
+
+      // Simple navigation toggle logic (visual only)
+      const navLinks = document.querySelectorAll('nav a');
+      navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          navLinks.forEach(l => {
+            l.classList.remove('text-primary', 'dark:text-inverse-primary', 'font-bold', 'border-r-2', 'border-primary', 'border-b-2');
+            l.classList.add('text-on-surface-variant');
+          });
+          link.classList.add('text-primary', 'font-bold');
+          if (link.closest('aside')) {
+            link.classList.add('border-r-2', 'border-primary');
+          } else {
+            link.classList.add('border-b-2', 'border-primary');
+          }
+        });
+      });
+    });
+  </script>
+</body></html>

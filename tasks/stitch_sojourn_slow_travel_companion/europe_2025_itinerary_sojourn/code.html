@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sojourn | Europe 2025 Itinerary</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;family=Inter:wght@400;600&amp;family=JetBrains+Mono:wght@450&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c5c6cd;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #75777d;
+        }
+        .gantt-grid {
+            background-size: 40px 100%;
+            background-image: linear-gradient(to right, #eceef0 1px, transparent 1px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-fixed": "#131b2e",
+                      "error": "#ba1a1a",
+                      "on-secondary": "#ffffff",
+                      "surface-tint": "#545f73",
+                      "outline-variant": "#c5c6cd",
+                      "tertiary-fixed-dim": "#bec6e0",
+                      "on-tertiary-fixed-variant": "#3f465c",
+                      "on-secondary-fixed": "#0d1c2f",
+                      "surface-container-highest": "#e0e3e5",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-low": "#f2f4f6",
+                      "on-error-container": "#93000a",
+                      "tertiary-container": "#20283c",
+                      "on-surface": "#191c1e",
+                      "primary": "#091426",
+                      "on-tertiary-container": "#888fa7",
+                      "outline": "#75777d",
+                      "on-primary-fixed-variant": "#3c475a",
+                      "secondary-container": "#d5e3fd",
+                      "surface-bright": "#f7f9fb",
+                      "surface-variant": "#e0e3e5",
+                      "inverse-on-surface": "#eff1f3",
+                      "primary-container": "#1e293b",
+                      "primary-fixed": "#d8e3fb",
+                      "inverse-primary": "#bcc7de",
+                      "tertiary-fixed": "#dae2fd",
+                      "secondary-fixed": "#d5e3fd",
+                      "surface-dim": "#d8dadc",
+                      "tertiary": "#0b1426",
+                      "on-primary-fixed": "#111c2d",
+                      "on-primary-container": "#8590a6",
+                      "primary-fixed-dim": "#bcc7de",
+                      "on-background": "#191c1e",
+                      "surface-container": "#eceef0",
+                      "on-surface-variant": "#45474c",
+                      "error-container": "#ffdad6",
+                      "background": "#f7f9fb",
+                      "on-error": "#ffffff",
+                      "secondary": "#515f74",
+                      "surface-container-high": "#e6e8ea",
+                      "surface": "#f7f9fb",
+                      "secondary-fixed-dim": "#b9c7e0",
+                      "inverse-surface": "#2d3133",
+                      "on-primary": "#ffffff",
+                      "on-secondary-fixed-variant": "#3a485c",
+                      "on-secondary-container": "#57657b",
+                      "on-tertiary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "container-max": "1280px",
+                      "gutter": "16px",
+                      "margin-desktop": "32px",
+                      "unit": "4px",
+                      "margin-mobile": "16px"
+              },
+              "fontFamily": {
+                      "headline-md": ["Hanken Grotesk"],
+                      "data-mono": ["JetBrains Mono"],
+                      "body-sm": ["Inter"],
+                      "body-base": ["Inter"],
+                      "headline-lg-mobile": ["Hanken Grotesk"],
+                      "label-caps": ["Inter"],
+                      "display-lg": ["Hanken Grotesk"]
+              },
+              "fontSize": {
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "data-mono": ["12px", {"lineHeight": "16px", "fontWeight": "450"}],
+                      "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                      "body-base": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background font-body-base overflow-hidden">
+<!-- Shell Structure: SideNav + (TopAppBar + Content) -->
+<div class="flex h-screen w-full">
+<!-- SideNavBar (JSON Derived) -->
+<aside class="fixed left-0 top-0 h-full z-40 flex flex-col items-center py-gutter bg-surface-container-low dark:bg-surface-container-lowest border-r border-outline-variant dark:border-outline docked left h-full w-20 md:w-64">
+<div class="w-full px-6 mb-12">
+<h1 class="text-headline-md font-headline-md font-extrabold text-primary dark:text-inverse-primary">Sojourn</h1>
+<p class="text-label-caps font-label-caps text-on-surface-variant">Slow Travel</p>
+</div>
+<nav class="w-full flex flex-col gap-1">
+<!-- Tab: My Trips (Active) -->
+<a class="flex items-center gap-4 px-6 py-3 text-primary dark:text-inverse-primary font-bold border-r-2 border-primary hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+<span class="text-label-caps font-label-caps hidden md:block">My Trips</span>
+</a>
+<!-- Tab: Places -->
+<a class="flex items-center gap-4 px-6 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+<span class="text-label-caps font-label-caps hidden md:block">Places</span>
+</a>
+<!-- Tab: Settings -->
+<a class="flex items-center gap-4 px-6 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-label-caps font-label-caps hidden md:block">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-6 w-full">
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-container-high transition-colors cursor-pointer">
+<img alt="User Profile" class="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfG0niGzFsisGnGZE1XihQU7_zSKwEOho7FdkrSHi0oJ7EQk2AQ-gyAJaSqW6YqZz2ExEoNPhtNxJBBQ3_S05o3llS2kj_2zP6wWD-iZU2CcfqEFlR3JYOcrhDilydTxLyUkgHgwLe1ul0fi54QA2WHFrbMZC3L5vwAej5iG9ypNUVNLY-nHWU8msMzJN1ExApQeqsHB0cRnADINmC-JX_OJlF0uuQ2QTpxn9md8q6RL_ZYOzJ7ZHf-zRezHuKyV3j3mCa22jf-dw"/>
+<div class="hidden md:block">
+<p class="text-body-sm font-semibold">Alex Rivera</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wider">Premium Plan</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Canvas Area -->
+<main class="flex-1 ml-20 md:ml-64 flex flex-col h-full overflow-hidden">
+<!-- TopAppBar (JSON Derived) -->
+<header class="flex justify-between items-center w-full px-margin-desktop h-16 sticky top-0 z-30 bg-surface dark:bg-surface border-b border-outline-variant dark:border-outline docked full-width top">
+<div class="flex items-center gap-8">
+<h2 class="text-headline-md font-headline-md text-on-surface dark:text-on-surface">Trip Planner</h2>
+<nav class="hidden md:flex gap-6 h-full items-center">
+<a class="text-primary dark:text-inverse-primary border-b-2 border-primary pb-1 text-label-caps font-label-caps hover:text-primary transition-opacity" href="#">Itinerary</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant text-label-caps font-label-caps hover:text-primary transition-opacity" href="#">Trip Map</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-primary text-on-primary px-4 py-2 rounded font-label-caps text-label-caps hover:opacity-90 transition-opacity">New Trip</button>
+<button class="border border-outline-variant text-on-surface px-4 py-2 rounded font-label-caps text-label-caps hover:bg-surface-container-low transition-opacity">Backup</button>
+<div class="flex items-center gap-2 border-l border-outline-variant pl-4 ml-2">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary" data-icon="dark_mode">dark_mode</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary" data-icon="more_vert">more_vert</span>
+</div>
+</div>
+</header>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto p-margin-desktop space-y-8">
+<!-- Trip Metadata Section -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap- gutter">
+<div class="md:col-span-2 bg-surface-container-low p-6 border border-outline-variant rounded-lg flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="px-2 py-0.5 bg-primary text-on-primary text-[10px] font-bold tracking-widest uppercase rounded-sm">Active Trip</span>
+<h1 class="text-display-lg font-display-lg text-primary">Europe 2025</h1>
+</div>
+<p class="text-on-surface-variant font-data-mono">APR 12, 2025 — JUL 08, 2025</p>
+</div>
+<div class="mt-6 flex gap-6">
+<div>
+<p class="text-label-caps font-label-caps text-on-surface-variant mb-1">TOTAL DURATION</p>
+<p class="text-headline-md font-headline-md">88 Days</p>
+</div>
+<div>
+<p class="text-label-caps font-label-caps text-on-surface-variant mb-1">LOCATIONS</p>
+<p class="text-headline-md font-headline-md">12 Cities</p>
+</div>
+<div>
+<p class="text-label-caps font-label-caps text-on-surface-variant mb-1">BUDGET TRACKER</p>
+<p class="text-headline-md font-headline-md">€12,400</p>
+</div>
+</div>
+</div>
+<!-- Schengen Tracker -->
+<div class="bg-surface-container-low p-6 border border-outline-variant rounded-lg">
+<div class="flex justify-between items-start mb-4">
+<p class="text-label-caps font-label-caps text-on-surface-variant">SCHENGEN STAY</p>
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="info">info</span>
+</div>
+<div class="relative w-32 h-32 mx-auto mb-4">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-outline-variant" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-dasharray="364.4" stroke-dashoffset="100" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-headline-md font-headline-md">72/90</span>
+<span class="text-[10px] font-label-caps text-on-surface-variant">DAYS USED</span>
+</div>
+</div>
+<p class="text-body-sm text-center text-on-surface-variant">18 days remaining in period</p>
+</div>
+<!-- Weather / Rapid Info -->
+<div class="bg-surface-container-low p-6 border border-outline-variant rounded-lg space-y-4">
+<div>
+<p class="text-label-caps font-label-caps text-on-surface-variant mb-2">CURRENT STOP: LISBON</p>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="wb_sunny">wb_sunny</span>
+<div>
+<p class="text-headline-md font-headline-md">24°C</p>
+<p class="text-body-sm text-on-surface-variant">Sunny, Low 18°C</p>
+</div>
+</div>
+</div>
+<div class="pt-4 border-t border-outline-variant">
+<p class="text-label-caps font-label-caps text-on-surface-variant mb-2">NEXT SEGMENT</p>
+<div class="flex justify-between items-center">
+<p class="font-semibold text-body-base">Lisbon → Madrid</p>
+<span class="text-data-mono text-on-surface-variant">In 4 days</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Dense Data Table: Segments -->
+<section class="bg-surface border border-outline-variant rounded-lg overflow-hidden shadow-sm">
+<div class="p-4 bg-surface-container border-b border-outline-variant flex justify-between items-center">
+<h3 class="text-label-caps font-label-caps text-primary">ITINERARY SEGMENTS</h3>
+<div class="flex gap-2">
+<button class="p-1 hover:bg-surface-container-high rounded transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="filter_list">filter_list</span>
+</button>
+<button class="p-1 hover:bg-surface-container-high rounded transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-4 py-3 text-label-caps font-label-caps text-on-surface-variant uppercase">City / Country</th>
+<th class="px-4 py-3 text-label-caps font-label-caps text-on-surface-variant uppercase">Dates</th>
+<th class="px-4 py-3 text-label-caps font-label-caps text-on-surface-variant uppercase text-center">Days</th>
+<th class="px-4 py-3 text-label-caps font-label-caps text-on-surface-variant uppercase text-center">Cum.</th>
+<th class="px-4 py-3 text-label-caps font-label-caps text-on-surface-variant uppercase text-center">Docs</th>
+<th class="px-4 py-3 text-label-caps font-label-caps text-on-surface-variant uppercase text-center">Schengen</th>
+<th class="px-4 py-3 text-label-caps font-label-caps text-on-surface-variant uppercase text-right">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors h-[40px]">
+<td class="px-4 py-2 font-semibold text-body-base">Lisbon, Portugal</td>
+<td class="px-4 py-2 font-data-mono text-on-surface-variant">12 Apr — 20 Apr</td>
+<td class="px-4 py-2 text-center font-data-mono">8</td>
+<td class="px-4 py-2 text-center font-data-mono text-outline">8</td>
+<td class="px-4 py-2 text-center">
+<div class="flex justify-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-on-surface" data-icon="flight" title="Flight Booked">flight</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface" data-icon="bed" title="Hotel Booked">bed</span>
+</div>
+</td>
+<td class="px-4 py-2 text-center">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="check_circle">check_circle</span>
+</td>
+<td class="px-4 py-2 text-right">
+<span class="px-2 py-0.5 rounded-[2px] bg-secondary-container/30 text-secondary text-[10px] font-bold uppercase">Completed</span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors h-[40px]">
+<td class="px-4 py-2 font-semibold text-body-base">Madrid, Spain</td>
+<td class="px-4 py-2 font-data-mono text-on-surface-variant">20 Apr — 28 Apr</td>
+<td class="px-4 py-2 text-center font-data-mono">8</td>
+<td class="px-4 py-2 text-center font-data-mono text-outline">16</td>
+<td class="px-4 py-2 text-center">
+<div class="flex justify-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-on-surface" data-icon="train">train</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface" data-icon="bed" title="Hotel Booked">bed</span>
+</div>
+</td>
+<td class="px-4 py-2 text-center">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="check_circle">check_circle</span>
+</td>
+<td class="px-4 py-2 text-right">
+<span class="px-2 py-0.5 rounded-[2px] bg-primary text-on-primary text-[10px] font-bold uppercase animate-pulse">In Progress</span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors h-[40px]">
+<td class="px-4 py-2 font-semibold text-body-base">Bordeaux, France</td>
+<td class="px-4 py-2 font-data-mono text-on-surface-variant">28 Apr — 05 May</td>
+<td class="px-4 py-2 text-center font-data-mono">7</td>
+<td class="px-4 py-2 text-center font-data-mono text-outline">23</td>
+<td class="px-4 py-2 text-center">
+<div class="flex justify-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-outline-variant" data-icon="train">train</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface" data-icon="bed" title="Hotel Booked">bed</span>
+</div>
+</td>
+<td class="px-4 py-2 text-center">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="check_circle">check_circle</span>
+</td>
+<td class="px-4 py-2 text-right">
+<span class="px-2 py-0.5 rounded-[2px] bg-surface-container-highest text-on-surface-variant text-[10px] font-bold uppercase">Planned</span>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors h-[40px]">
+<td class="px-4 py-2 font-semibold text-body-base">London, UK</td>
+<td class="px-4 py-2 font-data-mono text-on-surface-variant">05 May — 15 May</td>
+<td class="px-4 py-2 text-center font-data-mono">10</td>
+<td class="px-4 py-2 text-center font-data-mono text-outline">23</td>
+<td class="px-4 py-2 text-center">
+<div class="flex justify-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-outline-variant" data-icon="flight">flight</span>
+<span class="material-symbols-outlined text-[16px] text-outline-variant" data-icon="bed">bed</span>
+</div>
+</td>
+<td class="px-4 py-2 text-center">
+<span class="material-symbols-outlined text-[16px] text-outline-variant" data-icon="cancel">cancel</span>
+</td>
+<td class="px-4 py-2 text-right">
+<span class="px-2 py-0.5 rounded-[2px] bg-error-container/40 text-error text-[10px] font-bold uppercase">Pending Docs</span>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-low transition-colors h-[40px]">
+<td class="px-4 py-2 font-semibold text-body-base">Amsterdam, NL</td>
+<td class="px-4 py-2 font-data-mono text-on-surface-variant">15 May — 22 May</td>
+<td class="px-4 py-2 text-center font-data-mono">7</td>
+<td class="px-4 py-2 text-center font-data-mono text-outline">30</td>
+<td class="px-4 py-2 text-center">
+<div class="flex justify-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-outline-variant" data-icon="flight">flight</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface" data-icon="bed">bed</span>
+</div>
+</td>
+<td class="px-4 py-2 text-center">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="check_circle">check_circle</span>
+</td>
+<td class="px-4 py-2 text-right">
+<span class="px-2 py-0.5 rounded-[2px] bg-surface-container-highest text-on-surface-variant text-[10px] font-bold uppercase">Planned</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Gantt Chart Timeline -->
+<section class="bg-surface border border-outline-variant rounded-lg overflow-hidden">
+<div class="p-4 bg-surface-container border-b border-outline-variant flex justify-between items-center">
+<h3 class="text-label-caps font-label-caps text-primary">TRIP GANTT VIEW (90 DAY WINDOW)</h3>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-[10px] font-label-caps uppercase text-on-surface-variant">Schengen</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-outline-variant"></span>
+<span class="text-[10px] font-label-caps uppercase text-on-surface-variant">Non-Schengen</span>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto">
+<div class="min-w-[1200px] gantt-grid p-4 pb-8 space-y-3 relative">
+<!-- Timeline Header -->
+<div class="flex mb-4">
+<div class="w-40 flex-shrink-0"></div>
+<div class="flex-1 flex text-[10px] font-data-mono text-on-surface-variant">
+<div class="w-[120px] text-center border-l border-outline-variant">APR 12</div>
+<div class="w-[120px] text-center border-l border-outline-variant">APR 22</div>
+<div class="w-[120px] text-center border-l border-outline-variant">MAY 02</div>
+<div class="w-[120px] text-center border-l border-outline-variant">MAY 12</div>
+<div class="w-[120px] text-center border-l border-outline-variant">MAY 22</div>
+<div class="w-[120px] text-center border-l border-outline-variant">JUN 01</div>
+<div class="w-[120px] text-center border-l border-outline-variant">JUN 11</div>
+<div class="w-[120px] text-center border-l border-outline-variant">JUN 21</div>
+</div>
+</div>
+<!-- Bar 1 -->
+<div class="flex items-center">
+<div class="w-40 text-label-caps font-label-caps flex-shrink-0">LISBON</div>
+<div class="flex-1 relative h-6">
+<div class="absolute left-0 w-[96px] h-full bg-secondary-container rounded-[2px] border border-outline-variant flex items-center px-2">
+<span class="text-[9px] font-bold text-on-secondary-container truncate uppercase">Completed</span>
+</div>
+</div>
+</div>
+<!-- Bar 2 -->
+<div class="flex items-center">
+<div class="w-40 text-label-caps font-label-caps flex-shrink-0">MADRID</div>
+<div class="flex-1 relative h-6">
+<div class="absolute left-[96px] w-[96px] h-full bg-primary rounded-[2px] flex items-center px-2">
+<span class="text-[9px] font-bold text-white truncate uppercase">Current</span>
+</div>
+</div>
+</div>
+<!-- Bar 3 -->
+<div class="flex items-center">
+<div class="w-40 text-label-caps font-label-caps flex-shrink-0">BORDEAUX</div>
+<div class="flex-1 relative h-6">
+<div class="absolute left-[192px] w-[84px] h-full bg-surface-container-highest border border-outline-variant rounded-[2px] flex items-center px-2">
+<span class="text-[9px] font-bold text-on-surface-variant truncate uppercase">Planned</span>
+</div>
+</div>
+</div>
+<!-- Bar 4 (Overlap / Buffer Example) -->
+<div class="flex items-center">
+<div class="w-40 text-label-caps font-label-caps flex-shrink-0">LONDON</div>
+<div class="flex-1 relative h-6">
+<div class="absolute left-[276px] w-[120px] h-full bg-surface-container-low border border-dashed border-outline-variant rounded-[2px] flex items-center px-2">
+<span class="text-[9px] font-bold text-on-surface-variant truncate uppercase">Non-Schengen</span>
+</div>
+</div>
+</div>
+<!-- Bar 5 -->
+<div class="flex items-center">
+<div class="w-40 text-label-caps font-label-caps flex-shrink-0">AMSTERDAM</div>
+<div class="flex-1 relative h-6">
+<div class="absolute left-[396px] w-[84px] h-full bg-surface-container-highest border border-outline-variant rounded-[2px] flex items-center px-2">
+<span class="text-[9px] font-bold text-on-surface-variant truncate uppercase">Planned</span>
+</div>
+</div>
+</div>
+<!-- Current Day Marker -->
+<div class="absolute top-0 bottom-0 left-[220px] w-px border-l border-dashed border-error pointer-events-none z-10">
+<div class="bg-error text-white text-[8px] px-1 py-0.5 absolute -top-1 -left-4 font-bold">TODAY</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+<!-- Micro-interaction for Table Rows -->
+<script>
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', () => {
+                // Remove active from others
+                document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('bg-primary-container', 'text-on-primary-container'));
+                // Just a mock interaction
+                console.log('Segment selected:', row.cells[0].innerText);
+            });
+        });
+
+        // Simple tooltip mock
+        document.querySelectorAll('[title]').forEach(el => {
+            el.addEventListener('mouseenter', (e) => {
+                const title = el.getAttribute('title');
+                // Could spawn a minimalist floating tooltip here
+            });
+        });
+    </script>
+</body></html>
