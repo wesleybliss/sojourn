@@ -39,7 +39,7 @@ const Sidebar = () => {
         <aside
             className="section-card flex w-full shrink-0 flex-col overflow-hidden border-none
                 bg-sidebar text-sidebar-foreground md:w-auto md:max-w-[18rem]
-                lg:sticky lg:top-5 lg:h-[calc(100vh-2.5rem)] lg:w-[17.5rem]">
+                lg:sticky lg:h-[calc(100vh-1.5rem)] lg:w-[17.5rem]">
             <div className="border-b border-sidebar-border/70 px-5 py-5">
                 <Link href="/" className="block">
                     <div className="eyebrow mb-2">Slow Travel</div>

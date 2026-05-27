@@ -30,8 +30,8 @@ const AppShell = ({ children }: AppShellProps) => {
         
         <div className={shellBackgroundClassName}>
             <div
-                className="mx-auto flex min-h-screen w-full max-w-[1800px] flex-col gap-4 px-3 py-3
-                    lg:flex-row lg:px-5 lg:py-5">
+                className="mx-auto flex min-h-screen w-full max-w-[1800px] flex-col gap-2 px-1 py-1
+                    lg:flex-row lg:px-2 lg:py-2">
                 <Sidebar />
                 <div
                     className={cn(

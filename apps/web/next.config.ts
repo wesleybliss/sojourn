@@ -11,10 +11,7 @@ dotenv.config({
 const nextConfig: NextConfig = {
     reactStrictMode: true,
     transpilePackages: ['@repo/shared'],
-    // Shuffle env vars via NEXT_PUBLIC_* prefix in .env
-    // env: {
-    //   MY_VAR: process.env.MY_VAR,
-    // },
+    devIndicators: false,
 }
 
 export default nextConfig

@@ -212,11 +212,11 @@ html[data-theme='dark'] {
 
 @layer components {
     .app-panel {
-        @apply rounded-[28px] border border-border/70 bg-surface-container-lowest shadow-[0_24px_80px_-40px_rgba(9,20,38,0.35)];
+        @apply rounded-[9px] border border-border/70 bg-surface-container-lowest shadow-[0_24px_80px_-40px_rgba(9,20,38,0.35)];
     }
 
     .section-card {
-        @apply rounded-3xl border border-border/70 bg-surface-container-lowest shadow-sm;
+        @apply rounded-lg border border-border/70 bg-surface-container-lowest shadow-sm;
     }
 
     .eyebrow {

@@ -5,7 +5,7 @@ export const APP_SLUG = 'sojourn'
 
 const { key, getPrefixedKeys } = rwp.utils
 
-export const NS = 'sojourn-basic'
+export const NS = 'sojourn'
 
 //
 
