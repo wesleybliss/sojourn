@@ -32,7 +32,11 @@ const navigationItems = [
 const Sidebar = () => {
     
     const pathname = usePathname()
-    const { user } = useAuth()
+    const { firebaseUser, loading, user } = useAuth()
+    
+    const displayName = user?.name || firebaseUser?.displayName || user?.email || firebaseUser?.email || 'Member'
+    const displayEmail = user?.email || firebaseUser?.email || ''
+    const showSignedInState = Boolean(firebaseUser)
     
     return (
         
@@ -94,18 +98,27 @@ const Sidebar = () => {
             </nav>
             
             <div className="border-t border-sidebar-border/70 p-4">
-                {user ? (
+                {showSignedInState ? (
                     <div
                         className="flex items-center gap-3 rounded-2xl bg-sidebar-accent/70
                             px-3 py-3">
-                        <Gravatar
-                            user={user}
-                            className="flex size-11 items-center justify-center overflow-hidden"
-                            imageClassName="h-full w-full object-cover"
-                            size={44} />
+                        {user ? (
+                            <Gravatar
+                                user={user}
+                                className="flex size-11 items-center justify-center overflow-hidden"
+                                imageClassName="h-full w-full object-cover"
+                                size={44} />
+                        ) : (
+                            <div
+                                className="flex size-11 items-center justify-center overflow-hidden
+                                    rounded-full bg-sidebar-primary text-sm font-semibold
+                                    text-sidebar-primary-foreground">
+                                {displayName.substring(0, 1).toUpperCase()}
+                            </div>
+                        )}
                         <div className="min-w-0">
                             <div className="truncate text-sm font-semibold">
-                                {user.name || user.email}
+                                {displayName}
                             </div>
                             <div className="mt-1 flex items-center gap-2">
                                 <span
@@ -115,7 +128,11 @@ const Sidebar = () => {
                                     Member
                                 </span>
                                 <span className="truncate text-xs text-sidebar-foreground/55">
-                                    {user.email}
+                                    {displayEmail || (
+                                        loading
+                                            ? 'Loading profile...'
+                                            : 'Authenticated'
+                                    )}
                                 </span>
                             </div>
                         </div>
