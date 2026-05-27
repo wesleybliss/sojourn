@@ -1,4 +1,4 @@
-# Task: Integrate Turso Local-First Offline Sync in Next Trip Planner
+# Task: Integrate Turso Local-First Offline Sync in Next Sojourn
 
 ## Overview
 

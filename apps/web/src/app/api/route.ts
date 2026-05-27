@@ -11,7 +11,7 @@ export async function GET() {
     const pkg = JSON.parse(fs.readFileSync(packageUri, 'utf-8'))
     
     return apiResponse.ok({
-        message: `Trip Planner ${dayjs().format()}`,
+        message: `Sojourn ${dayjs().format()}`,
         data: {
             ok: true,
             version: pkg.version,

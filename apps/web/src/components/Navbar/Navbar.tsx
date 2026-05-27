@@ -25,7 +25,7 @@ const Navbar = () => {
                     
                     <div className="text-sm font-bold opacity-70">
                         <Link href="/">
-                            Trip Planner
+                            Sojourn
                         </Link>
                     </div>
                     

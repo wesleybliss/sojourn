@@ -43,7 +43,7 @@ export default function InviteCodeForm() {
             const data = await response.json()
             
             if (response.ok) {
-                toast.success('Access granted! Welcome to Trip Planner.')
+                toast.success('Access granted! Welcome to Sojourn.')
                 await refreshUser()
             } else {
                 toast.error(data.error || 'Invalid invite code')

@@ -1,4 +1,4 @@
-# Trip Planner
+# Sojourn
 
 A comprehensive trip planning application designed to help travelers organize itineraries, visualize schedules, and track important details like Schengen zone days. Built with Next 15, Drizzle ORM, and Tailwind CSS.
 
