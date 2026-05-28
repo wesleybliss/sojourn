@@ -1,7 +1,7 @@
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
-import { apiResponse } from '@repo/shared/utils/api'
-import { isUserTripMember, withAuth } from '@repo/shared/utils/auth'
+import { apiResponseDeprecated } from '@repo/shared/utils/api'
+import { isUserTripMember, withAuthDeprecated } from '@repo/shared/utils/auth'
 import { and, eq, inArray } from 'drizzle-orm'
 
 const handler = async (request: Request, context: { auth: any, params: Promise<any> }) => {
@@ -19,24 +19,24 @@ const handler = async (request: Request, context: { auth: any, params: Promise<a
       } = body
       
       if (!tripId)
-        return apiResponse.invalidParams('Param tripId is required')
+        return apiResponseDeprecated.invalidParams('Param tripId is required')
       
       if (!planId)
-        return apiResponse.invalidParams('Param planId is required')
+        return apiResponseDeprecated.invalidParams('Param planId is required')
       
       if (!name?.length)
-        return apiResponse.invalidParams('Param name is required')
+        return apiResponseDeprecated.invalidParams('Param name is required')
       
       if (!startDate?.length)
-        return apiResponse.invalidParams('Param startDate is required')
+        return apiResponseDeprecated.invalidParams('Param startDate is required')
       
       if (!endDate?.length)
-        return apiResponse.invalidParams('Param endDate is required')
+        return apiResponseDeprecated.invalidParams('Param endDate is required')
       
       const isMember = await isUserTripMember(context.auth, tripId)
       
       if (!isMember)
-        return apiResponse.forbidden()
+        return apiResponseDeprecated.forbidden()
       
       const [createdSegment] = await db
           .insert(schemas.segments)
@@ -50,13 +50,13 @@ const handler = async (request: Request, context: { auth: any, params: Promise<a
           })
           .returning()
       
-      return apiResponse.ok({
+      return apiResponseDeprecated.ok({
         message: 'Segment created successfully',
         data: createdSegment,
       })
     } catch (e) {
       console.error('Error creating segment:', e)
-      return apiResponse.internalServerError()
+      return apiResponseDeprecated.internalServerError()
     }
   } else if (request.method === 'DELETE') {
     try {
@@ -64,18 +64,18 @@ const handler = async (request: Request, context: { auth: any, params: Promise<a
       const { tripId, planId, segmentIds } = body
       
       if (!Array.isArray(segmentIds) || !segmentIds.length)
-        return apiResponse.invalidParams('Param segmentIds is required and must be non-empty array')
+        return apiResponseDeprecated.invalidParams('Param segmentIds is required and must be non-empty array')
       
       if (!tripId)
-        return apiResponse.invalidParams('Param tripId is required')
+        return apiResponseDeprecated.invalidParams('Param tripId is required')
       
       if (!planId)
-        return apiResponse.invalidParams('Param planId is required')
+        return apiResponseDeprecated.invalidParams('Param planId is required')
       
       const isMember = await isUserTripMember(context.auth, tripId)
       
       if (!isMember)
-        return apiResponse.forbidden()
+        return apiResponseDeprecated.forbidden()
       
       await db.transaction(async tx => {
           await tx.delete(schemas.segments)
@@ -86,10 +86,10 @@ const handler = async (request: Request, context: { auth: any, params: Promise<a
               ))
       })
       
-      return apiResponse.okMessage('Segments deleted successfully')
+      return apiResponseDeprecated.okMessage('Segments deleted successfully')
     } catch (e) {
       console.error('Error deleting segments:', e)
-      return apiResponse.internalServerError()
+      return apiResponseDeprecated.internalServerError()
     }
   } else {
     return new Response(
@@ -99,4 +99,4 @@ const handler = async (request: Request, context: { auth: any, params: Promise<a
   }
 }
 
-export default withAuth(handler)
+export default withAuthDeprecated(handler)

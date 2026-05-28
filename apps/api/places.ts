@@ -1,16 +1,16 @@
 import placesRepo from '@repo/shared/db/repos/places'
 import { getRandomUnsplashImageUrl } from '@repo/shared/utils'
-import { apiResponse } from '@repo/shared/utils/api'
-import { withAuth } from '@repo/shared/utils/auth'
+import { apiResponseDeprecated } from '@repo/shared/utils/api'
+import { withAuthDeprecated } from '@repo/shared/utils/auth'
 
 const handler = async (request: Request, context: { auth: any, params: Promise<any> }) => {
   if (request.method === 'GET') {
     try {
       const places = await placesRepo.findAll()
-      return apiResponse.ok({ data: places })
+      return apiResponseDeprecated.ok({ data: places })
     } catch (e) {
       console.error('Error getting places:', e)
-      return apiResponse.internalServerError()
+      return apiResponseDeprecated.internalServerError()
     }
   } else if (request.method === 'POST') {
     try {
@@ -26,7 +26,7 @@ const handler = async (request: Request, context: { auth: any, params: Promise<a
       } = body
 
       if (!name?.length)
-        return apiResponse.invalidParams('Param "name" required')
+        return apiResponseDeprecated.invalidParams('Param "name" required')
 
       const coverImageUrl = await getRandomUnsplashImageUrl(name)
 
@@ -41,10 +41,10 @@ const handler = async (request: Request, context: { auth: any, params: Promise<a
         isBookmarked,
       })
 
-      return apiResponse.ok({ data: newPlace })
+      return apiResponseDeprecated.ok({ data: newPlace })
     } catch (e) {
       console.error('Error creating new place:', e)
-      return apiResponse.internalServerError()
+      return apiResponseDeprecated.internalServerError()
     }
   } else {
     return new Response(
@@ -54,4 +54,4 @@ const handler = async (request: Request, context: { auth: any, params: Promise<a
   }
 }
 
-export default withAuth(handler)
+export default withAuthDeprecated(handler)

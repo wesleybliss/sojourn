@@ -1,7 +1,7 @@
 import db from '@repo/shared/db/index'
 import * as schemas from '@repo/shared/db/schema'
-import { apiResponse } from '@repo/shared/utils/api'
-import { isUserTripMember, withAuth } from '@repo/shared/utils/auth'
+import { apiResponseDeprecated } from '@repo/shared/utils/api'
+import { isUserTripMember, withAuthDeprecated } from '@repo/shared/utils/auth'
 import { eq } from 'drizzle-orm'
 
 const handler = async (request: Request, context: { auth: any, params: Promise<{ planId: string }> }) => {
@@ -15,22 +15,22 @@ const handler = async (request: Request, context: { auth: any, params: Promise<{
       const isMember = await isUserTripMember(context.auth, tripId)
       
       if (!isMember)
-        return apiResponse.forbidden()
+        return apiResponseDeprecated.forbidden()
       
       if (!planId || isNaN(parseInt(planId, 10)))
-        return apiResponse.badRequest('Invalid plan ID')
+        return apiResponseDeprecated.badRequest('Invalid plan ID')
       
       const [plan] = await db.select()
           .from(schemas.plans)
           .where(eq(schemas.plans.id, parseInt(planId, 10)))
       
       if (!plan)
-        return apiResponse.notFound('Plan')
+        return apiResponseDeprecated.notFound('Plan')
       
-      return apiResponse.ok({ data: plan })
+      return apiResponseDeprecated.ok({ data: plan })
     } catch (e) {
       console.error('Error fetching plan:', e)
-      return apiResponse.internalServerError()
+      return apiResponseDeprecated.internalServerError()
     }
   } else if (request.method === 'PUT') {
     try {
@@ -40,19 +40,19 @@ const handler = async (request: Request, context: { auth: any, params: Promise<{
       const tripId = body.tripId
       
       if (!planId || isNaN(parseInt(planId, 10)))
-        return apiResponse.invalidParams('Plan')
+        return apiResponseDeprecated.invalidParams('Plan')
       
       const isMember = await isUserTripMember(context.auth, tripId)
       
       if (!isMember)
-        return apiResponse.forbidden()
+        return apiResponseDeprecated.forbidden()
       
       const [plan] = await db.select()
           .from(schemas.plans)
           .where(eq(schemas.plans.id, parseInt(planId, 10)))
       
       if (!plan)
-        return apiResponse.notFound('Plan')
+        return apiResponseDeprecated.notFound('Plan')
       
       const [updatedPlan] = await db
           .update(schemas.plans)
@@ -64,22 +64,22 @@ const handler = async (request: Request, context: { auth: any, params: Promise<{
           .returning()
       
       if (!updatedPlan)
-        return apiResponse.notFound('Plan')
+        return apiResponseDeprecated.notFound('Plan')
       
-      return apiResponse.ok({
+      return apiResponseDeprecated.ok({
         message: 'Plan updated successfully',
         data: updatedPlan,
       })
     } catch (e) {
       console.error('Error updating plan:', e)
-      return apiResponse.internalServerError()
+      return apiResponseDeprecated.internalServerError()
     }
   } else if (request.method === 'DELETE') {
     try {
       const { planId } = await context.params
       
       if (!planId || isNaN(parseInt(planId, 10)))
-        return apiResponse.invalidParams('Invalid plan ID')
+        return apiResponseDeprecated.invalidParams('Invalid plan ID')
       
       const [plan] = await db
           .select()
@@ -87,12 +87,12 @@ const handler = async (request: Request, context: { auth: any, params: Promise<{
           .where(eq(schemas.plans.id, parseInt(planId, 10)))
       
       if (!plan)
-        return apiResponse.notFound('Plan')
+        return apiResponseDeprecated.notFound('Plan')
       
       const isMember = await isUserTripMember(context.auth, plan.tripId)
       
       if (!isMember)
-        return apiResponse.forbidden()
+        return apiResponseDeprecated.forbidden()
       
       const [deletedPlan] = await db
           .delete(schemas.plans)
@@ -100,12 +100,12 @@ const handler = async (request: Request, context: { auth: any, params: Promise<{
           .returning()
       
       if (!deletedPlan)
-        return apiResponse.notFound('Plan')
+        return apiResponseDeprecated.notFound('Plan')
       
-      return apiResponse.okMessage('Plan deleted successfully')
+      return apiResponseDeprecated.okMessage('Plan deleted successfully')
     } catch (e) {
       console.error('Error deleting plan:', e)
-      return apiResponse.internalServerError()
+      return apiResponseDeprecated.internalServerError()
     }
   } else {
     return new Response(
@@ -115,4 +115,4 @@ const handler = async (request: Request, context: { auth: any, params: Promise<{
   }
 }
 
-export default withAuth(handler)
+export default withAuthDeprecated(handler)

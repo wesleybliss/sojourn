@@ -2,8 +2,8 @@ import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import HttpError from '@repo/shared/errors/HttpError'
 import { User } from '@repo/shared/types'
-import { apiResponse } from '@repo/shared/utils/api'
-import { authorize } from '@repo/shared/utils/auth'
+import { apiResponseDeprecated } from '@repo/shared/utils/api'
+import { authorizeDeprecated } from '@repo/shared/utils/auth'
 import { eq } from 'drizzle-orm'
 
 export default async function handler(request) {
@@ -11,8 +11,8 @@ export default async function handler(request) {
 
   if (method === 'GET') {
     try {
-      const { user } = await authorize(request)
-      return apiResponse.ok<{ user: Partial<User>, needsInviteCode: boolean }>({
+      const { user } = await authorizeDeprecated(request)
+      return apiResponseDeprecated.ok<{ user: Partial<User>, needsInviteCode: boolean }>({
         data: {
           user: {
             id: user.id,
@@ -26,14 +26,14 @@ export default async function handler(request) {
       })
     } catch (e: unknown) {
       if (e instanceof HttpError)
-        return apiResponse.fail((e as Error).message, e.status)
+        return apiResponseDeprecated.fail((e as Error).message, e.status)
 
       console.error('Error in GET /api/auth/user:', e)
-      return apiResponse.internalServerError()
+      return apiResponseDeprecated.internalServerError()
     }
   } else if (method === 'POST') {
     try {
-      const { user } = await authorize(request)
+      const { user } = await authorizeDeprecated(request)
       const body = await request.json()
       const { inviteCode } = body
 
@@ -49,7 +49,7 @@ export default async function handler(request) {
         throw new HttpError(400, 'Invalid invite code')
 
       if (user.enabled)
-        return apiResponse.ok<{ user: Partial<User>, needsInviteCode: boolean }>({
+        return apiResponseDeprecated.ok<{ user: Partial<User>, needsInviteCode: boolean }>({
           message: 'User already enabled',
           data: {
             user: {
@@ -70,7 +70,7 @@ export default async function handler(request) {
         .where(eq(schemas.users.id, user.id))
         .returning()
 
-      return apiResponse.ok<{ user: Partial<User>, needsInviteCode: boolean }>({
+      return apiResponseDeprecated.ok<{ user: Partial<User>, needsInviteCode: boolean }>({
         message: 'Account enabled successfully',
         data: {
           user: {
@@ -85,10 +85,10 @@ export default async function handler(request) {
       })
     } catch (e: unknown) {
       if (e instanceof HttpError)
-        return apiResponse.fail((e as Error).message, e.status)
+        return apiResponseDeprecated.fail((e as Error).message, e.status)
 
       console.error('Error in POST /api/auth/user:', e)
-      return apiResponse.internalServerError()
+      return apiResponseDeprecated.internalServerError()
     }
   } else {
     return new Response('Method Not Allowed', { status: 405 })

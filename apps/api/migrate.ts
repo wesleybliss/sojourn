@@ -2,7 +2,7 @@ import db from '@repo/shared/db/index'
 import segmentsRepo from '@repo/shared/db/repos/segments'
 import tripsRepo from '@repo/shared/db/repos/trips'
 import * as schemas from '@repo/shared/db/schema'
-import { apiResponse } from '@repo/shared/utils/api'
+import { apiResponseDeprecated } from '@repo/shared/utils/api'
 import { eq } from 'drizzle-orm'
 
 const handler = async (request: Request, context: { auth: any, params: Promise<any> }) => {
@@ -53,13 +53,13 @@ const handler = async (request: Request, context: { auth: any, params: Promise<a
         })
       }
       
-      return apiResponse.ok({
+      return apiResponseDeprecated.ok({
         data: migrationResults,
         message: `Migration completed. ${migrationResults.length} trips processed.`,
       })
     } catch (e) {
       console.error('Error during migration:', e)
-      return apiResponse.internalServerError()
+      return apiResponseDeprecated.internalServerError()
     }
   } else {
     return new Response(

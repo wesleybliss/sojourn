@@ -93,6 +93,12 @@ importers:
       '@vercel/functions':
         specifier: ^3.4.3
         version: 3.6.0
+      ajv:
+        specifier: ^8.20.0
+        version: 8.20.0
+      dayjs:
+        specifier: ^1.11.20
+        version: 1.11.20
       drizzle-kit:
         specifier: 1.0.0-beta.22
         version: 1.0.0-beta.22
@@ -545,6 +551,9 @@ importers:
       '@vercel/blob':
         specifier: ^2.4.0
         version: 2.4.0
+      '@vercel/node':
+        specifier: ^5.8.5
+        version: 5.8.5
       ansi-styles:
         specifier: ^6.2.3
         version: 6.2.3

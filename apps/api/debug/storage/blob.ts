@@ -1,8 +1,8 @@
 import { Buffer } from 'node:buffer'
 
 import usersRepo from '@repo/shared/db/repos/users'
-import { apiResponse } from '@repo/shared/utils/api'
-import { withAuth } from '@repo/shared/utils/auth'
+import { apiResponseDeprecated } from '@repo/shared/utils/api'
+import { withAuthDeprecated } from '@repo/shared/utils/auth'
 import { putPlaceImageBuffer } from '@repo/shared/utils/storage/vercel-blob'
 
 const handler = async (request: Request, context: { auth: any, params: Promise<any> }) => {
@@ -11,17 +11,17 @@ const handler = async (request: Request, context: { auth: any, params: Promise<a
       const { userId } = context.auth
       
       if (!userId)
-        return apiResponse.unauthorized()
+        return apiResponseDeprecated.unauthorized()
       
       const user = await usersRepo.findOneById(userId)
       
       if (!user)
-        return apiResponse.notFound('User not found')
+        return apiResponseDeprecated.notFound('User not found')
       
       const { name, contentType, base64Data } = await request.json()
       
       if (!base64Data)
-        return apiResponse.invalidParams('Param "base64Data" is required')
+        return apiResponseDeprecated.invalidParams('Param "base64Data" is required')
       
       // Remove prefix (if any)
       const matches = base64Data.match(/^data:(.+);base64,(.+)$/)
@@ -35,11 +35,11 @@ const handler = async (request: Request, context: { auth: any, params: Promise<a
       
       const res = await putPlaceImageBuffer(name, contentType, buffer)
       
-      return apiResponse.ok({ data: res })
+      return apiResponseDeprecated.ok({ data: res })
       
     } catch (e) {
       console.error('Error uploading image to blob storage:', e)
-      return apiResponse.internalServerError()
+      return apiResponseDeprecated.internalServerError()
     }
   } else {
     return new Response(
@@ -49,4 +49,4 @@ const handler = async (request: Request, context: { auth: any, params: Promise<a
   }
 }
 
-export default withAuth(handler)
+export default withAuthDeprecated(handler)

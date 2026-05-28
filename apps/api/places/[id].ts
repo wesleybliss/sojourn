@@ -1,7 +1,7 @@
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
-import { apiResponse } from '@repo/shared/utils/api'
-import { withAuth } from '@repo/shared/utils/auth'
+import { apiResponseDeprecated } from '@repo/shared/utils/api'
+import { withAuthDeprecated } from '@repo/shared/utils/auth'
 import { eq } from 'drizzle-orm'
 
 const handler = async (request: Request, context: { auth: any, params: Promise<{ id: string }> }) => {
@@ -13,14 +13,14 @@ const handler = async (request: Request, context: { auth: any, params: Promise<{
       const body = await request.json()
 
       if (!placeId)
-        return apiResponse.badRequest(`Invalid place ID: "${placeId}"`)
+        return apiResponseDeprecated.badRequest(`Invalid place ID: "${placeId}"`)
 
       const [place] = await db.select()
         .from(schemas.places)
         .where(eq(schemas.places.id, placeId))
 
       if (!place)
-        return apiResponse.notFound('Place')
+        return apiResponseDeprecated.notFound('Place')
 
       const [updatedPlace] = await db
         .update(schemas.places)
@@ -38,15 +38,15 @@ const handler = async (request: Request, context: { auth: any, params: Promise<{
         .returning()
 
       if (!updatedPlace)
-        return apiResponse.notFound('Place')
+        return apiResponseDeprecated.notFound('Place')
 
-      return apiResponse.ok({
+      return apiResponseDeprecated.ok({
         message: 'Place updated successfully',
         data: updatedPlace,
       })
     } catch (e) {
       console.error('Error updating place:', e)
-      return apiResponse.internalServerError()
+      return apiResponseDeprecated.internalServerError()
     }
   } else {
     return new Response(
@@ -56,4 +56,4 @@ const handler = async (request: Request, context: { auth: any, params: Promise<{
   }
 }
 
-export default withAuth(handler)
+export default withAuthDeprecated(handler)

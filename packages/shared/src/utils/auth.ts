@@ -1,11 +1,30 @@
-import db from '@shared/db/index'
+import db from '@shared/db'
 import * as schemas from '@shared/db/schema'
 import HttpError from '@shared/errors/HttpError'
 import { ID } from '@shared/types/data'
 import { UserSelect } from '@shared/types/database'
 import { adminAuth } from '@shared/utils/firebase/admin'
+import { VercelRequest, VercelResponse } from '@vercel/node'
 import { and, eq, sql } from 'drizzle-orm'
 import { DecodedIdToken } from 'firebase-admin/auth'
+
+/** @deprecated use verifyFirebaseToken instead */
+const verifyFirebaseTokenDeprecated = async (request: Request): Promise<DecodedIdToken> => {
+    const authHeader = request.headers.get('Authorization')
+    
+    if (!authHeader || !authHeader.startsWith('Bearer '))
+        throw new HttpError(401, 'Missing or invalid authorization header')
+    
+    const idToken = authHeader.substring(7)
+    
+    try {
+        // Decoded token
+        return await adminAuth.verifyIdToken(idToken)
+    } catch (error) {
+        console.error('Firebase token verification failed:', error)
+        throw new HttpError(401, 'Invalid or expired token')
+    }
+}
 
 /**
  * Extracts and verifies Firebase ID token from request Authorization header.
@@ -14,8 +33,9 @@ import { DecodedIdToken } from 'firebase-admin/auth'
  * @returns Decoded Firebase token
  * @throws HttpError 401 - If token is missing or invalid
  */
-const verifyFirebaseToken = async (request: Request): Promise<DecodedIdToken> => {
-    const authHeader = request.headers.get('Authorization')
+const verifyFirebaseToken = async (request: VercelRequest): Promise<DecodedIdToken> => {
+    
+    const authHeader = request.headers.authorization
     
     if (!authHeader || !authHeader.startsWith('Bearer '))
         throw new HttpError(401, 'Missing or invalid authorization header')
@@ -103,12 +123,25 @@ const getOrCreateUser = async (firebaseUser: DecodedIdToken): Promise<UserSelect
     return newUser
 }
 
+/** @deprecated Use authorize instead */
+export const authorizeDeprecated = async (
+    request: Request,
+): Promise<{ user: UserSelect; firebaseToken: DecodedIdToken; userId: ID }> => {
+    
+    const firebaseToken = await verifyFirebaseTokenDeprecated(request)
+    
+    const user = await getOrCreateUser(firebaseToken)
+    
+    return { user, firebaseToken, userId: user.id }
+    
+}
+
 /**
  * Authorizes a user based on Firebase ID token from request.
  * Verifies Firebase token, gets or creates user in the database, and returns auth context.
  */
 export const authorize = async (
-    request: Request,
+    request: VercelRequest,
 ): Promise<{ user: UserSelect; firebaseToken: DecodedIdToken; userId: ID }> => {
     
     const firebaseToken = await verifyFirebaseToken(request)
@@ -125,19 +158,25 @@ export type AuthContext = {
     userId: ID
 }
 
-export type AuthHandlerContext<T = Record<string, never>> = {
+/** @deprecated Use AuthHandlerContext instead */
+export type AuthHandlerContextDeprecated<T = Record<string, never>> = {
     auth: AuthContext
     params: Promise<T>
 }
 
-export const withAuth = <T = Record<string, never>>(
-    handler: (_req: Request, _context: AuthHandlerContext<T>) => Promise<Response>,
-) => async (request: Request, context: Partial<AuthHandlerContext<T>> = {}) => {
+export type AuthHandlerContext = {
+    auth: AuthContext
+}
+
+/** @deprecated Use withAuth instead */
+export const withAuthDeprecated = <T = Record<string, never>>(
+    handler: (_req: Request, _context: AuthHandlerContextDeprecated<T>) => Promise<Response>,
+) => async (request: Request, context: Partial<AuthHandlerContextDeprecated<T>> = {}) => {
     
     try {
         
-        const auth = await authorize(request)
-        const newContext: AuthHandlerContext<T> = {
+        const auth = await authorizeDeprecated(request)
+        const newContext: AuthHandlerContextDeprecated<T> = {
             ...context,
             auth,
             params: context.params ?? Promise.resolve({} as T),
@@ -158,6 +197,36 @@ export const withAuth = <T = Record<string, never>>(
             JSON.stringify({ success: false, error: 'Internal Server Error' }),
             { status: 500, headers: { 'Content-Type': 'application/json' } },
         )
+        
+    }
+    
+}
+
+export const withAuth = (
+    handler: (
+        req: VercelRequest,
+        res: VercelResponse,
+        context: AuthContext,
+    ) => Promise<VercelResponse>,
+): (req: VercelRequest, res: VercelResponse) => Promise<VercelResponse> => {
+    
+    return async (req: VercelRequest, res: VercelResponse) => {
+        
+        try {
+            
+            const auth = await authorize(req)
+            
+            return await handler(req, res, auth)
+            
+        } catch (e) {
+            
+            if (e instanceof HttpError)
+                return res.status(e.status).json({ error: (e as HttpError).message })
+            
+            console.error('Authorization error:', e)
+            return res.status(500).json({ error: 'Internal Server Error' })
+            
+        }
         
     }
     

@@ -1,4 +1,6 @@
 import { createRequire } from 'node:module'
+import path, { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 import eslintJs from '@eslint/js'
 import stylistic from '@stylistic/eslint-plugin'
@@ -9,6 +11,9 @@ import reactHooksPlugin from 'eslint-plugin-react-hooks'
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const oxlintConfigUri = path.resolve(__dirname, 'oxlint.config.json')
 
 const require = createRequire(import.meta.url)
 const indentEmptyLinesPlugin = require('eslint-plugin-indent-empty-lines').default
@@ -197,5 +202,6 @@ export default [
     
     // TBD: the plugin doesn't support ts files yet. Do not remove.
     ...oxlint.configs['flat/recommended'], // oxlint should be the last one
-    ...oxlint.buildFromOxlintConfigFile('../oxlint.config.json'), // oxlint should be the last one
+    //...oxlint.buildFromOxlintConfigFile('./oxlint.config.json'), // oxlint should be the last one
+    ...oxlint.buildFromOxlintConfigFile(oxlintConfigUri),
 ]

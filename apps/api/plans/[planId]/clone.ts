@@ -1,8 +1,8 @@
 import db from '@repo/shared/db/index'
 import * as schemas from '@repo/shared/db/schema'
 import { omit } from '@repo/shared/utils'
-import { apiResponse } from '@repo/shared/utils/api'
-import { withAuth } from '@repo/shared/utils/auth'
+import { apiResponseDeprecated } from '@repo/shared/utils/api'
+import { withAuthDeprecated } from '@repo/shared/utils/auth'
 import { eq } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
 
@@ -12,14 +12,14 @@ const handler = async (request: Request, context: { auth: any, params: Promise<{
       const { planId } = await context.params
       
       if (isNaN(parseInt(planId, 10)))
-        return apiResponse.badRequest(`Invalid plan ID: "${planId}"`)
+        return apiResponseDeprecated.badRequest(`Invalid plan ID: "${planId}"`)
       
       const [plan] = await db.select()
           .from(schemas.plans)
           .where(eq(schemas.plans.id, parseInt(planId, 10)))
       
       if (!plan)
-        return apiResponse.notFound('Plan')
+        return apiResponseDeprecated.notFound('Plan')
       
       const result = await db.transaction(async tx => {
           const [clonedPlan] = await tx
@@ -47,13 +47,13 @@ const handler = async (request: Request, context: { auth: any, params: Promise<{
           return clonedPlan
       })
       
-      return apiResponse.ok({
+      return apiResponseDeprecated.ok({
           message: 'Plan cloned successfully',
           data: result,
       })
     } catch (e) {
       console.error('Error updating plan:', e)
-      return apiResponse.internalServerError()
+      return apiResponseDeprecated.internalServerError()
     }
   } else {
     return new Response(
@@ -63,4 +63,4 @@ const handler = async (request: Request, context: { auth: any, params: Promise<{
   }
 }
 
-export default withAuth(handler)
+export default withAuthDeprecated(handler)

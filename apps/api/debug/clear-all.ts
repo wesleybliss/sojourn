@@ -1,22 +1,22 @@
 import db from '@repo/shared/db/index'
 import usersRepo from '@repo/shared/db/repos/users'
 import * as schemas from '@repo/shared/db/schema'
-import { apiResponse } from '@repo/shared/utils/api'
-import { withAuth } from '@repo/shared/utils/auth'
+import { apiResponseDeprecated } from '@repo/shared/utils/api'
+import { withAuthDeprecated } from '@repo/shared/utils/auth'
 
 export default async function handler(request) {
   if (request.method !== 'POST') {
     return new Response('Method Not Allowed', { status: 405 })
   }
 
-  return withAuth(async (_request, { auth }) => {
+  return withAuthDeprecated(async (_request, { auth }) => {
     try {
       const { userId } = auth
 
       const user = await usersRepo.findOneById(userId)
 
       if (!user)
-        return apiResponse.notFound('User not found')
+        return apiResponseDeprecated.notFound('User not found')
 
       console.log('Clearing all database data...')
 
@@ -30,10 +30,10 @@ export default async function handler(request) {
       await db.delete(schemas.trips)
       console.log('✅ Cleared trips table')
 
-      return apiResponse.okMessage('Database cleared successfully')
+      return apiResponseDeprecated.okMessage('Database cleared successfully')
     } catch (e) {
       console.error('❌ Error clearing database:', e)
-      return apiResponse.internalServerError()
+      return apiResponseDeprecated.internalServerError()
     }
   })(request, {})
 }
