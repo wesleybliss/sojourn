@@ -55,10 +55,7 @@ const TripsPage = () => {
         
         <div data-testid="TripsPage" className="flex flex-col gap-8 p-5 lg:p-8">
             <section
-                className="section-card overflow-hidden
-                    bg-[linear-gradient(135deg,_rgba(221,231,243,0.9)_0%,_rgba(247,249,251,1)_50%,_rgba(207,216,226,0.75)_100%)]
-                    p-6
-                    dark:bg-[linear-gradient(135deg,_rgba(32,49,73,0.9)_0%,_rgba(17,28,45,1)_55%,_rgba(42,61,87,0.7)_100%)]
+                className="section-card overflow-hidden p-6
                     lg:p-8">
                 <div className="max-w-3xl">
                     <div className="eyebrow mb-3">My Trips</div>
@@ -91,14 +88,14 @@ const TripsPage = () => {
             <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                 <button
                     className={cn(
-                        'group flex min-h-[26rem] flex-col justify-between rounded-[28px] border border-dashed border-border/80',
+                        'group flex min-h-104 flex-col justify-between rounded-[14px] border border-dashed border-border/80',
                         'bg-surface-container-low px-5 py-6 text-left transition-colors hover:border-primary/30 hover:bg-surface-container',
                     )}
                     onClick={vm.createNewTrip}
                     type="button">
                     <div>
                         <span
-                            className="inline-flex size-12 items-center justify-center rounded-2xl
+                            className="inline-flex size-12 items-center justify-center rounded-xl
                                 bg-primary text-primary-foreground">
                             <MapPlus className="size-5" />
                         </span>

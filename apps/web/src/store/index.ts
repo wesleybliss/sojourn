@@ -8,6 +8,8 @@ import { createPersistedWire } from 'react-wire-persisted'
 
 export const theme = createPersistedWire<Theme>(keys.theme, 'light')
 
+export const isSidebarExpanded = createPersistedWire<boolean>(keys.isSidebarExpanded, true)
+
 export const trips = createWire<Trip[]>([])
 export const currentTripId = createWire<ID | null>(null)
 export const currentTrip = createSelector<Trip | null>({

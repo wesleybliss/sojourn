@@ -10,6 +10,7 @@ export const NS = 'sojourn'
 //
 
 key('theme')
+key('isSidebarExpanded')
 
 key('trips')
 key('currentTrip')

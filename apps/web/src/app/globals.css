@@ -225,12 +225,7 @@ html[data-theme='dark'] {
         font-family: var(--font-body-base);
     }
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
+    h1, h2, h3, h4, h5, h6 {
         font-family: var(--font-headline-md);
         letter-spacing: -0.025em;
     }
@@ -258,16 +253,10 @@ html[data-theme='dark'] {
 @layer components {
     .app-panel {
         @apply rounded-[9px] border border-border/70 bg-surface-container-lowest;
-        box-shadow:
-            0 24px 80px -40px rgb(0 0 0 / 0.55),
-            0 0 0 1px rgb(244 166 183 / 0.04);
     }
     
     .section-card {
-        @apply rounded-xl border border-border/70 bg-surface-container-lowest;
-        box-shadow:
-            0 8px 32px rgb(0 0 0 / 0.22),
-            0 0 0 1px rgb(244 166 183 / 0.03);
+        @apply rounded-lg border border-border/70 bg-surface-container-lowest;
     }
     
     .hero-gradient {

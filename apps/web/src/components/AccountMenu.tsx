@@ -1,5 +1,9 @@
+'use client'
+
+import { User } from '@repo/shared/types/database'
 import { Trip } from '@repo/shared/types/database'
 import { fetchJSON } from '@repo/shared/utils/api'
+import { ChevronUp, LogOut } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -30,7 +34,6 @@ const debugDumpData = (trips: Trip[] | null) => (e: MouseEvent) => {
         
         console.log('debug:dump', JSON.stringify(data, null, 2), data)
         toast.success('Database data dumped to console')
-        
     } catch (error) {
         console.error('Error dumping data:', error)
         toast.error('Failed to dump database data')
@@ -38,13 +41,35 @@ const debugDumpData = (trips: Trip[] | null) => (e: MouseEvent) => {
     
 }
 
-const AccountMenu = () => {
+type AccountMenuProps = {
+    variant?: 'icon' | 'sidebar'
+}
+
+const AccountMenu = ({
+    variant = 'icon',
+}: AccountMenuProps) => {
     
-    const { user, signOut: firebaseSignOut } = useAuth()
+    const {
+        firebaseUser,
+        loading,
+        user,
+        signOut: firebaseSignOut,
+    } = useAuth()
+    
+    const menuUser = user || (
+        firebaseUser
+            ? {
+                email: firebaseUser.email || '',
+                firebaseUid: firebaseUser.uid,
+                name: firebaseUser.displayName || firebaseUser.email || 'Member',
+                photoUrl: firebaseUser.photoURL,
+            } as User
+            : null
+    )
     
     const { data: trips } = useTripsQuery({
         options: {
-            enabled: !!user,
+            enabled: !!firebaseUser,
         },
     })
     
@@ -53,7 +78,7 @@ const AccountMenu = () => {
     const backupMutation = useBackupTrips()
     
     const links = useNavbarLinks(
-        user,
+        menuUser,
         trips as Trip[] | null | undefined,
         backupMutation,
         debugDumpData,
@@ -63,7 +88,6 @@ const AccountMenu = () => {
     const debugDeleteDatabase = async () => {
         
         try {
-            // Since Turso is a remote database, we'll clear all data instead of deleting the DB
             await fetchJSON('/api/debug/clear-all', {
                 method: 'POST',
             })
@@ -71,7 +95,6 @@ const AccountMenu = () => {
             setDeleteDatabaseDialogOpen(false)
             toast.success('Database cleared successfully')
             window.location.replace('/trips')
-            
         } catch (error) {
             console.error('Error clearing database:', error)
             toast.error('Failed to clear database')
@@ -92,19 +115,71 @@ const AccountMenu = () => {
         }
     }
     
-    if (!user) return null
+    if (!firebaseUser || !menuUser)
+        return null
+    
+    const displayName = menuUser.name || firebaseUser.displayName || menuUser.email || 'Member'
+    const displayEmail = menuUser.email || firebaseUser.email || ''
     
     return (<>
         
         <DropdownMenu>
-            
-            <DropdownMenuTrigger className="outline-none">
-                <Gravatar user={user} />
+            <DropdownMenuTrigger asChild>
+                {variant === 'sidebar' ? (
+                    <button
+                        className="flex w-full items-center gap-3 rounded-2xl bg-sidebar-accent/70
+                            px-3 py-3 text-left outline-none transition-colors hover:bg-sidebar-accent
+                            data-[state=open]:bg-sidebar-accent"
+                        type="button">
+                        {user ? (
+                            <Gravatar
+                                user={user}
+                                className="flex size-11 items-center justify-center overflow-hidden"
+                                imageClassName="h-full w-full object-cover"
+                                size={44} />
+                        ) : (
+                            <div
+                                className="flex size-11 items-center justify-center overflow-hidden
+                                    rounded-full bg-sidebar-primary text-sm font-semibold
+                                    text-sidebar-primary-foreground">
+                                {displayName.substring(0, 1).toUpperCase()}
+                            </div>
+                        )}
+                        <div className="min-w-0 flex-1">
+                            <div className="truncate text-sm font-semibold">
+                                {displayName}
+                            </div>
+                            <span className="truncate text-xs text-sidebar-foreground/55">
+                                    {displayEmail || (loading ? 'Loading profile...' : 'Authenticated')}
+                                </span>
+                            <div className="mt-1 flex items-center gap-2">
+                                <span
+                                    className="rounded-full bg-sidebar-primary px-2 py-0.5
+                                        text-[10px] font-semibold uppercase tracking-[0.18em]
+                                        text-sidebar-primary-foreground">
+                                    Member
+                                </span>
+                            </div>
+                        </div>
+                        <ChevronUp className="size-4 shrink-0 text-sidebar-foreground/60" />
+                    </button>
+                ) : (
+                    <button className="outline-none" type="button">
+                        {user ? (
+                            <Gravatar user={user} />
+                        ) : (
+                            <div
+                                className="flex size-9 items-center justify-center rounded-full
+                                    bg-primary text-xs font-semibold text-primary-foreground">
+                                {displayName.substring(0, 1).toUpperCase()}
+                            </div>
+                        )}
+                    </button>
+                )}
             </DropdownMenuTrigger>
             
-            <DropdownMenuContent align="end">
-                
-                <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
+            <DropdownMenuContent align={variant === 'sidebar' ? 'start' : 'end'}>
+                <DropdownMenuLabel>{displayEmail || displayName}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 
                 {links.map(([url, label, onClick]: NavbarLink) => (
@@ -121,11 +196,12 @@ const AccountMenu = () => {
                 <Link
                     href="#"
                     onClick={e => handleSignOut(e as unknown as MouseEvent)}>
-                    <DropdownMenuItem>Logout</DropdownMenuItem>
+                    <DropdownMenuItem>
+                        <LogOut />
+                        Logout
+                    </DropdownMenuItem>
                 </Link>
-            
             </DropdownMenuContent>
-        
         </DropdownMenu>
         
         <ConfirmDialog
@@ -136,7 +212,6 @@ const AccountMenu = () => {
             onCancel={() => setDeleteDatabaseDialogOpen(false)}
             confirmLabel="Delete"
             onConfirm={debugDeleteDatabase} />
-    
     </>)
     
 }

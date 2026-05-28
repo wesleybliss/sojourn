@@ -10,7 +10,7 @@ import { toast } from 'sonner'
 import AccountMenu from '@/components/AccountMenu'
 import CurrentPlanSelector from '@/components/CurrentPlanSelector'
 import TripActionsDropdown from '@/components/Navbar/TripActionsDropdown'
-import ThemeToggle from '@/components/ThemeToggle'
+import ThemeSwitcher from '@/components/ThemeSwitcher/ThemeSwitcher'
 import { Button } from '@/components/ui/button'
 import { useBackupTrips } from '@/lib/queries/backups'
 import { useCreateTripMutation } from '@/lib/queries/trip'
@@ -144,7 +144,7 @@ const Navbar = () => {
                                 trip={currentTrip}
                                 plan={currentPlan} />
                         )}
-                        <ThemeToggle variant="outline" />
+                        <ThemeSwitcher />
                         <AccountMenu />
                     </div>
                 </div>

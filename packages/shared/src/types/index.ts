@@ -7,6 +7,12 @@ export * from './trips'
 export * from './ui'
 export * from './window.d'
 
-export type Theme = 'light' | 'dark' | 'system'
+export const Themes = {
+    system: 'system',
+    light: 'light',
+    dark: 'dark' ,
+}
+
+export type Theme = typeof Themes[keyof typeof Themes]
 
 export type EventBusPayload = Record<string, unknown>

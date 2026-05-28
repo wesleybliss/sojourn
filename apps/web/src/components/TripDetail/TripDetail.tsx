@@ -240,7 +240,7 @@ const TripDetail = ({
                                                 strokeWidth="10" />
                                         </svg>
                                         <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                            <span className="font-headline text-3xl font-semibold">{Math.round(schengenPercentage)}%</span>
+                                            <span className="font-headline text-2xl font-semibold">{Math.round(schengenPercentage)}%</span>
                                             <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Used</span>
                                         </div>
                                     </div>

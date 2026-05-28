@@ -1,12 +1,17 @@
 'use client'
 
+import { useWireState } from '@forminator/react-wire'
 import { cn } from '@repo/shared/utils'
 import { Compass, Map, Settings2 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { GoSidebarExpand } from 'react-icons/go'
 
-import Gravatar from '@/components/Gravatar'
+import AccountMenu from '@/components/AccountMenu'
 import { useAuth } from '@/components/providers/AuthProvider'
+import * as store from '@/store'
+
+import { Button } from './ui/button'
 
 const navigationItems = [
     {
@@ -32,27 +37,46 @@ const navigationItems = [
 const Sidebar = () => {
     
     const pathname = usePathname()
-    const { firebaseUser, loading, user } = useAuth()
+    const { firebaseUser } = useAuth()
     
-    const displayName = user?.name || firebaseUser?.displayName || user?.email || firebaseUser?.email || 'Member'
-    const displayEmail = user?.email || firebaseUser?.email || ''
+    const [isSidebarExpanded, setIsSidebarExpanded] = useWireState(store.isSidebarExpanded)
+    
     const showSignedInState = Boolean(firebaseUser)
     
     return (
         
         <aside
-            className="section-card flex w-full shrink-0 flex-col overflow-hidden border-none
-                bg-sidebar text-sidebar-foreground md:w-auto md:max-w-[18rem]
-                lg:sticky lg:h-[calc(100vh-1.5rem)] lg:w-[17.5rem]">
-            <div className="border-b border-sidebar-border/70 px-5 py-5">
+            data-testid="Sidebar"
+            className={cn(
+                'tropical-glow relative section-card flex shrink-0 flex-col overflow-hidden border-none',
+                'bg-sidebar text-sidebar-foreground md:max-w-[18rem]',
+                'lg:sticky lg:h-[calc(100vh-1.5rem)]',
+                'transition-width duration-300 ease-in-out', {
+                    'w-full md:w-auto lg:w-70': isSidebarExpanded,
+                    'w-20': !isSidebarExpanded,
+                })}>
+            
+            <div className="p-5">
                 <Link href="/" className="block">
-                    <div className="eyebrow mb-2">Slow Travel</div>
-                    <div className="font-headline text-2xl font-semibold tracking-[-0.04em]">
-                        Sojourn
+                    <div className="eyebrow mb-2">
+                        <img className="size-12" src="/logo.png" alt="Sojourn" />
                     </div>
-                    <p className="mt-2 max-w-[18rem] text-sm text-sidebar-foreground/65">
-                        Minimal planning workspace for deliberate, long-form itineraries.
-                    </p>
+                    {isSidebarExpanded && (
+                        <div className="font-headline text-2xl font-semibold tracking-[-0.04em]">
+                            Sojourn
+                        </div>
+                    )}
+                    <div className={cn('flex', {
+                        'justify-end': isSidebarExpanded,
+                        'justify-center': !isSidebarExpanded,
+                    })}>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}>
+                            <GoSidebarExpand className="size-5" />
+                        </Button>
+                    </div>
                 </Link>
             </div>
             
@@ -68,14 +92,9 @@ const Sidebar = () => {
                         <Link
                             key={item.href}
                             href={item.href}
-                            className={cn(
-                                'group flex min-w-[12rem] items-center gap-3 rounded-2xl border px-4 py-3',
-                                'transition-colors md:min-w-0',
-                                isActive
-                                    ? 'border-sidebar-primary/15 bg-sidebar-accent text-sidebar-accent-foreground'
-                                    : 'border-transparent bg-transparent text-sidebar-foreground/72'
-                                        + ' hover:border-sidebar-border/70 hover:bg-sidebar-accent/70',
-                            )}>
+                            className={cn('group flex items-center gap-3', {
+                                'mx-auto': !isSidebarExpanded,
+                            })}>
                             <span className={cn(
                                 'flex size-10 items-center justify-center rounded-xl border transition-colors',
                                 isActive
@@ -85,7 +104,9 @@ const Sidebar = () => {
                             )}>
                                 <Icon className="size-[18px]" />
                             </span>
-                            <span className="min-w-0">
+                            <span className={cn('min-w-0', {
+                                'hidden': !isSidebarExpanded,
+                            })}>
                                 <span className="block text-sm font-semibold">{item.label}</span>
                                 <span className="block text-xs text-sidebar-foreground/55">
                                     {item.caption}
@@ -97,46 +118,11 @@ const Sidebar = () => {
                 })}
             </nav>
             
-            <div className="border-t border-sidebar-border/70 p-4">
+            <div className={cn('mb-2 p-4', {
+                'mx-auto': !isSidebarExpanded,
+            })}>
                 {showSignedInState ? (
-                    <div
-                        className="flex items-center gap-3 rounded-2xl bg-sidebar-accent/70
-                            px-3 py-3">
-                        {user ? (
-                            <Gravatar
-                                user={user}
-                                className="flex size-11 items-center justify-center overflow-hidden"
-                                imageClassName="h-full w-full object-cover"
-                                size={44} />
-                        ) : (
-                            <div
-                                className="flex size-11 items-center justify-center overflow-hidden
-                                    rounded-full bg-sidebar-primary text-sm font-semibold
-                                    text-sidebar-primary-foreground">
-                                {displayName.substring(0, 1).toUpperCase()}
-                            </div>
-                        )}
-                        <div className="min-w-0">
-                            <div className="truncate text-sm font-semibold">
-                                {displayName}
-                            </div>
-                            <div className="mt-1 flex items-center gap-2">
-                                <span
-                                    className="rounded-full bg-sidebar-primary px-2 py-0.5
-                                        text-[10px] font-semibold uppercase tracking-[0.18em]
-                                        text-sidebar-primary-foreground">
-                                    Member
-                                </span>
-                                <span className="truncate text-xs text-sidebar-foreground/55">
-                                    {displayEmail || (
-                                        loading
-                                            ? 'Loading profile...'
-                                            : 'Authenticated'
-                                    )}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
+                    <AccountMenu variant={isSidebarExpanded ? 'sidebar' : 'icon'} />
                 ) : (
                     <div
                         className="rounded-2xl border border-dashed border-sidebar-border
@@ -145,6 +131,7 @@ const Sidebar = () => {
                     </div>
                 )}
             </div>
+            
         </aside>
         
     )
