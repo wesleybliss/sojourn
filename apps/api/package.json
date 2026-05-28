@@ -1,0 +1,47 @@
+{
+    "name": "@repo/api",
+    "private": true,
+    "version": "0.1.0",
+    "type": "module",
+    "scripts": {
+        "dev": "nodemon",
+        "start": "dotenv -e ../../.env -- vercel dev --listen 5174",
+        "build": "node build.js",
+        "check": "pnpm tsc --noEmit --skipLibCheck",
+        "lint": "oxlint && eslint .",
+        "lint:dry": "oxlint && eslint --fix-dry-run .",
+        "lint:fix": "oxlint --fix && eslint --fix .",
+        "eslint": "eslint .",
+        "eslint:dry": "eslint --fix-dry-run .",
+        "eslint:fix": "eslint --fix .",
+        "test": "vitest"
+    },
+    "dependencies": {
+        "@repo/shared": "workspace:*",
+        "@vercel/functions": "^3.4.3",
+        "drizzle-kit": "1.0.0-beta.22",
+        "drizzle-orm": "1.0.0-beta.22"
+    },
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "@types/node": "^25.3.3",
+        "@types/papaparse": "^5.5.2",
+        "@vercel/node": "^5.7.0",
+        "dotenv": "^17.4.0",
+        "esbuild": "^0.28.0",
+        "eslint": "^10.1.0",
+        "eslint-plugin-indent-empty-lines": "^2.0.2",
+        "eslint-plugin-react": "^7.37.5",
+        "eslint-plugin-react-compiler": "19.1.0-rc.2",
+        "eslint-plugin-react-hooks": "^7.0.1",
+        "eslint-plugin-react-refresh": "^0.5.2",
+        "globals": "^17.4.0",
+        "nodemon": "^3.1.14",
+        "oxlint": "^1.59.0",
+        "tsc-alias": "^1.8.16",
+        "typescript": "^5.9.3",
+        "vite": "^8.0.8",
+        "vite-tsconfig-paths": "^6.1.1",
+        "vitest": "^4.1.2"
+    }
+}

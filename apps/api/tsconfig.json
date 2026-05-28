@@ -1,0 +1,31 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "tsBuildInfoFile": "../../node_modules/.cache/tsbuildinfo/api.tsbuildinfo",
+        "declarationDir": "../../node_modules/.cache/dts/api",
+        "lib": ["es2015"],
+        "composite": true,
+        "noEmit": false,
+        "emitDeclarationOnly": true,
+        "allowJs": false,
+        "target": "ES2022",
+        "esModuleInterop": true,
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "outDir": "dist",
+        "paths": {
+            "@/*": ["./src/*"],
+            "@api/*": ["./api/*"],
+            "@repo/shared": ["../../packages/shared/src/index.ts"],
+            "@repo/shared/*": ["../../packages/shared/src/*"]
+        },
+        "types": []
+    },
+    "references": [
+        { "path": "../../packages/shared" }
+    ],
+    "include": ["src", "api", "test"],
+    "exclude": ["node_modules", "task/**"]
+}
