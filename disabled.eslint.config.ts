@@ -4,7 +4,6 @@ export default [
     ...base,
     {
         files: ['**/*.ts', '**/*.tsx'],
-        rules: {
-        },
+        ignores: ['build.js'],
     },
 ]

@@ -1,5 +1,5 @@
 import { setAbortableTimeout } from '@repo/shared/utils'
-import { useEffect,useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 const useAbortableFetch = (
     fnAsync: () => void | Promise<void>,
@@ -16,8 +16,6 @@ const useAbortableFetch = (
         
         setAbortableTimeout(fnAsync, delayMillis, refAbortController.current)
         
-        // eslint-disable-next-line react-compiler/react-compiler
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [delayMillis, fnAsync, ...dependencies])
     
 }

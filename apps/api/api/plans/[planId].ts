@@ -1,7 +1,7 @@
 import { apiResponse } from '@repo/shared/utils/api'
 import { VercelRequest, VercelResponse } from '@vercel/node'
 
-import { getTrip } from '@/handlers/trips'
+import { deletePlan, getPlan, updatePlan } from '@/handlers/plans'
 
 export const config = {
     runtime: 'nodejs',
@@ -13,7 +13,9 @@ export default async function handler(
 ): Promise<VercelResponse | undefined> {
     
     switch (req.method) {
-        case 'GET': return getTrip(req, res)
+        case 'GET': return getPlan(req, res)
+        case 'PUT': return updatePlan(req, res)
+        case 'DELETE': return deletePlan(req, res)
         default: return apiResponse.internalServerError(res)
     }
     

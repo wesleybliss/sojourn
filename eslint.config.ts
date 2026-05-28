@@ -122,6 +122,7 @@ export default [
             'src/components/ui/**',
             'apps/web/src/components/ui/**',
             'task/**',
+            'apps/api/build.js',
         ],
     },
     {

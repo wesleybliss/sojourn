@@ -1,5 +1,5 @@
 export * from './backupTrips'
-export * from './getTripById'
+export * from './getTrip'
 export * from './getTrips'
 export * from './inviteTripMember'
 export * from './restoreTrips'

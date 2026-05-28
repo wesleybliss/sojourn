@@ -1,7 +1,6 @@
-import db from '@repo/shared/db'
 import tripsRepo from '@repo/shared/db/repos/trips'
 import usersRepo from '@repo/shared/db/repos/users'
-import * as schemas from '@repo/shared/db/schemas'
+import userTripsRepo from '@repo/shared/db/repos/userTrips'
 import { apiResponse } from '@repo/shared/utils/api'
 import { AuthContext, isUserTripMember, withAuth } from '@repo/shared/utils/auth'
 import { VercelRequest, VercelResponse } from '@vercel/node'
@@ -35,7 +34,8 @@ export const inviteTripMember = withAuth(async (
         if (!trip)
             return apiResponse.notFound(res, 'Trip not found')
         
-        await db.insert(schemas.userTrips).values({
+        // @todo userTrips repo
+        await userTripsRepo.create({
             userId: invitee.id,
             tripId: trip.id,
         })

@@ -3,10 +3,10 @@ import { apiResponse } from '@repo/shared/utils/api'
 import { AuthContext, withAuth } from '@repo/shared/utils/auth'
 import { VercelRequest, VercelResponse } from '@vercel/node'
 
-export const getTripById = withAuth(async (
+export const getTrip = withAuth(async (
     req: VercelRequest,
     res: VercelResponse,
-    context: AuthContext,
+    _context: AuthContext,
 ): Promise<VercelResponse> => {
     
     const tripId = parseInt(req.query.tripId as string, 10)

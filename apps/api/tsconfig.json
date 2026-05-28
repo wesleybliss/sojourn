@@ -10,7 +10,7 @@
         "allowJs": false,
         "target": "ES2023",
         "esModuleInterop": true,
-        "module": "NodeNext",
+        "module": "ESNext",
         "moduleResolution": "bundler",
         "resolveJsonModule": true,
         "isolatedModules": true,
@@ -26,6 +26,15 @@
     "references": [
         { "path": "../../packages/shared" }
     ],
-    "include": ["src", "api", "test"],
-    "exclude": ["node_modules", "task/**"]
+    "include": [
+        "src",
+        "api",
+        "test",
+        "disabled.eslint.config.ts",
+        "vitest.config.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "task/**"
+    ]
 }
