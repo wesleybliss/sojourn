@@ -29,7 +29,7 @@ export default function InviteCodeForm() {
             
             const token = await firebaseUser!.getIdToken()
             
-            const response = await fetch('/api/auth/user', {
+            const response = await fetch('auth/user', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

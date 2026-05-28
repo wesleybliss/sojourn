@@ -1,5 +1,4 @@
-import { User } from '@repo/shared/types/database'
-import { Trip } from '@repo/shared/types/database'
+import { Trip, User } from '@repo/shared/types/database'
 import { fetchJSON } from '@repo/shared/utils/api'
 import { ChevronUp, LogOut } from 'lucide-react'
 import { useState } from 'react'
@@ -86,7 +85,7 @@ const AccountMenu = ({
     const debugDeleteDatabase = async () => {
         
         try {
-            await fetchJSON('/api/debug/clear-all', {
+            await fetchJSON('debug/clear-all', {
                 method: 'POST',
             })
             

@@ -1,8 +1,8 @@
 import { PendingFetchRequest, Place, Segment } from '@repo/shared/types'
 import { abortableFetch } from '@repo/shared/utils'
 import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query'
-import { Dispatch, SetStateAction,useEffect, useMemo, useState } from 'react'
-import { seconds,throttledQueue } from 'throttled-queue'
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
+import { seconds, throttledQueue } from 'throttled-queue'
 
 import { usePlacesQuery } from '@/lib/queries/places'
 
@@ -81,7 +81,7 @@ const useThrottledPlacePhotos = (
             
             // return fetch('https://api.github.com/search/users?q=shaunpersad');
             
-            const request = abortableFetch('/api/places', {
+            const request = abortableFetch('places', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

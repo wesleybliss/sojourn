@@ -1,6 +1,6 @@
 import { ItemWithId } from '@repo/shared/types/data'
 import { BackupTripsBody } from '@repo/shared/types/mutations'
-import { fetchJSON,fetchWithAuth } from '@repo/shared/utils/api'
+import { fetchJSON, fetchWithAuth } from '@repo/shared/utils/api'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 const idToInt = (obj: ItemWithId | null) => obj?.id ?? null
@@ -19,7 +19,7 @@ export const useBackupTrips = () => {
             else
                 body.tripId = tripId
             
-            const res = await fetchWithAuth('/api/trips/backup', {
+            const res = await fetchWithAuth('trips/backup', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body),
@@ -66,7 +66,7 @@ export const useRestoreTrips = () => {
     
     return useMutation({
         mutationFn: async backupData => {
-            return fetchJSON('/api/trips/restore', {
+            return fetchJSON('trips/restore', {
                 method: 'POST',
                 body: JSON.stringify(backupData),
             })

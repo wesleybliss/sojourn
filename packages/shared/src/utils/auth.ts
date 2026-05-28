@@ -1,3 +1,4 @@
+import { setCorsHeaders } from '@repo/shared/utils/api'
 import db from '@shared/db'
 import * as schemas from '@shared/db/schema'
 import HttpError from '@shared/errors/HttpError'
@@ -202,6 +203,26 @@ export const withAuthDeprecated = <T = Record<string, never>>(
     
 }
 
+export const withCors = (
+    handler: (
+        req: VercelRequest,
+        res: VercelResponse,
+    ) => Promise<VercelResponse>,
+): (req: VercelRequest, res: VercelResponse) => Promise<VercelResponse> => {
+    
+    return async (req: VercelRequest, res: VercelResponse) => {
+        
+        const isCorsHandled = setCorsHeaders(req, res)
+        
+        if (isCorsHandled)
+            return isCorsHandled
+        
+        return handler(req, res)
+        
+    }
+    
+}
+
 export const withAuth = (
     handler: (
         req: VercelRequest,
@@ -210,7 +231,7 @@ export const withAuth = (
     ) => Promise<VercelResponse>,
 ): (req: VercelRequest, res: VercelResponse) => Promise<VercelResponse> => {
     
-    return async (req: VercelRequest, res: VercelResponse) => {
+    return withCors(async (req: VercelRequest, res: VercelResponse) => {
         
         try {
             
@@ -228,7 +249,7 @@ export const withAuth = (
             
         }
         
-    }
+    })
     
 }
 

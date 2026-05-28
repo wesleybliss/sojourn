@@ -43,7 +43,7 @@ export const useTripsQuery = ({
             
             const queryString = searchParams.toString()
             const result = await fetchJSON<Array<Trip | TripWithSegmentCount>>(
-                `/api/trips${queryString ? `?${queryString}` : ''}`,
+                `trips${queryString ? `?${queryString}` : ''}`,
             )
             
             store.trips.setValue((result.data as Trip[]) || [])

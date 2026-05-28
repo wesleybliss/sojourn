@@ -51,7 +51,7 @@ const useDebugViewModel = (): TDebugViewModel => {
         
         try {
             
-            const data = await fetchJSON('/api/places', {
+            const data = await fetchJSON('places', {
                 method: 'POST',
                 body: JSON.stringify({
                     name,
@@ -114,7 +114,7 @@ const useDebugViewModel = (): TDebugViewModel => {
             // const blob = new Blob([file], { type: file.type })
             const base64Data = await toBase64(file)
             
-            const json = await fetchJSON('/api/debug/storage/blob', {
+            const json = await fetchJSON('debug/storage/blob', {
                 method: 'POST',
                 body: JSON.stringify({
                     name: file.name,
@@ -150,7 +150,7 @@ const useDebugViewModel = (): TDebugViewModel => {
         
         try {
             
-            const result = await fetchJSON('/api/migrate', {
+            const result = await fetchJSON('migrate', {
                 method: 'POST',
             }) as Record<string, unknown>
             

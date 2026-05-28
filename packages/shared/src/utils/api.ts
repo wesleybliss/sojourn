@@ -1,6 +1,37 @@
 import { ApiResult } from '@shared/types'
 import { auth } from '@shared/utils/firebase/client'
-import { VercelResponse } from '@vercel/node'
+import logger from '@shared/utils/logger'
+import { VercelRequest, VercelResponse } from '@vercel/node'
+
+/**
+ * Adds CORS headers to the response.
+ * Returns true if the request is an OPTIONS request, and was automatically handled.
+ */
+const allowedHeaders = [
+    'Authorization',
+    'Content-Type',
+    'Pragma',
+    'Cache-Control',
+].join(', ')
+
+export const setCorsHeaders = (req: VercelRequest, res: VercelResponse) => {
+    
+    const log = logger('setCorsHeaders')
+    
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+    res.setHeader('Access-Control-Allow-Headers', allowedHeaders)
+    // res.setHeader('Access-Control-Expose-Headers', ELECTRIC_EXPOSE_HEADERS)
+    res.setHeader('Access-Control-Max-Age', '86400')
+    
+    if (req.method === 'OPTIONS') {
+        log.d('[OPTIONS] - handling preflight')
+        return res.status(200).end()
+    }
+    
+    return false
+    
+}
 
 export class ApiResponse<T> implements ApiResult<T> {
     
@@ -215,7 +246,11 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
  */
 export async function fetchJSON<T>(url: string, options: RequestInit = {}): Promise<ApiResult<T | null>> {
     
-    const response = await fetchWithAuth(url, {
+    const fullUrl = url.startsWith('http')
+        ? url
+        : `${import.meta.env.VITE_API_BASE_URL}/api/${url}`
+    
+    const response = await fetchWithAuth(fullUrl, {
         ...options,
         headers: {
             'Content-Type': 'application/json',

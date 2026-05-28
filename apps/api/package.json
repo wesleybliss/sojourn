@@ -5,7 +5,7 @@
     "type": "module",
     "scripts": {
         "dev": "nodemon",
-        "start": "dotenv -e ../../.env -- vercel dev --listen 5174",
+        "start": "dotenv -e ../../.env -- vercel dev --listen 4000",
         "build": "node build.js",
         "check": "pnpm tsc --noEmit --skipLibCheck",
         "lint": "oxlint && eslint .",

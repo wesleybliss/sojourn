@@ -7,7 +7,7 @@ import useSWR from 'swr'
  */
 export default function useTrips() {
     const fetcher = (url: string) => fetchJSON(url)
-    const { data, error } = useSWR('/api/trips', fetcher)
+    const { data, error } = useSWR('trips', fetcher)
     
     return { trips: data, loading: !data && !error, error }
 }

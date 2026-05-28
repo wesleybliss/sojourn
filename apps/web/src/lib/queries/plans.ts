@@ -2,8 +2,7 @@ import { ApiResult, ID } from '@repo/shared/types/data'
 import { Plan } from '@repo/shared/types/database'
 import { ClonePlanBody, CreatePlanBody, UpdatePlanBody } from '@repo/shared/types/mutations'
 import { fetchJSON } from '@repo/shared/utils/api'
-import { useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query'
-import { keepPreviousData } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query'
 /* import * as store from '@/store'
 import { updateItemArray } from '@/lib/storeUtils' */
 
@@ -12,7 +11,7 @@ const plansQueryKey = (tripId: ID, exclusive = false) =>
 
 export const usePlansQuery = (tripId: ID, opts = {}) => useQuery({
     queryKey: plansQueryKey(tripId),
-    queryFn: () => fetchJSON(`/api/trips/${tripId}/plans`),
+    queryFn: () => fetchJSON(`trips/${tripId}/plans`),
     enabled: !!tripId,
     placeholderData: keepPreviousData,
     ...opts,
@@ -20,7 +19,7 @@ export const usePlansQuery = (tripId: ID, opts = {}) => useQuery({
 
 export const usePlanQuery = (planId: ID, opts = {}) => useQuery({
     queryKey: ['plans', planId],
-    queryFn: () => fetchJSON(`/api/plans/${planId}`),
+    queryFn: () => fetchJSON(`plans/${planId}`),
     enabled: !!planId,
     placeholderData: keepPreviousData,
     ...opts,
@@ -31,7 +30,7 @@ export const useCreatePlan = (): UseMutationResult<ApiResult<Plan | null>, Error
     
     return useMutation({
         mutationFn: async ({ tripId, ...planData }: CreatePlanBody) => {
-            return fetchJSON<Plan>('/api/plans', {
+            return fetchJSON<Plan>('plans', {
                 method: 'POST',
                 body: JSON.stringify({ tripId, ...planData }),
             })
@@ -50,7 +49,7 @@ export const useUpdatePlan = (): UseMutationResult<ApiResult<Plan | null>, Error
     
     return useMutation({
         mutationFn: async ({ /* tripId, */ planId, ...planData }: UpdatePlanBody) => {
-            return fetchJSON<Plan>(`/api/plans/${planId}`, {
+            return fetchJSON<Plan>(`plans/${planId}`, {
                 method: 'PUT',
                 body: JSON.stringify(planData),
             })
@@ -67,7 +66,7 @@ export const useDeletePlan = (): UseMutationResult<ApiResult<Plan | null>, Error
     
     return useMutation({
         mutationFn: async (plan: Plan) => {
-            return fetchJSON<Plan>(`/api/plans/${plan.id}`, {
+            return fetchJSON<Plan>(`plans/${plan.id}`, {
                 method: 'DELETE',
             })
         },
@@ -83,7 +82,7 @@ export const useClonePlan = () => {
     
     return useMutation({
         mutationFn: async ({ planId }: ClonePlanBody) => {
-            return fetchJSON<Plan>(`/api/plans/${planId}/clone`, {
+            return fetchJSON<Plan>(`plans/${planId}/clone`, {
                 method: 'POST',
             })
         },

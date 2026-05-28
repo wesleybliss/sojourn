@@ -36,7 +36,7 @@ export const usePlacesQuery = () => useQuery({
         
         try {
             
-            const result = await fetchJSON<Place[]>('/api/places')
+            const result = await fetchJSON<Place[]>('places')
             
             if (result?.data?.length)
                 placesWithCoverImages.setValue(result.data)
@@ -69,7 +69,7 @@ export const useUpdatePlace = (): UseMutationResult<
             if (!id)
                 throw new Error('useUpdatePlace: id is required')
             
-            return fetchJSON(`/api/places/${id}`, {
+            return fetchJSON(`places/${id}`, {
                 method: 'PUT',
                 body: JSON.stringify(placeData),
             })
@@ -92,7 +92,7 @@ export const useCreatePlace = (): UseMutationResult<
     
     return useMutation({
         mutationFn: async (placeData: CreatePlaceBody) => {
-            return fetchJSON('/api/places', {
+            return fetchJSON('places', {
                 method: 'POST',
                 body: JSON.stringify(placeData),
             })
@@ -114,7 +114,7 @@ export const useShufflePlaceCoverPhoto = (): UseMutationResult<
     return useMutation({
         mutationFn: async ({ topic }: ShufflePlaceCoverPhotoBody) => {
             console.log('useShufflePlaceCoverPhoto.mutate', { topic })
-            return fetchJSON<string | null>('/api/utils/random-photo', {
+            return fetchJSON<string | null>('utils/random-photo', {
                 method: 'POST',
                 body: JSON.stringify({ topic }),
             })

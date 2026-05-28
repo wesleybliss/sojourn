@@ -44,7 +44,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Fetch internal user data from our API
     const fetchUserData = async (token: string) => {
         try {
-            const response = await fetch('/api/auth/user', {
+            const response = await fetch('auth/user', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
