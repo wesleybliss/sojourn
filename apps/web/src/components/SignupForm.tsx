@@ -1,13 +1,11 @@
-'use client'
-
 import ErrorWithCode from '@repo/shared/errors/ErrorWithCode'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
 import { useAuth } from '@/components/providers/AuthProvider'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { useRouter } from '@/lib/router'
 
 export default function SignupForm() {
     

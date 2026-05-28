@@ -1,5 +1,3 @@
-'use client'
-
 import useDebugViewModel from '@/app/debug/useDebugViewModel'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

@@ -1,5 +1,3 @@
-'use client'
-
 import { User } from '@repo/shared/types/database'
 import { auth, googleProvider } from '@repo/shared/utils/firebase/client'
 import {

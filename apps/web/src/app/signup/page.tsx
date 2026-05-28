@@ -1,6 +1,5 @@
-import Link from 'next/link'
-
 import SignupForm from '@/components/SignupForm'
+import { Link } from '@/lib/router'
 
 export default function SignupPage() {
     return (

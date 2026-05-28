@@ -21,7 +21,6 @@ export default defineConfig({
     ignorePatterns: [
         '**/dist/**',
         '**/build/**',
-        '**/.next/**',
         '**/node_modules/**',
         '**/src/components/ui/**',
         '**/components/ui/**',

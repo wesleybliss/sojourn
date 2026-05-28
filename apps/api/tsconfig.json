@@ -3,15 +3,15 @@
     "compilerOptions": {
         "tsBuildInfoFile": "../../node_modules/.cache/tsbuildinfo/api.tsbuildinfo",
         "declarationDir": "../../node_modules/.cache/dts/api",
-        "lib": ["es2015"],
+        "lib": ["ES2023"],
         "composite": true,
         "noEmit": false,
         "emitDeclarationOnly": true,
         "allowJs": false,
-        "target": "ES2022",
+        "target": "ES2023",
         "esModuleInterop": true,
-        "module": "ESNext",
-        "moduleResolution": "bundler",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
         "resolveJsonModule": true,
         "isolatedModules": true,
         "outDir": "dist",
@@ -21,7 +21,7 @@
             "@repo/shared": ["../../packages/shared/src/index.ts"],
             "@repo/shared/*": ["../../packages/shared/src/*"]
         },
-        "types": []
+        "types": ["node"]
     },
     "references": [
         { "path": "../../packages/shared" }

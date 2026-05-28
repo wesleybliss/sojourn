@@ -1,5 +1,6 @@
-import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+
+import { useRouter } from '@/lib/router'
 
 const useConditionalRedirect = (
     observable: unknown,

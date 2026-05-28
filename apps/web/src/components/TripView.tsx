@@ -1,5 +1,3 @@
-'use client'
-
 import TripDetail from '@/components/TripDetail'
 import TripEditor from '@/components/TripEditor'
 import useTripEditorViewModel from '@/components/TripEditor/useTripEditorViewModel'

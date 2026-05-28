@@ -1,4 +1,3 @@
-'use client'
 /* eslint-disable @stylistic/max-len */
 
 import { Trip } from '@repo/shared/types/database'

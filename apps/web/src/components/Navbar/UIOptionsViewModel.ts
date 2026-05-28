@@ -1,8 +1,7 @@
 import { useWireState } from '@forminator/react-wire'
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
-import { useRouter } from 'next/navigation'
 import { Dispatch, SetStateAction,useCallback, useState } from 'react'
 
+import { RouterLike, useRouter } from '@/lib/router'
 import * as store from '@/store'
 
 export type TUIOptionsViewModel = {
@@ -17,7 +16,7 @@ export type TUIOptionsViewModel = {
     toggleShowMap: () => void
     
     // Hooks
-    router: AppRouterInstance
+    router: RouterLike
 }
 
 const UIOptionsViewModel = (): TUIOptionsViewModel => {

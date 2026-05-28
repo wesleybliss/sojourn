@@ -1,10 +1,10 @@
 import { ApiResult, ID, Trip, TripInsert, TripWithSegmentCount } from '@repo/shared/types'
 import { QueryObserverResult, RefetchOptions, UseMutationResult } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
 import { SyntheticEvent, useEffect, useState } from 'react'
 
 import { useCreateTripMutation, useDeleteTripMutation, useShuffleTripCoverPhoto } from '@/lib/queries/trip'
 import { useTripsQuery } from '@/lib/queries/trips'
+import { useRouter } from '@/lib/router'
 
 type TripListItem = Trip | TripWithSegmentCount
 

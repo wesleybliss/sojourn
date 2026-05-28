@@ -1,5 +1,3 @@
-'use client'
-
 import { Themes } from '@shared/types'
 import { cn } from '@shared/utils'
 import { Monitor, Moon, Sun } from 'lucide-react'

@@ -59,8 +59,8 @@ Add to `.env` (temporary for development):
 ```bash
 # Temporary: expose for browser sync
 # TODO: Replace with server-issued short-lived tokens after OAuth migration
-NEXT_PUBLIC_TURSO_DATABASE_URL="libsql://sojourn-wesleybliss.aws-us-east-1.turso.io"
-NEXT_PUBLIC_TURSO_AUTH_TOKEN="<your-token>"
+VITE_TURSO_DATABASE_URL="libsql://sojourn-wesleybliss.aws-us-east-1.turso.io"
+VITE_TURSO_AUTH_TOKEN="<your-token>"
 ```
 
 **Security Note**: This approach is acceptable for development but should be replaced with server-issued short-lived replication tokens in production.
@@ -82,8 +82,8 @@ export const getClientDb = () => {
     }
 
     const url = 'idb:///sojourn'
-    const syncUrl = process.env.NEXT_PUBLIC_TURSO_DATABASE_URL
-    const authToken = process.env.NEXT_PUBLIC_TURSO_AUTH_TOKEN
+    const syncUrl = process.env.VITE_TURSO_DATABASE_URL
+    const authToken = process.env.VITE_TURSO_AUTH_TOKEN
 
     client = createClient({ url, syncUrl, authToken })
 
@@ -122,8 +122,8 @@ export const syncDb = async options => {
 ```js
 client = createClient({
     url: 'idb:///sojourn',
-    syncUrl: process.env.NEXT_PUBLIC_TURSO_DATABASE_URL,
-    authToken: process.env.NEXT_PUBLIC_TURSO_AUTH_TOKEN,
+    syncUrl: process.env.VITE_TURSO_DATABASE_URL,
+    authToken: process.env.VITE_TURSO_AUTH_TOKEN,
     excludeTables: ['users']
 })
 ```
@@ -361,7 +361,7 @@ export const SyncButton = () => {
 
 ## Future Improvements
 
-- [ ] Replace `NEXT_PUBLIC_TURSO_AUTH_TOKEN` with server-issued short-lived tokens
+- [ ] Replace `VITE_TURSO_AUTH_TOKEN` with server-issued short-lived tokens
 - [ ] Migrate to OAuth provider for authentication
 - [ ] Add telemetry/monitoring for sync failures
 - [ ] Implement custom conflict resolution strategies
@@ -371,7 +371,7 @@ export const SyncButton = () => {
 ## Troubleshooting
 
 ### Sync fails with auth error
-- Verify `NEXT_PUBLIC_TURSO_AUTH_TOKEN` is set correctly
+- Verify `VITE_TURSO_AUTH_TOKEN` is set correctly
 - Check token hasn't expired
 - Regenerate token: `turso db tokens create sojourn`
 

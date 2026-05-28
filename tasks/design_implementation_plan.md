@@ -33,7 +33,7 @@ We will add the following columns:
 
 #### 2. Root Layout Transition
 - File: `apps/web/src/app/layout.tsx`
-- Import `Hanken_Grotesk`, `Inter`, and `JetBrains_Mono` Google Fonts using Next.js `next/font/google`.
+- Load `Hanken Grotesk`, `Inter`, and `JetBrains Mono` through the global stylesheet.
 - Restructure the page template into a flex/grid split layout container:
   - Embed the new left-docked `Sidebar` navigation.
   - Nest the main content workspace on the right, capped with the top header bar `Navbar`.

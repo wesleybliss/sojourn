@@ -1,11 +1,10 @@
-'use client'
 /* eslint-disable @stylistic/max-len */
 
 import { cn } from '@repo/shared/utils'
-import { usePathname } from 'next/navigation'
 import { ReactNode } from 'react'
 
 import Sidebar from '@/components/Sidebar'
+import { usePathname } from '@/lib/router'
 
 interface AppShellProps {
     children: ReactNode

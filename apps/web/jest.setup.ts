@@ -1,20 +1,20 @@
 import '@testing-library/jest-dom'
 
 import { jest } from '@jest/globals'
-import { JSX, ReactNode } from 'react'
 
-// Stub next/link for React Testing Library
-jest.mock('next/link', () => {
-    return ({ children }: { children: ReactNode | JSX.Element }) => children
-})
-
-jest.mock('react-wire', () => {
-    const createMockWire = (initialValue?: unknown) => ({
-        getValue: jest.fn(() => initialValue),
-        setValue: jest.fn(),
-        subscribe: jest.fn(() => jest.fn()), // returns unsubscribe fn
-        fns: {},
-    })
+jest.mock('@forminator/react-wire', () => {
+    const createMockWire = (initialValue?: unknown) => {
+        let value = initialValue
+        
+        return {
+            getValue: jest.fn(() => value),
+            setValue: jest.fn((nextValue: unknown) => {
+                value = nextValue
+            }),
+            subscribe: jest.fn(() => jest.fn()),
+            fns: {},
+        }
+    }
     
     return {
         createWire: jest.fn((initialValue?: unknown) => createMockWire(initialValue)),

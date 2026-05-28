@@ -1,6 +1,5 @@
-import Link from 'next/link'
-
 import LoginForm from '@/components/LoginForm'
+import { Link } from '@/lib/router'
 
 export default function LoginPage() {
     

@@ -1,5 +1,3 @@
-'use client'
-
 import useDebugViewModel from '@/app/debug/useDebugViewModel'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -22,15 +20,6 @@ const DebugUploadFileBlobStorage = () => {
             {vm.sampleImageBlobUrl && (
                 <img src={vm.sampleImageBlobUrl} width="800" height="auto" />
             )}
-            
-            {/*
-                import Image from 'next/image'
-                <Image
-                    src="https://esorkirr926ujb53.public.blob.vercel-storage.com/avatar-1234.png"
-                    width={200}
-                    height={200}
-                    alt="avatar" />
-                */}
         
         </div>
         

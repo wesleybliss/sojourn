@@ -1,7 +1,4 @@
-'use client'
-
 import { useWireValue } from '@forminator/react-wire'
-import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 import {
@@ -13,6 +10,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import { useRouter } from '@/lib/router'
 import * as store from '@/store'
 
 const CurrentPlanSelector = () => {

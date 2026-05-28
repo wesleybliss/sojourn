@@ -6,7 +6,10 @@ import path from 'path'
 
 test('sample backup JSON validates against schema', () => {
     
-    const samplePath = path.resolve(__dirname, '../src/lib/json-schemas/trip-backup-schema-sampleon')
+    const samplePath = path.resolve(
+        __dirname,
+        '../../../packages/shared/src/utils/json-schemas/trip-backup-schema-sample.json',
+    )
     const raw = fs.readFileSync(samplePath, 'utf8')
     const data = JSON.parse(raw)
     

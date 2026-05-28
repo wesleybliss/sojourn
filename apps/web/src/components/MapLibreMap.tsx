@@ -7,7 +7,7 @@ import { useEffect,useRef } from 'react'
 const tileUrls = {
     demo: 'https://demotiles.maplibre.org/styleon',
     openMapTilesBright: 'https://openmaptiles.github.io/osm-bright-gl-style/style-cdnon',
-    mapTilerBasic: `https://api.maptiler.com/maps/basic-v2/styleon?key=${process.env.NEXT_PUBLIC_MAP_TILER_KEY}`,
+    mapTilerBasic: `https://api.maptiler.com/maps/basic-v2/styleon?key=${process.env.VITE_MAP_TILER_KEY}`,
 }
 
 interface MapLibreMapProps {

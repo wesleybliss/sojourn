@@ -1,10 +1,6 @@
-'use client'
-
 import { useWireState, useWireValue } from '@forminator/react-wire'
 import { cn } from '@repo/shared/utils'
 import { FolderUp, Map as MapIcon, MapPlus, PanelLeftClose, TableProperties } from 'lucide-react'
-import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 import AccountMenu from '@/components/AccountMenu'
@@ -14,6 +10,7 @@ import ThemeSwitcher from '@/components/ThemeSwitcher/ThemeSwitcher'
 import { Button } from '@/components/ui/button'
 import { useBackupTrips } from '@/lib/queries/backups'
 import { useCreateTripMutation } from '@/lib/queries/trip'
+import { Link, usePathname, useRouter } from '@/lib/router'
 import * as store from '@/store'
 
 const Navbar = () => {

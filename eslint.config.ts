@@ -2,7 +2,7 @@ import { createRequire } from 'node:module'
 
 import eslintJs from '@eslint/js'
 import stylistic from '@stylistic/eslint-plugin'
-// import oxlint from 'eslint-plugin-oxlint'
+import oxlint from 'eslint-plugin-oxlint'
 import reactPlugin from 'eslint-plugin-react'
 import reactCompiler from 'eslint-plugin-react-compiler'
 import reactHooksPlugin from 'eslint-plugin-react-hooks'
@@ -105,12 +105,14 @@ export default [
     {
         ignores: [
             'dist/**',
+            '**/dist/**',
             'build/**',
-            '.next/**',
-            '**/.next/**',
             'node_modules/**',
             'apps/api/node_modules/**',
             'apps/web/node_modules/**',
+            'apps/web/babel.config.cjs',
+            'apps/web/jest.config.cjs',
+            'apps/web/vite.config.ts',
             'components/ui/**',
             'src/components/ui/**',
             'apps/web/src/components/ui/**',
@@ -194,6 +196,6 @@ export default [
     },
     
     // TBD: the plugin doesn't support ts files yet. Do not remove.
-    // ...oxlint.configs['flat/recommended'], // oxlint should be the last one
-    // ...oxlint.buildFromOxlintConfigFile('./oxlint.config.ts'), // oxlint should be the last one
+    ...oxlint.configs['flat/recommended'], // oxlint should be the last one
+    ...oxlint.buildFromOxlintConfigFile('../oxlint.config.json'), // oxlint should be the last one
 ]

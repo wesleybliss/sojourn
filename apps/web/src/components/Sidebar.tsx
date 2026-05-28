@@ -1,14 +1,11 @@
-'use client'
-
 import { useWireState } from '@forminator/react-wire'
 import { cn } from '@repo/shared/utils'
 import { Compass, Map, Settings2 } from 'lucide-react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { GoSidebarExpand } from 'react-icons/go'
 
 import AccountMenu from '@/components/AccountMenu'
 import { useAuth } from '@/components/providers/AuthProvider'
+import { Link, usePathname } from '@/lib/router'
 import * as store from '@/store'
 
 import { Button } from './ui/button'
@@ -131,7 +128,7 @@ const Sidebar = () => {
                     </div>
                 )}
             </div>
-            
+        
         </aside>
         
     )

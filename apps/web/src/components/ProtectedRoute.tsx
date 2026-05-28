@@ -1,11 +1,9 @@
-'use client'
-
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { ReactNode, useEffect } from 'react'
 
 import InviteCodeForm from '@/components/InviteCodeForm'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { useAuth } from '@/components/providers/AuthProvider'
+import { usePathname, useRouter, useSearchParams } from '@/lib/router'
 
 interface ProtectedRouteProps {
     children: ReactNode

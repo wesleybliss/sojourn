@@ -1,4 +1,4 @@
-import base from '../../eslint.config.ts'
+import base from '../../eslint.config'
 
 export default [
     ...base,

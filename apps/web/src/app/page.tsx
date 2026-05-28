@@ -1,5 +1,3 @@
-'use client'
-
 import TripsPage from '@/app/trips/TripsPage'
 import ProtectedRoute from '@/components/ProtectedRoute'
 

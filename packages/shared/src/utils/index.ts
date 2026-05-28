@@ -188,7 +188,7 @@ export const geocodeNomatim = async (locationName: string) => {
 export const geocodeGeoapify = async (locationName: string) => {
     
     const base = 'https://api.geoapify.com/v1/geocode/search'
-    const url = `${base}?text=${locationName}&apiKey=${process.env.NEXT_PUBLIC_GEOAPIFY_KEY}`
+    const url = `${base}?text=${locationName}&apiKey=${process.env.VITE_GEOAPIFY_KEY}`
     
     // Don't get rate limited
     await sleep(1500)

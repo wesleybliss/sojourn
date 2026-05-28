@@ -7,7 +7,6 @@ import { ListViewMode } from '@repo/shared/types/ui'
 import { calculateTotalDays,sortArrByUpdatedAt } from '@repo/shared/utils'
 import { UseMutationResult } from '@tanstack/react-query'
 import dayjs from 'dayjs'
-import { useParams, useRouter } from 'next/navigation'
 import { ChangeEvent,Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -24,6 +23,7 @@ import {
     useUpdateSegment,
     useUpdateTrip,
 } from '@/lib/queries/trip'
+import { useParams, useRouter } from '@/lib/router'
 import * as store from '@/store'
 
 const matchesDate = (date: Date | string, query: string) => {
@@ -38,7 +38,7 @@ const matchesDate = (date: Date | string, query: string) => {
 
 type TripEditorViewModelParams = {
     tripId: string
-    planId: string
+    planId?: string
 }
 
 export type TTripEditorViewModel = {
@@ -110,8 +110,8 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
     const params = useParams<TripEditorViewModelParams>()
     const router = useRouter()
     
-    const tripId = parseInt(params.tripId, 10)
-    const planId = parseInt(params.planId, 10)
+    const tripId = parseInt(params.tripId ?? '', 10)
+    const planId = parseInt(params.planId ?? '', 10)
     
     // React Query is the single source of truth for trip/plans/segments
     const {

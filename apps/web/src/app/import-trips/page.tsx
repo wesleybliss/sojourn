@@ -1,7 +1,4 @@
-'use client'
-
 import { FolderUp } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { ChangeEvent, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -15,6 +12,7 @@ import {
 } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { useRestoreTrips } from '@/lib/queries/backups'
+import { useRouter } from '@/lib/router'
 
 export default function ImportTripsPage() {
     const fileInputRef = useRef<HTMLInputElement>(null)

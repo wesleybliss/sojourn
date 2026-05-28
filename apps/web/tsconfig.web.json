@@ -4,7 +4,8 @@
         "tsBuildInfoFile": "./node_modules/.cache/tsbuildinfo/web.tsbuildinfo",
         "declarationDir": "./node_modules/.cache/dts/web",
         "composite": true,
-        "noEmit": true,
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "emitDeclarationOnly": true,
         "skipLibCheck": true,
         "strict": true,
         "allowSyntheticDefaultImports": true,
@@ -15,28 +16,23 @@
         "isolatedModules": true,
         "target": "es2017",
         "jsx": "react-jsx",
-        "lib": ["ES2023", "DOM"],
         "types": ["node", "vite/client"],
+        "incremental": true,
         "paths": {
+            "vite-env": ["./vite-env.d.ts"],
             "@/*": ["./src/*"],
             "@shared/*": ["../../packages/shared/src/*"],
             "@shared": ["../../packages/shared/src/index.ts"],
+            "@repo/shared": ["../../packages/shared/src/index.ts"],
             "@repo/shared/*": ["../../packages/shared/src/*"],
-            "@repo/shared": ["../../packages/shared/src/index.ts"]
         }
     },
     "include": [
-        "next-env.d.ts",
-        ".next/types/**/*.ts",
         "./**/*.ts",
         "./**/*.tsx",
-        "src/**/*.ts",
-        "src/**/*.tsx"
     ],
     "exclude": [
-        "node_modules",
-        ".next",
-        "src/app/api/**/*"
+        "node_modules", "vite.config.ts", "eslint.config.js", "dist"
     ],
     "references": [{ "path": "../../packages/shared" }]
 }

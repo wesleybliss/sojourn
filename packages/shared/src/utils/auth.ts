@@ -6,7 +6,6 @@ import { UserSelect } from '@shared/types/database'
 import { adminAuth } from '@shared/utils/firebase/admin'
 import { and, eq, sql } from 'drizzle-orm'
 import { DecodedIdToken } from 'firebase-admin/auth'
-import { NextRequest, NextResponse } from 'next/server'
 
 /**
  * Extracts and verifies Firebase ID token from request Authorization header.
@@ -15,7 +14,7 @@ import { NextRequest, NextResponse } from 'next/server'
  * @returns Decoded Firebase token
  * @throws HttpError 401 - If token is missing or invalid
  */
-const verifyFirebaseToken = async (request: NextRequest): Promise<DecodedIdToken> => {
+const verifyFirebaseToken = async (request: Request): Promise<DecodedIdToken> => {
     const authHeader = request.headers.get('Authorization')
     
     if (!authHeader || !authHeader.startsWith('Bearer '))
@@ -109,7 +108,7 @@ const getOrCreateUser = async (firebaseUser: DecodedIdToken): Promise<UserSelect
  * Verifies Firebase token, gets or creates user in the database, and returns auth context.
  */
 export const authorize = async (
-    request: NextRequest,
+    request: Request,
 ): Promise<{ user: UserSelect; firebaseToken: DecodedIdToken; userId: ID }> => {
     
     const firebaseToken = await verifyFirebaseToken(request)
@@ -126,27 +125,39 @@ export type AuthContext = {
     userId: ID
 }
 
-export const withAuth = <T>(
-    handler: (_req: NextRequest, _context: { auth: AuthContext, params: Promise<T> }) => Promise<NextResponse>,
-) => async (request: NextRequest, context: Record<string, unknown> = {}) => {
+export type AuthHandlerContext<T = Record<string, never>> = {
+    auth: AuthContext
+    params: Promise<T>
+}
+
+export const withAuth = <T = Record<string, never>>(
+    handler: (_req: Request, _context: AuthHandlerContext<T>) => Promise<Response>,
+) => async (request: Request, context: Partial<AuthHandlerContext<T>> = {}) => {
     
     try {
         
         const auth = await authorize(request)
-        const newContext = { ...context, auth, params: context.params as Promise<T> }
+        const newContext: AuthHandlerContext<T> = {
+            ...context,
+            auth,
+            params: context.params ?? Promise.resolve({} as T),
+        }
         
         return await handler(request, newContext)
         
     } catch (e) {
         
         if (e instanceof HttpError)
-            return NextResponse.json({
-                success: false,
-                error: (e as HttpError).message,
-            }, { status: (e as HttpError).status })
+            return new Response(
+                JSON.stringify({ success: false, error: (e as HttpError).message }),
+                { status: (e as HttpError).status, headers: { 'Content-Type': 'application/json' } },
+            )
         
         console.error('Authorization error:', e)
-        return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+        return new Response(
+            JSON.stringify({ success: false, error: 'Internal Server Error' }),
+            { status: 500, headers: { 'Content-Type': 'application/json' } },
+        )
         
     }
     

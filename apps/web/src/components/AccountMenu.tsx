@@ -1,10 +1,7 @@
-'use client'
-
 import { User } from '@repo/shared/types/database'
 import { Trip } from '@repo/shared/types/database'
 import { fetchJSON } from '@repo/shared/utils/api'
 import { ChevronUp, LogOut } from 'lucide-react'
-import Link from 'next/link'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -22,6 +19,7 @@ import {
 import useNavbarLinks, { NavbarLink } from '@/hooks/useNavbarLinks'
 import { useBackupTrips } from '@/lib/queries/backups'
 import { useTripsQuery } from '@/lib/queries/trips'
+import { Link } from '@/lib/router'
 
 const debugDumpData = (trips: Trip[] | null) => (e: MouseEvent) => {
     
@@ -150,8 +148,8 @@ const AccountMenu = ({
                                 {displayName}
                             </div>
                             <span className="truncate text-xs text-sidebar-foreground/55">
-                                    {displayEmail || (loading ? 'Loading profile...' : 'Authenticated')}
-                                </span>
+                                {displayEmail || (loading ? 'Loading profile...' : 'Authenticated')}
+                            </span>
                             <div className="mt-1 flex items-center gap-2">
                                 <span
                                     className="rounded-full bg-sidebar-primary px-2 py-0.5

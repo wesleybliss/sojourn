@@ -134,7 +134,7 @@ const TripActionsDropdown = ({
                     </DropdownMenuCheckboxItem>
                 </DropdownMenuGroup>
                 
-                {process.env.NEXT_PUBLIC_DEBUG_ENABLED === 'true' && (<>
+                {process.env.VITE_DEBUG_ENABLED === 'true' && (<>
                     <DropdownMenuSeparator />
                     <DropdownMenuLabel className="opacity-60">Development Options</DropdownMenuLabel>
                     <DropdownMenuGroup>

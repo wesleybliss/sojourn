@@ -1,6 +1,5 @@
 import { ApiResult } from '@shared/types'
 import { auth } from '@shared/utils/firebase/client'
-import { NextResponse } from 'next/server'
 
 export class ApiResponse<T> implements ApiResult<T> {
     
@@ -24,25 +23,25 @@ export class ApiResponse<T> implements ApiResult<T> {
 }
 
 type ApiResponseHelper = {
-    ok: <T>(data: ApiResponse<T>, status?: number) => NextResponse<ApiResponse<T>>
-    fail: <T>(error: string, status: number, data?: ApiResponse<T>) => NextResponse<ApiResponse<T>>
-    okMessage: (message: string) => NextResponse<ApiResponse<{ message: string }>>
-    notFound: (resource?: string) => NextResponse<ApiResponse<undefined>>
-    badRequest: (message?: string) => NextResponse<ApiResponse<undefined>>
-    unauthorized: (message?: string) => NextResponse<ApiResponse<undefined>>
-    forbidden: (message?: string) => NextResponse<ApiResponse<undefined>>
-    invalidParams: (message?: string) => NextResponse<ApiResponse<undefined>>
-    internalServerError: (message?: string) => NextResponse<ApiResponse<undefined>>
+    ok: <T>(data: ApiResponse<T>, status?: number) => Response
+    fail: <T>(error: string, status: number, data?: ApiResponse<T>) => Response
+    okMessage: (message: string) => Response
+    notFound: (resource?: string) => Response
+    badRequest: (message?: string) => Response
+    unauthorized: (message?: string) => Response
+    forbidden: (message?: string) => Response
+    invalidParams: (message?: string) => Response
+    internalServerError: (message?: string) => Response
 }
 
 const apiResponseBase = {
-    ok: <T>(data: ApiResponse<T>, status: number = 200): NextResponse<ApiResponse<T>> => NextResponse.json(
-        data,
-        { status },
+    ok: <T>(data: ApiResponse<T>, status: number = 200): Response => new Response(
+        JSON.stringify(data),
+        { status, headers: { 'Content-Type': 'application/json' } },
     ),
-    fail: <T>(error: string, status: number, data?: ApiResponse<T>): NextResponse<ApiResponse<T>> => NextResponse.json(
-        { error, ...(data || {}) },
-        { status },
+    fail: <T>(error: string, status: number, data?: ApiResponse<T>): Response => new Response(
+        JSON.stringify({ error, ...data }),
+        { status, headers: { 'Content-Type': 'application/json' } },
     ),
 }
 
