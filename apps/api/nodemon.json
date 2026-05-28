@@ -1,7 +1,7 @@
 {
     "verbose": false,
     "watch": [".", "../../packages/shared"],
-    "ext": "*",
+    "ext": "*.ts",
     "ignore": ["**/.vercel/**"],
     "exec": "pnpm build && pnpm start"
 }
