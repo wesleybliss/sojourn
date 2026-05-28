@@ -1,6 +1,9 @@
 {
     "extends": "./tsconfig.base.json",
     "files": [],
+    "compilerOptions": {
+        "types": ["node"]
+    },
     "references": [
         { "path": "./apps/web/tsconfig.web.json" },
         { "path": "./apps/web/tsconfig.api.json" },
