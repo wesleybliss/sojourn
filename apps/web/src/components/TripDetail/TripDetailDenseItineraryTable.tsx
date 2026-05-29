@@ -32,7 +32,7 @@ const TripDetailDenseItineraryTable = ({
             <thead className="bg-surface-container-low text-left text-xs uppercase
                 tracking-[0.18em] text-muted-foreground">
                 <tr>
-                    <th className="px-4 py-3 font-medium">StopXXXX</th>
+                    <th className="px-4 py-3 font-medium">Stop</th>
                     <th className="px-4 py-3 font-medium">Dates</th>
                     <th className="px-4 py-3 font-medium">Days</th>
                     <th className="px-4 py-3 font-medium">Cumulative</th>

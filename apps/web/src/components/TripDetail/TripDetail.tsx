@@ -47,16 +47,12 @@ const TripDetail = ({
                         <TripDetailOperationalSnapshot segments={vm.segments} />
                     </div>
                     
-                    <article className="grid gap-5 md:grid-cols-2 xl:col-span-5 xl:grid-cols-1">
-                        <div className="flex flex-col gap-4 border-b border-border/70
-                            px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
+                    <article className="section-card xl:col-span-7 overflow-hidden">
+                        <div className="flex flex-col gap-4 border-b border-border/70 px-5 py-4
+                            lg:flex-row lg:items-center lg:justify-between">
                             <div>
-                                <div className="eyebrow mb-2">
-                                    Itinerary Ledger
-                                </div>
-                                <h2 className="text-xl font-semibold tracking-[-0.04em]">
-                                    Dense Itinerary Table
-                                </h2>
+                                <div className="eyebrow mb-2">Itinerary Ledger</div>
+                                <h2 className="text-xl font-semibold tracking-[-0.04em]">Dense Itinerary Table</h2>
                             </div>
                             <div className="flex flex-col gap-2 sm:flex-row">
                                 <div className="relative">
