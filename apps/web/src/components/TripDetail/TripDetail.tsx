@@ -40,7 +40,7 @@ const TripDetail = ({
             )}
             {/*<section className="grid gap-5 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">*/}
             {vm.showMap ? <TripDetailMap vm={vm} /> : (<>
-                <section className="grid gap-5 xl:grid-cols-12">
+                <section className="grid gap-5 xl:grid-cols-12 py-2">
                     
                     <div className="grid gap-5 md:grid-cols-2 xl:col-span-5 xl:grid-cols-1">
                         <TripDetailComplianceCard shengenData={vm.shengenData} />

@@ -34,10 +34,10 @@ export default defineConfig(({ mode }) => {
     plugins: [
         react(),
         tailwindcss({
-            content: [
-                './src/**/*.{html,js,ts,jsx,tsx}',
-                '../../packages/shared/src/**/*.{html,js,ts,jsx,tsx}',
-            ],
+            /*content: [
+                './src/!**!/!*.{html,js,ts,jsx,tsx}',
+                '../../packages/shared/src/!**!/!*.{html,js,ts,jsx,tsx}',
+            ],*/
         }),
     ],
         resolve: {
