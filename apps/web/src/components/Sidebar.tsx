@@ -57,20 +57,22 @@ const Sidebar = () => {
             <div className="p-5">
                 <Link href="/" className="block">
                     <div className="eyebrow mb-2">
-                        <img className="size-12" src="/logo.png" alt="Sojourn" />
+                        <img className="size-10" src="/logo.png" alt="Sojourn" />
                     </div>
-                    {isSidebarExpanded && (
-                        <div className="font-headline text-2xl font-semibold tracking-[-0.04em]">
-                            Sojourn
-                        </div>
-                    )}
+                    <div className={cn('font-headline text-2xl font-semibold tracking-[-0.04em]',
+                        'transition-opacity duration-600 ease-in-out', {
+                            'w-px opacity-0 overflow-hidden': !isSidebarExpanded,
+                        },
+                    )}>
+                        Sojourn
+                    </div>
                 </Link>
                 <div className={cn('flex', {
                     'justify-end': isSidebarExpanded,
                     'justify-center': !isSidebarExpanded,
                 })}>
                     <Button
-                        variant="ghost"
+                        className="bg-accent/30 text-accent-foreground hover:bg-accent/40"
                         size="icon"
                         onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}>
                         <GoSidebarExpand className={cn('size-5 transition-transform duration-300 ease-in-out', {
@@ -81,7 +83,7 @@ const Sidebar = () => {
                 </div>
             </div>
             
-            <nav className="flex flex-1 flex-row gap-2 overflow-x-auto p-3 md:flex-col md:overflow-visible">
+            <nav className="flex flex-1 flex-row gap-8 overflow-x-auto p-5 md:flex-col md:overflow-visible">
                 {navigationItems.map(item => {
                     const isActive = item.href === '/'
                         ? pathname === '/'

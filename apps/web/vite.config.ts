@@ -31,10 +31,15 @@ export default defineConfig(({ mode }) => {
     
     return {
         envDir: repoRoot,
-        plugins: [
-            react(),
-            tailwindcss(),
-        ],
+    plugins: [
+        react(),
+        tailwindcss({
+            content: [
+                './src/**/*.{html,js,ts,jsx,tsx}',
+                '../../packages/shared/src/**/*.{html,js,ts,jsx,tsx}',
+            ],
+        }),
+    ],
         resolve: {
             alias: {
                 '@': path.resolve(rootDir, './src'),

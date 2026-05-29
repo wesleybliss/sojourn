@@ -18,7 +18,7 @@ const ThemeSwitcher = memo(() => {
     
     return (
         
-        <div className="p-[6px] flex items-center bg-primary/10 rounded-lg gap-1">
+        <div className="p-1.5 flex items-center bg-accent/30 rounded-lg gap-1">
             
             {themes.map(({ value, icon: Icon }) => (
                 
