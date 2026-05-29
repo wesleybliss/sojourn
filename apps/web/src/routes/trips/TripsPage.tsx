@@ -52,21 +52,7 @@ const TripsPage = () => {
     
     return (
         
-        <div data-testid="TripsPage" className="flex flex-col gap-8 p-5 lg:p-8">
-            <section
-                className="section-card overflow-hidden p-6
-                    lg:p-8">
-                <div className="max-w-3xl">
-                    <div className="eyebrow mb-3">My Trips</div>
-                    <h2 className="text-3xl font-semibold tracking-[-0.05em] lg:text-4xl">
-                        Ongoing Journeys
-                    </h2>
-                    <p className="mt-3 text-sm text-muted-foreground lg:text-base">
-                        Keep every itinerary visible, track what changed most recently,
-                        and stage the next route without losing context.
-                    </p>
-                </div>
-            </section>
+        <div data-testid="TripsPage" className="flex flex-col gap-8 py-2">
             
             {!trips.length && (
                 <div

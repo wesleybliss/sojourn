@@ -243,15 +243,15 @@ html[data-theme='dark'] {
 }
 
 .font-mono {
-    font-family: var(--font-data-mono);
+    font-family: var(--font-data-mono), monospace;
 }
 
 .font-headline {
-    font-family: var(--font-headline-md);
+    font-family: var(--font-headline-md), sans-serif;
 }
 
 .font-label-caps {
-    font-family: var(--font-label-caps);
+    font-family: var(--font-label-caps), sans-serif;
     letter-spacing: 0.16em;
     text-transform: uppercase;
 }
@@ -268,6 +268,12 @@ html[data-theme='dark'] {
 }
 
 @layer components {
+
+    .shell-background {
+        @apply bg-[radial-gradient(circle_at_top_left,rgba(221,231,243,0.9),transparent_38%),linear-gradient(180deg,var(--surface)_0%,#eef3f8_100%)];
+        @apply dark:bg-[radial-gradient(circle_at_top_left,rgba(42,61,87,0.35),transparent_35%),linear-gradient(180deg,#091426_0%,#0d1728_100%)];
+    }
+    
     .app-panel {
         @apply rounded-[9px] border border-border/70 bg-surface-container-lowest;
     }

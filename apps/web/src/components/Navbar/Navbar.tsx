@@ -1,6 +1,6 @@
 import { useWireState, useWireValue } from '@forminator/react-wire'
 import { cn } from '@repo/shared/utils'
-import { FolderUp, Map as MapIcon, MapPlus, PanelLeftClose, TableProperties } from 'lucide-react'
+import { FolderUp, Map as MapIcon, MapPlus, TableProperties } from 'lucide-react'
 import { toast } from 'sonner'
 
 import AccountMenu from '@/components/AccountMenu'
@@ -10,7 +10,7 @@ import ThemeSwitcher from '@/components/ThemeSwitcher/ThemeSwitcher'
 import { Button } from '@/components/ui/button'
 import { useBackupTrips } from '@/lib/queries/backups'
 import { useCreateTripMutation } from '@/lib/queries/trip'
-import { Link, usePathname, useRouter } from '@/lib/router'
+import { usePathname, useRouter } from '@/lib/router'
 import * as store from '@/store'
 
 const Navbar = () => {
@@ -96,19 +96,9 @@ const Navbar = () => {
                                 ? 'Trip Workspace'
                                 : isPlacesPage
                                     ? 'Saved Places'
-                                    : 'Dashboard'}
+                                    : 'My Trips'}
                         </div>
                         <div className="flex items-center gap-3">
-                            {!isTripWorkspace && (
-                                <Link
-                                    href="/"
-                                    className="hidden rounded-full border border-border/70 px-2.5 py-1
-                                        text-xs font-medium text-muted-foreground transition-colors
-                                        hover:bg-accent hover:text-accent-foreground lg:inline-flex">
-                                    <PanelLeftClose className="size-3.5" />
-                                    Home
-                                </Link>
-                            )}
                             <div className="min-w-0">
                                 <h1 className="truncate text-2xl font-semibold tracking-[-0.04em] lg:text-3xl">
                                     {title}
@@ -152,7 +142,7 @@ const Navbar = () => {
                             bg-surface-container-low px-4 py-3
                             lg:flex-row lg:items-center lg:justify-between">
                         <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-                            <div className="min-w-[13rem]">
+                            <div className="min-w-52">
                                 <CurrentPlanSelector />
                             </div>
                             <div

@@ -40,7 +40,7 @@ const TripDetail = ({
             {vm.showMap ? (
                 DEBUG_USE_LEGACY_MAP ? <TripDetailMap vm={vm} /> : (
                     <section className="py-2">
-                        <TripMap className="min-h-[70vh] w-full" />
+                        <TripMap className="min-h-[70vh] w-full" segments={vm.segments} />
                     </section>
                 )
             ) : (<>

@@ -1,9 +1,9 @@
-/* eslint-disable @stylistic/max-len */
-
 import { cn } from '@repo/shared/utils'
+import { Menu } from 'lucide-react'
 import { ReactNode } from 'react'
 
 import Sidebar from '@/components/Sidebar'
+import { Button } from '@/components/ui/button'
 import { usePathname } from '@/lib/router'
 
 interface AppShellProps {
@@ -18,8 +18,7 @@ const AppShell = ({ children }: AppShellProps) => {
     const isChromeless = CHROMELESS_PATHS.some(path => pathname?.startsWith(path))
     const shellBackgroundClassName = [
         'min-h-screen',
-        'bg-[radial-gradient(circle_at_top_left,_rgba(221,231,243,0.9),_transparent_38%),linear-gradient(180deg,_var(--surface)_0%,_#eef3f8_100%)]',
-        'dark:bg-[radial-gradient(circle_at_top_left,_rgba(42,61,87,0.35),_transparent_35%),linear-gradient(180deg,_#091426_0%,_#0d1728_100%)]',
+        'shell-background',
     ].join(' ')
     
     if (isChromeless)
@@ -31,7 +30,9 @@ const AppShell = ({ children }: AppShellProps) => {
             <div
                 className="mx-auto flex min-h-screen w-full max-w-450 flex-col gap-2 px-1 py-1
                     lg:flex-row lg:px-2 lg:py-2">
+                
                 <Sidebar />
+                
                 <div
                     className={cn(
                         'routes-panel flex min-h-[calc(100vh-1.5rem)] min-w-0 flex-1 flex-col overflow-hidden',
@@ -39,6 +40,18 @@ const AppShell = ({ children }: AppShellProps) => {
                     )}>
                     {children}
                 </div>
+                
+                <div className="md:hidden fixed inset-y-4 right-4 z-20">
+                    <Button
+                        className="peer rounded-full"
+                        variant="outline">
+                        <Menu className="size-3"/>
+                    </Button>
+                    <div className="hidden fixed max-w-[80%] inset-top-4 right-4 peer-focus:block mt-2">
+                        <Sidebar isChild />
+                    </div>
+                </div>
+            
             </div>
         </div>
         

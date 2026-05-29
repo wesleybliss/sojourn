@@ -32,7 +32,13 @@ const navigationItems = [
     },
 ]
 
-const Sidebar = () => {
+interface SidebarProps {
+    isChild?: boolean
+}
+
+const Sidebar = ({
+    isChild = false,
+}: SidebarProps) => {
     
     const pathname = usePathname()
     const { firebaseUser } = useAuth()
@@ -46,10 +52,12 @@ const Sidebar = () => {
         <aside
             data-testid="Sidebar"
             className={cn(
-                'tropical-glow relative section-card flex shrink-0 flex-col overflow-hidden border-none',
+                'tropical-glow relative section-card shrink-0 flex-col overflow-hidden border-none',
                 'bg-sidebar text-sidebar-foreground md:max-w-[18rem]',
                 'lg:top-2 lg:sticky lg:h-[calc(100vh-1.6rem)]',
                 'transition-width duration-300 ease-in-out', {
+                    'flex p-0 shadow-lg outline': isChild,
+                    'hidden md:flex max-w-full': !isChild,
                     'w-full md:w-auto lg:w-70': isSidebarExpanded,
                     'w-20': !isSidebarExpanded,
                 })}>
@@ -68,6 +76,7 @@ const Sidebar = () => {
                     </div>
                 </Link>
                 <div className={cn('flex', {
+                    'hidden': isChild,
                     'justify-end': isSidebarExpanded,
                     'justify-center': !isSidebarExpanded,
                 })}>
@@ -83,7 +92,7 @@ const Sidebar = () => {
                 </div>
             </div>
             
-            <nav className="flex flex-1 flex-row gap-8 overflow-x-auto p-5 md:flex-col md:overflow-visible">
+            <nav className="flex flex-1 flex-col gap-8 overflow-x-auto p-5 md:overflow-visible">
                 {navigationItems.map(item => {
                     const isActive = item.href === '/'
                         ? pathname === '/'
