@@ -94,9 +94,11 @@ const Sidebar = ({
             
             <nav className="flex flex-1 flex-col gap-8 overflow-x-auto p-5 md:overflow-visible">
                 {navigationItems.map(item => {
+                    
                     const isActive = item.href === '/'
                         ? pathname === '/'
                         : pathname?.startsWith(item.href)
+                    
                     const Icon = item.icon
                     
                     return (
@@ -116,8 +118,8 @@ const Sidebar = ({
                             )}>
                                 <Icon className="size-4.5" />
                             </span>
-                            <span className={cn('min-w-0', {
-                                'hidden': !isSidebarExpanded,
+                            <span className={cn('min-w-0 transition-all duration-200 ease-in-out', {
+                                '-translate-x-20 w-px overflow-hidden opacity-0': !isSidebarExpanded,
                             })}>
                                 <span className="block text-sm font-semibold">{item.label}</span>
                                 <span className="block text-xs text-sidebar-foreground/55">
@@ -127,6 +129,7 @@ const Sidebar = ({
                         </Link>
                         
                     )
+                    
                 })}
             </nav>
             
