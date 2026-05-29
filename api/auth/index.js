@@ -5530,7 +5530,10 @@ var ApiResponse = class {
 };
 var apiResponseBase = {
   ok: (res, data, status = 200) => res.status(status).json(new ApiResponse(data)),
-  fail: (res, error, status, data) => res.status(status).json(new ApiResponse(data, error))
+  fail: (res, error, status, data) => {
+    console.error("apiResponse/fail", error, new Error("apiResponse fail"));
+    return res.status(status).json(new ApiResponse(data, error));
+  }
 };
 var apiResponse = {
   ...apiResponseBase,
@@ -18140,9 +18143,9 @@ var withAuth = (handler2) => {
       const auth2 = await authorize(req);
       return await handler2(req, res, auth2);
     } catch (e) {
+      console.error("Authorization error:", e);
       if (e instanceof HttpError_default)
         return res.status(e.status).json({ error: e.message });
-      console.error("Authorization error:", e);
       return res.status(500).json({ error: "Internal Server Error" });
     }
   });

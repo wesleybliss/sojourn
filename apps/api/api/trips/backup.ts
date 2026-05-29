@@ -1,4 +1,5 @@
 import { apiResponse } from '@repo/shared/utils/api'
+import { withAuth } from '@repo/shared/utils/auth'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 import { backupTrips } from '#handlers/trips/backupTrips'
@@ -7,14 +8,14 @@ export const config = {
     runtime: 'nodejs',
 }
 
-export default async function handler(
+export default withAuth((
     req: VercelRequest,
     res: VercelResponse,
-): Promise<VercelResponse | undefined> {
+): VercelResponse | Promise<VercelResponse> => {
     
     switch (req.method) {
         case 'POST': return backupTrips(req, res)
         default: return apiResponse.internalServerError(res)
     }
     
-}
+})

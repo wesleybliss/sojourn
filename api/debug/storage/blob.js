@@ -3437,9 +3437,9 @@ var require_event_target = __commonJS({
        *     the listener would be automatically removed when invoked.
        * @public
        */
-      addEventListener(type, handler2, options = {}) {
+      addEventListener(type, handler, options = {}) {
         for (const listener of this.listeners(type)) {
-          if (!options[kForOnEventAttribute] && listener[kListener] === handler2 && !listener[kForOnEventAttribute]) {
+          if (!options[kForOnEventAttribute] && listener[kListener] === handler && !listener[kForOnEventAttribute]) {
             return;
           }
         }
@@ -3450,7 +3450,7 @@ var require_event_target = __commonJS({
               data: isBinary ? data : data.toString()
             });
             event[kTarget] = this;
-            callListener(handler2, this, event);
+            callListener(handler, this, event);
           };
         } else if (type === "close") {
           wrapper = function onClose(code, message) {
@@ -3460,7 +3460,7 @@ var require_event_target = __commonJS({
               wasClean: this._closeFrameReceived && this._closeFrameSent
             });
             event[kTarget] = this;
-            callListener(handler2, this, event);
+            callListener(handler, this, event);
           };
         } else if (type === "error") {
           wrapper = function onError(error) {
@@ -3469,19 +3469,19 @@ var require_event_target = __commonJS({
               message: error.message
             });
             event[kTarget] = this;
-            callListener(handler2, this, event);
+            callListener(handler, this, event);
           };
         } else if (type === "open") {
           wrapper = function onOpen() {
             const event = new Event2("open");
             event[kTarget] = this;
-            callListener(handler2, this, event);
+            callListener(handler, this, event);
           };
         } else {
           return;
         }
         wrapper[kForOnEventAttribute] = !!options[kForOnEventAttribute];
-        wrapper[kListener] = handler2;
+        wrapper[kListener] = handler;
         if (options.once) {
           this.once(type, wrapper);
         } else {
@@ -3495,9 +3495,9 @@ var require_event_target = __commonJS({
        * @param {(Function|Object)} handler The listener to remove
        * @public
        */
-      removeEventListener(type, handler2) {
+      removeEventListener(type, handler) {
         for (const listener of this.listeners(type)) {
-          if (listener[kListener] === handler2 && !listener[kForOnEventAttribute]) {
+          if (listener[kListener] === handler && !listener[kForOnEventAttribute]) {
             this.removeListener(type, listener);
             break;
           }
@@ -4132,15 +4132,15 @@ var require_websocket = __commonJS({
           }
           return null;
         },
-        set(handler2) {
+        set(handler) {
           for (const listener of this.listeners(method)) {
             if (listener[kForOnEventAttribute]) {
               this.removeListener(method, listener);
               break;
             }
           }
-          if (typeof handler2 !== "function") return;
-          this.addEventListener(method, handler2, {
+          if (typeof handler !== "function") return;
+          this.addEventListener(method, handler, {
             [kForOnEventAttribute]: true
           });
         }
@@ -6454,31 +6454,31 @@ var require_util = __commonJS({
     function isBuffer2(buffer) {
       return buffer instanceof Uint8Array || Buffer.isBuffer(buffer);
     }
-    function validateHandler(handler2, method, upgrade) {
-      if (!handler2 || typeof handler2 !== "object") {
+    function validateHandler(handler, method, upgrade) {
+      if (!handler || typeof handler !== "object") {
         throw new InvalidArgumentError("handler must be an object");
       }
-      if (typeof handler2.onConnect !== "function") {
+      if (typeof handler.onConnect !== "function") {
         throw new InvalidArgumentError("invalid onConnect method");
       }
-      if (typeof handler2.onError !== "function") {
+      if (typeof handler.onError !== "function") {
         throw new InvalidArgumentError("invalid onError method");
       }
-      if (typeof handler2.onBodySent !== "function" && handler2.onBodySent !== void 0) {
+      if (typeof handler.onBodySent !== "function" && handler.onBodySent !== void 0) {
         throw new InvalidArgumentError("invalid onBodySent method");
       }
       if (upgrade || method === "CONNECT") {
-        if (typeof handler2.onUpgrade !== "function") {
+        if (typeof handler.onUpgrade !== "function") {
           throw new InvalidArgumentError("invalid onUpgrade method");
         }
       } else {
-        if (typeof handler2.onHeaders !== "function") {
+        if (typeof handler.onHeaders !== "function") {
           throw new InvalidArgumentError("invalid onHeaders method");
         }
-        if (typeof handler2.onData !== "function") {
+        if (typeof handler.onData !== "function") {
           throw new InvalidArgumentError("invalid onData method");
         }
-        if (typeof handler2.onComplete !== "function") {
+        if (typeof handler.onComplete !== "function") {
           throw new InvalidArgumentError("invalid onComplete method");
         }
       }
@@ -6921,7 +6921,7 @@ var require_request = __commonJS({
         throwOnError,
         expectContinue,
         servername
-      }, handler2) {
+      }, handler) {
         if (typeof path !== "string") {
           throw new InvalidArgumentError("path must be a string");
         } else if (path[0] !== "/" && !(path.startsWith("http://") || path.startsWith("https://")) && method !== "CONNECT") {
@@ -7026,9 +7026,9 @@ var require_request = __commonJS({
         } else if (headers != null) {
           throw new InvalidArgumentError("headers must be an object or an array");
         }
-        validateHandler(handler2, method, upgrade);
+        validateHandler(handler, method, upgrade);
         this.servername = servername || getServerName(this.host);
-        this[kHandler] = handler2;
+        this[kHandler] = handler;
         if (channels.create.hasSubscribers) {
           channels.create.publish({ request: this });
         }
@@ -7394,20 +7394,20 @@ var require_dispatcher_base = __commonJS({
           queueMicrotask(onDestroyed);
         });
       }
-      [kInterceptedDispatch](opts, handler2) {
+      [kInterceptedDispatch](opts, handler) {
         if (!this[kInterceptors] || this[kInterceptors].length === 0) {
           this[kInterceptedDispatch] = this[kDispatch];
-          return this[kDispatch](opts, handler2);
+          return this[kDispatch](opts, handler);
         }
         let dispatch = this[kDispatch].bind(this);
         for (let i = this[kInterceptors].length - 1; i >= 0; i--) {
           dispatch = this[kInterceptors][i](dispatch);
         }
         this[kInterceptedDispatch] = dispatch;
-        return dispatch(opts, handler2);
+        return dispatch(opts, handler);
       }
-      dispatch(opts, handler2) {
-        if (!handler2 || typeof handler2 !== "object") {
+      dispatch(opts, handler) {
+        if (!handler || typeof handler !== "object") {
           throw new InvalidArgumentError("handler must be an object");
         }
         try {
@@ -7420,12 +7420,12 @@ var require_dispatcher_base = __commonJS({
           if (this[kClosed]) {
             throw new ClientClosedError();
           }
-          return this[kInterceptedDispatch](opts, handler2);
+          return this[kInterceptedDispatch](opts, handler);
         } catch (err) {
-          if (typeof handler2.onError !== "function") {
+          if (typeof handler.onError !== "function") {
             throw new InvalidArgumentError("invalid onError method");
           }
-          handler2.onError(err);
+          handler.onError(err);
           return false;
         }
       }
@@ -12472,17 +12472,17 @@ var require_redirect_handler = __commonJS({
       }
     };
     var RedirectHandler = class {
-      constructor(dispatch, maxRedirections, opts, handler2) {
+      constructor(dispatch, maxRedirections, opts, handler) {
         if (maxRedirections != null && (!Number.isInteger(maxRedirections) || maxRedirections < 0)) {
           throw new InvalidArgumentError("maxRedirections must be a positive number");
         }
-        util.validateHandler(handler2, opts.method, opts.upgrade);
+        util.validateHandler(handler, opts.method, opts.upgrade);
         this.dispatch = dispatch;
         this.location = null;
         this.abort = null;
         this.opts = { ...opts, maxRedirections: 0 };
         this.maxRedirections = maxRedirections;
-        this.handler = handler2;
+        this.handler = handler;
         this.history = [];
         this.redirectionLimitReached = false;
         if (util.isStream(this.opts.body)) {
@@ -12615,12 +12615,12 @@ var require_redirect_interceptor = __commonJS({
     var RedirectHandler = require_redirect_handler();
     function createRedirectInterceptor({ maxRedirections: defaultMaxRedirections }) {
       return (dispatch) => {
-        return function Intercept(opts, handler2) {
+        return function Intercept(opts, handler) {
           const { maxRedirections = defaultMaxRedirections } = opts;
           if (!maxRedirections) {
-            return dispatch(opts, handler2);
+            return dispatch(opts, handler);
           }
-          const redirectHandler = new RedirectHandler(dispatch, maxRedirections, opts, handler2);
+          const redirectHandler = new RedirectHandler(dispatch, maxRedirections, opts, handler);
           opts = { ...opts, maxRedirections: 0 };
           return dispatch(opts, redirectHandler);
         };
@@ -12879,9 +12879,9 @@ var require_client = __commonJS({
         connect(this);
         this.once("connect", cb);
       }
-      [kDispatch](opts, handler2) {
+      [kDispatch](opts, handler) {
         const origin = opts.origin || this[kUrl].origin;
-        const request = new Request3(origin, opts, handler2);
+        const request = new Request3(origin, opts, handler);
         this[kQueue].push(request);
         if (this[kResuming]) {
         } else if (util.bodyLength(request.body) == null && util.isIterable(request.body)) {
@@ -13330,13 +13330,13 @@ var require_pool_base = __commonJS({
         }
         await Promise.all(this[kClients].map((c) => c.destroy(err)));
       }
-      [kDispatch](opts, handler2) {
+      [kDispatch](opts, handler) {
         const dispatcher = this[kGetDispatcher]();
         if (!dispatcher) {
           this[kNeedDrain] = true;
-          this[kQueue].push({ opts, handler: handler2 });
+          this[kQueue].push({ opts, handler });
           this[kQueued]++;
-        } else if (!dispatcher.dispatch(opts, handler2)) {
+        } else if (!dispatcher.dispatch(opts, handler)) {
           dispatcher[kNeedDrain] = true;
           this[kNeedDrain] = !this[kGetDispatcher]();
         }
@@ -13672,7 +13672,7 @@ var require_agent = __commonJS({
         }
         return ret;
       }
-      [kDispatch](opts, handler2) {
+      [kDispatch](opts, handler) {
         let key;
         if (opts.origin && (typeof opts.origin === "string" || opts.origin instanceof URL)) {
           key = String(opts.origin);
@@ -13684,7 +13684,7 @@ var require_agent = __commonJS({
           dispatcher = this[kFactory](opts.origin, this[kOptions]).on("drain", this[kOnDrain]).on("connect", this[kOnConnect]).on("disconnect", this[kOnDisconnect]).on("connectionError", this[kOnConnectionError]);
           this[kClients].set(key, dispatcher);
         }
-        return dispatcher.dispatch(opts, handler2);
+        return dispatcher.dispatch(opts, handler);
       }
       async [kClose]() {
         const closePromises = [];
@@ -13754,12 +13754,12 @@ var require_proxy_agent = __commonJS({
           this.#client = new Client2(proxyUrl, { connect });
         }
       }
-      [kDispatch](opts, handler2) {
-        const onHeaders = handler2.onHeaders;
-        handler2.onHeaders = function(statusCode, data, resume) {
+      [kDispatch](opts, handler) {
+        const onHeaders = handler.onHeaders;
+        handler.onHeaders = function(statusCode, data, resume) {
           if (statusCode === 407) {
-            if (typeof handler2.onError === "function") {
-              handler2.onError(new InvalidArgumentError("Proxy Authentication Required (407)"));
+            if (typeof handler.onError === "function") {
+              handler.onError(new InvalidArgumentError("Proxy Authentication Required (407)"));
             }
             return;
           }
@@ -13776,7 +13776,7 @@ var require_proxy_agent = __commonJS({
           headers.host = host;
         }
         opts.headers = { ...this[kProxyHeaders], ...headers };
-        return this.#client[kDispatch](opts, handler2);
+        return this.#client[kDispatch](opts, handler);
       }
       async [kClose]() {
         return this.#client.close();
@@ -13873,7 +13873,7 @@ var require_proxy_agent = __commonJS({
           }
         });
       }
-      dispatch(opts, handler2) {
+      dispatch(opts, handler) {
         const headers = buildHeaders(opts.headers);
         throwIfProxyAuthIsSent(headers);
         if (headers && !("host" in headers) && !("Host" in headers)) {
@@ -13885,7 +13885,7 @@ var require_proxy_agent = __commonJS({
             ...opts,
             headers
           },
-          handler2
+          handler
         );
       }
       /**
@@ -13972,10 +13972,10 @@ var require_env_http_proxy_agent = __commonJS({
         }
         this.#parseNoProxy();
       }
-      [kDispatch](opts, handler2) {
+      [kDispatch](opts, handler) {
         const url = new URL(opts.origin);
         const agent = this.#getProxyAgentForUrl(url);
-        return agent.dispatch(opts, handler2);
+        return agent.dispatch(opts, handler);
       }
       async [kClose]() {
         await this[kNoProxyAgent].close();
@@ -14378,13 +14378,13 @@ var require_retry_agent = __commonJS({
         this.#agent = agent;
         this.#options = options;
       }
-      dispatch(opts, handler2) {
+      dispatch(opts, handler) {
         const retry2 = new RetryHandler({
           ...opts,
           retryOptions: this.#options
         }, {
           dispatch: this.#agent.dispatch.bind(this.#agent),
-          handler: handler2
+          handler
         });
         return this.#agent.dispatch(opts, retry2);
       }
@@ -15215,11 +15215,11 @@ var require_api_pipeline = __commonJS({
       }
     };
     var PipelineHandler = class extends AsyncResource {
-      constructor(opts, handler2) {
+      constructor(opts, handler) {
         if (!opts || typeof opts !== "object") {
           throw new InvalidArgumentError("invalid opts");
         }
-        if (typeof handler2 !== "function") {
+        if (typeof handler !== "function") {
           throw new InvalidArgumentError("invalid handler");
         }
         const { signal, method, opaque, onInfo, responseHeaders } = opts;
@@ -15235,7 +15235,7 @@ var require_api_pipeline = __commonJS({
         super("UNDICI_PIPELINE");
         this.opaque = opaque || null;
         this.responseHeaders = responseHeaders || null;
-        this.handler = handler2;
+        this.handler = handler;
         this.abort = null;
         this.context = null;
         this.onInfo = onInfo || null;
@@ -15290,7 +15290,7 @@ var require_api_pipeline = __commonJS({
         this.context = context;
       }
       onHeaders(statusCode, rawHeaders, resume) {
-        const { opaque, handler: handler2, context } = this;
+        const { opaque, handler, context } = this;
         if (statusCode < 200) {
           if (this.onInfo) {
             const headers = this.responseHeaders === "raw" ? util.parseRawHeaders(rawHeaders) : util.parseHeaders(rawHeaders);
@@ -15303,7 +15303,7 @@ var require_api_pipeline = __commonJS({
         try {
           this.handler = null;
           const headers = this.responseHeaders === "raw" ? util.parseRawHeaders(rawHeaders) : util.parseHeaders(rawHeaders);
-          body = this.runInAsyncScope(handler2, null, {
+          body = this.runInAsyncScope(handler, null, {
             statusCode,
             headers,
             opaque,
@@ -15350,9 +15350,9 @@ var require_api_pipeline = __commonJS({
         util.destroy(ret, err);
       }
     };
-    function pipeline(opts, handler2) {
+    function pipeline(opts, handler) {
       try {
-        const pipelineHandler = new PipelineHandler(opts, handler2);
+        const pipelineHandler = new PipelineHandler(opts, handler);
         this.dispatch({ ...opts, body: pipelineHandler.req }, pipelineHandler);
         return pipelineHandler.ret;
       } catch (err) {
@@ -15800,7 +15800,7 @@ var require_mock_utils = __commonJS({
       }
       return Buffer.concat(buffers).toString("utf8");
     }
-    function mockDispatch(opts, handler2) {
+    function mockDispatch(opts, handler) {
       const key = buildKey(opts);
       const mockDispatch2 = getMockDispatch(this[kDispatches], key);
       mockDispatch2.timesInvoked++;
@@ -15813,7 +15813,7 @@ var require_mock_utils = __commonJS({
       mockDispatch2.pending = timesInvoked < times;
       if (error !== null) {
         deleteMockDispatch(this[kDispatches], key);
-        handler2.onError(error);
+        handler.onError(error);
         return true;
       }
       if (typeof delay === "number" && delay > 0) {
@@ -15833,10 +15833,10 @@ var require_mock_utils = __commonJS({
         const responseData = getResponseData(body);
         const responseHeaders = generateKeyValues(headers);
         const responseTrailers = generateKeyValues(trailers);
-        handler2.onConnect?.((err) => handler2.onError(err), null);
-        handler2.onHeaders?.(statusCode, responseHeaders, resume, getStatusText(statusCode));
-        handler2.onData?.(Buffer.from(responseData));
-        handler2.onComplete?.(responseTrailers);
+        handler.onConnect?.((err) => handler.onError(err), null);
+        handler.onHeaders?.(statusCode, responseHeaders, resume, getStatusText(statusCode));
+        handler.onData?.(Buffer.from(responseData));
+        handler.onComplete?.(responseTrailers);
         deleteMockDispatch(mockDispatches, key);
       }
       function resume() {
@@ -15847,10 +15847,10 @@ var require_mock_utils = __commonJS({
       const agent = this[kMockAgent];
       const origin = this[kOrigin];
       const originalDispatch = this[kOriginalDispatch];
-      return function dispatch(opts, handler2) {
+      return function dispatch(opts, handler) {
         if (agent.isMockActive) {
           try {
-            mockDispatch.call(this, opts, handler2);
+            mockDispatch.call(this, opts, handler);
           } catch (error) {
             if (error instanceof MockNotMatchedError) {
               const netConnect = agent[kGetNetConnect]();
@@ -15858,7 +15858,7 @@ var require_mock_utils = __commonJS({
                 throw new MockNotMatchedError(`${error.message}: subsequent request to origin ${origin} was not allowed (net.connect disabled)`);
               }
               if (checkNetConnect(netConnect, origin)) {
-                originalDispatch.call(this, opts, handler2);
+                originalDispatch.call(this, opts, handler);
               } else {
                 throw new MockNotMatchedError(`${error.message}: subsequent request to origin ${origin} was not allowed (net.connect is not enabled for this origin)`);
               }
@@ -15867,7 +15867,7 @@ var require_mock_utils = __commonJS({
             }
           }
         } else {
-          originalDispatch.call(this, opts, handler2);
+          originalDispatch.call(this, opts, handler);
         }
       };
     }
@@ -16291,9 +16291,9 @@ var require_mock_agent = __commonJS({
         }
         return dispatcher;
       }
-      dispatch(opts, handler2) {
+      dispatch(opts, handler) {
         this.get(opts.origin);
-        return this[kAgent].dispatch(opts, handler2);
+        return this[kAgent].dispatch(opts, handler);
       }
       async close() {
         await this[kAgent].close();
@@ -16413,11 +16413,11 @@ var require_decorator_handler = __commonJS({
     "use strict";
     module.exports = class DecoratorHandler {
       #handler;
-      constructor(handler2) {
-        if (typeof handler2 !== "object" || handler2 === null) {
+      constructor(handler) {
+        if (typeof handler !== "object" || handler === null) {
           throw new TypeError("handler must be an object");
         }
-        this.#handler = handler2;
+        this.#handler = handler;
       }
       onConnect(...args) {
         return this.#handler.onConnect?.(...args);
@@ -16455,16 +16455,16 @@ var require_redirect = __commonJS({
     module.exports = (opts) => {
       const globalMaxRedirections = opts?.maxRedirections;
       return (dispatch) => {
-        return function redirectInterceptor(opts2, handler2) {
+        return function redirectInterceptor(opts2, handler) {
           const { maxRedirections = globalMaxRedirections, ...baseOpts } = opts2;
           if (!maxRedirections) {
-            return dispatch(opts2, handler2);
+            return dispatch(opts2, handler);
           }
           const redirectHandler = new RedirectHandler(
             dispatch,
             maxRedirections,
             opts2,
-            handler2
+            handler
           );
           return dispatch(baseOpts, redirectHandler);
         };
@@ -16480,13 +16480,13 @@ var require_retry3 = __commonJS({
     var RetryHandler = require_retry_handler();
     module.exports = (globalOpts) => {
       return (dispatch) => {
-        return function retryInterceptor(opts, handler2) {
+        return function retryInterceptor(opts, handler) {
           return dispatch(
             opts,
             new RetryHandler(
               { ...opts, retryOptions: { ...globalOpts, ...opts.retryOptions } },
               {
-                handler: handler2,
+                handler,
                 dispatch
               }
             )
@@ -16512,13 +16512,13 @@ var require_dump = __commonJS({
       #size = 0;
       #reason = null;
       #handler = null;
-      constructor({ maxSize }, handler2) {
-        super(handler2);
+      constructor({ maxSize }, handler) {
+        super(handler);
         if (maxSize != null && (!Number.isFinite(maxSize) || maxSize < 1)) {
           throw new InvalidArgumentError("maxSize must be a number greater than 0");
         }
         this.#maxSize = maxSize ?? this.#maxSize;
-        this.#handler = handler2;
+        this.#handler = handler;
       }
       onConnect(abort) {
         this.#abort = abort;
@@ -16581,11 +16581,11 @@ var require_dump = __commonJS({
       maxSize: 1024 * 1024
     }) {
       return (dispatch) => {
-        return function Intercept(opts, handler2) {
+        return function Intercept(opts, handler) {
           const { dumpMaxSize = defaultMaxSize } = opts;
           const dumpHandler = new DumpHandler(
             { maxSize: dumpMaxSize },
-            handler2
+            handler
           );
           return dispatch(opts, dumpHandler);
         };
@@ -16776,10 +16776,10 @@ var require_dns = __commonJS({
       #dispatch = null;
       #handler = null;
       #origin = null;
-      constructor(state, { origin, handler: handler2, dispatch }, opts) {
-        super(handler2);
+      constructor(state, { origin, handler, dispatch }, opts) {
+        super(handler);
         this.#origin = origin;
-        this.#handler = handler2;
+        this.#handler = handler;
         this.#opts = { ...opts };
         this.#state = state;
         this.#dispatch = dispatch;
@@ -16852,14 +16852,14 @@ var require_dns = __commonJS({
       };
       const instance = new DNSInstance(opts);
       return (dispatch) => {
-        return function dnsInterceptor(origDispatchOpts, handler2) {
+        return function dnsInterceptor(origDispatchOpts, handler) {
           const origin = origDispatchOpts.origin.constructor === URL ? origDispatchOpts.origin : new URL(origDispatchOpts.origin);
           if (isIP(origin.hostname) !== 0) {
-            return dispatch(origDispatchOpts, handler2);
+            return dispatch(origDispatchOpts, handler);
           }
           instance.runLookup(origin, origDispatchOpts, (err, newOrigin) => {
             if (err) {
-              return handler2.onError(err);
+              return handler.onError(err);
             }
             let dispatchOpts = null;
             dispatchOpts = {
@@ -16874,7 +16874,7 @@ var require_dns = __commonJS({
             };
             dispatch(
               dispatchOpts,
-              instance.getHandler({ origin, dispatch, handler: handler2 }, origDispatchOpts)
+              instance.getHandler({ origin, dispatch, handler }, origDispatchOpts)
             );
           });
           return true;
@@ -23777,9 +23777,9 @@ var require_undici = __commonJS({
       headerNameToString: util.headerNameToString
     };
     function makeDispatcher(fn) {
-      return (url, opts, handler2) => {
+      return (url, opts, handler) => {
         if (typeof opts === "function") {
-          handler2 = opts;
+          handler = opts;
           opts = null;
         }
         if (!url || typeof url !== "string" && typeof url !== "object" && !(url instanceof URL)) {
@@ -23812,7 +23812,7 @@ var require_undici = __commonJS({
           origin: url.origin,
           path: url.search ? `${url.pathname}${url.search}` : url.pathname,
           method: opts.method || (opts.body ? "PUT" : "GET")
-        }, handler2);
+        }, handler);
       };
     }
     module.exports.setGlobalDispatcher = setGlobalDispatcher;
@@ -24249,7 +24249,10 @@ var ApiResponse = class {
 };
 var apiResponseBase = {
   ok: (res, data, status = 200) => res.status(status).json(new ApiResponse(data)),
-  fail: (res, error, status, data) => res.status(status).json(new ApiResponse(data, error))
+  fail: (res, error, status, data) => {
+    console.error("apiResponse/fail", error, new Error("apiResponse fail"));
+    return res.status(status).json(new ApiResponse(data, error));
+  }
 };
 var apiResponse = {
   ...apiResponseBase,
@@ -24285,9 +24288,6 @@ var apiResponseDeprecated = {
   invalidParams: (message = "Invalid params") => apiResponseBaseDeprecated.fail(message, 422),
   internalServerError: (message = "Internal server error") => apiResponseBaseDeprecated.fail(message ?? "Unknown error", 500)
 };
-
-// src/handlers/debug/storage/uploadBlob.ts
-import { Buffer as Buffer3 } from "node:buffer";
 
 // ../../node_modules/.pnpm/dotenv@17.4.2/node_modules/dotenv/config.js
 (function() {
@@ -36771,6 +36771,108 @@ var db = drizzle({
 });
 var db_default = db;
 
+// ../../packages/shared/src/errors/HttpError.ts
+var HttpError = class extends Error {
+  status;
+  constructor(status, message) {
+    super(message);
+    this.status = status;
+  }
+};
+var HttpError_default = HttpError;
+
+// ../../packages/shared/src/utils/firebase/admin.ts
+import { cert, getApps as getApps2, initializeApp as initializeApp2 } from "firebase-admin/app";
+import { getAuth as getAuth2 } from "firebase-admin/auth";
+var app2;
+if (getApps2().length === 0) {
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n") : void 0;
+  const credential = privateKey ? cert({
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    privateKey
+  }) : void 0;
+  app2 = initializeApp2({
+    credential,
+    projectId: process.env.FIREBASE_PROJECT_ID
+  });
+} else {
+  app2 = getApps2()[0];
+}
+var adminAuth = getAuth2(app2);
+
+// ../../packages/shared/src/utils/auth.ts
+var verifyFirebaseToken = async (request) => {
+  const authHeader = request.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer "))
+    throw new HttpError_default(401, "Missing or invalid authorization header");
+  const idToken = authHeader.substring(7);
+  try {
+    return await adminAuth.verifyIdToken(idToken);
+  } catch (error) {
+    console.error("Firebase token verification failed:", error);
+    throw new HttpError_default(401, "Invalid or expired token");
+  }
+};
+var getOrCreateUser = async (firebaseUser) => {
+  const { uid: firebaseUid, email, name: name2, picture } = firebaseUser;
+  if (!email)
+    throw new HttpError_default(400, "Email not provided by authentication provider. Please contact support.");
+  const normalizedEmail = email.toLowerCase().trim();
+  const [existingByUid] = await db_default.select().from(users).where(eq(users.firebaseUid, firebaseUid)).limit(1);
+  if (existingByUid)
+    return existingByUid;
+  const [existingByEmail] = await db_default.select().from(users).where(sql.raw(`lower(${users.email}) = ${normalizedEmail}`)).limit(1);
+  if (existingByEmail) {
+    if (existingByEmail.firebaseUid && existingByEmail.firebaseUid !== firebaseUid) {
+      throw new HttpError_default(409, "This email is associated with a different account. Please contact support.");
+    }
+    const [updated] = await db_default.update(users).set({
+      firebaseUid,
+      name: name2 || existingByEmail.name,
+      photoUrl: picture || existingByEmail.photoUrl
+    }).where(eq(users.id, existingByEmail.id)).returning();
+    return updated;
+  }
+  const [newUser] = await db_default.insert(users).values({
+    email: normalizedEmail,
+    firebaseUid,
+    name: name2 || null,
+    photoUrl: picture || null,
+    enabled: false
+  }).returning();
+  return newUser;
+};
+var authorize = async (request) => {
+  const firebaseToken = await verifyFirebaseToken(request);
+  const user = await getOrCreateUser(firebaseToken);
+  return { user, firebaseToken, userId: user.id };
+};
+var withCors = (handler) => {
+  return async (req, res) => {
+    const isCorsHandled = setCorsHeaders(req, res);
+    if (isCorsHandled)
+      return isCorsHandled;
+    return handler(req, res);
+  };
+};
+var withAuth = (handler) => {
+  return withCors(async (req, res) => {
+    try {
+      const auth2 = await authorize(req);
+      return await handler(req, res, auth2);
+    } catch (e) {
+      console.error("Authorization error:", e);
+      if (e instanceof HttpError_default)
+        return res.status(e.status).json({ error: e.message });
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+};
+
+// src/handlers/debug/storage/uploadBlob.ts
+import { Buffer as Buffer3 } from "node:buffer";
+
 // ../../packages/shared/src/db/repos/repo.ts
 var Repository = class {
   name;
@@ -36879,105 +36981,6 @@ var UsersRepository = class _UsersRepository extends AUsersRepository {
   }
 };
 var users_default = new UsersRepository();
-
-// ../../packages/shared/src/errors/HttpError.ts
-var HttpError = class extends Error {
-  status;
-  constructor(status, message) {
-    super(message);
-    this.status = status;
-  }
-};
-var HttpError_default = HttpError;
-
-// ../../packages/shared/src/utils/firebase/admin.ts
-import { cert, getApps as getApps2, initializeApp as initializeApp2 } from "firebase-admin/app";
-import { getAuth as getAuth2 } from "firebase-admin/auth";
-var app2;
-if (getApps2().length === 0) {
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n") : void 0;
-  const credential = privateKey ? cert({
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-    privateKey
-  }) : void 0;
-  app2 = initializeApp2({
-    credential,
-    projectId: process.env.FIREBASE_PROJECT_ID
-  });
-} else {
-  app2 = getApps2()[0];
-}
-var adminAuth = getAuth2(app2);
-
-// ../../packages/shared/src/utils/auth.ts
-var verifyFirebaseToken = async (request) => {
-  const authHeader = request.headers.authorization;
-  if (!authHeader || !authHeader.startsWith("Bearer "))
-    throw new HttpError_default(401, "Missing or invalid authorization header");
-  const idToken = authHeader.substring(7);
-  try {
-    return await adminAuth.verifyIdToken(idToken);
-  } catch (error) {
-    console.error("Firebase token verification failed:", error);
-    throw new HttpError_default(401, "Invalid or expired token");
-  }
-};
-var getOrCreateUser = async (firebaseUser) => {
-  const { uid: firebaseUid, email, name: name2, picture } = firebaseUser;
-  if (!email)
-    throw new HttpError_default(400, "Email not provided by authentication provider. Please contact support.");
-  const normalizedEmail = email.toLowerCase().trim();
-  const [existingByUid] = await db_default.select().from(users).where(eq(users.firebaseUid, firebaseUid)).limit(1);
-  if (existingByUid)
-    return existingByUid;
-  const [existingByEmail] = await db_default.select().from(users).where(sql.raw(`lower(${users.email}) = ${normalizedEmail}`)).limit(1);
-  if (existingByEmail) {
-    if (existingByEmail.firebaseUid && existingByEmail.firebaseUid !== firebaseUid) {
-      throw new HttpError_default(409, "This email is associated with a different account. Please contact support.");
-    }
-    const [updated] = await db_default.update(users).set({
-      firebaseUid,
-      name: name2 || existingByEmail.name,
-      photoUrl: picture || existingByEmail.photoUrl
-    }).where(eq(users.id, existingByEmail.id)).returning();
-    return updated;
-  }
-  const [newUser] = await db_default.insert(users).values({
-    email: normalizedEmail,
-    firebaseUid,
-    name: name2 || null,
-    photoUrl: picture || null,
-    enabled: false
-  }).returning();
-  return newUser;
-};
-var authorize = async (request) => {
-  const firebaseToken = await verifyFirebaseToken(request);
-  const user = await getOrCreateUser(firebaseToken);
-  return { user, firebaseToken, userId: user.id };
-};
-var withCors = (handler2) => {
-  return async (req, res) => {
-    const isCorsHandled = setCorsHeaders(req, res);
-    if (isCorsHandled)
-      return isCorsHandled;
-    return handler2(req, res);
-  };
-};
-var withAuth = (handler2) => {
-  return withCors(async (req, res) => {
-    try {
-      const auth2 = await authorize(req);
-      return await handler2(req, res, auth2);
-    } catch (e) {
-      if (e instanceof HttpError_default)
-        return res.status(e.status).json({ error: e.message });
-      console.error("Authorization error:", e);
-      return res.status(500).json({ error: "Internal Server Error" });
-    }
-  });
-};
 
 // ../../node_modules/.pnpm/@vercel+blob@2.4.0/node_modules/@vercel/blob/dist/chunk-3D2SZ6M2.js
 var import_is_node_process = __toESM(require_lib(), 1);
@@ -38510,17 +38513,17 @@ var uploadBlob = withAuth(async (req, res, context) => {
 var config = {
   runtime: "nodejs"
 };
-async function handler(req, res) {
+var blob_default = withAuth((req, res) => {
   switch (req.method) {
     case "POST":
       return uploadBlob(req, res);
     default:
       return apiResponse.internalServerError(res);
   }
-}
+});
 export {
   config,
-  handler as default
+  blob_default as default
 };
 /*! Bundled license information:
 

@@ -228,7 +228,7 @@ export const withAuth = (
         req: VercelRequest,
         res: VercelResponse,
         context: AuthContext,
-    ) => Promise<VercelResponse>,
+    ) => VercelResponse | Promise<VercelResponse>,
 ): (req: VercelRequest, res: VercelResponse) => Promise<VercelResponse> => {
     
     return withCors(async (req: VercelRequest, res: VercelResponse) => {
@@ -241,10 +241,11 @@ export const withAuth = (
             
         } catch (e) {
             
+            console.error('Authorization error:', e)
+            
             if (e instanceof HttpError)
                 return res.status(e.status).json({ error: (e as HttpError).message })
             
-            console.error('Authorization error:', e)
             return res.status(500).json({ error: 'Internal Server Error' })
             
         }

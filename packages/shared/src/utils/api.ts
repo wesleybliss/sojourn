@@ -54,9 +54,6 @@ export class ApiResponse<T> implements ApiResult<T> {
     
 }
 
-/*export const notFoundResponse = (res: VercelResponse) =>
-    res.status(404).json({ error: 'Not found' })*/
-
 type ApiResponseHelper = {
     ok: <T>(res: VercelResponse, data: T, status?: number) => VercelResponse
     fail: <T>(res: VercelResponse, error: string, status: number, data?: T) => VercelResponse
@@ -72,8 +69,10 @@ type ApiResponseHelper = {
 const apiResponseBase = {
     ok: <T>(res: VercelResponse, data: T, status: number = 200): VercelResponse =>
         res.status(status).json(new ApiResponse(data)),
-    fail: <T>(res: VercelResponse, error: string, status: number, data?: T): VercelResponse =>
-        res.status(status).json(new ApiResponse(data, error)),
+    fail: <T>(res: VercelResponse, error: string, status: number, data?: T): VercelResponse => {
+        console.error('apiResponse/fail', error, new Error('apiResponse fail'))
+        return res.status(status).json(new ApiResponse(data, error))
+    },
 }
 
 export const apiResponse: ApiResponseHelper = {
