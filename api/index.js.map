@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../apps/api/api/index.ts"],
+  "sourcesContent": ["import type { VercelRequest, VercelResponse } from '@vercel/node'\n\nexport const config = {\n    runtime: 'nodejs',\n}\n\nexport default async function handler(\n    _req: VercelRequest,\n    res: VercelResponse,\n): Promise<VercelResponse | undefined> {\n    \n    return res.json({\n        status: 'ok',\n    })\n    \n}\n"],
+  "mappings": ";;;AAEO,IAAM,SAAS;AAAA,EAClB,SAAS;AACb;AAEA,eAAO,QACH,MACA,KACmC;AAEnC,SAAO,IAAI,KAAK;AAAA,IACZ,QAAQ;AAAA,EACZ,CAAC;AAEL;",
+  "names": []
+}
