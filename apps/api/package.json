@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "nodemon",
         "start": "dotenv -e ../../.env -- vercel dev --listen 4000",
-        "build": "node build.js",
+        "build": "tsc -p .",
+        "old-build": "node build.js",
         "check": "pnpm tsc --noEmit --skipLibCheck",
         "lint": "oxlint && eslint .",
         "lint:dry": "oxlint && eslint --fix-dry-run .",

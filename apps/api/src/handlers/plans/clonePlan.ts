@@ -3,7 +3,7 @@ import * as schemas from '@repo/shared/db/schema'
 import { omit } from '@repo/shared/utils'
 import { apiResponse } from '@repo/shared/utils/api'
 import { AuthContext, withAuth } from '@repo/shared/utils/auth'
-import { VercelRequest, VercelResponse } from '@vercel/node'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { eq } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
 

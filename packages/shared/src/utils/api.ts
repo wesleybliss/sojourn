@@ -1,7 +1,7 @@
 import { ApiResult } from '@shared/types'
 import { auth } from '@shared/utils/firebase/client'
 import logger from '@shared/utils/logger'
-import { VercelRequest, VercelResponse } from '@vercel/node'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 /**
  * Adds CORS headers to the response.

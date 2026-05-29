@@ -4,7 +4,7 @@ import { Plan, Segment, Trip } from '@repo/shared/types'
 import { apiResponse } from '@repo/shared/utils/api'
 import { AuthContext, isUserTripMember, withAuth } from '@repo/shared/utils/auth'
 import tripsWithPlansSchema from '@repo/shared/utils/json-schemas/trip-backup.jsonschema'
-import { VercelRequest, VercelResponse } from '@vercel/node'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 import Ajv from 'ajv'
 import dayjs from 'dayjs'
 

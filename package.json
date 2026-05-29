@@ -9,7 +9,9 @@
     ],
     "scripts": {
         "dev:web": "pnpm --filter web dev",
+        "build:web": "pnpm --filter web build",
         "dev:api": "pnpm --filter api dev",
+        "build:api": "pnpm --filter api build",
         "dev": "pnpm --parallel --stream dev:web dev:api",
         "build": "pnpm --filter @repo/shared build && pnpm --filter @repo/web --filter @repo/api build",
         "validate": "pnpm check && pnpm lint:fix",

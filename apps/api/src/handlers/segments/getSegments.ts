@@ -1,7 +1,7 @@
 import segmentsRepo from '@repo/shared/db/repos/segments'
 import { apiResponse } from '@repo/shared/utils/api'
 import { AuthContext, withAuth } from '@repo/shared/utils/auth'
-import { VercelRequest, VercelResponse } from '@vercel/node'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 export const getSegments = withAuth(async (
     _req: VercelRequest,

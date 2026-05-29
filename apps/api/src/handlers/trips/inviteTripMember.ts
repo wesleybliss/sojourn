@@ -3,7 +3,7 @@ import usersRepo from '@repo/shared/db/repos/users'
 import userTripsRepo from '@repo/shared/db/repos/userTrips'
 import { apiResponse } from '@repo/shared/utils/api'
 import { AuthContext, isUserTripMember, withAuth } from '@repo/shared/utils/auth'
-import { VercelRequest, VercelResponse } from '@vercel/node'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 export const inviteTripMember = withAuth(async (
     req: VercelRequest,

@@ -2,19 +2,23 @@
     "extends": "../../tsconfig.base.json",
     "compilerOptions": {
         "tsBuildInfoFile": "../../node_modules/.cache/tsbuildinfo/api.tsbuildinfo",
-        "declarationDir": "../../node_modules/.cache/dts/api",
-        "lib": ["ES2023"],
-        "composite": true,
+        "lib": ["ES2024", "DOM"],
+        "composite": false,
         "noEmit": false,
-        "emitDeclarationOnly": true,
+        "emitDeclarationOnly": false,
         "allowJs": false,
         "target": "ES2023",
         "esModuleInterop": true,
         "module": "ESNext",
         "moduleResolution": "bundler",
         "resolveJsonModule": true,
-        "isolatedModules": true,
-        "outDir": "dist",
+        "isolatedModules": false,
+        "verbatimModuleSyntax": true,
+        "rootDir": ".",
+        "outDir": "../../api",
+
+        "declaration": false,
+        "sourceMap": true,
         "paths": {
             "@/*": ["./src/*"],
             "@api/*": ["./api/*"],
@@ -28,10 +32,7 @@
     ],
     "include": [
         "src",
-        "api",
-        "test",
-        "disabled.eslint.config.ts",
-        "vitest.config.ts"
+        "api"
     ],
     "exclude": [
         "node_modules",

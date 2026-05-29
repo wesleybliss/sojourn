@@ -5,7 +5,7 @@ import HttpError from '@shared/errors/HttpError'
 import { ID } from '@shared/types/data'
 import { UserSelect } from '@shared/types/database'
 import { adminAuth } from '@shared/utils/firebase/admin'
-import { VercelRequest, VercelResponse } from '@vercel/node'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { and, eq, sql } from 'drizzle-orm'
 import { DecodedIdToken } from 'firebase-admin/auth'
 

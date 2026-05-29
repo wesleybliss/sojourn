@@ -4,7 +4,7 @@ import { ID, SegmentInsert } from '@repo/shared/types'
 import { convertStringDates, getUpdatePayload } from '@repo/shared/utils'
 import { apiResponse } from '@repo/shared/utils/api'
 import { AuthContext, withAuth } from '@repo/shared/utils/auth'
-import { VercelRequest, VercelResponse } from '@vercel/node'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 import dayjs from 'dayjs'
 import { eq } from 'drizzle-orm'
 

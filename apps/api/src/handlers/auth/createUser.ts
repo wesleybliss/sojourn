@@ -3,7 +3,7 @@ import * as schemas from '@repo/shared/db/schema'
 import HttpError from '@repo/shared/errors/HttpError'
 import { apiResponse } from '@repo/shared/utils/api'
 import { AuthContext, authorize, withAuth } from '@repo/shared/utils/auth'
-import { VercelRequest, VercelResponse } from '@vercel/node'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { eq } from 'drizzle-orm'
 
 export const createUser = withAuth(async (

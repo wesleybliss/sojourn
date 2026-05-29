@@ -1,16 +1,10 @@
-import { createRequire } from 'module'; const require = createRequire(import.meta.url);
-
-// api/index.ts
-var config = {
-  runtime: "nodejs"
+import { VercelRequest, VercelResponse } from '@vercel/node';
+export const config = {
+    runtime: 'nodejs',
 };
-async function handler(_req, res) {
-  return res.json({
-    status: "ok"
-  });
+export default async function handler(_req, res) {
+    return res.json({
+        status: 'ok',
+    });
 }
-export {
-  config,
-  handler as default
-};
 //# sourceMappingURL=index.js.map

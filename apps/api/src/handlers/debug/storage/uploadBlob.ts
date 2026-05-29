@@ -4,7 +4,7 @@ import usersRepo from '@repo/shared/db/repos/users'
 import { apiResponse } from '@repo/shared/utils/api'
 import { AuthContext, withAuth } from '@repo/shared/utils/auth'
 import { putPlaceImageBuffer } from '@repo/shared/utils/storage/vercel-blob'
-import { VercelRequest, VercelResponse } from '@vercel/node'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 export const uploadBlob = withAuth(async (
     req: VercelRequest,

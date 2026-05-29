@@ -1,5 +1,5 @@
 import { apiResponse } from '@repo/shared/utils/api'
-import { VercelRequest, VercelResponse } from '@vercel/node'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 import { deletePlan, getPlan, updatePlan } from '@/handlers/plans'
 
