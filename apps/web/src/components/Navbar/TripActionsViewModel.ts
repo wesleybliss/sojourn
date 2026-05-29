@@ -54,7 +54,7 @@ const TripActionsViewModel = (currentTrip: Trip | null): TTripActionsViewModel =
     
     const backupTrip = useCallback(async () => {
         
-        if (!currentTrip) return console.warn('NavbarViewModel#backupTrip no trip selected')
+        if (!currentTrip) return console.warn('useNavbarViewModel#backupTrip no trip selected')
         
         try {
             await backupMutation.mutateAsync({ type: 'single', tripId: currentTrip?.id })

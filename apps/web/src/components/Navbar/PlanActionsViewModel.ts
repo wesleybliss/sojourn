@@ -65,10 +65,10 @@ const PlanActionsViewModel = (
     const deletePlan = useCallback(async () => {
         
         if (!currentTrip)
-            return console.warn('NavbarViewModel#deletePlan no trip selected')
+            return console.warn('useNavbarViewModel#deletePlan no trip selected')
         
         if (!currentPlan)
-            return console.warn('NavbarViewModel#deletePlan no plan selected')
+            return console.warn('useNavbarViewModel#deletePlan no plan selected')
         
         if (!confirm('Are you sure you want to delete this plan?'))
             return

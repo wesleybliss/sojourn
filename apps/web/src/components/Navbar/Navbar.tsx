@@ -1,110 +1,39 @@
-import { useWireState, useWireValue } from '@forminator/react-wire'
 import { cn } from '@repo/shared/utils'
 import { FolderUp, Map as MapIcon, MapPlus, TableProperties } from 'lucide-react'
-import { toast } from 'sonner'
 
 import AccountMenu from '@/components/AccountMenu'
 import CurrentPlanSelector from '@/components/CurrentPlanSelector'
 import TripActionsDropdown from '@/components/Navbar/TripActionsDropdown'
+import useNavbarViewModel from '@/components/Navbar/useNavbarViewModel'
 import ThemeSwitcher from '@/components/ThemeSwitcher/ThemeSwitcher'
 import { Button } from '@/components/ui/button'
-import { useBackupTrips } from '@/lib/queries/backups'
-import { useCreateTripMutation } from '@/lib/queries/trip'
-import { usePathname, useRouter } from '@/lib/router'
-import * as store from '@/store'
 
 const Navbar = () => {
     
-    const router = useRouter()
-    const pathname = usePathname()
-    
-    const currentTrip = useWireValue(store.currentTrip)
-    const currentPlan = useWireValue(store.currentPlan)
-    const [showMap, setShowMap] = useWireState(store.showMap)
-    
-    const createTripMutation = useCreateTripMutation()
-    const backupMutation = useBackupTrips()
-    
-    const isTripWorkspace = pathname?.startsWith('/trips/')
-    const isPlacesPage = pathname?.startsWith('/places')
-    const isImportPage = pathname?.startsWith('/import-trips')
-    const title = isTripWorkspace
-        ? currentTrip?.name || 'Trip Planner'
-        : isPlacesPage
-            ? 'Future Destinations'
-            : isImportPage
-                ? 'Import & Restore'
-                : 'Ongoing Journeys'
-    
-    const subtitle = isTripWorkspace
-        ? currentTrip?.description || 'Operational view across segments, timing, and route context.'
-        : isPlacesPage
-            ? 'Research saved destinations, notes, and travel windows in one workspace.'
-            : isImportPage
-                ? 'Bring in prior backups or stage new itineraries.'
-                : 'Track active itineraries, their latest changes, and next planning steps.'
-    
-    const importButtonLabel = isTripWorkspace ? 'Backup Trip' : 'Import / Backup'
-    
-    const handleCreateTrip = async () => {
-        
-        try {
-            const result = await createTripMutation.mutateAsync({
-                name: 'New Trip',
-                description: '',
-            })
-            
-            if (result.data)
-                router.push(`/trips/${result.data.id}`)
-        } catch (error) {
-            console.error('Navbar.handleCreateTrip', error)
-            toast.error('Failed to create trip')
-        }
-        
-    }
-    
-    const handleImportOrBackup = async () => {
-        
-        if (isTripWorkspace && currentTrip) {
-            try {
-                await backupMutation.mutateAsync({
-                    type: 'single',
-                    tripId: currentTrip.id,
-                })
-                toast.success('Backup generated')
-            } catch (error) {
-                console.error('Navbar.handleImportOrBackup', error)
-                toast.error('Backup failed')
-            }
-            
-            return
-        }
-        
-        router.push('/import-trips')
-    }
+    const vm = useNavbarViewModel()
     
     return (
         
-        <header
-            className="sticky top-0 z-20 border-b border-border/70
-                bg-surface-container-lowest/92 backdrop-blur rounded-lg">
+        <header className="sticky top-0 z-20 border-b border-border/70
+            bg-surface-container-lowest/92 backdrop-blur rounded-lg">
+            
             <div className="flex flex-col gap-4 px-5 py-4 lg:px-8">
                 <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                     <div className="min-w-0">
                         <div className="eyebrow mb-2">
-                            {isTripWorkspace
+                            {vm.isTripWorkspace
                                 ? 'Trip Workspace'
-                                : isPlacesPage
+                                : vm.isPlacesPage
                                     ? 'Saved Places'
                                     : 'My Trips'}
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="min-w-0">
                                 <h1 className="truncate text-2xl font-semibold tracking-[-0.04em] lg:text-3xl">
-                                    {title}
+                                    {vm.title}
                                 </h1>
                                 <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-                                    {subtitle}
+                                    {vm.subtitle}
                                 </p>
                             </div>
                         </div>
@@ -112,29 +41,29 @@ const Navbar = () => {
                     
                     <div className="flex flex-wrap items-center gap-2">
                         <Button
-                            disabled={createTripMutation.isPending}
-                            onClick={handleCreateTrip}>
+                            disabled={vm.createTripMutation.isPending}
+                            onClick={vm.handleCreateTrip}>
                             <MapPlus />
-                            {createTripMutation.isPending ? 'Creating...' : 'New Trip'}
+                            {vm.createTripMutation.isPending ? 'Creating...' : 'New Trip'}
                         </Button>
                         <Button
                             variant="outline"
-                            disabled={backupMutation.isPending}
-                            onClick={handleImportOrBackup}>
+                            disabled={vm.backupMutation.isPending}
+                            onClick={vm.handleImportOrBackup}>
                             <FolderUp />
-                            {backupMutation.isPending ? 'Working...' : importButtonLabel}
+                            {vm.backupMutation.isPending ? 'Working...' : vm.importButtonLabel}
                         </Button>
-                        {currentTrip && isTripWorkspace && (
+                        {vm.currentTrip && vm.isTripWorkspace && (
                             <TripActionsDropdown
-                                trip={currentTrip}
-                                plan={currentPlan} />
+                                trip={vm.currentTrip}
+                                plan={vm.currentPlan} />
                         )}
                         <ThemeSwitcher />
                         <AccountMenu />
                     </div>
                 </div>
                 
-                {isTripWorkspace && currentTrip && (
+                {vm.isTripWorkspace && vm.currentTrip && (
                     <div
                         className="flex flex-col gap-3 rounded-2xl border border-border/60
                             bg-surface-container-low px-4 py-3
@@ -150,11 +79,11 @@ const Navbar = () => {
                                     className={cn(
                                         'inline-flex items-center gap-2 rounded-full px-3 py-1.5',
                                         'text-sm font-medium transition-colors',
-                                        !showMap
+                                        !vm.showMap
                                             ? 'bg-primary text-primary-foreground'
                                             : 'text-muted-foreground hover:bg-accent',
                                     )}
-                                    onClick={() => setShowMap(false)}
+                                    onClick={() => vm.setShowMap(false)}
                                     type="button">
                                     <TableProperties className="size-4" />
                                     Itinerary
@@ -163,15 +92,20 @@ const Navbar = () => {
                                     className={cn(
                                         'inline-flex items-center gap-2 rounded-full px-3 py-1.5',
                                         'text-sm font-medium transition-colors',
-                                        showMap
+                                        vm.showMap
                                             ? 'bg-primary text-primary-foreground'
                                             : 'text-muted-foreground hover:bg-accent',
                                     )}
-                                    onClick={() => setShowMap(true)}
+                                    onClick={() => vm.setShowMap(true)}
                                     type="button">
                                     <MapIcon className="size-4" />
                                     Trip Map
                                 </button>
+                            </div>
+                            <div>
+                                <Button onClick={() => vm.setIsTripEditMode(!vm.isTripEditMode)}>
+                                    Edit Trip
+                                </Button>
                             </div>
                         </div>
                         <div
@@ -180,17 +114,18 @@ const Navbar = () => {
                             <span
                                 className="rounded-full bg-surface-container-high px-3 py-1
                                     font-medium text-foreground">
-                                {currentTrip.name}
+                                {vm.currentTrip.name}
                             </span>
-                            {currentPlan && (
+                            {vm.currentPlan && (
                                 <span className="rounded-full border border-border/70 px-3 py-1">
-                                    Active plan: {currentPlan.name}
+                                    Active plan: {vm.currentPlan.name}
                                 </span>
                             )}
                         </div>
                     </div>
                 )}
             </div>
+        
         </header>
         
     )

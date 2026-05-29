@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 import { Route, Routes } from 'react-router'
+import * as rwp from 'react-wire-persisted'
 
 import useDebug from '@/hooks/useDebug'
 import AppLayout from '@/layouts/AppLayout'
@@ -24,6 +25,8 @@ import TripsRoute from '@/routes/trips/page'
 dayjs.extend(advancedFormat)
 
 const App = () => {
+    
+    rwp.useHydration()
     
     useDebug()
     
