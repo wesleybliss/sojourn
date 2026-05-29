@@ -73,7 +73,10 @@ const Sidebar = () => {
                         variant="ghost"
                         size="icon"
                         onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}>
-                        <GoSidebarExpand className="size-5" />
+                        <GoSidebarExpand className={cn('size-5 transition-transform duration-300 ease-in-out', {
+                            'rotate-180': !isSidebarExpanded,
+                            'rotate-0': isSidebarExpanded,
+                        })} />
                     </Button>
                 </div>
             </div>
@@ -128,18 +131,6 @@ const Sidebar = () => {
                         Sign in to access your travel workspace.
                     </div>
                 )}
-            </div>
-            
-            <div className="absolute inset-y-0 right-0 z-10
-                w-0.5 max-w-0.5 border-r-px border-sidebar-border/70
-                bg-sidebar-accent/60 text-sidebar-foreground/80">
-                <Button
-                    className="absolute-center z-11"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}>
-                    <GoSidebarExpand className="size-5" />
-                </Button>
             </div>
         
         </aside>
