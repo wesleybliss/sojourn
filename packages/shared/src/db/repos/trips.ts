@@ -1,12 +1,11 @@
+import PlansRepository from '@repo/shared/db/repos/plans'
 import Repository from '@repo/shared/db/repos/repo'
+import SegmentsRepository from '@repo/shared/db/repos/segments'
 import * as schemas from '@repo/shared/db/schema'
 import type { TripWithSegmentCount } from '@repo/shared/types'
 import type { ID } from '@repo/shared/types/data'
 import type { Database, Trip, TripSelect } from '@repo/shared/types/database'
-import { desc,eq } from 'drizzle-orm'
-
-import PlansRepository from '@repo/shared/db/repos/plans'
-import SegmentsRepository from '@repo/shared/db/repos/segments'
+import { desc, eq } from 'drizzle-orm'
 
 export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
     
@@ -51,7 +50,7 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
         
     }
     
-    async findAllByUserIdWithDetails(userId: ID, plansRepo = PlansRepository): Promise<Trip[]> {
+    async findAllByUserIdWithDetails(userId: ID, plansRepo: typeof PlansRepository): Promise<Trip[]> {
         
         try {
             
@@ -71,7 +70,7 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
         
     }
     
-    async findOneByName(name: string, withDetails?: boolean, plansRepo = PlansRepository): Promise<Trip | null> {
+    async findOneByName(name: string, plansRepo: typeof PlansRepository, withDetails?: boolean): Promise<Trip | null> {
         
         try {
             
@@ -127,7 +126,7 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
     
     async findAllByUserIdWithDetailsAndSegmentCount(
         userId: ID,
-        plansRepo = PlansRepository,
+        plansRepo: typeof PlansRepository,
     ): Promise<TripWithSegmentCount[]> {
         
         const trips = await this.findAllByUserIdWithDetails(userId, plansRepo)
@@ -139,7 +138,7 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
         
     }
     
-    async findOneWithDetails(id: ID, plansRepo = PlansRepository): Promise<Trip | null> {
+    async findOneWithDetails(id: ID, plansRepo: typeof PlansRepository): Promise<Trip | null> {
         
         try {
             

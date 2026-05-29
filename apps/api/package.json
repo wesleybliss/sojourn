@@ -27,7 +27,8 @@
         "dayjs": "^1.11.20",
         "drizzle-kit": "1.0.0-beta.22",
         "drizzle-orm": "1.0.0-beta.22",
-        "nanoid": "^5.1.11"
+        "nanoid": "^5.1.11",
+        "zod": "^4.4.3"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",

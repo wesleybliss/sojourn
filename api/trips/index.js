@@ -18244,45 +18244,6 @@ var Repository = class {
 };
 var repo_default = Repository;
 
-// ../../packages/shared/src/db/repos/plans.ts
-var PlansRepository = class _PlansRepository extends repo_default {
-  constructor(db2) {
-    super("plan", "plans", plans, db2);
-  }
-  tx(transaction) {
-    return new _PlansRepository(transaction);
-  }
-  async findAllByTripId(tripId) {
-    try {
-      const plansWithSegments = await this.db.select({
-        plan: plans,
-        segment: segments
-      }).from(plans).leftJoin(segments, eq(segments.planId, plans.id)).where(eq(plans.tripId, tripId)).orderBy(asc(plans.id), asc(segments.startDate));
-      const plansMap = /* @__PURE__ */ new Map();
-      plansWithSegments.forEach(({ plan, segment }) => {
-        if (!plansMap.has(plan.id))
-          plansMap.set(plan.id, {
-            ...plan,
-            segments: [],
-            updatedAt: plan.updatedAt,
-            createdAt: plan.createdAt
-          });
-        if (segment)
-          plansMap.get(plan.id)?.segments?.push({
-            ...segment,
-            startDate: this.normalizeDateValue(segment.startDate),
-            endDate: this.normalizeDateValue(segment.endDate)
-          });
-      });
-      return Array.from(plansMap.values());
-    } catch (e) {
-      console.error(`Error fetching ${this.plural} for trip ${tripId}:`, e);
-      throw new Error(`Failed to fetch ${this.plural}`);
-    }
-  }
-};
-var plans_default = new PlansRepository();
-
 // ../../packages/shared/src/db/repos/segments.ts
 var SegmentsRepository = class _SegmentsRepository extends repo_default {
   constructor(db2) {
@@ -18351,7 +18312,7 @@ var TripsRepository = class _TripsRepository extends repo_default {
       throw new Error(`Failed to fetch ${this.plural}`);
     }
   }
-  async findAllByUserIdWithDetails(userId, plansRepo = plans_default) {
+  async findAllByUserIdWithDetails(userId, plansRepo) {
     try {
       const trips2 = await this.findAllByUserId(userId);
       return await Promise.all(trips2.map(async (trip) => ({
@@ -18363,7 +18324,7 @@ var TripsRepository = class _TripsRepository extends repo_default {
       throw new Error(`Failed to fetch ${this.plural} with details`);
     }
   }
-  async findOneByName(name2, withDetails, plansRepo = plans_default) {
+  async findOneByName(name2, plansRepo, withDetails) {
     try {
       const trip = await this.findOneBy("name", name2);
       if (!trip) return null;
@@ -18393,14 +18354,14 @@ var TripsRepository = class _TripsRepository extends repo_default {
       throw new Error(`Failed to fetch ${this.plural} with segment counts`);
     }
   }
-  async findAllByUserIdWithDetailsAndSegmentCount(userId, plansRepo = plans_default) {
+  async findAllByUserIdWithDetailsAndSegmentCount(userId, plansRepo) {
     const trips2 = await this.findAllByUserIdWithDetails(userId, plansRepo);
     return trips2.map((trip) => ({
       ...trip,
       segmentCount: trip.plans?.reduce((total, plan) => total + (plan.segments?.length || 0), 0) || 0
     }));
   }
-  async findOneWithDetails(id, plansRepo = plans_default) {
+  async findOneWithDetails(id, plansRepo) {
     try {
       const trip = await this.findOneById(id);
       if (!trip) return null;

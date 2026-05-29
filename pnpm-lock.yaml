@@ -108,6 +108,9 @@ importers:
       nanoid:
         specifier: ^5.1.11
         version: 5.1.11
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@eslint/js':
         specifier: ^10.0.1
