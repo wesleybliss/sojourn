@@ -1,4 +1,4 @@
-import { mkdir, readdir, readFile, stat } from 'node:fs/promises'
+import { mkdir, readdir, readFile, rm, stat } from 'node:fs/promises'
 import { isBuiltin } from 'node:module'
 import { dirname, join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -160,6 +160,9 @@ function pluginPathAliases() {
 }
 
 async function build() {
+    
+    await rm(outputDir, { recursive: true, force: true })
+    await mkdir(outputDir, { recursive: true })
     
     const allDependencies = await Promise.all([
         getPackageDependencies(sharedRoot),
