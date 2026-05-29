@@ -112,14 +112,12 @@ const Navbar = () => {
                     
                     <div className="flex flex-wrap items-center gap-2">
                         <Button
-                            className="rounded-full"
                             disabled={createTripMutation.isPending}
                             onClick={handleCreateTrip}>
                             <MapPlus />
                             {createTripMutation.isPending ? 'Creating...' : 'New Trip'}
                         </Button>
                         <Button
-                            className="rounded-full"
                             variant="outline"
                             disabled={backupMutation.isPending}
                             onClick={handleImportOrBackup}>
