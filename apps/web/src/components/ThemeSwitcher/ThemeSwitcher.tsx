@@ -4,6 +4,7 @@ import { Monitor, Moon, Sun } from 'lucide-react'
 import { memo } from 'react'
 
 import useThemeSwitcherViewModel from '@/components/ThemeSwitcher/ThemeSwitcherViewModel'
+import { Button } from '@/components/ui/button'
 
 const themes = [
     { value: Themes.light, icon: Sun },
@@ -17,27 +18,24 @@ const ThemeSwitcher = memo(() => {
     
     return (
         
-        <div className={cn('p-2 gap-1', {
-            'grid grid-cols-3': vm.isSidebarExpanded,
-            'flex flex-col items-center bg-primary/10 rounded-lg': !vm.isSidebarExpanded,
-        })}>
+        <div className="p-[6px] flex items-center bg-primary/10 rounded-lg gap-1">
             
             {themes.map(({ value, icon: Icon }) => (
                 
-                <button
+                <Button
                     key={value}
+                    size="xs"
+                    variant="ghost"
                     onClick={() => vm.toggleTheme(value)}
                     className={cn(
-                        'flex flex-col items-center justify-center gap-1.5 p-2 rounded-md transition-all border',
-                        'hover:bg-accent hover:text-accent-foreground',
                         vm.theme === value
                             ? 'bg-accent border-accent-foreground/20 text-accent-foreground'
                             : 'border-transparent text-muted-foreground',
                     )}>
                     
-                    <Icon className="size-4" />
+                    <Icon className="size-3" />
                 
-                </button>
+                </Button>
                 
             ))}
         

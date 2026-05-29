@@ -31,7 +31,7 @@ const TripDetail = ({
     
     return (
         
-        <div className="flex flex-1 flex-col gap-6 p-5 lg:p-8">
+        <div className="flex flex-1 flex-col gap-6 p-5 lg:p-0">
             {vm.isLoading && (
                 <div className="section-card p-5">
                     <p className="mb-3 text-sm text-muted-foreground">Loading itinerary workspace...</p>
