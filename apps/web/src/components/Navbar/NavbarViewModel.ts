@@ -2,7 +2,6 @@ import { useWireValue } from '@forminator/react-wire'
 import { Plan, Segment, ShengenData, Trip, User } from '@repo/shared/types'
 
 import { useAuth } from '@/components/providers/AuthProvider'
-import useDebug from '@/hooks/useDebug'
 import * as store from '@/store'
 
 export type TNavbarViewModel = {
@@ -23,8 +22,6 @@ const NavbarViewModel = (): TNavbarViewModel => {
     const currentPlan = useWireValue(store.currentPlan)
     const segments = useWireValue(store.currentSegments)
     const shengenData = useWireValue(store.shengenData)
-    
-    useDebug()
     
     return {
         

@@ -16,6 +16,7 @@ import TripPage from '@/app/trips/[tripId]/page'
 import PlanDetail from '@/app/trips/[tripId]/plans/[planId]/page'
 import Plans from '@/app/trips/[tripId]/plans/page'
 import TripsRoute from '@/app/trips/page'
+import useDebug from '@/hooks/useDebug'
 import AppLayout from '@/layouts/AppLayout'
 import DebugLayout from '@/layouts/DebugLayout'
 import { Navigate } from '@/lib/router'
@@ -23,7 +24,11 @@ import { Navigate } from '@/lib/router'
 dayjs.extend(advancedFormat)
 
 const App = () => {
+    
+    useDebug()
+    
     return (
+        
         <Routes>
             <Route element={<AppLayout />}>
                 <Route index element={<HomePage />} />
@@ -45,7 +50,9 @@ const App = () => {
                 <Route path="*" element={<Navigate href="/" replace />} />
             </Route>
         </Routes>
+        
     )
+    
 }
 
 export default App

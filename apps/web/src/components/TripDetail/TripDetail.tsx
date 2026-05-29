@@ -2,15 +2,7 @@
 import { Segment } from '@repo/shared/types/database'
 import { cn } from '@repo/shared/utils'
 import dayjs from 'dayjs'
-import {
-    BedDouble,
-    CalendarClock,
-    CloudSun,
-    Globe2,
-    Plane,
-    Search,
-    TrainFront,
-} from 'lucide-react'
+import { BedDouble, CalendarClock, CloudSun, Globe2, Plane, Search, TrainFront } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 
 import GanttChart from '@/components/GanttChart'
@@ -229,7 +221,7 @@ const TripDetail = ({
                                                 r="44"
                                                 strokeWidth="10" />
                                             <circle
-                                                className="stroke-[var(--primary)]"
+                                                className="stroke-primary"
                                                 cx="56"
                                                 cy="56"
                                                 fill="none"
