@@ -48,7 +48,7 @@ const Sidebar = () => {
             className={cn(
                 'tropical-glow relative section-card flex shrink-0 flex-col overflow-hidden border-none',
                 'bg-sidebar text-sidebar-foreground md:max-w-[18rem]',
-                'lg:sticky lg:h-[calc(100vh-1rem)]',
+                'lg:top-2 lg:sticky lg:h-[calc(100vh-1.6rem)]',
                 'transition-width duration-300 ease-in-out', {
                     'w-full md:w-auto lg:w-70': isSidebarExpanded,
                     'w-20': !isSidebarExpanded,
