@@ -1,6 +1,7 @@
 import { useWireState } from '@forminator/react-wire'
 import { cn } from '@repo/shared/utils'
 import { Compass, Map, Settings2 } from 'lucide-react'
+import { memo, useMemo } from 'react'
 import { GoSidebarExpand } from 'react-icons/go'
 
 import AccountMenu from '@/components/AccountMenu'
@@ -38,7 +39,7 @@ const Sidebar = () => {
     
     const [isSidebarExpanded, setIsSidebarExpanded] = useWireState(store.isSidebarExpanded)
     
-    const showSignedInState = Boolean(firebaseUser)
+    const showSignedInState = useMemo(() => Boolean(firebaseUser), [firebaseUser])
     
     return (
         
@@ -63,18 +64,18 @@ const Sidebar = () => {
                             Sojourn
                         </div>
                     )}
-                    <div className={cn('flex', {
-                        'justify-end': isSidebarExpanded,
-                        'justify-center': !isSidebarExpanded,
-                    })}>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}>
-                            <GoSidebarExpand className="size-5" />
-                        </Button>
-                    </div>
                 </Link>
+                <div className={cn('flex', {
+                    'justify-end': isSidebarExpanded,
+                    'justify-center': !isSidebarExpanded,
+                })}>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}>
+                        <GoSidebarExpand className="size-5" />
+                    </Button>
+                </div>
             </div>
             
             <nav className="flex flex-1 flex-row gap-2 overflow-x-auto p-3 md:flex-col md:overflow-visible">
@@ -99,7 +100,7 @@ const Sidebar = () => {
                                     : 'border-sidebar-border/70 bg-sidebar-accent/60 text-sidebar-foreground/80'
                                         + ' group-hover:bg-sidebar-accent',
                             )}>
-                                <Icon className="size-[18px]" />
+                                <Icon className="size-4.5" />
                             </span>
                             <span className={cn('min-w-0', {
                                 'hidden': !isSidebarExpanded,
@@ -128,6 +129,18 @@ const Sidebar = () => {
                     </div>
                 )}
             </div>
+            
+            <div className="absolute inset-y-0 right-0 z-10
+                w-0.5 max-w-0.5 border-r-px border-sidebar-border/70
+                bg-sidebar-accent/60 text-sidebar-foreground/80">
+                <Button
+                    className="absolute-center z-11"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}>
+                    <GoSidebarExpand className="size-5" />
+                </Button>
+            </div>
         
         </aside>
         
@@ -135,4 +148,4 @@ const Sidebar = () => {
     
 }
 
-export default Sidebar
+export default memo(Sidebar)

@@ -2,8 +2,8 @@ import type { Plan } from '@repo/shared/types'
 import type { Segment } from '@repo/shared/types'
 import bcrypt from 'bcryptjs'
 import { clsx } from 'clsx'
-import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
+import dayjs from 'dayjs'
 import { nanoid } from 'nanoid'
 import type { ChangeEvent, SyntheticEvent } from 'react'
 import { twMerge } from 'tailwind-merge'
@@ -149,7 +149,7 @@ export const geocodeNomatim = async (locationName: string) => {
         
         const response = await fetch(url, {
             headers: {
-                // IMPORTANT: Change this to something descriptive for your app
+                // IMPORTANT: Change this to something descriptive for your routes
                 'User-Agent': 'TripPlannerBasic/1.0 (gammagammaco@gmail.com)',
             },
         })

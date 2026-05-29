@@ -1,5 +1,5 @@
-import TripsPage from '@/app/trips/TripsPage'
 import ProtectedRoute from '@/components/ProtectedRoute'
+import TripsPage from '@/routes/trips/TripsPage'
 
 export default function HomePage() {
     

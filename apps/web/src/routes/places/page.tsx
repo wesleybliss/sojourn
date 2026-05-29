@@ -1,16 +1,7 @@
-/* eslint-disable @stylistic/max-len */
-
 import { Place, Trip } from '@repo/shared/types/database'
 import { cn } from '@repo/shared/utils'
 import dayjs from 'dayjs'
-import {
-    Bookmark,
-    BookmarkCheck,
-    CalendarRange,
-    MapPinned,
-    Plus,
-    Search,
-} from 'lucide-react'
+import { Bookmark, BookmarkCheck, CalendarRange, MapPinned, Plus, Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 

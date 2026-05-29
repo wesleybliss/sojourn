@@ -1,5 +1,5 @@
-import useDebugViewModel from '@/app/debug/useDebugViewModel'
 import { Button } from '@/components/ui/button'
+import useDebugViewModel from '@/routes/debug/useDebugViewModel'
 
 const DebugMigrateTripsToPlans = () => {
     

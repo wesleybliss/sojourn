@@ -22,11 +22,11 @@ const useThemeSwitcherViewModel = (): TThemeSwitcherViewModel => {
     const [isSidebarExpanded, setIsSidebarExpanded] = useWireState(store.isSidebarExpanded)
     
     const applyTheme = (newTheme: Theme) => {
+        
         if (typeof window === 'undefined') return
         
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
         const isDark = newTheme === 'dark' || (newTheme === 'system' && prefersDark)
-        
         
         document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light')
         

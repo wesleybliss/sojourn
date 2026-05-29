@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router'
 
-import DebugSidebar from '@/app/debug/DebugSidebar'
+import DebugSidebar from '@/routes/debug/DebugSidebar'
 
 const DebugLayout = () => {
     return (

@@ -10,7 +10,7 @@ const useDebug = () => {
         window.app = {}
         
         window.app.store = store
-        // window.app.actions = actions
+        // window.routes.actions = actions
         window.app.constants = constants
         
     }, [])

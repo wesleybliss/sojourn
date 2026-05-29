@@ -1,18 +1,18 @@
 import { useWireState } from '@forminator/react-wire'
-import { ShengenData } from '@repo/shared/types'
+import { SegmentStatusLabel, ShengenData, WeatherSummary } from '@repo/shared/types'
 import { Coords, ID } from '@repo/shared/types/data'
 import { Plan, Segment, Trip } from '@repo/shared/types/database'
 import { UpdatePlanBody } from '@repo/shared/types/mutations'
 import { ListViewMode } from '@repo/shared/types/ui'
-import { calculateTotalDays,sortArrByUpdatedAt } from '@repo/shared/utils'
+import { calculateTotalDays, sortArrByUpdatedAt } from '@repo/shared/utils'
 import { UseMutationResult } from '@tanstack/react-query'
 import dayjs from 'dayjs'
-import { ChangeEvent,Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
+import { ChangeEvent, Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 
+import useCurrentWeather from '@/hooks/useCurrentWeather'
 import { useBackupTrips } from '@/lib/queries/backups'
-import { useShufflePlaceCoverPhoto } from '@/lib/queries/places'
-import { useUpdatePlace } from '@/lib/queries/places'
+import { useShufflePlaceCoverPhoto, useUpdatePlace } from '@/lib/queries/places'
 import { useUpdatePlan } from '@/lib/queries/plans'
 import {
     useAddSegment,
@@ -98,6 +98,8 @@ export type TTripEditorViewModel = {
     deletePlan: (planIdToDelete: ID) => Promise<void>
     updatePlanMutation: UseMutationResult<unknown, Error, UpdatePlanBody, unknown>
     shufflePlaceCoverPhoto: (placeId: ID, topic?: string) => Promise<void>
+    getStatusLabel: (segment: Segment, vm: TTripEditorViewModel) => SegmentStatusLabel
+    useCurrentWeather: (segment?: Segment) => WeatherSummary | null
     
     // Loading/error states
     isLoading: boolean
@@ -414,6 +416,20 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         
     }, [shufflePlaceCoverPhotoMutation, updatePlace])
     
+    const getStatusLabel = (segment: Segment): SegmentStatusLabel => {
+        
+        if (getSegmentCompleted(segment))
+            return 'Completed'
+        
+        if (getSegmentPlanned(segment))
+            return 'Confirmed'
+        
+        if (segment.flightBooked || segment.stayBooked)
+            return 'Partial'
+        
+        return 'Planning'
+    }
+    
     useEffect(() => {
         
         setIsLoadingInitial(true)
@@ -505,7 +521,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         // Hooks
         navigate: router.push,
         
-        // Actions
+        // Methods
         updateTrip,
         addSegment,
         updateSegment,
@@ -519,6 +535,8 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         deletePlan,
         updatePlanMutation,
         shufflePlaceCoverPhoto,
+        getStatusLabel,
+        useCurrentWeather,
         
         // Loading/error states
         isLoading,

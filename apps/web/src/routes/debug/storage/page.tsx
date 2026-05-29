@@ -1,6 +1,6 @@
-import useDebugViewModel from '@/app/debug/useDebugViewModel'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import useDebugViewModel from '@/routes/debug/useDebugViewModel'
 
 const DebugUploadFileBlobStorage = () => {
     

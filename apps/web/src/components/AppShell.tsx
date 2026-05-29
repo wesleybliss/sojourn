@@ -34,7 +34,7 @@ const AppShell = ({ children }: AppShellProps) => {
                 <Sidebar />
                 <div
                     className={cn(
-                        'app-panel flex min-h-[calc(100vh-1.5rem)] min-w-0 flex-1 flex-col overflow-hidden',
+                        'routes-panel flex min-h-[calc(100vh-1.5rem)] min-w-0 flex-1 flex-col overflow-hidden',
                         'lg:min-h-[calc(100vh-2.5rem)]',
                     )}>
                     {children}

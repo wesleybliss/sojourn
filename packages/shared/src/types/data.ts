@@ -29,3 +29,17 @@ export interface ApiResult<T> {
     count?: number
     message?: string | undefined
 }
+
+export const SegmentStatusLabels = {
+    Completed: 'Completed',
+    Confirmed: 'Confirmed',
+    Partial: 'Partial',
+    Planning: 'Planning',
+}
+
+export type SegmentStatusLabel = typeof SegmentStatusLabels[keyof typeof SegmentStatusLabels]
+
+export type WeatherSummary = {
+    temperature: number
+    label: string
+}
