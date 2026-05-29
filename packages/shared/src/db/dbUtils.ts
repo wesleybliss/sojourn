@@ -1,9 +1,12 @@
 import dayjs from 'dayjs'
-import { AnyColumn, BuildColumns, ColumnBuilderBase, SQL, sql } from 'drizzle-orm'
+import { sql } from 'drizzle-orm'
+import type { AnyColumn, BuildColumns, ColumnBuilderBase, SQL } from 'drizzle-orm'
 import {
     customType,
     integer,
     sqliteTable,
+} from 'drizzle-orm/sqlite-core'
+import type {
     SQLiteTableExtraConfig,
     SQLiteTableExtraConfigValue,
     SQLiteTableWithColumns,

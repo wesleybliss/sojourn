@@ -321,7 +321,7 @@ var require_main = __commonJS({
     var fs = __require("fs");
     var path = __require("path");
     var os = __require("os");
-    var crypto3 = __require("crypto");
+    var crypto2 = __require("crypto");
     var TIPS = [
       "\u25C8 encrypted .env [www.dotenvx.com]",
       "\u25C8 secrets for agents [www.dotenvx.com]",
@@ -565,7 +565,7 @@ var require_main = __commonJS({
       const authTag = ciphertext.subarray(-16);
       ciphertext = ciphertext.subarray(12, -16);
       try {
-        const aesgcm = crypto3.createDecipheriv("aes-256-gcm", key, nonce);
+        const aesgcm = crypto2.createDecipheriv("aes-256-gcm", key, nonce);
         aesgcm.setAuthTag(authTag);
         return `${aesgcm.update(ciphertext)}${aesgcm.final()}`;
       } catch (error) {
@@ -5184,39 +5184,6 @@ var BASE64_CODE = "./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456
 
 // ../../packages/shared/src/utils/index.ts
 var import_dayjs = __toESM(require_dayjs_min());
-
-// ../../node_modules/.pnpm/nanoid@5.1.11/node_modules/nanoid/index.js
-import { webcrypto as crypto2 } from "node:crypto";
-
-// ../../node_modules/.pnpm/nanoid@5.1.11/node_modules/nanoid/url-alphabet/index.js
-var urlAlphabet = "useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict";
-
-// ../../node_modules/.pnpm/nanoid@5.1.11/node_modules/nanoid/index.js
-var POOL_SIZE_MULTIPLIER = 128;
-var pool;
-var poolOffset;
-function fillPool(bytes) {
-  if (bytes < 0 || bytes > 1024) throw new RangeError("Wrong ID size");
-  if (!pool || pool.length < bytes) {
-    pool = Buffer.allocUnsafe(bytes * POOL_SIZE_MULTIPLIER);
-    crypto2.getRandomValues(pool);
-    poolOffset = 0;
-  } else if (poolOffset + bytes > pool.length) {
-    crypto2.getRandomValues(pool);
-    poolOffset = 0;
-  }
-  poolOffset += bytes;
-}
-function nanoid(size = 21) {
-  fillPool(size |= 0);
-  let id = "";
-  for (let i = poolOffset - size; i < poolOffset; i++) {
-    id += urlAlphabet[pool[i] & 63];
-  }
-  return id;
-}
-
-// ../../packages/shared/src/utils/index.ts
 var requireKeys = (source, ...keys) => {
   if (source === void 0)
     throw new Error("utils/index: requireKeys source was undefined");
@@ -5233,13 +5200,6 @@ var requireKeys = (source, ...keys) => {
 var isLocalhost = typeof window !== "undefined" && Boolean(
   window.location.hostname === "localhost" || window.location.hostname === "[::1]" || window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
 );
-var omit = (obj, keys = []) => {
-  return Object.keys(obj).reduce((acc, it) => {
-    if (!keys.includes(it))
-      acc[it] = obj[it];
-    return acc;
-  }, {});
-};
 
 // ../../packages/shared/src/utils/firebase/client.ts
 import { getApp, getApps, initializeApp } from "firebase/app";
@@ -5473,9 +5433,9 @@ var levelColors = {
   log: ansi_styles_default.grey
 };
 var Logger = class _Logger {
-  static {
-    this.hooks = [];
-  }
+  tag;
+  options;
+  static hooks = [];
   static registerHook(fn) {
     _Logger.hooks.push(fn);
   }
@@ -18091,6 +18051,7 @@ var db_default = db;
 
 // ../../packages/shared/src/errors/HttpError.ts
 var HttpError = class extends Error {
+  status;
   constructor(status, message) {
     super(message);
     this.status = status;
@@ -18200,39 +18161,6 @@ var isUserTripMember = async ({ userId }, tripId) => {
     return false;
   }
 };
-
-// src/handlers/plans/clonePlan.ts
-var clonePlan = withAuth(async (req, res, _context) => {
-  try {
-    const planId = parseInt(req.query.planId, 10);
-    if (isNaN(planId))
-      return apiResponse.badRequest(res, `Invalid plan ID: "${planId}"`);
-    const [plan] = await db_default.select().from(plans).where(eq(plans.id, planId));
-    if (!plan)
-      return apiResponse.notFound(res, "Plan");
-    const result = await db_default.transaction(async (tx) => {
-      const [clonedPlan] = await tx.insert(plans).values({
-        tripId: plan.tripId,
-        name: `${plan.name}-${nanoid()}`,
-        description: plan.description
-      }).returning();
-      const segments2 = await db_default.select().from(segments).where(eq(segments.planId, planId));
-      const segmentInserts = segments2.map((it) => tx.insert(segments).values({
-        ...omit(it, ["id", "planId"]),
-        planId: clonedPlan.id
-      }));
-      await Promise.all(segmentInserts);
-      return clonedPlan;
-    });
-    return apiResponse.ok(res, {
-      message: "Plan cloned successfully",
-      data: result
-    });
-  } catch (e) {
-    console.error("Error cloning plan:", e);
-    return apiResponse.internalServerError(res);
-  }
-});
 
 // src/handlers/plans/deletePlan.ts
 var deletePlan = withAuth(async (req, res, context) => {

@@ -1,7 +1,7 @@
-import Repository from '@shared/db/repos/repo'
-import * as schemas from '@shared/db/schema'
-import { ID } from '@shared/types/data'
-import { Database, Segment, SegmentInsert, SegmentSelect } from '@shared/types/database'
+import Repository from '@repo/shared/db/repos/repo'
+import * as schemas from '@repo/shared/db/schema'
+import type { ID } from '@repo/shared/types/data'
+import type { Database, Segment, SegmentInsert, SegmentSelect } from '@repo/shared/types/database'
 import { asc,eq } from 'drizzle-orm'
 
 export class SegmentsRepository extends Repository<Segment, typeof schemas.segments> {

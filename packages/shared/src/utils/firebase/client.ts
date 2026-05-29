@@ -1,5 +1,5 @@
-import { FirebaseInitConfig } from '@shared/types/firebase'
-import { requireKeys } from '@shared/utils'
+import type { FirebaseInitConfig } from '@repo/shared/types/firebase'
+import { requireKeys } from '@repo/shared/utils'
 import { getApp,getApps, initializeApp } from 'firebase/app'
 import { getAuth, GoogleAuthProvider } from 'firebase/auth'
 

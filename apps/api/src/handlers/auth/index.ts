@@ -1,2 +1,2 @@
-export * from './createUser'
-export * from './getUser'
+export * from '#handlers/auth/createUser'
+export * from '#handlers/auth/getUser'

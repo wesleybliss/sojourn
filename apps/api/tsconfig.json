@@ -22,6 +22,8 @@
         "paths": {
             "@/*": ["./src/*"],
             "@api/*": ["./api/*"],
+            "#handlers/*": ["./src/handlers/*.ts"],
+            "#api/*": ["./api/*.ts"],
             "@repo/shared": ["../../packages/shared/src/index.ts"],
             "@repo/shared/*": ["../../packages/shared/src/*"]
         },

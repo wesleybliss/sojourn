@@ -1,7 +1,7 @@
 import { apiResponse } from '@repo/shared/utils/api'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-import { uploadBlob } from '@/handlers/debug/storage'
+import { uploadBlob } from '#handlers/debug/storage/uploadBlob'
 
 export const config = {
     runtime: 'nodejs',

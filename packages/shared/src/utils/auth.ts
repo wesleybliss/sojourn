@@ -1,13 +1,13 @@
+import db from '@repo/shared/db'
+import * as schemas from '@repo/shared/db/schema'
+import HttpError from '@repo/shared/errors/HttpError'
+import type { ID } from '@repo/shared/types/data'
+import type { UserSelect } from '@repo/shared/types/database'
 import { setCorsHeaders } from '@repo/shared/utils/api'
-import db from '@shared/db'
-import * as schemas from '@shared/db/schema'
-import HttpError from '@shared/errors/HttpError'
-import { ID } from '@shared/types/data'
-import { UserSelect } from '@shared/types/database'
-import { adminAuth } from '@shared/utils/firebase/admin'
+import { adminAuth } from '@repo/shared/utils/firebase/admin'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { and, eq, sql } from 'drizzle-orm'
-import { DecodedIdToken } from 'firebase-admin/auth'
+import type { DecodedIdToken } from 'firebase-admin/auth'
 
 /** @deprecated use verifyFirebaseToken instead */
 const verifyFirebaseTokenDeprecated = async (request: Request): Promise<DecodedIdToken> => {

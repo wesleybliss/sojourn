@@ -1,1 +1,1 @@
-export * from './getRandomPhoto'
+export * from '#handlers/utils/getRandomPhoto'

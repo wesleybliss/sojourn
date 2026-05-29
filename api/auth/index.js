@@ -5433,9 +5433,9 @@ var levelColors = {
   log: ansi_styles_default.grey
 };
 var Logger = class _Logger {
-  static {
-    this.hooks = [];
-  }
+  tag;
+  options;
+  static hooks = [];
   static registerHook(fn) {
     _Logger.hooks.push(fn);
   }

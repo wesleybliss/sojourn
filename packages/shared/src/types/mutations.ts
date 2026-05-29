@@ -1,6 +1,6 @@
-import { ID } from '@shared/types/data'
-import { Place } from '@shared/types/database'
-import { Plan, PlanInsert, Segment,Trip } from '@shared/types/database'
+import type { ID } from '@repo/shared/types/data'
+import type { Place } from '@repo/shared/types/database'
+import type { Plan, PlanInsert, Segment,Trip } from '@repo/shared/types/database'
 
 export type BackupTripsBody = {
     type: 'single' | 'multiple'

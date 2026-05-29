@@ -1,6 +1,6 @@
-import Repository from '@shared/db/repos/repo'
-import * as schemas from '@shared/db/schema'
-import { Database, Place } from '@shared/types/database'
+import Repository from '@repo/shared/db/repos/repo'
+import * as schemas from '@repo/shared/db/schema'
+import type { Database, Place } from '@repo/shared/types/database'
 // import { eq, asc } from 'drizzle-orm'
 
 export abstract class APlacesRepository extends Repository<Place, typeof schemas.places> {}

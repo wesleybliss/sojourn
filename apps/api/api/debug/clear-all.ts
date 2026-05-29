@@ -1,7 +1,7 @@
 import { apiResponse } from '@repo/shared/utils/api'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-import { clearAll } from '@/handlers/debug'
+import { clearAll } from '#handlers/debug/clearAll'
 
 export const config = {
     runtime: 'nodejs',

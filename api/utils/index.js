@@ -5452,9 +5452,9 @@ var levelColors = {
   log: ansi_styles_default.grey
 };
 var Logger = class _Logger {
-  static {
-    this.hooks = [];
-  }
+  tag;
+  options;
+  static hooks = [];
   static registerHook(fn) {
     _Logger.hooks.push(fn);
   }
@@ -18070,6 +18070,7 @@ var db_default = db;
 
 // ../../packages/shared/src/errors/HttpError.ts
 var HttpError = class extends Error {
+  status;
   constructor(status, message) {
     super(message);
     this.status = status;

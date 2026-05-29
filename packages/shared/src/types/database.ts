@@ -1,7 +1,7 @@
-import database from '@shared/db'
-import * as schemas from '@shared/db/schema'
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm'
-import { SQLiteTable } from 'drizzle-orm/sqlite-core'
+import database from '@repo/shared/db'
+import * as schemas from '@repo/shared/db/schema'
+import type { InferInsertModel, InferSelectModel } from 'drizzle-orm'
+import type { SQLiteTable } from 'drizzle-orm/sqlite-core'
 import { createInsertSchema,createSelectSchema } from 'drizzle-orm/zod'
 import { z } from 'zod'
 

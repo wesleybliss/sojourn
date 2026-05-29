@@ -5200,25 +5200,6 @@ var requireKeys = (source, ...keys) => {
 var isLocalhost = typeof window !== "undefined" && Boolean(
   window.location.hostname === "localhost" || window.location.hostname === "[::1]" || window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
 );
-var getRandomUnsplashImageUrl = async (topic) => {
-  const accessKey = process.env.UNSPLASH_ACCESS_KEY;
-  if (!accessKey?.length)
-    throw new Error("Missing UNSPLASH_ACCESS_KEY");
-  const cleanTopic = encodeURIComponent(topic.replace(/[^a-zA-Z]/g, " "));
-  const url = `https://api.unsplash.com/photos/random?orientation=landscape&query=${cleanTopic}`;
-  try {
-    const res = await fetch(url, {
-      headers: {
-        Authorization: `Client-ID ${accessKey}`
-      }
-    });
-    const data = await res.json();
-    return data.urls.regular;
-  } catch (e) {
-    console.error("getRandomUnsplashImageUrl", e);
-    return null;
-  }
-};
 
 // ../../packages/shared/src/utils/firebase/client.ts
 import { getApp, getApps, initializeApp } from "firebase/app";
@@ -5452,9 +5433,9 @@ var levelColors = {
   log: ansi_styles_default.grey
 };
 var Logger = class _Logger {
-  static {
-    this.hooks = [];
-  }
+  tag;
+  options;
+  static hooks = [];
   static registerHook(fn) {
     _Logger.hooks.push(fn);
   }
@@ -18070,6 +18051,10 @@ var db_default = db;
 
 // ../../packages/shared/src/db/repos/repo.ts
 var Repository = class {
+  name;
+  plural;
+  schema;
+  db;
   constructor(name2, plural, schema, db2) {
     this.name = name2;
     this.plural = plural;
@@ -18172,6 +18157,7 @@ var places_default = new PlacesRepository();
 
 // ../../packages/shared/src/errors/HttpError.ts
 var HttpError = class extends Error {
+  status;
   constructor(status, message) {
     super(message);
     this.status = status;
@@ -18268,38 +18254,6 @@ var withAuth = (handler2) => {
   });
 };
 
-// src/handlers/places/createPlace.ts
-var createPlace = withAuth(async (req, res, _context) => {
-  try {
-    const {
-      name: name2,
-      focus,
-      quickTip,
-      personalNotes,
-      region,
-      travelWindow,
-      isBookmarked = false
-    } = req.body;
-    if (!name2?.length)
-      return apiResponse.invalidParams(res, 'Param "name" required');
-    const coverImageUrl = await getRandomUnsplashImageUrl(name2);
-    const newPlace = await places_default.create({
-      name: name2,
-      coverImageUrl,
-      focus,
-      quickTip,
-      personalNotes,
-      region,
-      travelWindow,
-      isBookmarked
-    });
-    return apiResponse.ok(res, newPlace);
-  } catch (e) {
-    console.error("Error getting place:", e);
-    return apiResponse.internalServerError(res);
-  }
-});
-
 // src/handlers/places/getPlace.ts
 var getPlace = withAuth(async (req, res, _context) => {
   try {
@@ -18308,17 +18262,6 @@ var getPlace = withAuth(async (req, res, _context) => {
     return apiResponse.ok(res, place);
   } catch (e) {
     console.error("Error getting place:", e);
-    return apiResponse.internalServerError(res);
-  }
-});
-
-// src/handlers/places/getPlaces.ts
-var getPlaces = withAuth(async (_req, res, _context) => {
-  try {
-    const places2 = await places_default.findAll();
-    return apiResponse.ok(res, places2);
-  } catch (e) {
-    console.error("Error getting places:", e);
     return apiResponse.internalServerError(res);
   }
 });

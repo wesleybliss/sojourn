@@ -1,7 +1,7 @@
 import { apiResponse } from '@repo/shared/utils/api'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-import { getRandomPhoto } from '@/handlers/utils'
+import { getRandomPhoto } from '#handlers/utils/getRandomPhoto'
 
 export const config = {
     runtime: 'nodejs',

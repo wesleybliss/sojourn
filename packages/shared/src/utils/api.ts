@@ -1,6 +1,6 @@
-import { ApiResult } from '@shared/types'
-import { auth } from '@shared/utils/firebase/client'
-import logger from '@shared/utils/logger'
+import type { ApiResult } from '@repo/shared/types'
+import { auth } from '@repo/shared/utils/firebase/client'
+import logger from '@repo/shared/utils/logger'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 /**

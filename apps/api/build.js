@@ -92,10 +92,26 @@ function pluginPathAliases() {
             const resolved = await tryResolve(fullPath)
             return { path: resolved, external: false }
         })
+
+        // Handle #handlers/ alias (apps/api/src/handlers/*) - bundle these
+        build.onResolve({ filter: /^#handlers\/.*/ }, async args => {
+            const rest = args.path.slice('#handlers/'.length)
+            const fullPath = join(__dirname, 'src', 'handlers', rest)
+            const resolved = await tryResolve(fullPath)
+            return { path: resolved, external: false }
+        })
         
         // Handle @api/ alias (apps/api/api/*) - bundle these
         build.onResolve({ filter: /^@api\/.*/ }, async args => {
             const rest = args.path.slice(5) // Remove '@api/'
+            const fullPath = join(__dirname, 'api', rest)
+            const resolved = await tryResolve(fullPath)
+            return { path: resolved, external: false }
+        })
+
+        // Handle #api/ alias (apps/api/api/*) - bundle these
+        build.onResolve({ filter: /^#api\/.*/ }, async args => {
+            const rest = args.path.slice('#api/'.length)
             const fullPath = join(__dirname, 'api', rest)
             const resolved = await tryResolve(fullPath)
             return { path: resolved, external: false }

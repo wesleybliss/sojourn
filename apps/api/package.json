@@ -3,6 +3,10 @@
     "private": true,
     "version": "0.1.0",
     "type": "module",
+    "imports": {
+        "#api/*": "./api/*.ts",
+        "#handlers/*": "./src/handlers/*.ts"
+    },
     "scripts": {
         "dev": "nodemon",
         "start": "dotenv -e ../../.env -- vercel dev --listen 4000",

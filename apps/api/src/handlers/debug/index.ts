@@ -1,1 +1,1 @@
-export * from './clearAll'
+export * from '#handlers/debug/clearAll'

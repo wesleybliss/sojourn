@@ -1,7 +1,7 @@
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import { apiResponse } from '@repo/shared/utils/api'
-import { AuthContext, isUserTripMember, withAuth } from '@repo/shared/utils/auth'
+import { type AuthContext, isUserTripMember, withAuth } from '@repo/shared/utils/auth'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { and, eq, inArray } from 'drizzle-orm'
 

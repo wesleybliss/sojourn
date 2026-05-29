@@ -1,7 +1,8 @@
 import { apiResponse } from '@repo/shared/utils/api'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-import { createUser, getUser } from '@/handlers/auth'
+import { createUser } from '#handlers/auth/createUser'
+import { getUser } from '#handlers/auth/getUser'
 
 export const config = {
     runtime: 'nodejs',

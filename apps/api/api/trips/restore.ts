@@ -1,7 +1,7 @@
 import { apiResponse } from '@repo/shared/utils/api'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-import { restoreTrips } from '@/handlers/trips'
+import { restoreTrips } from '#handlers/trips/restoreTrips'
 
 export const config = {
     runtime: 'nodejs',

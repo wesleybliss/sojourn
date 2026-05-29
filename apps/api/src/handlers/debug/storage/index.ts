@@ -1,1 +1,1 @@
-export * from './uploadBlob'
+export * from '#handlers/debug/storage/uploadBlob'

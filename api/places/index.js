@@ -5452,9 +5452,9 @@ var levelColors = {
   log: ansi_styles_default.grey
 };
 var Logger = class _Logger {
-  static {
-    this.hooks = [];
-  }
+  tag;
+  options;
+  static hooks = [];
   static registerHook(fn) {
     _Logger.hooks.push(fn);
   }
@@ -18070,6 +18070,10 @@ var db_default = db;
 
 // ../../packages/shared/src/db/repos/repo.ts
 var Repository = class {
+  name;
+  plural;
+  schema;
+  db;
   constructor(name2, plural, schema, db2) {
     this.name = name2;
     this.plural = plural;
@@ -18172,6 +18176,7 @@ var places_default = new PlacesRepository();
 
 // ../../packages/shared/src/errors/HttpError.ts
 var HttpError = class extends Error {
+  status;
   constructor(status, message) {
     super(message);
     this.status = status;
@@ -18300,18 +18305,6 @@ var createPlace = withAuth(async (req, res, _context) => {
   }
 });
 
-// src/handlers/places/getPlace.ts
-var getPlace = withAuth(async (req, res, _context) => {
-  try {
-    const placeId = parseInt(req.query.placeId, 10);
-    const place = await places_default.findOneById(placeId);
-    return apiResponse.ok(res, place);
-  } catch (e) {
-    console.error("Error getting place:", e);
-    return apiResponse.internalServerError(res);
-  }
-});
-
 // src/handlers/places/getPlaces.ts
 var getPlaces = withAuth(async (_req, res, _context) => {
   try {
@@ -18319,38 +18312,6 @@ var getPlaces = withAuth(async (_req, res, _context) => {
     return apiResponse.ok(res, places2);
   } catch (e) {
     console.error("Error getting places:", e);
-    return apiResponse.internalServerError(res);
-  }
-});
-
-// src/handlers/places/updatePlace.ts
-var updatePlace = withAuth(async (req, res, _context) => {
-  const placeId = parseInt(req.query.id, 10);
-  try {
-    const body = req.body;
-    if (!placeId)
-      return apiResponse.badRequest(res, `Invalid place ID: "${placeId}"`);
-    const [place] = await db_default.select().from(places).where(eq(places.id, placeId));
-    if (!place)
-      return apiResponse.notFound(res, "Place");
-    const [updatedPlace] = await db_default.update(places).set({
-      name: body.name,
-      coverImageUrl: body.coverImageUrl,
-      focus: body.focus,
-      quickTip: body.quickTip,
-      personalNotes: body.personalNotes,
-      region: body.region,
-      travelWindow: body.travelWindow,
-      isBookmarked: body.isBookmarked
-    }).where(eq(places.id, placeId)).returning();
-    if (!updatedPlace)
-      return apiResponse.notFound(res, "Place");
-    return apiResponse.ok(res, {
-      message: "Place updated successfully",
-      data: updatedPlace
-    });
-  } catch (e) {
-    console.error("Error updating place:", e);
     return apiResponse.internalServerError(res);
   }
 });

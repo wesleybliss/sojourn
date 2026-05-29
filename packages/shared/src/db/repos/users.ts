@@ -1,6 +1,6 @@
-import Repository from '@shared/db/repos/repo'
-import * as schemas from '@shared/db/schema'
-import { Database, User, UserSelect } from '@shared/types/database'
+import Repository from '@repo/shared/db/repos/repo'
+import * as schemas from '@repo/shared/db/schema'
+import type { Database, User, UserSelect } from '@repo/shared/types/database'
 
 export abstract class AUsersRepository extends Repository<User, typeof schemas.users> {
     abstract findOneByEmail(_email: string): Promise<UserSelect | null>

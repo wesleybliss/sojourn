@@ -1,7 +1,9 @@
 import { apiResponse } from '@repo/shared/utils/api'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-import { createSegment, deleteSegment, getSegments } from '@/handlers/segments'
+import { createSegment } from '#handlers/segments/createSegment'
+import { deleteSegment } from '#handlers/segments/deleteSegment'
+import { getSegments } from '#handlers/segments/getSegments'
 
 export const config = {
     runtime: 'nodejs',

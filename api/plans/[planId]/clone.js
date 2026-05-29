@@ -5473,9 +5473,9 @@ var levelColors = {
   log: ansi_styles_default.grey
 };
 var Logger = class _Logger {
-  static {
-    this.hooks = [];
-  }
+  tag;
+  options;
+  static hooks = [];
   static registerHook(fn) {
     _Logger.hooks.push(fn);
   }
@@ -18091,6 +18091,7 @@ var db_default = db;
 
 // ../../packages/shared/src/errors/HttpError.ts
 var HttpError = class extends Error {
+  status;
   constructor(status, message) {
     super(message);
     this.status = status;
@@ -18186,20 +18187,6 @@ var withAuth = (handler2) => {
     }
   });
 };
-var isUserTripMember = async ({ userId }, tripId) => {
-  try {
-    if (!userId || !tripId)
-      return false;
-    const rows = await db_default.select().from(userTrips).where(and(
-      eq(userTrips.userId, userId),
-      eq(userTrips.tripId, tripId)
-    ));
-    return Array.isArray(rows) && rows.length > 0 && rows[0].tripId === tripId;
-  } catch (e) {
-    console.error("isUserTripMember", e);
-    return false;
-  }
-};
 
 // src/handlers/plans/clonePlan.ts
 var clonePlan = withAuth(async (req, res, _context) => {
@@ -18230,79 +18217,6 @@ var clonePlan = withAuth(async (req, res, _context) => {
     });
   } catch (e) {
     console.error("Error cloning plan:", e);
-    return apiResponse.internalServerError(res);
-  }
-});
-
-// src/handlers/plans/deletePlan.ts
-var deletePlan = withAuth(async (req, res, context) => {
-  try {
-    const planId = parseInt(req.query.planId, 10);
-    if (!planId || isNaN(planId))
-      return apiResponse.badRequest(res, "Invalid plan ID");
-    const [plan] = await db_default.select().from(plans).where(eq(plans.id, planId));
-    if (!plan)
-      return apiResponse.notFound(res, "Plan");
-    const isMember = await isUserTripMember(context, plan.tripId);
-    if (!isMember)
-      return apiResponse.forbidden(res);
-    const [deletedPlan] = await db_default.delete(plans).where(eq(plans.id, planId)).returning();
-    if (!deletedPlan)
-      return apiResponse.notFound(res, "Plan");
-    return apiResponse.okMessage(res, "Plan deleted successfully");
-  } catch (e) {
-    console.error("Error deleting plan:", e);
-    return apiResponse.internalServerError(res);
-  }
-});
-
-// src/handlers/plans/getPlan.ts
-var getPlan = withAuth(async (req, res, context) => {
-  try {
-    const planId = parseInt(req.query.planId, 10);
-    const body = req.body;
-    const { tripId } = body;
-    const isMember = await isUserTripMember(context, tripId);
-    if (!isMember)
-      return apiResponse.forbidden(res);
-    if (!planId || isNaN(planId))
-      return apiResponse.badRequest(res, "Invalid plan ID");
-    const [plan] = await db_default.select().from(plans).where(eq(plans.id, planId));
-    if (!plan)
-      return apiResponse.notFound(res, "Plan");
-    return apiResponse.ok(res, { data: plan });
-  } catch (e) {
-    console.error("Error fetching plan:", e);
-    return apiResponse.internalServerError(res);
-  }
-});
-
-// src/handlers/plans/updatePlan.ts
-var updatePlan = withAuth(async (req, res, context) => {
-  try {
-    const planId = parseInt(req.query.planId, 10);
-    const body = req.body;
-    const tripId = body.tripId;
-    if (!planId || isNaN(planId))
-      return apiResponse.badRequest(res, "Invalid plan ID");
-    const isMember = await isUserTripMember(context, tripId);
-    if (!isMember)
-      return apiResponse.forbidden(res);
-    const [plan] = await db_default.select().from(plans).where(eq(plans.id, planId));
-    if (!plan)
-      return apiResponse.notFound(res, "Plan");
-    const [updatedPlan] = await db_default.update(plans).set({
-      name: body.name,
-      description: body.description
-    }).where(eq(plans.id, planId)).returning();
-    if (!updatedPlan)
-      return apiResponse.notFound(res, "Plan");
-    return apiResponse.ok(res, {
-      message: "Plan updated successfully",
-      data: updatedPlan
-    });
-  } catch (e) {
-    console.error("Error updating plan:", e);
     return apiResponse.internalServerError(res);
   }
 });
