@@ -19,81 +19,81 @@
     --radius-md: 0.375rem;
     --radius-lg: 0.5rem;
     --radius-xl: 0.875rem;
-    
+
     --font-body-base: var(--font-inter), sans-serif;
     --font-label-caps: var(--font-inter), sans-serif;
     --font-headline-md: var(--font-hanken-grotesk), sans-serif;
     --font-data-mono: var(--font-jetbrains-mono), monospace;
-    
+
     /* Sojourn Palette */
     --navy-950: #03045e;
     --navy-900: #09106d;
     --navy-800: #17208a;
-    
+
     --rose-300: #f4a6b7;
     --rose-400: #ef8ea6;
     --rose-500: #e57393;
-    
+
     --sand-100: #fff7f5;
     --sand-200: #f7ebe8;
-    
+
     --seafoam-300: #9fd9d0;
     --seafoam-400: #74c7ba;
-    
+
     --gold-300: #f2d58c;
-    
+
     /* Base */
     --background: #faf6f5;
     --foreground: #14153b;
-    
+
     --card: #fff;
     --card-foreground: #14153b;
-    
+
     --popover: #fff;
     --popover-foreground: #14153b;
-    
+
     /* Brand */
     --primary: #03045e;
     --primary-foreground: #fff7f5;
-    
+
     --secondary: #f7d6de;
     --secondary-foreground: #2b2350;
-    
+
     --muted: #f5eeec;
     --muted-foreground: #736a7e;
-    
+
     --accent: #c8ece5;
     --accent-foreground: #10364a;
-    
+
     --destructive: #d84c6f;
-    
+
     --border: #ead9dd;
     --input: #ead9dd;
     --ring: #ef8ea6;
-    
+
     /* Sidebar */
     --sidebar: #fff;
     --sidebar-foreground: #14153b;
-    
+
     --sidebar-primary: #03045e;
     --sidebar-primary-foreground: #fff7f5;
-    
+
     --sidebar-accent: #f8e4e9;
     --sidebar-accent-foreground: #2b2350;
-    
+
     --sidebar-border: #ead9dd;
     --sidebar-ring: #ef8ea6;
-    
+
     /* Surface System */
     --surface: #faf6f5;
     --surface-dim: #e8d7dc;
-    
+
     --surface-container-lowest: #fff;
     --surface-container-low: #fff7f8;
     --surface-container: #f9edf0;
     --surface-container-high: #f2e2e7;
     --surface-container-highest: #ead4db;
-    
+
     /* Charts */
     --chart-1: #e57393;
     --chart-2: #74c7ba;
@@ -106,58 +106,58 @@ html[data-theme='dark'] {
     /* Deep plum / twilight base */
     --background: #14051f;
     --foreground: #fdf4f7;
-    
+
     /* Elevated surfaces */
     --card: #1b0829;
     --card-foreground: #fdf4f7;
-    
+
     --popover: #1b0829;
     --popover-foreground: #fdf4f7;
-    
+
     /* Brand */
     --primary: #f4a6b7;
     --primary-foreground: #21072f;
-    
+
     --secondary: #311044;
     --secondary-foreground: #f8dbe3;
-    
+
     --muted: #261033;
     --muted-foreground: #bda8c3;
-    
+
     /* Tropical teal accent */
     --accent: #183842;
     --accent-foreground: #bce9e1;
-    
+
     --destructive: #ff7096;
-    
+
     /* Borders / inputs */
     --border: #43204f;
     --input: #43204f;
     --ring: #f4a6b7;
-    
+
     /* Sidebar */
     --sidebar: #180724;
     --sidebar-foreground: #fdf4f7;
-    
+
     --sidebar-primary: #f4a6b7;
     --sidebar-primary-foreground: #21072f;
-    
+
     --sidebar-accent: #2b0f3b;
     --sidebar-accent-foreground: #f8dbe3;
-    
+
     --sidebar-border: #43204f;
     --sidebar-ring: #f4a6b7;
-    
+
     /* Surface hierarchy */
     --surface: #14051f;
     --surface-dim: #2d123a;
-    
+
     --surface-container-lowest: #1a0826;
     --surface-container-low: #210b30;
     --surface-container: #2a103b;
     --surface-container-high: #341547;
     --surface-container-highest: #431d57;
-    
+
     /* Charts */
     --chart-1: #f4a6b7;
     --chart-2: #8ad7cb;
@@ -234,6 +234,12 @@ html[data-theme='dark'] {
         font-family: var(--font-headline-md);
         letter-spacing: -0.025em;
     }
+  .maplibregl-popup-content {
+    @apply bg-transparent! shadow-none! p-0! rounded-none!;
+    }
+  .maplibregl-popup-tip {
+    @apply hidden!;
+    }
 }
 
 .font-mono {
@@ -265,23 +271,23 @@ html[data-theme='dark'] {
     .app-panel {
         @apply rounded-[9px] border border-border/70 bg-surface-container-lowest;
     }
-    
+
     .section-card {
         @apply rounded-lg border border-border/70 bg-surface-container-lowest;
     }
-    
+
     .hero-gradient {
         background:
             radial-gradient(circle at top, rgb(244 166 183 / 0.18), transparent 42%),
             radial-gradient(circle at bottom right, rgb(138 215 203 / 0.08), transparent 28%),
             linear-gradient(180deg, #14051f 0%, #210b30 100%);
     }
-    
+
     .eyebrow {
         @apply font-label-caps text-[0.68rem] text-muted-foreground;
         letter-spacing: 0.22em;
     }
-    
+
     .brand-gradient {
         background: linear-gradient(
             135deg,
@@ -290,7 +296,7 @@ html[data-theme='dark'] {
             #74c7ba 100%
         );
     }
-    
+
     .tropical-glow {
         box-shadow:
             0 0 0 1px rgb(244 166 183 / 0.12),
