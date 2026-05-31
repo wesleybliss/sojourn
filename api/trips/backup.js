@@ -12046,7 +12046,7 @@ var allowedHeaders = [
 var setCorsHeaders = (req, res) => {
   const log = logger_default("setCorsHeaders");
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", allowedHeaders);
   res.setHeader("Access-Control-Max-Age", "86400");
   if (req.method === "OPTIONS") {
@@ -12085,28 +12085,6 @@ var apiResponse = {
   forbidden: (res, message = "Forbidden") => apiResponseBase.fail(res, message, 403),
   invalidParams: (res, message = "Invalid params") => apiResponseBase.fail(res, message, 422),
   internalServerError: (res, message = "Internal server error") => apiResponseBase.fail(res, message ?? "Unknown error", 500)
-};
-var apiResponseBaseDeprecated = {
-  ok: (data, status = 200) => new Response(
-    JSON.stringify(data),
-    { status, headers: { "Content-Type": "application/json" } }
-  ),
-  fail: (error, status, data) => new Response(
-    JSON.stringify({ error, ...data }),
-    { status, headers: { "Content-Type": "application/json" } }
-  )
-};
-var apiResponseDeprecated = {
-  ...apiResponseBaseDeprecated,
-  // Success helpers
-  okMessage: (message) => apiResponseBaseDeprecated.ok({ message }),
-  // Failure helpers
-  notFound: (resource = "Resource") => apiResponseBaseDeprecated.fail(`${resource} not found`, 404),
-  badRequest: (message = "Bad request") => apiResponseBaseDeprecated.fail(message, 400),
-  unauthorized: (message = "Unauthorized") => apiResponseBaseDeprecated.fail(message, 401),
-  forbidden: (message = "Forbidden") => apiResponseBaseDeprecated.fail(message, 403),
-  invalidParams: (message = "Invalid params") => apiResponseBaseDeprecated.fail(message, 422),
-  internalServerError: (message = "Internal server error") => apiResponseBaseDeprecated.fail(message ?? "Unknown error", 500)
 };
 
 // ../../node_modules/.pnpm/dotenv@17.4.2/node_modules/dotenv/config.js
