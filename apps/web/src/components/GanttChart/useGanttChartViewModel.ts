@@ -1,7 +1,7 @@
 import { GanttChartItemPrimitive } from '@repo/shared/types'
-import type { IApi } from '@svar-ui/react-gantt'
+import type { IApi, ITask } from '@svar-ui/react-gantt'
 import { differenceInDays } from 'date-fns'
-import { type Dispatch, RefObject, type SetStateAction, useEffect, useMemo, useRef } from 'react'
+import { type Dispatch, RefObject, type SetStateAction, useCallback, useEffect, useMemo, useRef } from 'react'
 
 import useDarkMode from '@/hooks/useDarkMode'
 
@@ -58,95 +58,90 @@ const useGanttChartViewModel = <T extends GanttChartItemPrimitive>({
         
     }), [items, startDateKey, endDateKey])
     
+    const handleUpdateTask = useCallback((task: ITask | null, event: any) => {
+        
+        if (!task || !task.start || !task.end)
+            return
+        
+        const start = task.start
+        const end = task.end
+        
+        setItems(prev => prev.map(item =>
+            item.id === event.id
+                ? {
+                    ...item,
+                    name: task.text,
+                    [startDateKey]: start.getTime(),
+                    [endDateKey]: end.getTime(),
+                } as T
+                : item,
+        ))
+        
+    }, [])
+    
+    const handleDragTask = useCallback((task: ITask | null, event: any) => {
+        
+        // Only update when the drag is complete
+        if (event.inProgress) return
+        
+        if (!task || !task.start || !task.end)
+            return
+        
+        const start = task.start
+        const end = task.end
+        
+        setItems(prev => prev.map(item =>
+            item.id === event.id
+                ? {
+                    ...item,
+                    name: task.text,
+                    [startDateKey]: start.getTime(),
+                    [endDateKey]: end.getTime(),
+                } as T
+                : item,
+        ))
+        
+    }, [])
+    
+    const handleAddTask = useCallback((event: any) => {
+        
+        const { task } = event
+        
+        setItems(prevItems => [
+            ...prevItems,
+            {
+                id: task.id,
+                name: task.text,
+                [startDateKey]: task.start?.getTime(),
+                [endDateKey]: task.end?.getTime(),
+                color: task.color,
+            } as T,
+        ])
+        
+    }, [])
+    
+    const handleDeleteTask = useCallback((event: any) => {
+        
+        const { id } = event
+        
+        setItems(prevItems => prevItems.filter(item => item.id !== id))
+        
+    }, [])
+    
     useEffect(() => {
         
         const api = ganttRef.current
         
         if (!api) return
         
-        const handleUpdateTask = (event: any) => {
-            
-            const { id } = event
-            const task = api.getTask(id)
-            
-            if (task && task.start && task.end) {
-                const start = task.start
-                const end = task.end
-                setItems(prevItems =>
-                    prevItems.map(item =>
-                        item.id === id
-                            ? {
-                                ...item,
-                                name: task.text,
-                                [startDateKey]: start.getTime(),
-                                [endDateKey]: end.getTime(),
-                            } as T
-                            : item,
-                    ),
-                )
-            }
-        }
-        
-        const handleDragTask = (event: any) => {
-            
-            // Only update when the drag is complete
-            if (event.inProgress) return
-            
-            const { id } = event
-            const task = api.getTask(id)
-            
-            if (task && task.start && task.end) {
-                
-                const start = task.start
-                const end = task.end
-                
-                setItems(prevItems =>
-                    prevItems.map(item =>
-                        item.id === id
-                            ? {
-                                ...item,
-                                name: task.text,
-                                [startDateKey]: start.getTime(),
-                                [endDateKey]: end.getTime(),
-                            } as T
-                            : item,
-                    ),
-                )
-                
-            }
-            
-        }
-        
-        const handleAddTask = (event: any) => {
-            
-            const { task } = event
-            
-            setItems(prevItems => [
-                ...prevItems,
-                {
-                    id: task.id,
-                    name: task.text,
-                    [startDateKey]: task.start?.getTime(),
-                    [endDateKey]: task.end?.getTime(),
-                    color: task.color,
-                } as T,
-            ])
-            
-        }
-        
-        const handleDeleteTask = (event: any) => {
-            const { id } = event
-            setItems(prevItems => prevItems.filter(item => item.id !== id))
-        }
-        
         api.on(
             'update-task',
-            handleUpdateTask,
+            e => handleUpdateTask(api.getTask(e.id), e),
             { tag: 'update-task' },
         )
         api.on(
             'drag-task',
-            handleDragTask,
+            e => handleDragTask(api.getTask(e.id), e),
             { tag: 'drag-task' },
         )
         api.on(
