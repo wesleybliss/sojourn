@@ -1,5 +1,5 @@
 import { useWireState } from '@forminator/react-wire'
-import { SegmentStatusLabel, ShengenData, WeatherSummary } from '@repo/shared/types'
+import { SegmentStatusLabel, ShengenData } from '@repo/shared/types'
 import { Coords, ID } from '@repo/shared/types/data'
 import { Plan, Segment, Trip } from '@repo/shared/types/database'
 import { UpdatePlanBody } from '@repo/shared/types/mutations'
@@ -10,7 +10,6 @@ import dayjs from 'dayjs'
 import { ChangeEvent, Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 
-import useCurrentWeather from '@/hooks/useCurrentWeather'
 import { useBackupTrips } from '@/lib/queries/backups'
 import { useShufflePlaceCoverPhoto, useUpdatePlace } from '@/lib/queries/places'
 import { useUpdatePlan } from '@/lib/queries/plans'
@@ -99,7 +98,6 @@ export type TTripEditorViewModel = {
     updatePlanMutation: UseMutationResult<unknown, Error, UpdatePlanBody, unknown>
     shufflePlaceCoverPhoto: (placeId: ID, topic?: string) => Promise<void>
     getStatusLabel: (segment: Segment, vm: TTripEditorViewModel) => SegmentStatusLabel
-    useCurrentWeather: (segment?: Segment) => WeatherSummary | null
     
     // Loading/error states
     isLoading: boolean
@@ -536,7 +534,6 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         updatePlanMutation,
         shufflePlaceCoverPhoto,
         getStatusLabel,
-        useCurrentWeather,
         
         // Loading/error states
         isLoading,

@@ -1,3 +1,4 @@
+import plansRepo from '@repo/shared/db/repos/plans'
 import segmentsRepo from '@repo/shared/db/repos/segments'
 import tripsRepo from '@repo/shared/db/repos/trips'
 import { ID } from '@repo/shared/types/data'
@@ -129,7 +130,7 @@ const findExistingTrip = async (trip: Partial<Trip>): Promise<Trip | null> => {
         
     }
     
-    return trip.name ? await tripsRepo.findOneByName(trip.name) : null
+    return trip.name ? await tripsRepo.findOneByName(trip.name, plansRepo) : null
     
 }
 

@@ -32,9 +32,10 @@ const TripItineraryCard = ({
                 <div className="flex flex-col gap-2 sm:flex-row">
                     <div className="relative">
                         <Search className="pointer-events-none absolute left-3 top-1/2
-                                        size-4 -translate-y-1/2 text-muted-foreground" />
+                            size-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             className="w-full rounded-full pl-9 sm:w-72"
+                            aria-label="Search itinerary"
                             onChange={e => vm.setSegmentsFilterQuery(e.target.value)}
                             placeholder="Filter by stop or date"
                             value={vm.segmentsFilterQuery} />
@@ -53,7 +54,7 @@ const TripItineraryCard = ({
                 </div>
             </div>
             
-            <div className="scrollbar-minimal overflow-x-auto">
+            <div className="scrollbar-minimal max-h-140 overflow-auto">
                 <TripDetailDenseItineraryTable vm={vm} />
                 {hasNoFilteredSegments && (
                     <div className="flex flex-col items-center justify-center gap-5 px-6 py-14 text-center">

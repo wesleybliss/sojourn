@@ -46,7 +46,8 @@ export default function PlacesPage() {
             tripName: trip.name,
             segmentName: segment.name,
             updatedAt: segment.updatedAt as Date,
-            dateRange: `${dayjs(segment.startDate as Date).format('MMM D')} - ${dayjs(segment.endDate as Date).format('MMM D')}`,
+            dateRange: `${dayjs(segment.startDate as Date)
+                .format('MMM D')} - ${dayjs(segment.endDate as Date).format('MMM D')}`,
         }))))
         .sort((a, b) => dayjs(b.updatedAt).valueOf() - dayjs(a.updatedAt).valueOf()), [trips])
     
@@ -114,19 +115,25 @@ export default function PlacesPage() {
         }
     }
     
+    const sectionClasses = [
+        'bg-[linear-gradient(135deg,_rgba(233,238,243,1)_0%,_rgba(247,249,251,1)_55%,_rgba(216,226,238,0.85)_100%)]',
+        'dark:bg-[linear-gradient(135deg,_rgba(32,49,73,0.9)_0%,_rgba(17,28,45,1)_55%,_rgba(42,61,87,0.7)_100%)]',
+    ]
+    
     return (
         
         <ProtectedRoute>
             <div className="flex flex-col gap-8 p-5 lg:p-8">
-                <section className="section-card overflow-hidden bg-[linear-gradient(135deg,_rgba(233,238,243,1)_0%,_rgba(247,249,251,1)_55%,_rgba(216,226,238,0.85)_100%)] p-6 dark:bg-[linear-gradient(135deg,_rgba(32,49,73,0.9)_0%,_rgba(17,28,45,1)_55%,_rgba(42,61,87,0.7)_100%)] lg:p-8">
+                <section className={`section-card overflow-hidden p-6 lg:p-8 ${sectionClasses.join(' ')}`}>
                     <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                         <div className="max-w-3xl">
                             <div className="eyebrow mb-3">Saved Places</div>
-                            <h1 className="text-3xl font-semibold tracking-[-0.05em] lg:text-4xl">
+                            <h1 className="text-3xl font-semibold tracking-tighter lg:text-4xl">
                                 Future Destinations
                             </h1>
                             <p className="mt-3 text-sm text-muted-foreground lg:text-base">
-                                Keep destination research, quick operational tips, and travel windows in a single dashboard before they become segments.
+                                Keep destination research, quick operational tips, and travel windows in a
+                                single dashboard before they become segments.
                             </p>
                         </div>
                         <Button className="rounded-full" onClick={() => setAddPlaceDialogOpen(true)}>
@@ -138,8 +145,9 @@ export default function PlacesPage() {
                 
                 <section className="section-card p-5">
                     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                        <div className="relative lg:w-[28rem]">
-                            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                        <div className="relative lg:w-md">
+                            <Search className="pointer-events-none absolute left-3 top-1/2
+                                size-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 className="rounded-full pl-9"
                                 onChange={e => setSearch(e.target.value)}
@@ -172,18 +180,23 @@ export default function PlacesPage() {
                         return (
                             
                             <article
-                                className="overflow-hidden rounded-[28px] border border-border/70 bg-surface-container-lowest shadow-sm"
+                                className="overflow-hidden rounded-[28px] border border-border/70
+                                    bg-surface-container-lowest shadow-sm"
                                 key={place.id}>
-                                <div className="relative aspect-[16/9] overflow-hidden bg-surface-container">
+                                <div className="relative aspect-video overflow-hidden bg-surface-container">
                                     {place.coverImageUrl ? (
                                         <img
                                             alt={place.name}
                                             className="h-full w-full object-cover"
                                             src={place.coverImageUrl} />
                                     ) : (
-                                        <div className="h-full w-full bg-[linear-gradient(135deg,_#dbe5f0_0%,_#f8fafc_45%,_#c8d4e2_100%)] dark:bg-[linear-gradient(135deg,_#203149_0%,_#152235_55%,_#2a3d57_100%)]" />
+                                        <div className="h-full w-full
+                                            bg-[linear-gradient(135deg,#dbe5f0_0%,#f8fafc_45%,#c8d4e2_100%)]
+                                            dark:bg-[linear-gradient(135deg,#203149_0%,#152235_55%,#2a3d57_100%)]" />
                                     )}
-                                    <div className="absolute left-4 top-4 rounded-full bg-surface-container-lowest/92 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground">
+                                    <div className="absolute left-4 top-4 rounded-full
+                                        bg-surface-container-lowest/92 px-3 py-1 text-[11px]
+                                        font-semibold uppercase tracking-[0.18em] text-foreground">
                                         {place.region || 'Unassigned'}
                                     </div>
                                 </div>
@@ -195,7 +208,8 @@ export default function PlacesPage() {
                                             <h2 className="font-headline text-2xl font-semibold">{place.name}</h2>
                                         </div>
                                         <button
-                                            className="rounded-full border border-border/70 p-2 transition-colors hover:bg-accent"
+                                            className="rounded-full border border-border/70 p-2
+                                                transition-colors hover:bg-accent"
                                             onClick={() => toggleBookmark(place)}
                                             type="button">
                                             {place.isBookmarked ? (
@@ -208,31 +222,43 @@ export default function PlacesPage() {
                                     
                                     <div className="space-y-3 text-sm">
                                         <div>
-                                            <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Focus</div>
+                                            <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                                                Focus
+                                            </div>
                                             <p className="mt-1 text-foreground/90">
-                                                {place.focus || 'Add a destination focus to clarify why this place is on the shortlist.'}
+                                                {place.focus || 'Add a destination focus to clarify '
+                                                    + 'why this place is on the shortlist.'}
                                             </p>
                                         </div>
                                         <div className="rounded-2xl bg-surface-container-low px-4 py-3">
-                                            <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Quick tip</div>
+                                            <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                                                Quick tip
+                                            </div>
                                             <p className="mt-1 text-foreground/90">
-                                                {place.quickTip || 'Capture internet, transit, or neighborhood notes here.'}
+                                                {place.quickTip || 'Capture internet, transit, '
+                                                    + 'or neighborhood notes here.'}
                                             </p>
                                         </div>
                                         <div>
-                                            <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Personal notes</div>
+                                            <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                                                Personal notes
+                                            </div>
                                             <p className="mt-1 text-foreground/90">
-                                                {place.personalNotes || 'Add the reasons this place is worth revisiting later.'}
+                                                {place.personalNotes || 'Add the reasons this place '
+                                                    + 'is worth revisiting later.'}
                                             </p>
                                         </div>
                                     </div>
                                     
-                                    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-4 text-sm">
-                                        <span className="inline-flex items-center gap-2 rounded-full bg-surface-container-low px-3 py-1.5 text-muted-foreground">
+                                    <div className="flex flex-wrap items-center justify-between gap-3
+                                        border-t border-border/60 pt-4 text-sm">
+                                        <span className="inline-flex items-center gap-2 rounded-full
+                                            bg-surface-container-low px-3 py-1.5 text-muted-foreground">
                                             <MapPinned className="size-4" />
                                             {segmentCount} linked segment{segmentCount === 1 ? '' : 's'}
                                         </span>
-                                        <span className="inline-flex items-center gap-2 rounded-full border border-border/70 px-3 py-1.5 text-muted-foreground">
+                                        <span className="inline-flex items-center gap-2 rounded-full
+                                            border border-border/70 px-3 py-1.5 text-muted-foreground">
                                             <CalendarRange className="size-4" />
                                             {place.travelWindow || 'Window TBD'}
                                         </span>
@@ -244,7 +270,8 @@ export default function PlacesPage() {
                     })}
                     
                     {!filteredPlaces.length && !isLoading && (
-                        <div className="section-card col-span-full border-dashed px-6 py-16 text-center text-muted-foreground">
+                        <div className="section-card col-span-full border-dashed
+                            px-6 py-16 text-center text-muted-foreground">
                             No places match the current filters.
                         </div>
                     )}
@@ -260,7 +287,8 @@ export default function PlacesPage() {
                     </div>
                     <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-border/70 text-sm">
-                            <thead className="bg-surface-container-low text-left text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                            <thead className="bg-surface-container-low text-left text-xs uppercase
+                                tracking-[0.18em] text-muted-foreground">
                                 <tr>
                                     <th className="px-6 py-4 font-medium">Trip</th>
                                     <th className="px-6 py-4 font-medium">Segment</th>

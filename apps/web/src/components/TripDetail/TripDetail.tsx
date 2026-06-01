@@ -45,7 +45,7 @@ const TripDetail = ({
                 )
             ) : (<>
                 
-                <section className="grid gap-5 xl:grid-cols-12 py-6">
+                <section className="grid gap-5 xl:grid-cols-12 pt-6">
                     
                     <div className="grid gap-5 md:grid-cols-2 xl:col-span-5 xl:grid-cols-1 xl:flex xl:flex-col">
                         <TripDetailComplianceCard shengenData={vm.shengenData} />
