@@ -4,8 +4,8 @@ import type { SegmentInsert, TripInsert } from '@repo/shared/types'
 import { apiResponse } from '@repo/shared/utils/api'
 import { type AuthContext, withAuth } from '@repo/shared/utils/auth'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
+import dayjs from 'dayjs'
 
 const toDate = (v: string | number | Date | Dayjs | null | undefined) => {
     const value = dayjs(v).toDate()

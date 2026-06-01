@@ -1,8 +1,8 @@
 import database from '@repo/shared/db'
 import type { Database, Insert, Select } from '@repo/shared/types'
 import type { ID } from '@repo/shared/types/data'
-import { desc, eq, inArray } from 'drizzle-orm'
 import type { AnyColumn } from 'drizzle-orm'
+import { desc, eq, inArray } from 'drizzle-orm'
 import type { SQLiteTable } from 'drizzle-orm/sqlite-core'
 
 /**

@@ -1,10 +1,9 @@
 import 'dotenv/config'
 
 import { createClient } from '@libsql/client'
-import { drizzle } from 'drizzle-orm/libsql'
-
 import { relations } from '@repo/shared/db/relations'
 import * as schema from '@repo/shared/db/schema'
+import { drizzle } from 'drizzle-orm/libsql'
 
 if (!process.env.TURSO_DATABASE_URL?.length) {
     console.error('Missing TURSO_DATABASE_URL env var', JSON.stringify(process.env, null, 2))

@@ -10701,6 +10701,20 @@ function _createClient4(config2) {
   }
 }
 
+// ../../packages/shared/src/db/schema.ts
+var schema_exports = {};
+__export(schema_exports, {
+  places: () => places,
+  plans: () => plans,
+  segments: () => segments,
+  trips: () => trips,
+  userTrips: () => userTrips,
+  users: () => users
+});
+
+// ../../packages/shared/src/db/dbUtils.ts
+var import_dayjs2 = __toESM(require_dayjs_min());
+
 // ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/entity.js
 var entityKind = /* @__PURE__ */ Symbol.for("drizzle:entityKind");
 function is(value, type) {
@@ -10714,6 +10728,37 @@ function is(value, type) {
   }
   return false;
 }
+
+// ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/logger.js
+var ConsoleLogWriter = class {
+  static [entityKind] = "ConsoleLogWriter";
+  write(message) {
+    console.log(message);
+  }
+};
+var DefaultLogger = class {
+  static [entityKind] = "DefaultLogger";
+  writer;
+  constructor(config2) {
+    this.writer = config2?.writer ?? new ConsoleLogWriter();
+  }
+  logQuery(query, params) {
+    const stringifiedParams = params.map((p) => {
+      try {
+        return JSON.stringify(p);
+      } catch {
+        return String(p);
+      }
+    });
+    const paramsStr = stringifiedParams.length ? ` -- params: [${stringifiedParams.join(", ")}]` : "";
+    this.writer.write(`Query: ${query}${paramsStr}`);
+  }
+};
+var NoopLogger = class {
+  static [entityKind] = "NoopLogger";
+  logQuery() {
+  }
+};
 
 // ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/column-common.js
 var OriginalColumn = /* @__PURE__ */ Symbol.for("drizzle:OriginalColumn");
@@ -10782,6 +10827,27 @@ var Column = class {
   /** @internal */
   [OriginalColumn]() {
     return this;
+  }
+};
+
+// ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/query-promise.js
+var QueryPromise = class {
+  static [entityKind] = "QueryPromise";
+  [Symbol.toStringTag] = "QueryPromise";
+  catch(onRejected) {
+    return this.then(void 0, onRejected);
+  }
+  finally(onFinally) {
+    return this.then((value) => {
+      onFinally?.();
+      return value;
+    }, (reason) => {
+      onFinally?.();
+      throw reason;
+    });
+  }
+  then(onFulfilled, onRejected) {
+    return this.execute().then(onFulfilled, onRejected);
   }
 };
 
@@ -11327,136 +11393,246 @@ Subquery.prototype.getSQL = function() {
   return new SQL([this]);
 };
 
-// ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/utils.js
-function mapResultRow(columns, row, joinsNotNullableMap) {
-  const nullifyMap = {};
-  const result = columns.reduce((result2, { path, field }, columnIndex) => {
-    let decoder;
-    if (is(field, Column)) decoder = field;
-    else if (is(field, SQL)) decoder = field.decoder;
-    else if (is(field, Subquery)) decoder = field._.sql.decoder;
-    else decoder = field.sql.decoder;
-    let node = result2;
-    for (const [pathChunkIndex, pathChunk] of path.entries()) if (pathChunkIndex < path.length - 1) {
-      if (!(pathChunk in node)) node[pathChunk] = {};
-      node = node[pathChunk];
-    } else {
-      const rawValue = row[columnIndex];
-      const value = node[pathChunk] = rawValue === null ? null : decoder.mapFromDriverValue(rawValue);
-      if (joinsNotNullableMap && is(field, Column) && path.length === 2) {
-        const objectName = path[0];
-        if (!(objectName in nullifyMap)) nullifyMap[objectName] = value === null ? getTableName(field.table) : false;
-        else if (typeof nullifyMap[objectName] === "string" && nullifyMap[objectName] !== getTableName(field.table)) nullifyMap[objectName] = false;
-      }
+// ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/alias.js
+var ColumnTableAliasProxyHandler = class {
+  static [entityKind] = "ColumnTableAliasProxyHandler";
+  constructor(table2, ignoreColumnAlias) {
+    this.table = table2;
+    this.ignoreColumnAlias = ignoreColumnAlias;
+  }
+  get(columnObj, prop) {
+    if (prop === "table") return this.table;
+    if (prop === "isAlias" && this.ignoreColumnAlias) return false;
+    return columnObj[prop];
+  }
+};
+var ViewSelectionAliasProxyHandler = class {
+  static [entityKind] = "ViewSelectionAliasProxyHandler";
+  constructor(view, selection, ignoreColumnAlias) {
+    this.view = view;
+    this.selection = selection;
+    this.ignoreColumnAlias = ignoreColumnAlias;
+  }
+  get(selection, prop) {
+    const value = selection[prop];
+    if (is(value, Column)) return new Proxy(value, new ColumnTableAliasProxyHandler(this.view, this.ignoreColumnAlias));
+    if (is(value, Subquery) || is(value, SQL) || is(value, SQL.Aliased) || isSQLWrapper(value) || typeof value !== "object" || value === null) return value;
+    return new Proxy(value, this);
+  }
+};
+var TableAliasProxyHandler = class {
+  static [entityKind] = "TableAliasProxyHandler";
+  constructor(alias, replaceOriginalName, ignoreColumnAlias) {
+    this.alias = alias;
+    this.replaceOriginalName = replaceOriginalName;
+    this.ignoreColumnAlias = ignoreColumnAlias;
+  }
+  get(target, prop) {
+    if (prop === Table.Symbol.IsAlias) return true;
+    if (prop === Table.Symbol.Name) return this.alias;
+    if (this.replaceOriginalName && prop === Table.Symbol.OriginalName) return this.alias;
+    if (prop === ViewBaseConfig) return {
+      ...target[ViewBaseConfig],
+      name: this.alias,
+      isAlias: true,
+      selectedFields: new Proxy(target[ViewBaseConfig].selectedFields, new ViewSelectionAliasProxyHandler(new Proxy(target, this), target[ViewBaseConfig].selectedFields, this.ignoreColumnAlias))
+    };
+    if (prop === Table.Symbol.Columns) {
+      const columns = target[Table.Symbol.Columns];
+      if (!columns) return columns;
+      if (is(target, View)) return new Proxy(target[Table.Symbol.Columns], new ViewSelectionAliasProxyHandler(new Proxy(target, this), target[Table.Symbol.Columns], this.ignoreColumnAlias));
+      const proxiedColumns = {};
+      Object.keys(columns).map((key) => {
+        proxiedColumns[key] = new Proxy(columns[key], new ColumnTableAliasProxyHandler(new Proxy(target, this), this.ignoreColumnAlias));
+      });
+      return proxiedColumns;
     }
-    return result2;
-  }, {});
-  if (joinsNotNullableMap && Object.keys(nullifyMap).length > 0) {
-    for (const [objectName, tableName] of Object.entries(nullifyMap)) if (typeof tableName === "string" && !joinsNotNullableMap[tableName]) result[objectName] = null;
+    const value = target[prop];
+    if (is(value, Column)) return new Proxy(value, new ColumnTableAliasProxyHandler(new Proxy(target, this), this.ignoreColumnAlias));
+    return value;
   }
-  return result;
-}
-function orderSelectedFields(fields, pathPrefix) {
-  return Object.entries(fields).reduce((result, [name2, field]) => {
-    if (typeof name2 !== "string") return result;
-    const newPath = pathPrefix ? [...pathPrefix, name2] : [name2];
-    if (is(field, Column) || is(field, SQL) || is(field, SQL.Aliased) || is(field, Subquery)) result.push({
-      path: newPath,
-      field
-    });
-    else if (is(field, Table)) result.push(...orderSelectedFields(field[Table.Symbol.Columns], newPath));
-    else result.push(...orderSelectedFields(field, newPath));
-    return result;
-  }, []);
-}
-function haveSameKeys(left, right) {
-  const leftKeys = Object.keys(left);
-  const rightKeys = Object.keys(right);
-  if (leftKeys.length !== rightKeys.length) return false;
-  for (const [index2, key] of leftKeys.entries()) if (key !== rightKeys[index2]) return false;
-  return true;
-}
-function mapUpdateSet(table2, values) {
-  const entries = Object.entries(values).filter(([, value]) => value !== void 0).map(([key, value]) => {
-    if (is(value, SQL) || is(value, Column)) return [key, value];
-    else return [key, new Param(value, table2[Table.Symbol.Columns][key])];
-  });
-  if (entries.length === 0) throw new Error("No values to set");
-  return Object.fromEntries(entries);
-}
-function applyMixins(baseClass, extendedClasses) {
-  for (const extendedClass of extendedClasses) for (const name2 of Object.getOwnPropertyNames(extendedClass.prototype)) {
-    if (name2 === "constructor") continue;
-    Object.defineProperty(baseClass.prototype, name2, Object.getOwnPropertyDescriptor(extendedClass.prototype, name2) || /* @__PURE__ */ Object.create(null));
+};
+var ColumnAliasProxyHandler = class {
+  static [entityKind] = "ColumnAliasProxyHandler";
+  constructor(alias) {
+    this.alias = alias;
   }
+  get(target, prop) {
+    if (prop === "isAlias") return true;
+    if (prop === "name") return this.alias;
+    if (prop === "keyAsName") return false;
+    if (prop === OriginalColumn) return () => target;
+    return target[prop];
+  }
+};
+var RelationTableAliasProxyHandler = class {
+  static [entityKind] = "RelationTableAliasProxyHandler";
+  constructor(alias) {
+    this.alias = alias;
+  }
+  get(target, prop) {
+    if (prop === "sourceTable") return aliasedTable(target.sourceTable, this.alias);
+    return target[prop];
+  }
+};
+function aliasedTable(table2, tableAlias) {
+  return new Proxy(table2, new TableAliasProxyHandler(tableAlias, false, false));
 }
-function getTableColumns(table2) {
-  return table2[Table.Symbol.Columns];
+function aliasedColumn(column, alias) {
+  return new Proxy(column, new ColumnAliasProxyHandler(alias));
 }
-function getTableLikeName(table2) {
-  return is(table2, Subquery) ? table2._.alias : is(table2, View) ? table2[ViewBaseConfig].name : is(table2, SQL) ? void 0 : table2[Table.Symbol.IsAlias] ? table2[Table.Symbol.Name] : table2[Table.Symbol.BaseName];
+function aliasedTableColumn(column, tableAlias) {
+  return new Proxy(column, new ColumnTableAliasProxyHandler(new Proxy(column.table, new TableAliasProxyHandler(tableAlias, false, false)), false));
 }
-function getColumnNameAndConfig(a, b) {
-  return {
-    name: typeof a === "string" && a.length > 0 ? a : "",
-    config: typeof a === "object" ? a : b
-  };
+function mapColumnsInAliasedSQLToAlias(query, alias) {
+  return new SQL.Aliased(mapColumnsInSQLToAlias(query.sql, alias), query.fieldAlias);
 }
-var textDecoder = typeof TextDecoder === "undefined" ? null : new TextDecoder();
+function mapColumnsInSQLToAlias(query, alias) {
+  return sql.join(query.queryChunks.map((c) => {
+    if (is(c, Column)) return aliasedTableColumn(c, alias);
+    if (is(c, SQL)) return mapColumnsInSQLToAlias(c, alias);
+    if (is(c, SQL.Aliased)) return mapColumnsInAliasedSQLToAlias(c, alias);
+    return c;
+  }));
+}
+Column.prototype.as = function(alias) {
+  return aliasedColumn(this, alias);
+};
+function getOriginalColumnFromAlias(column) {
+  return column[OriginalColumn]();
+}
 
-// ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/logger.js
-var ConsoleLogWriter = class {
-  static [entityKind] = "ConsoleLogWriter";
-  write(message) {
-    console.log(message);
+// ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/column-builder.js
+var ColumnBuilder = class {
+  static [entityKind] = "ColumnBuilder";
+  /** @internal */
+  config;
+  constructor(name2, dataType, columnType) {
+    this.config = {
+      name: name2,
+      keyAsName: name2 === "",
+      notNull: false,
+      default: void 0,
+      hasDefault: false,
+      primaryKey: false,
+      isUnique: false,
+      uniqueName: void 0,
+      uniqueType: void 0,
+      dataType,
+      columnType,
+      generated: void 0
+    };
   }
-};
-var DefaultLogger = class {
-  static [entityKind] = "DefaultLogger";
-  writer;
-  constructor(config2) {
-    this.writer = config2?.writer ?? new ConsoleLogWriter();
+  /**
+  * Changes the data type of the column. Commonly used with `json` columns. Also, useful for branded types.
+  *
+  * @example
+  * ```ts
+  * const users = pgTable('users', {
+  * 	id: integer('id').$type<UserId>().primaryKey(),
+  * 	details: json('details').$type<UserDetails>().notNull(),
+  * });
+  * ```
+  */
+  $type() {
+    return this;
   }
-  logQuery(query, params) {
-    const stringifiedParams = params.map((p) => {
-      try {
-        return JSON.stringify(p);
-      } catch {
-        return String(p);
-      }
-    });
-    const paramsStr = stringifiedParams.length ? ` -- params: [${stringifiedParams.join(", ")}]` : "";
-    this.writer.write(`Query: ${query}${paramsStr}`);
+  /**
+  * Adds a `not null` clause to the column definition.
+  *
+  * Affects the `select` model of the table - columns *without* `not null` will be nullable on select.
+  */
+  notNull() {
+    this.config.notNull = true;
+    return this;
   }
-};
-var NoopLogger = class {
-  static [entityKind] = "NoopLogger";
-  logQuery() {
+  /**
+  * Adds a `default <value>` clause to the column definition.
+  *
+  * Affects the `insert` model of the table - columns *with* `default` are optional on insert.
+  *
+  * If you need to set a dynamic default value, use {@link $defaultFn} instead.
+  */
+  default(value) {
+    this.config.default = value;
+    this.config.hasDefault = true;
+    return this;
+  }
+  /**
+  * Adds a dynamic default value to the column.
+  * The function will be called when the row is inserted, and the returned value will be used as the column value.
+  *
+  * **Note:** This value does not affect the `drizzle-kit` behavior, it is only used at runtime in `drizzle-orm`.
+  */
+  $defaultFn(fn) {
+    this.config.defaultFn = fn;
+    this.config.hasDefault = true;
+    return this;
+  }
+  /**
+  * Alias for {@link $defaultFn}.
+  */
+  $default = this.$defaultFn;
+  /**
+  * Adds a dynamic update value to the column.
+  * The function will be called when the row is updated, and the returned value will be used as the column value if none is provided.
+  * If no `default` (or `$defaultFn`) value is provided, the function will be called when the row is inserted as well, and the returned value will be used as the column value.
+  *
+  * **Note:** This value does not affect the `drizzle-kit` behavior, it is only used at runtime in `drizzle-orm`.
+  */
+  $onUpdateFn(fn) {
+    this.config.onUpdateFn = fn;
+    this.config.hasDefault = true;
+    return this;
+  }
+  /**
+  * Alias for {@link $onUpdateFn}.
+  */
+  $onUpdate = this.$onUpdateFn;
+  /**
+  * Adds a `primary key` clause to the column definition. This implicitly makes the column `not null`.
+  *
+  * In SQLite, `integer primary key` implicitly makes the column auto-incrementing.
+  */
+  primaryKey() {
+    this.config.primaryKey = true;
+    this.config.notNull = true;
+    return this;
+  }
+  /** @internal Sets the name of the column to the key within the table definition if a name was not given. */
+  setName(name2) {
+    if (this.config.name !== "") return;
+    this.config.name = name2;
   }
 };
 
-// ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/cache/core/cache.js
-var Cache = class {
-  static [entityKind] = "Cache";
-};
-var NoopCache = class extends Cache {
-  static [entityKind] = "NoopCache";
-  strategy() {
-    return "all";
-  }
-  async get(_key) {
-  }
-  async put(_hashedQuery, _response, _tables, _config) {
-  }
-  async onMutate(_params) {
+// ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/errors.js
+var DrizzleError = class extends Error {
+  static [entityKind] = "DrizzleError";
+  constructor({ message, cause }) {
+    super(message);
+    this.name = "DrizzleError";
+    this.cause = cause;
   }
 };
-async function hashQuery(sql2, params) {
-  const dataToHash = `${sql2}-${JSON.stringify(params, (_, v) => typeof v === "bigint" ? `${v}n` : v)}`;
-  const data = new TextEncoder().encode(dataToHash);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  return [...new Uint8Array(hashBuffer)].map((b) => b.toString(16).padStart(2, "0")).join("");
-}
+var DrizzleQueryError = class DrizzleQueryError2 extends Error {
+  static [entityKind] = "DrizzleQueryError";
+  constructor(query, params, cause) {
+    super(`Failed query: ${query}
+params: ${params}`);
+    this.query = query;
+    this.params = params;
+    this.cause = cause;
+    Error.captureStackTrace(this, DrizzleQueryError2);
+    if (cause) this.cause = cause;
+  }
+};
+var TransactionRollbackError = class extends DrizzleError {
+  static [entityKind] = "TransactionRollbackError";
+  constructor() {
+    super({ message: "Rollback" });
+  }
+};
 
 // ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/sql/expressions/conditions.js
 function bindIfParam(value, column) {
@@ -11580,6 +11756,523 @@ function asc(column) {
 function desc(column) {
   return sql`${column} desc`;
 }
+
+// ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/relations.js
+function processRelations(tablesConfig, tables) {
+  for (const tableConfig of Object.values(tablesConfig)) for (const [relationFieldName, relation] of Object.entries(tableConfig.relations)) {
+    if (!is(relation, Relation)) continue;
+    relation.sourceTable = tableConfig.table;
+    relation.fieldName = relationFieldName;
+  }
+  for (const [sourceTableName, tableConfig] of Object.entries(tablesConfig)) for (const [relationFieldName, relation] of Object.entries(tableConfig.relations)) {
+    if (!is(relation, Relation)) continue;
+    let reverseRelation;
+    const { targetTableName, alias, sourceColumns, targetColumns, throughTable, sourceTable, through, where, sourceColumnTableNames, targetColumnTableNames } = relation;
+    const relationPrintName = `relations -> ${tableConfig.name}: { ${relationFieldName}: r.${is(relation, One) ? "one" : "many"}.${targetTableName}(...) }`;
+    if (relationFieldName in tableConfig.table[TableColumns]) throw new Error(`${relationPrintName}: relation name collides with column "${relationFieldName}" of table "${tableConfig.name}"`);
+    if (typeof alias === "string" && !alias) throw new Error(`${relationPrintName}: "alias" cannot be an empty string - omit it if you don't need it`);
+    if (sourceColumns?.length === 0) throw new Error(`${relationPrintName}: "from" cannot be empty`);
+    if (targetColumns?.length === 0) throw new Error(`${relationPrintName}: "to" cannot be empty`);
+    if (sourceColumns && targetColumns) {
+      if (sourceColumns.length !== targetColumns.length && !throughTable) throw new Error(`${relationPrintName}: "from" and "to" fields without "through" must have the same length`);
+      for (const sName of sourceColumnTableNames) if (sName !== sourceTableName) throw new Error(`${relationPrintName}: all "from" columns must belong to table "${sourceTableName}", found column of table "${sName}"`);
+      for (const tName of targetColumnTableNames) if (tName !== targetTableName) throw new Error(`${relationPrintName}: all "to" columns must belong to table "${targetTableName}", found column of table "${tName}"`);
+      if (through) {
+        if (through.source.length !== sourceColumns.length || through.target.length !== targetColumns.length) throw new Error(`${relationPrintName}: ".through(column)" must be used either on all columns in "from" and "to" or not defined on any of them`);
+        for (const column of through.source) if (tables[column._.tableName] !== throughTable) throw new Error(`${relationPrintName}: ".through(column)" must be used on the same table by all columns of the relation`);
+        for (const column of through.target) if (tables[column._.tableName] !== throughTable) throw new Error(`${relationPrintName}: ".through(column)" must be used on the same table by all columns of the relation`);
+      }
+      continue;
+    }
+    if (sourceColumns || targetColumns) throw new Error(`${relationPrintName}: relation must have either both "from" and "to" defined, or none of them`);
+    const reverseTableConfig = tablesConfig[targetTableName];
+    if (!reverseTableConfig) throw new Error(`${relationPrintName}: not enough data provided to build the relation - "from"/"to" are not defined, and no reverse relations of table "${targetTableName}" were found"`);
+    if (alias) {
+      const reverseRelations = Object.values(reverseTableConfig.relations).filter((it) => is(it, Relation) && it.alias === alias && it !== relation);
+      if (reverseRelations.length > 1) throw new Error(`${relationPrintName}: not enough data provided to build the relation - "from"/"to" are not defined, and multiple relations with alias "${alias}" found in table "${targetTableName}": ${reverseRelations.map((it) => `"${it.fieldName}"`).join(", ")}`);
+      reverseRelation = reverseRelations[0];
+      if (!reverseRelation) throw new Error(`${relationPrintName}: not enough data provided to build the relation - "from"/"to" are not defined, and there is no reverse relation of table "${targetTableName}" with alias "${alias}"`);
+    } else {
+      const reverseRelations = Object.values(reverseTableConfig.relations).filter((it) => is(it, Relation) && it.targetTable === sourceTable && !it.alias && it !== relation);
+      if (reverseRelations.length > 1) throw new Error(`${relationPrintName}: not enough data provided to build the relation - "from"/"to" are not defined, and multiple relations between "${targetTableName}" and "${sourceTableName}" were found.
+Hint: you can specify "alias" on both sides of the relation with the same value`);
+      reverseRelation = reverseRelations[0];
+      if (!reverseRelation) throw new Error(`${relationPrintName}: not enough data provided to build the relation - "from"/"to" are not defined, and no reverse relation of table "${targetTableName}" with target table "${sourceTableName}" was found`);
+    }
+    if (!reverseRelation.sourceColumns || !reverseRelation.targetColumns) throw new Error(`${relationPrintName}: not enough data provided to build the relation - "from"/"to" are not defined, and reverse relation "${targetTableName}.${reverseRelation.fieldName}" does not have "from"/"to" defined`);
+    relation.sourceColumns = reverseRelation.targetColumns;
+    relation.targetColumns = reverseRelation.sourceColumns;
+    relation.through = reverseRelation.through ? {
+      source: reverseRelation.through.target,
+      target: reverseRelation.through.source
+    } : void 0;
+    relation.throughTable = reverseRelation.throughTable;
+    relation.isReversed = !where;
+    relation.where = where ?? reverseRelation.where;
+  }
+  return tablesConfig;
+}
+function buildRelations(tables, config2) {
+  const tablesConfig = {};
+  for (const [tsName, table2] of Object.entries(tables)) tablesConfig[tsName] = {
+    table: table2,
+    name: tsName,
+    relations: config2[tsName] ?? {}
+  };
+  return processRelations(tablesConfig, tables);
+}
+var Relation = class {
+  static [entityKind] = "RelationV2";
+  fieldName;
+  sourceColumns;
+  targetColumns;
+  alias;
+  where;
+  sourceTable;
+  targetTable;
+  through;
+  throughTable;
+  isReversed;
+  /** @internal */
+  sourceColumnTableNames = [];
+  /** @internal */
+  targetColumnTableNames = [];
+  constructor(targetTable, targetTableName) {
+    this.targetTableName = targetTableName;
+    this.targetTable = targetTable;
+  }
+};
+var One = class extends Relation {
+  static [entityKind] = "OneV2";
+  relationType = "one";
+  optional;
+  constructor(tables, targetTable, targetTableName, config2) {
+    super(targetTable, targetTableName);
+    this.alias = config2?.alias;
+    this.where = config2?.where;
+    if (config2?.from) this.sourceColumns = (Array.isArray(config2.from) ? config2.from : [config2.from]).map((it) => {
+      this.throughTable ??= it._.through ? tables[it._.through._.tableName] : void 0;
+      this.sourceColumnTableNames.push(it._.tableName);
+      return it._.column;
+    });
+    if (config2?.to) this.targetColumns = (Array.isArray(config2.to) ? config2.to : [config2.to]).map((it) => {
+      this.throughTable ??= it._.through ? tables[it._.through._.tableName] : void 0;
+      this.targetColumnTableNames.push(it._.tableName);
+      return it._.column;
+    });
+    if (this.throughTable) this.through = {
+      source: (Array.isArray(config2?.from) ? config2.from : config2?.from ? [config2.from] : []).map((c) => c._.through),
+      target: (Array.isArray(config2?.to) ? config2.to : config2?.to ? [config2.to] : []).map((c) => c._.through)
+    };
+    this.optional = config2?.optional ?? true;
+  }
+};
+var Many = class extends Relation {
+  static [entityKind] = "ManyV2";
+  relationType = "many";
+  constructor(tables, targetTable, targetTableName, config2) {
+    super(targetTable, targetTableName);
+    this.config = config2;
+    this.alias = config2?.alias;
+    this.where = config2?.where;
+    if (config2?.from) this.sourceColumns = (Array.isArray(config2.from) ? config2.from : [config2.from]).map((it) => {
+      this.throughTable ??= it._.through ? tables[it._.through._.tableName] : void 0;
+      this.sourceColumnTableNames.push(it._.tableName);
+      return it._.column;
+    });
+    if (config2?.to) this.targetColumns = (Array.isArray(config2.to) ? config2.to : [config2.to]).map((it) => {
+      this.throughTable ??= it._.through ? tables[it._.through._.tableName] : void 0;
+      this.targetColumnTableNames.push(it._.tableName);
+      return it._.column;
+    });
+    if (this.throughTable) this.through = {
+      source: (Array.isArray(config2?.from) ? config2.from : config2?.from ? [config2.from] : []).map((c) => c._.through),
+      target: (Array.isArray(config2?.to) ? config2.to : config2?.to ? [config2.to] : []).map((c) => c._.through)
+    };
+  }
+};
+var AggregatedField = class {
+  static [entityKind] = "AggregatedField";
+  table;
+  onTable(table2) {
+    this.table = table2;
+    return this;
+  }
+};
+var Count = class extends AggregatedField {
+  static [entityKind] = "AggregatedFieldCount";
+  query;
+  getSQL() {
+    if (!this.query) {
+      if (!this.table) throw new Error("Table must be set before building aggregate field");
+      this.query = sql`select count(*) as ${sql.identifier("r")} from ${getTableAsAliasSQL(this.table)}`.mapWith(Number);
+    }
+    return this.query;
+  }
+};
+var operators = {
+  and,
+  between,
+  eq,
+  exists,
+  gt,
+  gte,
+  ilike,
+  inArray,
+  arrayContains,
+  arrayContained,
+  arrayOverlaps,
+  isNull,
+  isNotNull,
+  like,
+  lt,
+  lte,
+  ne,
+  not,
+  notBetween,
+  notExists,
+  notLike,
+  notIlike,
+  notInArray,
+  or,
+  sql
+};
+var orderByOperators = {
+  sql,
+  asc,
+  desc
+};
+function mapRelationalRow(row, buildQueryResultSelection, mapColumnValue = (value) => value, parseJson = false, parseJsonIfString = false, path) {
+  for (const selectionItem of buildQueryResultSelection) {
+    if (selectionItem.selection) {
+      const currentPath = `${path ? `${path}.` : ""}${selectionItem.key}`;
+      if (row[selectionItem.key] === null) continue;
+      if (parseJson) {
+        row[selectionItem.key] = JSON.parse(row[selectionItem.key]);
+        if (row[selectionItem.key] === null) continue;
+      }
+      if (parseJsonIfString && typeof row[selectionItem.key] === "string") row[selectionItem.key] = JSON.parse(row[selectionItem.key]);
+      if (selectionItem.isArray) {
+        for (const item of row[selectionItem.key]) mapRelationalRow(item, selectionItem.selection, mapColumnValue, false, parseJsonIfString, currentPath);
+        continue;
+      }
+      mapRelationalRow(row[selectionItem.key], selectionItem.selection, mapColumnValue, false, parseJsonIfString, currentPath);
+      continue;
+    }
+    const field = selectionItem.field;
+    const value = mapColumnValue(row[selectionItem.key]);
+    if (value === null) continue;
+    let decoder;
+    if (is(field, Column)) decoder = field;
+    else if (is(field, SQL)) decoder = field.decoder;
+    else if (is(field, SQL.Aliased)) decoder = field.sql.decoder;
+    else if (is(field, Table) || is(field, View)) decoder = noopDecoder;
+    else decoder = field.getSQL().decoder;
+    row[selectionItem.key] = "mapFromJsonValue" in decoder ? decoder.mapFromJsonValue(value) : decoder.mapFromDriverValue(value);
+  }
+  return row;
+}
+var RelationsBuilderTable = class {
+  static [entityKind] = "RelationsBuilderTable";
+  _;
+  constructor(table2, name2) {
+    this._ = {
+      name: name2,
+      table: table2
+    };
+  }
+};
+var RelationsBuilderColumn = class {
+  static [entityKind] = "RelationsBuilderColumn";
+  _;
+  constructor(column, tableName, key) {
+    this._ = {
+      tableName,
+      column,
+      key
+    };
+  }
+  through(column) {
+    return new RelationsBuilderJunctionColumn(this._.column, this._.tableName, this._.key, column);
+  }
+};
+var RelationsBuilderJunctionColumn = class {
+  static [entityKind] = "RelationsBuilderColumn";
+  _;
+  constructor(column, tableName, key, through) {
+    this._ = {
+      tableName,
+      column,
+      through,
+      key
+    };
+  }
+};
+var RelationsHelperStatic = class {
+  static [entityKind] = "RelationsHelperStatic";
+  _;
+  constructor(tables) {
+    this._ = { tables };
+    const one = {};
+    const many = {};
+    for (const [tableName, table2] of Object.entries(tables)) {
+      one[tableName] = (config2) => {
+        return new One(tables, table2, tableName, config2);
+      };
+      many[tableName] = (config2) => {
+        return new Many(tables, table2, tableName, config2);
+      };
+    }
+    this.one = one;
+    this.many = many;
+  }
+  one;
+  many;
+  /** @internal - to be reworked */
+  aggs = { count() {
+    return new Count();
+  } };
+};
+function createRelationsHelper(tables) {
+  const helperStatic = new RelationsHelperStatic(tables);
+  const relationsTables = Object.entries(tables).reduce((acc, [tKey, value]) => {
+    const rTable = new RelationsBuilderTable(value, tKey);
+    const columns = Object.entries(value[TableColumns]).reduce((acc2, [cKey, column]) => {
+      acc2[cKey] = new RelationsBuilderColumn(column, tKey, cKey);
+      return acc2;
+    }, {});
+    acc[tKey] = Object.assign(rTable, columns);
+    return acc;
+  }, {});
+  return Object.assign(helperStatic, relationsTables);
+}
+function extractTablesFromSchema(schema) {
+  return Object.fromEntries(Object.entries(schema).filter(([_, e]) => is(e, Table) || is(e, View)));
+}
+function defineRelations(schema, relations2) {
+  const tables = extractTablesFromSchema(schema);
+  return buildRelations(tables, relations2 ? relations2(createRelationsHelper(tables)) : {});
+}
+function fieldSelectionToSQL(table2, target) {
+  const field = table2[TableColumns][target];
+  return field ? is(field, Column) ? field : is(field, SQL.Aliased) ? sql`${table2}.${sql.identifier(field.fieldAlias)}` : sql`${table2}.${sql.identifier(target)}` : sql`${table2}.${sql.identifier(target)}`;
+}
+function relationsFieldFilterToSQL(column, filter) {
+  if (typeof filter !== "object" || is(filter, Placeholder)) return eq(column, filter);
+  const entries = Object.entries(filter);
+  if (!entries.length) return void 0;
+  const parts = [];
+  for (const [target, value] of entries) {
+    if (value === void 0) continue;
+    switch (target) {
+      case "NOT": {
+        const res = relationsFieldFilterToSQL(column, value);
+        if (!res) continue;
+        parts.push(not(res));
+        continue;
+      }
+      case "OR":
+        if (!value.length) continue;
+        parts.push(or(...value.map((subFilter) => relationsFieldFilterToSQL(column, subFilter))));
+        continue;
+      case "AND":
+        if (!value.length) continue;
+        parts.push(and(...value.map((subFilter) => relationsFieldFilterToSQL(column, subFilter))));
+        continue;
+      case "isNotNull":
+      case "isNull":
+        if (!value) continue;
+        parts.push(operators[target](column));
+        continue;
+      case "in":
+        parts.push(operators.inArray(column, value));
+        continue;
+      case "notIn":
+        parts.push(operators.notInArray(column, value));
+        continue;
+      default:
+        parts.push(operators[target](column, value));
+        continue;
+    }
+  }
+  if (!parts.length) return void 0;
+  return and(...parts);
+}
+function relationsFilterToSQL(table2, filter, tableRelations = {}, tablesRelations = {}, casing, depth = 0) {
+  const entries = Object.entries(filter);
+  if (!entries.length) return void 0;
+  const parts = [];
+  for (const [target, value] of entries) {
+    if (value === void 0) continue;
+    switch (target) {
+      case "RAW": {
+        const processed = typeof value === "function" ? value(table2, operators) : value.getSQL();
+        parts.push(processed);
+        continue;
+      }
+      case "OR":
+        if (!value?.length) continue;
+        parts.push(or(...value.map((subFilter) => relationsFilterToSQL(table2, subFilter, tableRelations, tablesRelations, casing, depth))));
+        continue;
+      case "AND":
+        if (!value?.length) continue;
+        parts.push(and(...value.map((subFilter) => relationsFilterToSQL(table2, subFilter, tableRelations, tablesRelations, casing, depth))));
+        continue;
+      case "NOT": {
+        if (value === void 0) continue;
+        const built = relationsFilterToSQL(table2, value, tableRelations, tablesRelations, casing, depth);
+        if (!built) continue;
+        parts.push(not(built));
+        continue;
+      }
+      default: {
+        if (table2[TableColumns][target]) {
+          const colFilter = relationsFieldFilterToSQL(fieldSelectionToSQL(table2, target), value);
+          if (colFilter) parts.push(colFilter);
+          continue;
+        }
+        const relation = tableRelations[target];
+        if (!relation) throw new DrizzleError({ message: `Unknown relational filter field: "${target}"` });
+        const targetTable = aliasedTable(relation.targetTable, `f${depth}`);
+        const throughTable = relation.throughTable ? aliasedTable(relation.throughTable, `ft${depth}`) : void 0;
+        const targetConfig = tablesRelations[relation.targetTableName];
+        const { filter: relationFilter, joinCondition } = relationToSQL(casing, relation, table2, targetTable, throughTable);
+        const filter2 = and(relationFilter, typeof value === "boolean" ? void 0 : relationsFilterToSQL(targetTable, value, targetConfig.relations, tablesRelations, casing, depth + 1));
+        const subquery = throughTable ? sql`(select * from ${getTableAsAliasSQL(targetTable)} inner join ${getTableAsAliasSQL(throughTable)} on ${joinCondition}${sql` where ${filter2}`.if(filter2)} limit 1)` : sql`(select * from ${getTableAsAliasSQL(targetTable)}${sql` where ${filter2}`.if(filter2)} limit 1)`;
+        if (filter2) parts.push((value ? exists : notExists)(subquery));
+      }
+    }
+  }
+  return and(...parts);
+}
+function relationsOrderToSQL(table2, orders) {
+  if (typeof orders === "function") {
+    const data = orders(table2, orderByOperators);
+    return is(data, SQL) ? data : Array.isArray(data) ? data.length ? sql.join(data.map((o) => is(o, SQL) ? o : asc(o)), sql`, `) : void 0 : is(data, Column) ? asc(data) : void 0;
+  }
+  const entries = Object.entries(orders).filter(([_, value]) => value);
+  if (!entries.length) return void 0;
+  return sql.join(entries.map(([target, value]) => (value === "asc" ? asc : desc)(fieldSelectionToSQL(table2, target))), sql`, `);
+}
+function relationExtrasToSQL(table2, extras) {
+  const subqueries = [];
+  const selection = [];
+  for (const [key, field] of Object.entries(extras)) {
+    if (!field) continue;
+    const extra = typeof field === "function" ? field(table2, { sql: operators.sql }) : field;
+    const query = sql`(${extra.getSQL()}) as ${sql.identifier(key)}`;
+    query.decoder = extra.getSQL().decoder;
+    subqueries.push(query);
+    selection.push({
+      key,
+      field: query
+    });
+  }
+  return {
+    sql: subqueries.length ? sql.join(subqueries, sql`, `) : void 0,
+    selection
+  };
+}
+function relationToSQL(casing, relation, sourceTable, targetTable, throughTable) {
+  if (relation.through) {
+    const outerColumnWhere = relation.sourceColumns.map((s, i) => {
+      const t = relation.through.source[i];
+      return eq(sql`${sourceTable}.${sql.identifier(casing.getColumnCasing(s))}`, sql`${throughTable}.${sql.identifier(is(t._.column, Column) ? casing.getColumnCasing(t._.column) : t._.key)}`);
+    });
+    const innerColumnWhere = relation.targetColumns.map((s, i) => {
+      const t = relation.through.target[i];
+      return eq(sql`${throughTable}.${sql.identifier(is(t._.column, Column) ? casing.getColumnCasing(t._.column) : t._.key)}`, sql`${targetTable}.${sql.identifier(casing.getColumnCasing(s))}`);
+    });
+    return {
+      filter: and(relation.where ? relationsFilterToSQL(relation.isReversed ? sourceTable : targetTable, relation.where) : void 0, ...outerColumnWhere),
+      joinCondition: and(...innerColumnWhere)
+    };
+  }
+  return { filter: and(...relation.sourceColumns.map((s, i) => {
+    const t = relation.targetColumns[i];
+    return eq(sql`${sourceTable}.${sql.identifier(casing.getColumnCasing(s))}`, sql`${targetTable}.${sql.identifier(casing.getColumnCasing(t))}`);
+  }), relation.where ? relationsFilterToSQL(relation.isReversed ? sourceTable : targetTable, relation.where) : void 0) };
+}
+function getTableAsAliasSQL(table2) {
+  return sql`${table2[IsAlias] ? sql`${sql`${sql.identifier(table2[TableSchema] ?? "")}.`.if(table2[TableSchema])}${sql.identifier(table2[OriginalName])} as ${table2}` : table2}`;
+}
+
+// ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/utils.js
+function mapResultRow(columns, row, joinsNotNullableMap) {
+  const nullifyMap = {};
+  const result = columns.reduce((result2, { path, field }, columnIndex) => {
+    let decoder;
+    if (is(field, Column)) decoder = field;
+    else if (is(field, SQL)) decoder = field.decoder;
+    else if (is(field, Subquery)) decoder = field._.sql.decoder;
+    else decoder = field.sql.decoder;
+    let node = result2;
+    for (const [pathChunkIndex, pathChunk] of path.entries()) if (pathChunkIndex < path.length - 1) {
+      if (!(pathChunk in node)) node[pathChunk] = {};
+      node = node[pathChunk];
+    } else {
+      const rawValue = row[columnIndex];
+      const value = node[pathChunk] = rawValue === null ? null : decoder.mapFromDriverValue(rawValue);
+      if (joinsNotNullableMap && is(field, Column) && path.length === 2) {
+        const objectName = path[0];
+        if (!(objectName in nullifyMap)) nullifyMap[objectName] = value === null ? getTableName(field.table) : false;
+        else if (typeof nullifyMap[objectName] === "string" && nullifyMap[objectName] !== getTableName(field.table)) nullifyMap[objectName] = false;
+      }
+    }
+    return result2;
+  }, {});
+  if (joinsNotNullableMap && Object.keys(nullifyMap).length > 0) {
+    for (const [objectName, tableName] of Object.entries(nullifyMap)) if (typeof tableName === "string" && !joinsNotNullableMap[tableName]) result[objectName] = null;
+  }
+  return result;
+}
+function orderSelectedFields(fields, pathPrefix) {
+  return Object.entries(fields).reduce((result, [name2, field]) => {
+    if (typeof name2 !== "string") return result;
+    const newPath = pathPrefix ? [...pathPrefix, name2] : [name2];
+    if (is(field, Column) || is(field, SQL) || is(field, SQL.Aliased) || is(field, Subquery)) result.push({
+      path: newPath,
+      field
+    });
+    else if (is(field, Table)) result.push(...orderSelectedFields(field[Table.Symbol.Columns], newPath));
+    else result.push(...orderSelectedFields(field, newPath));
+    return result;
+  }, []);
+}
+function haveSameKeys(left, right) {
+  const leftKeys = Object.keys(left);
+  const rightKeys = Object.keys(right);
+  if (leftKeys.length !== rightKeys.length) return false;
+  for (const [index2, key] of leftKeys.entries()) if (key !== rightKeys[index2]) return false;
+  return true;
+}
+function mapUpdateSet(table2, values) {
+  const entries = Object.entries(values).filter(([, value]) => value !== void 0).map(([key, value]) => {
+    if (is(value, SQL) || is(value, Column)) return [key, value];
+    else return [key, new Param(value, table2[Table.Symbol.Columns][key])];
+  });
+  if (entries.length === 0) throw new Error("No values to set");
+  return Object.fromEntries(entries);
+}
+function applyMixins(baseClass, extendedClasses) {
+  for (const extendedClass of extendedClasses) for (const name2 of Object.getOwnPropertyNames(extendedClass.prototype)) {
+    if (name2 === "constructor") continue;
+    Object.defineProperty(baseClass.prototype, name2, Object.getOwnPropertyDescriptor(extendedClass.prototype, name2) || /* @__PURE__ */ Object.create(null));
+  }
+}
+function getTableColumns(table2) {
+  return table2[Table.Symbol.Columns];
+}
+function getTableLikeName(table2) {
+  return is(table2, Subquery) ? table2._.alias : is(table2, View) ? table2[ViewBaseConfig].name : is(table2, SQL) ? void 0 : table2[Table.Symbol.IsAlias] ? table2[Table.Symbol.Name] : table2[Table.Symbol.BaseName];
+}
+function getColumnNameAndConfig(a, b) {
+  return {
+    name: typeof a === "string" && a.length > 0 ? a : "",
+    config: typeof a === "object" ? a : b
+  };
+}
+var textDecoder = typeof TextDecoder === "undefined" ? null : new TextDecoder();
 
 // ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/pg-core/utils/array.js
 function parsePgArrayValue(arrayString, startFrom, inQuotes) {
@@ -13422,7 +14115,7 @@ var PrimaryKey = class {
 };
 
 // ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/_relations.js
-var Relation = class {
+var Relation2 = class {
   static [entityKind] = "Relation";
   referencedTableName;
   fieldName;
@@ -13440,7 +14133,7 @@ var Relations = class {
     this.config = config2;
   }
 };
-var One = class One2 extends Relation {
+var One2 = class One3 extends Relation2 {
   static [entityKind] = "One";
   constructor(sourceTable, referencedTable, config2, isNullable) {
     super(sourceTable, referencedTable, config2?.relationName);
@@ -13448,19 +14141,19 @@ var One = class One2 extends Relation {
     this.isNullable = isNullable;
   }
   withFieldName(fieldName) {
-    const relation = new One2(this.sourceTable, this.referencedTable, this.config, this.isNullable);
+    const relation = new One3(this.sourceTable, this.referencedTable, this.config, this.isNullable);
     relation.fieldName = fieldName;
     return relation;
   }
 };
-var Many = class Many2 extends Relation {
+var Many2 = class Many3 extends Relation2 {
   static [entityKind] = "Many";
   constructor(sourceTable, referencedTable, config2) {
     super(sourceTable, referencedTable, config2?.relationName);
     this.config = config2;
   }
   withFieldName(fieldName) {
-    const relation = new Many2(this.sourceTable, this.referencedTable, this.config);
+    const relation = new Many3(this.sourceTable, this.referencedTable, this.config);
     relation.fieldName = fieldName;
     return relation;
   }
@@ -13491,7 +14184,7 @@ function getOperators() {
     sql
   };
 }
-function getOrderByOperators() {
+function getOrderByOperators2() {
   return {
     sql,
     asc,
@@ -13539,16 +14232,16 @@ function extractTablesRelationalConfig(schema, configHelpers) {
 }
 function createOne(sourceTable) {
   return function one(table2, config2) {
-    return new One(sourceTable, table2, config2, config2?.fields.reduce((res, f) => res && f.notNull, true) ?? false);
+    return new One2(sourceTable, table2, config2, config2?.fields.reduce((res, f) => res && f.notNull, true) ?? false);
   };
 }
 function createMany(sourceTable) {
   return function many(referencedTable, config2) {
-    return new Many(sourceTable, referencedTable, config2);
+    return new Many2(sourceTable, referencedTable, config2);
   };
 }
 function normalizeRelation(schema, tableNamesMap, relation) {
-  if (is(relation, One) && relation.config) return {
+  if (is(relation, One2) && relation.config) return {
     fields: relation.config.fields,
     references: relation.config.references
   };
@@ -13562,7 +14255,7 @@ function normalizeRelation(schema, tableNamesMap, relation) {
   const reverseRelations = [];
   for (const referencedTableRelation of Object.values(referencedTableConfig.relations)) if (relation.relationName && relation !== referencedTableRelation && referencedTableRelation.relationName === relation.relationName || !relation.relationName && referencedTableRelation.referencedTable === relation.sourceTable) reverseRelations.push(referencedTableRelation);
   if (reverseRelations.length > 1) throw relation.relationName ? /* @__PURE__ */ new Error(`There are multiple relations with name "${relation.relationName}" in table "${referencedTableTsName}"`) : /* @__PURE__ */ new Error(`There are multiple relations between "${referencedTableTsName}" and "${relation.sourceTable[Table.Symbol.Name]}". Please specify relation name`);
-  if (reverseRelations[0] && is(reverseRelations[0], One) && reverseRelations[0].config) return {
+  if (reverseRelations[0] && is(reverseRelations[0], One2) && reverseRelations[0].config) return {
     fields: reverseRelations[0].config.references,
     references: reverseRelations[0].config.fields
   };
@@ -13574,13 +14267,13 @@ function createTableRelationsHelpers(sourceTable) {
     many: createMany(sourceTable)
   };
 }
-function mapRelationalRow(tablesConfig, tableConfig, row, buildQueryResultSelection, mapColumnValue = (value) => value) {
+function mapRelationalRow2(tablesConfig, tableConfig, row, buildQueryResultSelection, mapColumnValue = (value) => value) {
   const result = {};
   for (const [selectionItemIndex, selectionItem] of buildQueryResultSelection.entries()) if (selectionItem.isJson) {
     const relation = tableConfig.relations[selectionItem.tsKey];
     const rawSubRows = row[selectionItemIndex];
     const subRows = typeof rawSubRows === "string" ? JSON.parse(rawSubRows) : rawSubRows;
-    result[selectionItem.tsKey] = is(relation, One) ? subRows && mapRelationalRow(tablesConfig, tablesConfig[selectionItem.relationTableTsKey], subRows, selectionItem.selection, mapColumnValue) : subRows.map((subRow) => mapRelationalRow(tablesConfig, tablesConfig[selectionItem.relationTableTsKey], subRow, selectionItem.selection, mapColumnValue));
+    result[selectionItem.tsKey] = is(relation, One2) ? subRows && mapRelationalRow2(tablesConfig, tablesConfig[selectionItem.relationTableTsKey], subRows, selectionItem.selection, mapColumnValue) : subRows.map((subRow) => mapRelationalRow2(tablesConfig, tablesConfig[selectionItem.relationTableTsKey], subRow, selectionItem.selection, mapColumnValue));
   } else {
     const value = mapColumnValue(row[selectionItemIndex]);
     const field = selectionItem.field;
@@ -13592,27 +14285,6 @@ function mapRelationalRow(tablesConfig, tableConfig, row, buildQueryResultSelect
   }
   return result;
 }
-
-// ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/query-promise.js
-var QueryPromise = class {
-  static [entityKind] = "QueryPromise";
-  [Symbol.toStringTag] = "QueryPromise";
-  catch(onRejected) {
-    return this.then(void 0, onRejected);
-  }
-  finally(onFinally) {
-    return this.then((value) => {
-      onFinally?.();
-      return value;
-    }, (reason) => {
-      onFinally?.();
-      throw reason;
-    });
-  }
-  then(onFulfilled, onRejected) {
-    return this.execute().then(onFulfilled, onRejected);
-  }
-};
 
 // ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/sqlite-core/query-builders/_query.js
 var _RelationalQueryBuilder = class {
@@ -13672,7 +14344,7 @@ var SQLiteRelationalQuery = class extends QueryPromise {
   _prepare(isOneTimeQuery = false) {
     const { query, builtQuery } = this._toSQL();
     return this.session[isOneTimeQuery ? "prepareOneTimeQuery" : "prepareQuery"](builtQuery, void 0, this.mode === "first" ? "get" : "all", true, (rawRows, mapColumnValue) => {
-      const rows = rawRows.map((row) => mapRelationalRow(this.schema, this.tableConfig, row, query.selection, mapColumnValue));
+      const rows = rawRows.map((row) => mapRelationalRow2(this.schema, this.tableConfig, row, query.selection, mapColumnValue));
       if (this.mode === "first") return rows[0];
       return rows;
     });
@@ -13749,583 +14421,6 @@ var SQLiteCountBuilder = class SQLiteCountBuilder2 extends SQL {
   }
 };
 
-// ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/alias.js
-var ColumnTableAliasProxyHandler = class {
-  static [entityKind] = "ColumnTableAliasProxyHandler";
-  constructor(table2, ignoreColumnAlias) {
-    this.table = table2;
-    this.ignoreColumnAlias = ignoreColumnAlias;
-  }
-  get(columnObj, prop) {
-    if (prop === "table") return this.table;
-    if (prop === "isAlias" && this.ignoreColumnAlias) return false;
-    return columnObj[prop];
-  }
-};
-var ViewSelectionAliasProxyHandler = class {
-  static [entityKind] = "ViewSelectionAliasProxyHandler";
-  constructor(view, selection, ignoreColumnAlias) {
-    this.view = view;
-    this.selection = selection;
-    this.ignoreColumnAlias = ignoreColumnAlias;
-  }
-  get(selection, prop) {
-    const value = selection[prop];
-    if (is(value, Column)) return new Proxy(value, new ColumnTableAliasProxyHandler(this.view, this.ignoreColumnAlias));
-    if (is(value, Subquery) || is(value, SQL) || is(value, SQL.Aliased) || isSQLWrapper(value) || typeof value !== "object" || value === null) return value;
-    return new Proxy(value, this);
-  }
-};
-var TableAliasProxyHandler = class {
-  static [entityKind] = "TableAliasProxyHandler";
-  constructor(alias, replaceOriginalName, ignoreColumnAlias) {
-    this.alias = alias;
-    this.replaceOriginalName = replaceOriginalName;
-    this.ignoreColumnAlias = ignoreColumnAlias;
-  }
-  get(target, prop) {
-    if (prop === Table.Symbol.IsAlias) return true;
-    if (prop === Table.Symbol.Name) return this.alias;
-    if (this.replaceOriginalName && prop === Table.Symbol.OriginalName) return this.alias;
-    if (prop === ViewBaseConfig) return {
-      ...target[ViewBaseConfig],
-      name: this.alias,
-      isAlias: true,
-      selectedFields: new Proxy(target[ViewBaseConfig].selectedFields, new ViewSelectionAliasProxyHandler(new Proxy(target, this), target[ViewBaseConfig].selectedFields, this.ignoreColumnAlias))
-    };
-    if (prop === Table.Symbol.Columns) {
-      const columns = target[Table.Symbol.Columns];
-      if (!columns) return columns;
-      if (is(target, View)) return new Proxy(target[Table.Symbol.Columns], new ViewSelectionAliasProxyHandler(new Proxy(target, this), target[Table.Symbol.Columns], this.ignoreColumnAlias));
-      const proxiedColumns = {};
-      Object.keys(columns).map((key) => {
-        proxiedColumns[key] = new Proxy(columns[key], new ColumnTableAliasProxyHandler(new Proxy(target, this), this.ignoreColumnAlias));
-      });
-      return proxiedColumns;
-    }
-    const value = target[prop];
-    if (is(value, Column)) return new Proxy(value, new ColumnTableAliasProxyHandler(new Proxy(target, this), this.ignoreColumnAlias));
-    return value;
-  }
-};
-var ColumnAliasProxyHandler = class {
-  static [entityKind] = "ColumnAliasProxyHandler";
-  constructor(alias) {
-    this.alias = alias;
-  }
-  get(target, prop) {
-    if (prop === "isAlias") return true;
-    if (prop === "name") return this.alias;
-    if (prop === "keyAsName") return false;
-    if (prop === OriginalColumn) return () => target;
-    return target[prop];
-  }
-};
-var RelationTableAliasProxyHandler = class {
-  static [entityKind] = "RelationTableAliasProxyHandler";
-  constructor(alias) {
-    this.alias = alias;
-  }
-  get(target, prop) {
-    if (prop === "sourceTable") return aliasedTable(target.sourceTable, this.alias);
-    return target[prop];
-  }
-};
-function aliasedTable(table2, tableAlias) {
-  return new Proxy(table2, new TableAliasProxyHandler(tableAlias, false, false));
-}
-function aliasedColumn(column, alias) {
-  return new Proxy(column, new ColumnAliasProxyHandler(alias));
-}
-function aliasedTableColumn(column, tableAlias) {
-  return new Proxy(column, new ColumnTableAliasProxyHandler(new Proxy(column.table, new TableAliasProxyHandler(tableAlias, false, false)), false));
-}
-function mapColumnsInAliasedSQLToAlias(query, alias) {
-  return new SQL.Aliased(mapColumnsInSQLToAlias(query.sql, alias), query.fieldAlias);
-}
-function mapColumnsInSQLToAlias(query, alias) {
-  return sql.join(query.queryChunks.map((c) => {
-    if (is(c, Column)) return aliasedTableColumn(c, alias);
-    if (is(c, SQL)) return mapColumnsInSQLToAlias(c, alias);
-    if (is(c, SQL.Aliased)) return mapColumnsInAliasedSQLToAlias(c, alias);
-    return c;
-  }));
-}
-Column.prototype.as = function(alias) {
-  return aliasedColumn(this, alias);
-};
-function getOriginalColumnFromAlias(column) {
-  return column[OriginalColumn]();
-}
-
-// ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/errors.js
-var DrizzleError = class extends Error {
-  static [entityKind] = "DrizzleError";
-  constructor({ message, cause }) {
-    super(message);
-    this.name = "DrizzleError";
-    this.cause = cause;
-  }
-};
-var DrizzleQueryError = class DrizzleQueryError2 extends Error {
-  static [entityKind] = "DrizzleQueryError";
-  constructor(query, params, cause) {
-    super(`Failed query: ${query}
-params: ${params}`);
-    this.query = query;
-    this.params = params;
-    this.cause = cause;
-    Error.captureStackTrace(this, DrizzleQueryError2);
-    if (cause) this.cause = cause;
-  }
-};
-var TransactionRollbackError = class extends DrizzleError {
-  static [entityKind] = "TransactionRollbackError";
-  constructor() {
-    super({ message: "Rollback" });
-  }
-};
-
-// ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/relations.js
-function processRelations(tablesConfig, tables) {
-  for (const tableConfig of Object.values(tablesConfig)) for (const [relationFieldName, relation] of Object.entries(tableConfig.relations)) {
-    if (!is(relation, Relation2)) continue;
-    relation.sourceTable = tableConfig.table;
-    relation.fieldName = relationFieldName;
-  }
-  for (const [sourceTableName, tableConfig] of Object.entries(tablesConfig)) for (const [relationFieldName, relation] of Object.entries(tableConfig.relations)) {
-    if (!is(relation, Relation2)) continue;
-    let reverseRelation;
-    const { targetTableName, alias, sourceColumns, targetColumns, throughTable, sourceTable, through, where, sourceColumnTableNames, targetColumnTableNames } = relation;
-    const relationPrintName = `relations -> ${tableConfig.name}: { ${relationFieldName}: r.${is(relation, One3) ? "one" : "many"}.${targetTableName}(...) }`;
-    if (relationFieldName in tableConfig.table[TableColumns]) throw new Error(`${relationPrintName}: relation name collides with column "${relationFieldName}" of table "${tableConfig.name}"`);
-    if (typeof alias === "string" && !alias) throw new Error(`${relationPrintName}: "alias" cannot be an empty string - omit it if you don't need it`);
-    if (sourceColumns?.length === 0) throw new Error(`${relationPrintName}: "from" cannot be empty`);
-    if (targetColumns?.length === 0) throw new Error(`${relationPrintName}: "to" cannot be empty`);
-    if (sourceColumns && targetColumns) {
-      if (sourceColumns.length !== targetColumns.length && !throughTable) throw new Error(`${relationPrintName}: "from" and "to" fields without "through" must have the same length`);
-      for (const sName of sourceColumnTableNames) if (sName !== sourceTableName) throw new Error(`${relationPrintName}: all "from" columns must belong to table "${sourceTableName}", found column of table "${sName}"`);
-      for (const tName of targetColumnTableNames) if (tName !== targetTableName) throw new Error(`${relationPrintName}: all "to" columns must belong to table "${targetTableName}", found column of table "${tName}"`);
-      if (through) {
-        if (through.source.length !== sourceColumns.length || through.target.length !== targetColumns.length) throw new Error(`${relationPrintName}: ".through(column)" must be used either on all columns in "from" and "to" or not defined on any of them`);
-        for (const column of through.source) if (tables[column._.tableName] !== throughTable) throw new Error(`${relationPrintName}: ".through(column)" must be used on the same table by all columns of the relation`);
-        for (const column of through.target) if (tables[column._.tableName] !== throughTable) throw new Error(`${relationPrintName}: ".through(column)" must be used on the same table by all columns of the relation`);
-      }
-      continue;
-    }
-    if (sourceColumns || targetColumns) throw new Error(`${relationPrintName}: relation must have either both "from" and "to" defined, or none of them`);
-    const reverseTableConfig = tablesConfig[targetTableName];
-    if (!reverseTableConfig) throw new Error(`${relationPrintName}: not enough data provided to build the relation - "from"/"to" are not defined, and no reverse relations of table "${targetTableName}" were found"`);
-    if (alias) {
-      const reverseRelations = Object.values(reverseTableConfig.relations).filter((it) => is(it, Relation2) && it.alias === alias && it !== relation);
-      if (reverseRelations.length > 1) throw new Error(`${relationPrintName}: not enough data provided to build the relation - "from"/"to" are not defined, and multiple relations with alias "${alias}" found in table "${targetTableName}": ${reverseRelations.map((it) => `"${it.fieldName}"`).join(", ")}`);
-      reverseRelation = reverseRelations[0];
-      if (!reverseRelation) throw new Error(`${relationPrintName}: not enough data provided to build the relation - "from"/"to" are not defined, and there is no reverse relation of table "${targetTableName}" with alias "${alias}"`);
-    } else {
-      const reverseRelations = Object.values(reverseTableConfig.relations).filter((it) => is(it, Relation2) && it.targetTable === sourceTable && !it.alias && it !== relation);
-      if (reverseRelations.length > 1) throw new Error(`${relationPrintName}: not enough data provided to build the relation - "from"/"to" are not defined, and multiple relations between "${targetTableName}" and "${sourceTableName}" were found.
-Hint: you can specify "alias" on both sides of the relation with the same value`);
-      reverseRelation = reverseRelations[0];
-      if (!reverseRelation) throw new Error(`${relationPrintName}: not enough data provided to build the relation - "from"/"to" are not defined, and no reverse relation of table "${targetTableName}" with target table "${sourceTableName}" was found`);
-    }
-    if (!reverseRelation.sourceColumns || !reverseRelation.targetColumns) throw new Error(`${relationPrintName}: not enough data provided to build the relation - "from"/"to" are not defined, and reverse relation "${targetTableName}.${reverseRelation.fieldName}" does not have "from"/"to" defined`);
-    relation.sourceColumns = reverseRelation.targetColumns;
-    relation.targetColumns = reverseRelation.sourceColumns;
-    relation.through = reverseRelation.through ? {
-      source: reverseRelation.through.target,
-      target: reverseRelation.through.source
-    } : void 0;
-    relation.throughTable = reverseRelation.throughTable;
-    relation.isReversed = !where;
-    relation.where = where ?? reverseRelation.where;
-  }
-  return tablesConfig;
-}
-function buildRelations(tables, config2) {
-  const tablesConfig = {};
-  for (const [tsName, table2] of Object.entries(tables)) tablesConfig[tsName] = {
-    table: table2,
-    name: tsName,
-    relations: config2[tsName] ?? {}
-  };
-  return processRelations(tablesConfig, tables);
-}
-var Relation2 = class {
-  static [entityKind] = "RelationV2";
-  fieldName;
-  sourceColumns;
-  targetColumns;
-  alias;
-  where;
-  sourceTable;
-  targetTable;
-  through;
-  throughTable;
-  isReversed;
-  /** @internal */
-  sourceColumnTableNames = [];
-  /** @internal */
-  targetColumnTableNames = [];
-  constructor(targetTable, targetTableName) {
-    this.targetTableName = targetTableName;
-    this.targetTable = targetTable;
-  }
-};
-var One3 = class extends Relation2 {
-  static [entityKind] = "OneV2";
-  relationType = "one";
-  optional;
-  constructor(tables, targetTable, targetTableName, config2) {
-    super(targetTable, targetTableName);
-    this.alias = config2?.alias;
-    this.where = config2?.where;
-    if (config2?.from) this.sourceColumns = (Array.isArray(config2.from) ? config2.from : [config2.from]).map((it) => {
-      this.throughTable ??= it._.through ? tables[it._.through._.tableName] : void 0;
-      this.sourceColumnTableNames.push(it._.tableName);
-      return it._.column;
-    });
-    if (config2?.to) this.targetColumns = (Array.isArray(config2.to) ? config2.to : [config2.to]).map((it) => {
-      this.throughTable ??= it._.through ? tables[it._.through._.tableName] : void 0;
-      this.targetColumnTableNames.push(it._.tableName);
-      return it._.column;
-    });
-    if (this.throughTable) this.through = {
-      source: (Array.isArray(config2?.from) ? config2.from : config2?.from ? [config2.from] : []).map((c) => c._.through),
-      target: (Array.isArray(config2?.to) ? config2.to : config2?.to ? [config2.to] : []).map((c) => c._.through)
-    };
-    this.optional = config2?.optional ?? true;
-  }
-};
-var Many3 = class extends Relation2 {
-  static [entityKind] = "ManyV2";
-  relationType = "many";
-  constructor(tables, targetTable, targetTableName, config2) {
-    super(targetTable, targetTableName);
-    this.config = config2;
-    this.alias = config2?.alias;
-    this.where = config2?.where;
-    if (config2?.from) this.sourceColumns = (Array.isArray(config2.from) ? config2.from : [config2.from]).map((it) => {
-      this.throughTable ??= it._.through ? tables[it._.through._.tableName] : void 0;
-      this.sourceColumnTableNames.push(it._.tableName);
-      return it._.column;
-    });
-    if (config2?.to) this.targetColumns = (Array.isArray(config2.to) ? config2.to : [config2.to]).map((it) => {
-      this.throughTable ??= it._.through ? tables[it._.through._.tableName] : void 0;
-      this.targetColumnTableNames.push(it._.tableName);
-      return it._.column;
-    });
-    if (this.throughTable) this.through = {
-      source: (Array.isArray(config2?.from) ? config2.from : config2?.from ? [config2.from] : []).map((c) => c._.through),
-      target: (Array.isArray(config2?.to) ? config2.to : config2?.to ? [config2.to] : []).map((c) => c._.through)
-    };
-  }
-};
-var AggregatedField = class {
-  static [entityKind] = "AggregatedField";
-  table;
-  onTable(table2) {
-    this.table = table2;
-    return this;
-  }
-};
-var Count = class extends AggregatedField {
-  static [entityKind] = "AggregatedFieldCount";
-  query;
-  getSQL() {
-    if (!this.query) {
-      if (!this.table) throw new Error("Table must be set before building aggregate field");
-      this.query = sql`select count(*) as ${sql.identifier("r")} from ${getTableAsAliasSQL(this.table)}`.mapWith(Number);
-    }
-    return this.query;
-  }
-};
-var operators = {
-  and,
-  between,
-  eq,
-  exists,
-  gt,
-  gte,
-  ilike,
-  inArray,
-  arrayContains,
-  arrayContained,
-  arrayOverlaps,
-  isNull,
-  isNotNull,
-  like,
-  lt,
-  lte,
-  ne,
-  not,
-  notBetween,
-  notExists,
-  notLike,
-  notIlike,
-  notInArray,
-  or,
-  sql
-};
-var orderByOperators = {
-  sql,
-  asc,
-  desc
-};
-function mapRelationalRow2(row, buildQueryResultSelection, mapColumnValue = (value) => value, parseJson = false, parseJsonIfString = false, path) {
-  for (const selectionItem of buildQueryResultSelection) {
-    if (selectionItem.selection) {
-      const currentPath = `${path ? `${path}.` : ""}${selectionItem.key}`;
-      if (row[selectionItem.key] === null) continue;
-      if (parseJson) {
-        row[selectionItem.key] = JSON.parse(row[selectionItem.key]);
-        if (row[selectionItem.key] === null) continue;
-      }
-      if (parseJsonIfString && typeof row[selectionItem.key] === "string") row[selectionItem.key] = JSON.parse(row[selectionItem.key]);
-      if (selectionItem.isArray) {
-        for (const item of row[selectionItem.key]) mapRelationalRow2(item, selectionItem.selection, mapColumnValue, false, parseJsonIfString, currentPath);
-        continue;
-      }
-      mapRelationalRow2(row[selectionItem.key], selectionItem.selection, mapColumnValue, false, parseJsonIfString, currentPath);
-      continue;
-    }
-    const field = selectionItem.field;
-    const value = mapColumnValue(row[selectionItem.key]);
-    if (value === null) continue;
-    let decoder;
-    if (is(field, Column)) decoder = field;
-    else if (is(field, SQL)) decoder = field.decoder;
-    else if (is(field, SQL.Aliased)) decoder = field.sql.decoder;
-    else if (is(field, Table) || is(field, View)) decoder = noopDecoder;
-    else decoder = field.getSQL().decoder;
-    row[selectionItem.key] = "mapFromJsonValue" in decoder ? decoder.mapFromJsonValue(value) : decoder.mapFromDriverValue(value);
-  }
-  return row;
-}
-var RelationsBuilderTable = class {
-  static [entityKind] = "RelationsBuilderTable";
-  _;
-  constructor(table2, name2) {
-    this._ = {
-      name: name2,
-      table: table2
-    };
-  }
-};
-var RelationsBuilderColumn = class {
-  static [entityKind] = "RelationsBuilderColumn";
-  _;
-  constructor(column, tableName, key) {
-    this._ = {
-      tableName,
-      column,
-      key
-    };
-  }
-  through(column) {
-    return new RelationsBuilderJunctionColumn(this._.column, this._.tableName, this._.key, column);
-  }
-};
-var RelationsBuilderJunctionColumn = class {
-  static [entityKind] = "RelationsBuilderColumn";
-  _;
-  constructor(column, tableName, key, through) {
-    this._ = {
-      tableName,
-      column,
-      through,
-      key
-    };
-  }
-};
-var RelationsHelperStatic = class {
-  static [entityKind] = "RelationsHelperStatic";
-  _;
-  constructor(tables) {
-    this._ = { tables };
-    const one = {};
-    const many = {};
-    for (const [tableName, table2] of Object.entries(tables)) {
-      one[tableName] = (config2) => {
-        return new One3(tables, table2, tableName, config2);
-      };
-      many[tableName] = (config2) => {
-        return new Many3(tables, table2, tableName, config2);
-      };
-    }
-    this.one = one;
-    this.many = many;
-  }
-  one;
-  many;
-  /** @internal - to be reworked */
-  aggs = { count() {
-    return new Count();
-  } };
-};
-function createRelationsHelper(tables) {
-  const helperStatic = new RelationsHelperStatic(tables);
-  const relationsTables = Object.entries(tables).reduce((acc, [tKey, value]) => {
-    const rTable = new RelationsBuilderTable(value, tKey);
-    const columns = Object.entries(value[TableColumns]).reduce((acc2, [cKey, column]) => {
-      acc2[cKey] = new RelationsBuilderColumn(column, tKey, cKey);
-      return acc2;
-    }, {});
-    acc[tKey] = Object.assign(rTable, columns);
-    return acc;
-  }, {});
-  return Object.assign(helperStatic, relationsTables);
-}
-function extractTablesFromSchema(schema) {
-  return Object.fromEntries(Object.entries(schema).filter(([_, e]) => is(e, Table) || is(e, View)));
-}
-function defineRelations(schema, relations2) {
-  const tables = extractTablesFromSchema(schema);
-  return buildRelations(tables, relations2 ? relations2(createRelationsHelper(tables)) : {});
-}
-function fieldSelectionToSQL(table2, target) {
-  const field = table2[TableColumns][target];
-  return field ? is(field, Column) ? field : is(field, SQL.Aliased) ? sql`${table2}.${sql.identifier(field.fieldAlias)}` : sql`${table2}.${sql.identifier(target)}` : sql`${table2}.${sql.identifier(target)}`;
-}
-function relationsFieldFilterToSQL(column, filter) {
-  if (typeof filter !== "object" || is(filter, Placeholder)) return eq(column, filter);
-  const entries = Object.entries(filter);
-  if (!entries.length) return void 0;
-  const parts = [];
-  for (const [target, value] of entries) {
-    if (value === void 0) continue;
-    switch (target) {
-      case "NOT": {
-        const res = relationsFieldFilterToSQL(column, value);
-        if (!res) continue;
-        parts.push(not(res));
-        continue;
-      }
-      case "OR":
-        if (!value.length) continue;
-        parts.push(or(...value.map((subFilter) => relationsFieldFilterToSQL(column, subFilter))));
-        continue;
-      case "AND":
-        if (!value.length) continue;
-        parts.push(and(...value.map((subFilter) => relationsFieldFilterToSQL(column, subFilter))));
-        continue;
-      case "isNotNull":
-      case "isNull":
-        if (!value) continue;
-        parts.push(operators[target](column));
-        continue;
-      case "in":
-        parts.push(operators.inArray(column, value));
-        continue;
-      case "notIn":
-        parts.push(operators.notInArray(column, value));
-        continue;
-      default:
-        parts.push(operators[target](column, value));
-        continue;
-    }
-  }
-  if (!parts.length) return void 0;
-  return and(...parts);
-}
-function relationsFilterToSQL(table2, filter, tableRelations = {}, tablesRelations = {}, casing, depth = 0) {
-  const entries = Object.entries(filter);
-  if (!entries.length) return void 0;
-  const parts = [];
-  for (const [target, value] of entries) {
-    if (value === void 0) continue;
-    switch (target) {
-      case "RAW": {
-        const processed = typeof value === "function" ? value(table2, operators) : value.getSQL();
-        parts.push(processed);
-        continue;
-      }
-      case "OR":
-        if (!value?.length) continue;
-        parts.push(or(...value.map((subFilter) => relationsFilterToSQL(table2, subFilter, tableRelations, tablesRelations, casing, depth))));
-        continue;
-      case "AND":
-        if (!value?.length) continue;
-        parts.push(and(...value.map((subFilter) => relationsFilterToSQL(table2, subFilter, tableRelations, tablesRelations, casing, depth))));
-        continue;
-      case "NOT": {
-        if (value === void 0) continue;
-        const built = relationsFilterToSQL(table2, value, tableRelations, tablesRelations, casing, depth);
-        if (!built) continue;
-        parts.push(not(built));
-        continue;
-      }
-      default: {
-        if (table2[TableColumns][target]) {
-          const colFilter = relationsFieldFilterToSQL(fieldSelectionToSQL(table2, target), value);
-          if (colFilter) parts.push(colFilter);
-          continue;
-        }
-        const relation = tableRelations[target];
-        if (!relation) throw new DrizzleError({ message: `Unknown relational filter field: "${target}"` });
-        const targetTable = aliasedTable(relation.targetTable, `f${depth}`);
-        const throughTable = relation.throughTable ? aliasedTable(relation.throughTable, `ft${depth}`) : void 0;
-        const targetConfig = tablesRelations[relation.targetTableName];
-        const { filter: relationFilter, joinCondition } = relationToSQL(casing, relation, table2, targetTable, throughTable);
-        const filter2 = and(relationFilter, typeof value === "boolean" ? void 0 : relationsFilterToSQL(targetTable, value, targetConfig.relations, tablesRelations, casing, depth + 1));
-        const subquery = throughTable ? sql`(select * from ${getTableAsAliasSQL(targetTable)} inner join ${getTableAsAliasSQL(throughTable)} on ${joinCondition}${sql` where ${filter2}`.if(filter2)} limit 1)` : sql`(select * from ${getTableAsAliasSQL(targetTable)}${sql` where ${filter2}`.if(filter2)} limit 1)`;
-        if (filter2) parts.push((value ? exists : notExists)(subquery));
-      }
-    }
-  }
-  return and(...parts);
-}
-function relationsOrderToSQL(table2, orders) {
-  if (typeof orders === "function") {
-    const data = orders(table2, orderByOperators);
-    return is(data, SQL) ? data : Array.isArray(data) ? data.length ? sql.join(data.map((o) => is(o, SQL) ? o : asc(o)), sql`, `) : void 0 : is(data, Column) ? asc(data) : void 0;
-  }
-  const entries = Object.entries(orders).filter(([_, value]) => value);
-  if (!entries.length) return void 0;
-  return sql.join(entries.map(([target, value]) => (value === "asc" ? asc : desc)(fieldSelectionToSQL(table2, target))), sql`, `);
-}
-function relationExtrasToSQL(table2, extras) {
-  const subqueries = [];
-  const selection = [];
-  for (const [key, field] of Object.entries(extras)) {
-    if (!field) continue;
-    const extra = typeof field === "function" ? field(table2, { sql: operators.sql }) : field;
-    const query = sql`(${extra.getSQL()}) as ${sql.identifier(key)}`;
-    query.decoder = extra.getSQL().decoder;
-    subqueries.push(query);
-    selection.push({
-      key,
-      field: query
-    });
-  }
-  return {
-    sql: subqueries.length ? sql.join(subqueries, sql`, `) : void 0,
-    selection
-  };
-}
-function relationToSQL(casing, relation, sourceTable, targetTable, throughTable) {
-  if (relation.through) {
-    const outerColumnWhere = relation.sourceColumns.map((s, i) => {
-      const t = relation.through.source[i];
-      return eq(sql`${sourceTable}.${sql.identifier(casing.getColumnCasing(s))}`, sql`${throughTable}.${sql.identifier(is(t._.column, Column) ? casing.getColumnCasing(t._.column) : t._.key)}`);
-    });
-    const innerColumnWhere = relation.targetColumns.map((s, i) => {
-      const t = relation.through.target[i];
-      return eq(sql`${throughTable}.${sql.identifier(is(t._.column, Column) ? casing.getColumnCasing(t._.column) : t._.key)}`, sql`${targetTable}.${sql.identifier(casing.getColumnCasing(s))}`);
-    });
-    return {
-      filter: and(relation.where ? relationsFilterToSQL(relation.isReversed ? sourceTable : targetTable, relation.where) : void 0, ...outerColumnWhere),
-      joinCondition: and(...innerColumnWhere)
-    };
-  }
-  return { filter: and(...relation.sourceColumns.map((s, i) => {
-    const t = relation.targetColumns[i];
-    return eq(sql`${sourceTable}.${sql.identifier(casing.getColumnCasing(s))}`, sql`${targetTable}.${sql.identifier(casing.getColumnCasing(t))}`);
-  }), relation.where ? relationsFilterToSQL(relation.isReversed ? sourceTable : targetTable, relation.where) : void 0) };
-}
-function getTableAsAliasSQL(table2) {
-  return sql`${table2[IsAlias] ? sql`${sql`${sql.identifier(table2[TableSchema] ?? "")}.`.if(table2[TableSchema])}${sql.identifier(table2[OriginalName])} as ${table2}` : table2}`;
-}
-
 // ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/sqlite-core/query-builders/query.js
 var RelationalQueryBuilder = class {
   static [entityKind] = "SQLiteAsyncRelationalQueryBuilderV2";
@@ -14379,7 +14474,7 @@ var SQLiteRelationalQuery2 = class extends QueryPromise {
   _prepare(isOneTimeQuery = true) {
     const { query, builtQuery } = this._toSQL();
     return this.session[isOneTimeQuery ? "prepareOneTimeRelationalQuery" : "prepareRelationalQuery"](builtQuery, void 0, this.mode === "first" ? "get" : "all", (rawRows, mapColumnValue) => {
-      const rows = rawRows.map((row) => mapRelationalRow2(row, query.selection, mapColumnValue, !this.rowMode));
+      const rows = rawRows.map((row) => mapRelationalRow(row, query.selection, mapColumnValue, !this.rowMode));
       if (this.mode === "first") return rows[0];
       return rows;
     });
@@ -14560,110 +14655,6 @@ var ForeignKey2 = class {
   }
   isNameExplicit() {
     return !!this.reference().name;
-  }
-};
-
-// ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/column-builder.js
-var ColumnBuilder = class {
-  static [entityKind] = "ColumnBuilder";
-  /** @internal */
-  config;
-  constructor(name2, dataType, columnType) {
-    this.config = {
-      name: name2,
-      keyAsName: name2 === "",
-      notNull: false,
-      default: void 0,
-      hasDefault: false,
-      primaryKey: false,
-      isUnique: false,
-      uniqueName: void 0,
-      uniqueType: void 0,
-      dataType,
-      columnType,
-      generated: void 0
-    };
-  }
-  /**
-  * Changes the data type of the column. Commonly used with `json` columns. Also, useful for branded types.
-  *
-  * @example
-  * ```ts
-  * const users = pgTable('users', {
-  * 	id: integer('id').$type<UserId>().primaryKey(),
-  * 	details: json('details').$type<UserDetails>().notNull(),
-  * });
-  * ```
-  */
-  $type() {
-    return this;
-  }
-  /**
-  * Adds a `not null` clause to the column definition.
-  *
-  * Affects the `select` model of the table - columns *without* `not null` will be nullable on select.
-  */
-  notNull() {
-    this.config.notNull = true;
-    return this;
-  }
-  /**
-  * Adds a `default <value>` clause to the column definition.
-  *
-  * Affects the `insert` model of the table - columns *with* `default` are optional on insert.
-  *
-  * If you need to set a dynamic default value, use {@link $defaultFn} instead.
-  */
-  default(value) {
-    this.config.default = value;
-    this.config.hasDefault = true;
-    return this;
-  }
-  /**
-  * Adds a dynamic default value to the column.
-  * The function will be called when the row is inserted, and the returned value will be used as the column value.
-  *
-  * **Note:** This value does not affect the `drizzle-kit` behavior, it is only used at runtime in `drizzle-orm`.
-  */
-  $defaultFn(fn) {
-    this.config.defaultFn = fn;
-    this.config.hasDefault = true;
-    return this;
-  }
-  /**
-  * Alias for {@link $defaultFn}.
-  */
-  $default = this.$defaultFn;
-  /**
-  * Adds a dynamic update value to the column.
-  * The function will be called when the row is updated, and the returned value will be used as the column value if none is provided.
-  * If no `default` (or `$defaultFn`) value is provided, the function will be called when the row is inserted as well, and the returned value will be used as the column value.
-  *
-  * **Note:** This value does not affect the `drizzle-kit` behavior, it is only used at runtime in `drizzle-orm`.
-  */
-  $onUpdateFn(fn) {
-    this.config.onUpdateFn = fn;
-    this.config.hasDefault = true;
-    return this;
-  }
-  /**
-  * Alias for {@link $onUpdateFn}.
-  */
-  $onUpdate = this.$onUpdateFn;
-  /**
-  * Adds a `primary key` clause to the column definition. This implicitly makes the column `not null`.
-  *
-  * In SQLite, `integer primary key` implicitly makes the column auto-incrementing.
-  */
-  primaryKey() {
-    this.config.primaryKey = true;
-    this.config.notNull = true;
-    return this;
-  }
-  /** @internal Sets the name of the column to the key within the table definition if a name was not given. */
-  setName(name2) {
-    if (this.config.name !== "") return;
-    this.config.name = name2;
   }
 };
 
@@ -16491,7 +16482,7 @@ var SQLiteDialect = class {
         isJson: false,
         selection: []
       });
-      let orderByOrig = typeof config2.orderBy === "function" ? config2.orderBy(aliasedColumns, getOrderByOperators()) : config2.orderBy ?? [];
+      let orderByOrig = typeof config2.orderBy === "function" ? config2.orderBy(aliasedColumns, getOrderByOperators2()) : config2.orderBy ?? [];
       if (!Array.isArray(orderByOrig)) orderByOrig = [orderByOrig];
       orderBy = orderByOrig.map((orderByValue) => {
         if (is(orderByValue, Column)) return aliasedTableColumn(orderByValue, tableAlias);
@@ -16510,7 +16501,7 @@ var SQLiteDialect = class {
           tableNamesMap,
           table: fullSchema[relationTableTsName],
           tableConfig: schema[relationTableTsName],
-          queryConfig: is(relation, One) ? selectedRelationConfigValue === true ? { limit: 1 } : {
+          queryConfig: is(relation, One2) ? selectedRelationConfigValue === true ? { limit: 1 } : {
             ...selectedRelationConfigValue,
             limit: 1
           } : selectedRelationConfigValue,
@@ -16534,7 +16525,7 @@ var SQLiteDialect = class {
     where = and(joinOn, where);
     if (nestedQueryRelation) {
       let field = sql`json_array(${sql.join(selection.map(({ field: field2 }) => is(field2, SQLiteColumn) ? sql.identifier(this.casing.getColumnCasing(field2)) : is(field2, SQL.Aliased) ? field2.sql : field2), sql`, `)})`;
-      if (is(nestedQueryRelation, Many)) field = sql`coalesce(json_group_array(${field}), json_array())`;
+      if (is(nestedQueryRelation, Many2)) field = sql`coalesce(json_group_array(${field}), json_array())`;
       const nestedSelection = [{
         dbKey: "data",
         tsKey: "data",
@@ -16686,7 +16677,7 @@ var SQLiteDialect = class {
       if (!withEntries.length) return;
       return sql.join(withEntries.map(([k, join]) => {
         const relation = tableConfig.relations[k];
-        const isSingle2 = is(relation, One3);
+        const isSingle2 = is(relation, One);
         const targetTable = aliasedTable(relation.targetTable, `d${currentDepth + 1}`);
         const throughTable = relation.throughTable ? aliasedTable(relation.throughTable, `tr${currentDepth}`) : void 0;
         const { filter, joinCondition } = relationToSQL(this.casing, relation, table2, targetTable, throughTable);
@@ -17453,6 +17444,29 @@ var BaseSQLiteDatabase = class {
   }
 };
 
+// ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/cache/core/cache.js
+var Cache = class {
+  static [entityKind] = "Cache";
+};
+var NoopCache = class extends Cache {
+  static [entityKind] = "NoopCache";
+  strategy() {
+    return "all";
+  }
+  async get(_key) {
+  }
+  async put(_hashedQuery, _response, _tables, _config) {
+  }
+  async onMutate(_params) {
+  }
+};
+async function hashQuery(sql2, params) {
+  const dataToHash = `${sql2}-${JSON.stringify(params, (_, v) => typeof v === "bigint" ? `${v}n` : v)}`;
+  const data = new TextEncoder().encode(dataToHash);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  return [...new Uint8Array(hashBuffer)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
 // ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/sqlite-core/session.js
 var ExecuteResultSync = class extends QueryPromise {
   static [entityKind] = "ExecuteResultSync";
@@ -17617,6 +17631,167 @@ var SQLiteTransaction = class extends BaseSQLiteDatabase {
     throw new TransactionRollbackError();
   }
 };
+
+// ../../packages/shared/src/db/dbUtils.ts
+var timestampSeconds = (name2) => customType2({
+  dataType() {
+    return "integer";
+  },
+  toDriver(value) {
+    if (value instanceof Date) return (0, import_dayjs2.default)(value).unix();
+    if (typeof value === "number") return import_dayjs2.default.unix(value).unix();
+    if (typeof value === "string") return (0, import_dayjs2.default)(value).unix();
+    console.warn("toDriver unexpected input:", value);
+    return value;
+  },
+  fromDriver(value) {
+    return import_dayjs2.default.unix(value).toDate();
+  }
+})(name2);
+var ts = (name2) => timestampSeconds(name2).default(sql.raw("(unixepoch())")).notNull();
+var timestamps = {
+  updatedAt: ts("updatedAt"),
+  createdAt: ts("createdAt")
+};
+var idColumn = () => integer2("id").primaryKey({ autoIncrement: true });
+var sqliteTableObject = sqliteTable;
+var table = (name2, columns, extraConfig) => {
+  if (!name2?.length)
+    throw new Error("Table name required");
+  if (!Object.keys(columns).length)
+    throw new Error("Table properties required");
+  const { id, ...rest } = columns;
+  const finalColumns = {
+    ...id === false ? {} : { id: idColumn() },
+    ...timestamps,
+    ...rest
+  };
+  return sqliteTableObject(
+    name2,
+    finalColumns,
+    extraConfig
+  );
+};
+var lower = (value) => sql`lower(${value})`;
+var optsCascadeAll = {
+  onUpdate: "cascade",
+  onDelete: "cascade"
+};
+
+// ../../packages/shared/src/db/schema.ts
+var users = table("users", {
+  email: text2("email").notNull(),
+  firebaseUid: text2("firebaseUid"),
+  // Firebase UID for Google authentication
+  enabled: integer2("enabled", { mode: "boolean" }).default(false),
+  // Beta access control
+  name: text2("name"),
+  // User display name from Firebase
+  photoUrl: text2("photoUrl")
+  // User photo URL from Firebase
+}, (table2) => [
+  uniqueIndex("emailUniqueIndex").on(lower(table2.email)),
+  uniqueIndex("firebaseUidUniqueIndex").on(table2.firebaseUid)
+]);
+var trips = table("trips", {
+  userId: integer2("userId").notNull().references(() => users.id, optsCascadeAll),
+  name: text2("name").notNull(),
+  description: text2("description"),
+  coverImageUrl: text2("coverImageUrl")
+});
+var userTrips = table("userTrips", {
+  id: false,
+  userId: integer2("userId").notNull().references(() => users.id, optsCascadeAll),
+  tripId: integer2("tripId").notNull().references(() => trips.id, optsCascadeAll),
+  ...timestamps
+}, (table2) => ({
+  pk: primaryKey({
+    columns: [
+      table2.userId,
+      table2.tripId
+    ]
+  })
+}));
+var plans = table("plans", {
+  tripId: integer2("tripId").notNull().references(() => trips.id, optsCascadeAll),
+  name: text2("name").notNull(),
+  description: text2("description")
+});
+var segments = table("segments", {
+  tripId: integer2("tripId").notNull().references(() => trips.id, optsCascadeAll),
+  planId: integer2("planId").notNull().references(() => plans.id, optsCascadeAll),
+  name: text2("name").notNull(),
+  description: text2("description"),
+  startDate: timestampSeconds("startDate").notNull(),
+  endDate: timestampSeconds("endDate").notNull(),
+  coordsLat: real2("coordsLat"),
+  coordsLng: real2("coordsLng"),
+  color: text2("color").notNull(),
+  flightBooked: integer2("flightBooked", { mode: "boolean" }).default(false).notNull(),
+  stayBooked: integer2("stayBooked", { mode: "boolean" }).default(false).notNull(),
+  isShengenRegion: integer2("isShengenRegion", { mode: "boolean" }).default(false).notNull()
+});
+var places = table("places", {
+  name: text2("name").notNull(),
+  coverImageUrl: text2("coverImageUrl"),
+  focus: text2("focus"),
+  quickTip: text2("quickTip"),
+  personalNotes: text2("personalNotes"),
+  region: text2("region"),
+  travelWindow: text2("travelWindow"),
+  isBookmarked: integer2("isBookmarked", { mode: "boolean" }).default(false).notNull()
+});
+
+// ../../packages/shared/src/db/relations.ts
+var relations = defineRelations(schema_exports, (r) => ({
+  trips: {
+    members: r.many.userTrips({
+      from: r.trips.id,
+      to: r.userTrips.tripId,
+      alias: "userTrips"
+    }),
+    plans: r.many.plans({
+      from: r.trips.id,
+      to: r.plans.tripId
+    }),
+    segments: r.many.segments({
+      from: r.trips.id,
+      to: r.segments.tripId
+    })
+  },
+  userTrips: {
+    user: r.one.users({
+      from: r.userTrips.userId,
+      to: r.users.id,
+      alias: "userTrips"
+    }),
+    trip: r.one.trips({
+      from: r.userTrips.tripId,
+      to: r.trips.id,
+      alias: "userTrips"
+    })
+  },
+  plans: {
+    trip: r.one.trips({
+      from: r.plans.tripId,
+      to: r.trips.id
+    }),
+    segments: r.many.segments({
+      from: r.plans.id,
+      to: r.segments.planId
+    })
+  },
+  segments: {
+    trip: r.one.trips({
+      from: r.segments.tripId,
+      to: r.trips.id
+    }),
+    plan: r.one.plans({
+      from: r.segments.planId,
+      to: r.plans.id
+    })
+  }
+}));
 
 // ../../node_modules/.pnpm/drizzle-orm@1.0.0-beta.22_@libsql+client@0.17.3_@opentelemetry+api@1.9.1_@sinclair+typebox@0.34.49_zod@4.4.3/node_modules/drizzle-orm/libsql/session.js
 var LibSQLSession = class LibSQLSession2 extends SQLiteSession {
@@ -17880,179 +18055,6 @@ function drizzle(...params) {
   }
   _drizzle.mock = mock;
 })(drizzle || (drizzle = {}));
-
-// ../../packages/shared/src/db/schema.ts
-var schema_exports = {};
-__export(schema_exports, {
-  places: () => places,
-  plans: () => plans,
-  segments: () => segments,
-  trips: () => trips,
-  userTrips: () => userTrips,
-  users: () => users
-});
-
-// ../../packages/shared/src/db/dbUtils.ts
-var import_dayjs2 = __toESM(require_dayjs_min());
-var timestampSeconds = (name2) => customType2({
-  dataType() {
-    return "integer";
-  },
-  toDriver(value) {
-    if (value instanceof Date) return (0, import_dayjs2.default)(value).unix();
-    if (typeof value === "number") return import_dayjs2.default.unix(value).unix();
-    if (typeof value === "string") return (0, import_dayjs2.default)(value).unix();
-    console.warn("toDriver unexpected input:", value);
-    return value;
-  },
-  fromDriver(value) {
-    return import_dayjs2.default.unix(value).toDate();
-  }
-})(name2);
-var ts = (name2) => timestampSeconds(name2).default(sql.raw("(unixepoch())")).notNull();
-var timestamps = {
-  updatedAt: ts("updatedAt"),
-  createdAt: ts("createdAt")
-};
-var idColumn = () => integer2("id").primaryKey({ autoIncrement: true });
-var sqliteTableObject = sqliteTable;
-var table = (name2, columns, extraConfig) => {
-  if (!name2?.length)
-    throw new Error("Table name required");
-  if (!Object.keys(columns).length)
-    throw new Error("Table properties required");
-  const { id, ...rest } = columns;
-  const finalColumns = {
-    ...id === false ? {} : { id: idColumn() },
-    ...timestamps,
-    ...rest
-  };
-  return sqliteTableObject(
-    name2,
-    finalColumns,
-    extraConfig
-  );
-};
-var lower = (value) => sql`lower(${value})`;
-var optsCascadeAll = {
-  onUpdate: "cascade",
-  onDelete: "cascade"
-};
-
-// ../../packages/shared/src/db/schema.ts
-var users = table("users", {
-  email: text2("email").notNull(),
-  firebaseUid: text2("firebaseUid"),
-  // Firebase UID for Google authentication
-  enabled: integer2("enabled", { mode: "boolean" }).default(false),
-  // Beta access control
-  name: text2("name"),
-  // User display name from Firebase
-  photoUrl: text2("photoUrl")
-  // User photo URL from Firebase
-}, (table2) => [
-  uniqueIndex("emailUniqueIndex").on(lower(table2.email)),
-  uniqueIndex("firebaseUidUniqueIndex").on(table2.firebaseUid)
-]);
-var trips = table("trips", {
-  userId: integer2("userId").notNull().references(() => users.id, optsCascadeAll),
-  name: text2("name").notNull(),
-  description: text2("description"),
-  coverImageUrl: text2("coverImageUrl")
-});
-var userTrips = table("userTrips", {
-  id: false,
-  userId: integer2("userId").notNull().references(() => users.id, optsCascadeAll),
-  tripId: integer2("tripId").notNull().references(() => trips.id, optsCascadeAll),
-  ...timestamps
-}, (table2) => ({
-  pk: primaryKey({
-    columns: [
-      table2.userId,
-      table2.tripId
-    ]
-  })
-}));
-var plans = table("plans", {
-  tripId: integer2("tripId").notNull().references(() => trips.id, optsCascadeAll),
-  name: text2("name").notNull(),
-  description: text2("description")
-});
-var segments = table("segments", {
-  tripId: integer2("tripId").notNull().references(() => trips.id, optsCascadeAll),
-  planId: integer2("planId").notNull().references(() => plans.id, optsCascadeAll),
-  name: text2("name").notNull(),
-  description: text2("description"),
-  startDate: timestampSeconds("startDate").notNull(),
-  endDate: timestampSeconds("endDate").notNull(),
-  coordsLat: real2("coordsLat"),
-  coordsLng: real2("coordsLng"),
-  color: text2("color").notNull(),
-  flightBooked: integer2("flightBooked", { mode: "boolean" }).default(false).notNull(),
-  stayBooked: integer2("stayBooked", { mode: "boolean" }).default(false).notNull(),
-  isShengenRegion: integer2("isShengenRegion", { mode: "boolean" }).default(false).notNull()
-});
-var places = table("places", {
-  name: text2("name").notNull(),
-  coverImageUrl: text2("coverImageUrl"),
-  focus: text2("focus"),
-  quickTip: text2("quickTip"),
-  personalNotes: text2("personalNotes"),
-  region: text2("region"),
-  travelWindow: text2("travelWindow"),
-  isBookmarked: integer2("isBookmarked", { mode: "boolean" }).default(false).notNull()
-});
-
-// ../../packages/shared/src/db/relations.ts
-var relations = defineRelations(schema_exports, (r) => ({
-  trips: {
-    members: r.many.userTrips({
-      from: r.trips.id,
-      to: r.userTrips.tripId,
-      alias: "userTrips"
-    }),
-    plans: r.many.plans({
-      from: r.trips.id,
-      to: r.plans.tripId
-    }),
-    segments: r.many.segments({
-      from: r.trips.id,
-      to: r.segments.tripId
-    })
-  },
-  userTrips: {
-    user: r.one.users({
-      from: r.userTrips.userId,
-      to: r.users.id,
-      alias: "userTrips"
-    }),
-    trip: r.one.trips({
-      from: r.userTrips.tripId,
-      to: r.trips.id,
-      alias: "userTrips"
-    })
-  },
-  plans: {
-    trip: r.one.trips({
-      from: r.plans.tripId,
-      to: r.trips.id
-    }),
-    segments: r.many.segments({
-      from: r.plans.id,
-      to: r.segments.planId
-    })
-  },
-  segments: {
-    trip: r.one.trips({
-      from: r.segments.tripId,
-      to: r.trips.id
-    }),
-    plan: r.one.plans({
-      from: r.segments.planId,
-      to: r.plans.id
-    })
-  }
-}));
 
 // ../../packages/shared/src/db/index.ts
 if (!process.env.TURSO_DATABASE_URL?.length) {

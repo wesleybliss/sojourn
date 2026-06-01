@@ -9,6 +9,8 @@ import { useEffect, useRef } from 'react'
 
 import useDarkMode from '@/hooks/useDarkMode'
 
+import ganttStyles from './GanttChart.module.css'
+
 export interface GanttChartSharedProps<T extends GanttChartItemPrimitive> {
     items: T[]
     setItems: Dispatch<SetStateAction<T[]>>
@@ -151,13 +153,17 @@ const GanttChart = <T extends GanttChartItemPrimitive,>({
     })
     
     return isDarkMode ? (
-        <WillowDark>
-            <Gantt ref={ganttRef} tasks={svarTasks} />
-        </WillowDark>
+        <div className={ganttStyles.ganttDarkTheme}>
+            <WillowDark>
+                <Gantt ref={ganttRef} tasks={svarTasks} />
+            </WillowDark>
+        </div>
     ) : (
-        <Willow>
-            <Gantt ref={ganttRef} tasks={svarTasks} />
-        </Willow>
+        <div className={ganttStyles.ganttLightTheme}>
+            <Willow>
+                <Gantt ref={ganttRef} tasks={svarTasks} />
+            </Willow>
+        </div>
     )
     
 }

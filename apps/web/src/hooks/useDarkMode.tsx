@@ -14,7 +14,7 @@ const useDarkMode = () => {
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
         setIsDarkMode(mediaQuery.matches)
         
-        const handler = e => setIsDarkMode(e.matches)
+        const handler = (e: MediaQueryListEvent) => setIsDarkMode(e.matches)
         mediaQuery.addEventListener('change', handler)
         
         return () => mediaQuery.removeEventListener('change', handler)

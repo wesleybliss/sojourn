@@ -1,8 +1,8 @@
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import type { ID, PlanInsert, Segment, SegmentInsert, TripInsert } from '@repo/shared/types'
-import { asc, desc, eq, inArray } from 'drizzle-orm'
 import type { InferInsertModel } from 'drizzle-orm'
+import { asc, desc, eq, inArray } from 'drizzle-orm'
 
 const normalizeDateValue = (v: Date | string | number | null) => {
     if (!v) return null
