@@ -66,18 +66,20 @@ const Sidebar = ({
                 'p-5': isSidebarExpanded,
                 'pt-5 mx-auto': !isSidebarExpanded,
             })}>
-                <Link href="/" className="block">
-                    <div className="eyebrow mb-2">
+                <Link href="/" className="group block outline-none">
+                    <div className="eyebrow mb-2 group-hover:scale-150
+                        group-hover:rotate-12
+                        transition-transform duration-300 ease-in-out">
                         <img className="size-10" src="/logo.png" alt="Sojourn" />
                     </div>
-                    <div className={cn('font-headline text-2xl font-semibold tracking-[-0.04em]',
-                        'transition-opacity duration-600 ease-in-out', {
-                            'w-px opacity-0 overflow-hidden': !isSidebarExpanded,
-                        },
-                    )}>
-                        Sojourn
-                    </div>
                 </Link>
+                <div className={cn('font-headline text-2xl font-semibold tracking-[-0.04em]',
+                    'transition-opacity duration-600 ease-in-out', {
+                        'w-px opacity-0 overflow-hidden': !isSidebarExpanded,
+                    },
+                )}>
+                    Sojourn
+                </div>
                 <div className={cn('flex', {
                     'hidden': isChild,
                     'justify-end': isSidebarExpanded,
