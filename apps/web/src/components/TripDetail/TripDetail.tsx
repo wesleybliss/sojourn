@@ -68,7 +68,7 @@ const TripDetail = ({
                             Drag bars to test sequencing locally
                         </div>
                     </div>
-                    <div className="p-4 lg:p-5">
+                    <div className="GanttChart-wrap p-4 lg:p-5">
                         <GanttChart
                             endDateKey="endDate"
                             items={timelineItems}

@@ -1,8 +1,99 @@
 
-.wx-willow-theme {
-    
+.gantt-theme {
+    --wx-gantt-border: 1px solid rgb(22 12 45 / 0.1);
+    --wx-gantt-form-header-border: none;
+    --wx-gantt-icon-color: #9889a4;
+    --wx-gantt-bar-font: 400 13px 'Hanken Grotesk', sans-serif;
+    --wx-gantt-bar-border-radius: 4px;
+    --wx-gantt-milestone-border-radius: 4px;
+    --wx-gantt-task-color: #5b54ef;
+    --wx-gantt-task-font-color: #fff;
+    --wx-gantt-task-fill-color: #5b54ef;
+    --wx-gantt-task-border-color: transparent;
+    --wx-gantt-task-border: 1px solid transparent;
+    --wx-gantt-project-color: #5b54ef;
+    --wx-gantt-project-font-color: #fff;
+    --wx-gantt-project-fill-color: #5b54ef;
+    --wx-gantt-project-border-color: transparent;
+    --wx-gantt-project-border: 1px solid transparent;
+    --wx-gantt-milestone-color: #ad44ab;
+    --wx-gantt-select-color: #f4e9ec;
+    --wx-gantt-link-color: #9889a4;
+    --wx-gantt-link-marker-background: #f4e9ec;
+    --wx-gantt-link-marker-color: #9889a4;
+    --wx-gantt-bar-shadow: 0 1px 2px rgb(44 47 60 / 0.06), 0 3px 10px rgb(44 47 60 / 0.12);
+    --wx-gantt-progress-marker-height: 26px;
+    --wx-gantt-progress-border-color: #d8c8ce;
+    --wx-gantt-baseline-border-radius: 2px;
+    --wx-grid-header-font: 500 13px 'Hanken Grotesk', sans-serif;
+    --wx-grid-header-font-color: #1e0a31;
+    --wx-grid-header-text-transform: none;
+    --wx-grid-header-shadow: none;
+    --wx-grid-body-font: 400 13px 'Hanken Grotesk', sans-serif;
+    --wx-grid-body-font-color: #1e0a31;
+    --wx-grid-body-row-border: 1px solid rgb(22 12 45 / 0.1);
+    --wx-grid-body-cell-border: 1px solid transparent;
+    --wx-timescale-font: 500 12px 'Hanken Grotesk', sans-serif;
+    --wx-timescale-font-color: #1e0a31;
+    --wx-timescale-text-transform: uppercase;
+    --wx-timescale-shadow: none;
+    --wx-timescale-border: 1px solid rgb(22 12 45 / 0.1);
+    --wx-gantt-holiday-background: #f9edf0;
+    --wx-gantt-holiday-color: #9889a4;
+    --wx-gantt-marker-font: 500 12px 'Hanken Grotesk', sans-serif;
+    --wx-gantt-marker-font-color: #fff;
+    --wx-gantt-marker-color: rgba(6 155 199 / 0.77);
+    --wx-tooltip-font: 400 13px 'Hanken Grotesk', sans-serif;
+    --wx-tooltip-font-color: #f6e8ec;
+    --wx-tooltip-background: #271d2a;
+    --wx-sidebar-close-icon: #c0c3ce;
 }
 
-.wx-willow-dark-theme {
-    
+.gantt-dark-theme {
+    --wx-gantt-border: 1px solid rgb(254 244 247 / 0.16);
+    --wx-gantt-form-header-border: none;
+    --wx-gantt-icon-color: #9889a4;
+    --wx-gantt-bar-font: 400 13px 'Hanken Grotesk', sans-serif;
+    --wx-gantt-bar-border-radius: 4px;
+    --wx-gantt-milestone-border-radius: 4px;
+    --wx-gantt-task-color: #74c7ba;
+    --wx-gantt-task-font-color: #ffffffd1;
+    --wx-gantt-task-fill-color: #4aa99d;
+    --wx-gantt-task-border-color: #4aa99d;
+    --wx-gantt-task-border: 1px solid transparent;
+    --wx-gantt-project-color: #5b54ef;
+    --wx-gantt-project-font-color: #ffffffd1;
+    --wx-gantt-project-fill-color: #867cf0;
+    --wx-gantt-project-border-color: #867cf0;
+    --wx-gantt-project-border: 1px solid transparent;
+    --wx-gantt-milestone-color: #ad44ab;
+    --wx-gantt-select-color: #2d123a;
+    --wx-gantt-link-color: #9889a4;
+    --wx-gantt-link-marker-background: #2d123a;
+    --wx-gantt-link-marker-color: #9889a4;
+    --wx-gantt-bar-shadow: 0 1px 2px rgb(44 47 60 / 0.06), 0 3px 10px rgb(44 47 60 / 0.12);
+    --wx-gantt-progress-marker-height: 26px;
+    --wx-gantt-progress-border-color: #4a3656;
+    --wx-grid-header-font: 500 13px 'Hanken Grotesk', sans-serif;
+    --wx-grid-header-font-color: #fdf4f7;
+    --wx-grid-header-text-transform: none;
+    --wx-grid-header-shadow: none;
+    --wx-grid-body-font: 400 13px 'Hanken Grotesk', sans-serif;
+    --wx-grid-body-font-color: #fdf4f7;
+    --wx-grid-body-row-border: 1px solid rgb(254 244 247 / 0.16);
+    --wx-grid-body-cell-border: 1px solid transparent;
+    --wx-timescale-font: 500 12px 'Hanken Grotesk', sans-serif;
+    --wx-timescale-font-color: #fdf4f7;
+    --wx-timescale-text-transform: uppercase;
+    --wx-timescale-shadow: none;
+    --wx-timescale-border: 1px solid rgb(254 244 247 / 0.16);
+    --wx-gantt-holiday-background: #341547;
+    --wx-gantt-holiday-color: #bda8c3;
+    --wx-gantt-marker-font: 500 12px 'Hanken Grotesk', sans-serif;
+    --wx-gantt-marker-font-color: #fff;
+    --wx-gantt-marker-color: rgba(6 155 199 / 0.77);
+    --wx-tooltip-font: 400 13px 'Hanken Grotesk', sans-serif;
+    --wx-tooltip-font-color: #f6e8ec;
+    --wx-tooltip-background: #271d2a;
+    --wx-sidebar-close-icon: #341547;
 }
