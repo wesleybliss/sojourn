@@ -59,10 +59,13 @@ const Sidebar = ({
                     'flex p-0 shadow-lg outline': isChild,
                     'hidden md:flex max-w-full': !isChild,
                     'w-full md:w-auto lg:w-70': isSidebarExpanded,
-                    'w-20': !isSidebarExpanded,
+                    'w-18': !isSidebarExpanded,
                 })}>
             
-            <div className="p-5">
+            <div className={cn({
+                'p-5': isSidebarExpanded,
+                'pt-5 mx-auto': !isSidebarExpanded,
+            })}>
                 <Link href="/" className="block">
                     <div className="eyebrow mb-2">
                         <img className="size-10" src="/logo.png" alt="Sojourn" />
@@ -83,6 +86,7 @@ const Sidebar = ({
                     <Button
                         className="bg-accent/30 text-accent-foreground hover:bg-accent/40"
                         size="icon"
+                        aria-label="Toggle sidebar"
                         onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}>
                         <GoSidebarExpand className={cn('size-5 transition-transform duration-300 ease-in-out', {
                             'rotate-180': !isSidebarExpanded,
@@ -92,7 +96,10 @@ const Sidebar = ({
                 </div>
             </div>
             
-            <nav className="flex flex-1 flex-col gap-8 overflow-x-auto p-5 md:overflow-visible">
+            <nav className={cn('flex flex-1 flex-col gap-8 overflow-x-auto md:overflow-visible', {
+                'p-5': isSidebarExpanded,
+                'pt-5 items-center content-center': !isSidebarExpanded,
+            })}>
                 {navigationItems.map(item => {
                     
                     const isActive = item.href === '/'
@@ -107,7 +114,7 @@ const Sidebar = ({
                             key={item.href}
                             href={item.href}
                             className={cn('group flex items-center gap-3', {
-                                'mx-auto': !isSidebarExpanded,
+                                'mx-auto translate-x-1.5': !isSidebarExpanded,
                             })}>
                             <span className={cn(
                                 'flex size-10 items-center justify-center rounded-xl border transition-colors',
@@ -119,7 +126,7 @@ const Sidebar = ({
                                 <Icon className="size-4.5" />
                             </span>
                             <span className={cn('min-w-0 transition-all duration-200 ease-in-out', {
-                                '-translate-x-20 w-px overflow-hidden opacity-0': !isSidebarExpanded,
+                                '-translate-x-20 w-0 overflow-hidden opacity-0': !isSidebarExpanded,
                             })}>
                                 <span className="block text-sm font-semibold">{item.label}</span>
                                 <span className="block text-xs text-sidebar-foreground/55">
