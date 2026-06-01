@@ -103,7 +103,9 @@ const Navbar = () => {
                                 </button>
                             </div>
                             <div>
-                                <Button onClick={() => vm.setIsTripEditMode(!vm.isTripEditMode)}>
+                                <Button
+                                    className="bg-accent text-accent-foreground hover:bg-accent/90"
+                                    onClick={() => vm.setIsTripEditMode(!vm.isTripEditMode)}>
                                     <FolderPen />
                                     Edit Trip
                                 </Button>
