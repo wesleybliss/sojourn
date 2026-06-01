@@ -5,16 +5,15 @@
     "outputDirectory": "apps/web/dist",
     "installCommand": "pnpm install",
     "functions": {
-        "api/**/*.ts": {
+        "api/*.js": {
+            "maxDuration": 60
+        },
+        "api/**/*.js": {
             "maxDuration": 60
         }
     },
     "fluid": true,
     "routes": [
-        {
-            "src": "/api/(.*)",
-            "dest": "/apps/api/$1"
-        },
         {
             "handle": "filesystem"
         },
