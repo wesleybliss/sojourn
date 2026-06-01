@@ -2,10 +2,12 @@ import '@svar-ui/react-gantt/all.css'
 
 import { GanttChartItemPrimitive } from '@repo/shared/types'
 import type { IApi } from '@svar-ui/react-gantt'
-import { Gantt } from '@svar-ui/react-gantt'
+import { Gantt, Willow, WillowDark } from '@svar-ui/react-gantt'
 import { differenceInDays } from 'date-fns'
 import type { Dispatch, ReactNode, SetStateAction } from 'react'
 import { useEffect, useRef } from 'react'
+
+import useDarkMode from '@/hooks/useDarkMode'
 
 export interface GanttChartSharedProps<T extends GanttChartItemPrimitive> {
     items: T[]
@@ -26,6 +28,8 @@ const GanttChart = <T extends GanttChartItemPrimitive,>({
     onRenderName: _onRenderName,
 }: GanttChartProps<T>) => {
     const ganttRef = useRef<IApi | null>(null)
+    
+    const isDarkMode = useDarkMode()
     
     useEffect(() => {
         const api = ganttRef.current
@@ -146,7 +150,16 @@ const GanttChart = <T extends GanttChartItemPrimitive,>({
         }
     })
     
-    return <Gantt ref={ganttRef} tasks={svarTasks} />
+    return isDarkMode ? (
+        <WillowDark>
+            <Gantt ref={ganttRef} tasks={svarTasks} />
+        </WillowDark>
+    ) : (
+        <Willow>
+            <Gantt ref={ganttRef} tasks={svarTasks} />
+        </Willow>
+    )
+    
 }
 
 export default GanttChart
