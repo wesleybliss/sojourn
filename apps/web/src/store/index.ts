@@ -51,6 +51,8 @@ export const showMap = createWire<boolean>(false)
 
 export const isTripEditMode = createWire<boolean>(false)
 
+export const isGanttChartLocked = createWire<boolean>(true)
+
 //
 
 export const shengenData = createSelector<ShengenData | null>({

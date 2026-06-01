@@ -49,6 +49,10 @@
     --wx-sidebar-close-icon: #c0c3ce;
 }
 
+.gantt-theme .wx-fullscreen {
+    background-color: #f4e9ec;
+}
+
 .gantt-dark-theme {
     --wx-gantt-border: 1px solid rgb(254 244 247 / 0.16);
     --wx-gantt-form-header-border: none;
@@ -96,4 +100,8 @@
     --wx-tooltip-font-color: #f6e8ec;
     --wx-tooltip-background: #271d2a;
     --wx-sidebar-close-icon: #341547;
+}
+
+.gantt-dark-theme .wx-fullscreen {
+    background-color: #14051f;
 }

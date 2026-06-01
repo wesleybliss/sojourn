@@ -1,5 +1,5 @@
 import { Segment } from '@repo/shared/types/database'
-import { CalendarClock } from 'lucide-react'
+import { CalendarClock, LockKeyhole, LockKeyholeOpen } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import GanttChart from '@/components/GanttChart'
@@ -10,6 +10,7 @@ import TripItineraryCard from '@/components/TripDetail/TripItineraryCard'
 import { TTripEditorViewModel } from '@/components/TripEditor/useTripEditorViewModel'
 import TripMap from '@/components/TripMap'
 import { Progress } from '@/components/ui/progress'
+import { Toggle } from '@/components/ui/toggle'
 
 const DEBUG_USE_LEGACY_MAP = false
 
@@ -60,13 +61,32 @@ const TripDetail = ({
                 <section className="section-card overflow-hidden">
                     <div className="flex items-center justify-between border-b border-border/70 px-5 py-4">
                         <div>
-                            <div className="eyebrow mb-2">Timeline</div>
-                            <h2 className="text-xl font-semibold tracking-[-0.04em]">Gantt Chart Timeline</h2>
+                            <div className="eyebrow mb-2">
+                                Timeline
+                            </div>
+                            <h2 className="text-xl font-semibold tracking-[-0.04em]">
+                                Gantt Chart Timeline
+                            </h2>
                         </div>
-                        <div className="inline-flex items-center gap-2 rounded-full
-                            bg-surface-container-low px-3 py-1.5 text-xs text-muted-foreground">
-                            <CalendarClock className="size-4" />
-                            Drag bars to test sequencing locally
+                        <div className="flex justify-end items-center gap-2">
+                            <Toggle
+                                className="data-[state=on]:bg-red-500/10 data-[state=on]:*:[svg]:stroke-accent-900
+                                    data-[state=off]:bg-accent/70 data-[state=off]:*:[svg]:stroke-accent-900"
+                                title="Toggle locked gantt chart"
+                                aria-label="Toggle locked gantt chart"
+                                size="sm"
+                                variant="outline"
+                                pressed={vm.isGanttChartLocked}
+                                onPressedChange={vm.setIsGanttChartLocked}>
+                                {vm.isGanttChartLocked
+                                    ? <LockKeyhole />
+                                    : <LockKeyholeOpen />}
+                            </Toggle>
+                            <div className="inline-flex items-center gap-2 rounded-full
+                                bg-surface-container-low px-3 py-1.5 text-xs text-muted-foreground">
+                                <CalendarClock className="size-4" />
+                                Drag bars to test sequencing locally
+                            </div>
                         </div>
                     </div>
                     <div className="GanttChart-wrap p-4 lg:p-5">
@@ -74,7 +94,8 @@ const TripDetail = ({
                             endDateKey="endDate"
                             items={timelineItems}
                             setItems={setTimelineItems}
-                            startDateKey="startDate" />
+                            startDateKey="startDate"
+                            enabled={vm.isGanttChartLocked} />
                     </div>
                 </section>
             

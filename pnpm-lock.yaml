@@ -265,6 +265,9 @@ importers:
       '@repo/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@svar-ui/react-core':
+        specifier: ^2.5.1
+        version: 2.5.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@svar-ui/react-gantt':
         specifier: ^2.6.1
         version: 2.6.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -3874,6 +3877,9 @@ packages:
   '@svar-ui/lib-dom@0.12.1':
     resolution: {integrity: sha512-srvDleQqR6stBBDijCgzDHMFTTffI6sv3XCpNPKmurrnE83L1MDNqezqg6j3+0dUVPd4AAEGOez2DvK6byblTQ==}
 
+  '@svar-ui/lib-dom@0.12.2':
+    resolution: {integrity: sha512-tV9sJ7Xpedxf1dttTc8I190eqlP0UsassUw48uW3JuEQR0G3IRfmH53/X+mYEooc7bcpZDkzYukWEqJeEq9UlQ==}
+
   '@svar-ui/lib-react@1.2.2':
     resolution: {integrity: sha512-bB+Vou2NM0JhMuFW03MsjjoV5Y3xcFfuuK48+7uzUC9Ui1oSWpCK+txOZ+dnUFJISSVjSsXuF34AzMw/2CA63w==}
 
@@ -3891,6 +3897,12 @@ packages:
 
   '@svar-ui/react-core@2.5.0':
     resolution: {integrity: sha512-eZxuDKrptyIXkTjLy+Bnw7EdeDjWP6FlWZyhFPjtC/2RkwNbubbxRdW1ycmR+4hFnnrwnrNR2dmr5OwLXRKJbQ==}
+    peerDependencies:
+      react: '>=18'
+      react-dom: '>=18'
+
+  '@svar-ui/react-core@2.5.1':
+    resolution: {integrity: sha512-Kv41asKQgzTjY5LzbqItPhLJMvEr+3Usw8mNwsqO/+U9AJM0qd50t+HC9WE60nsaTznnqS59/iOpTd67Na4wLA==}
     peerDependencies:
       react: '>=18'
       react-dom: '>=18'
@@ -11474,6 +11486,8 @@ snapshots:
 
   '@svar-ui/lib-dom@0.12.1': {}
 
+  '@svar-ui/lib-dom@0.12.2': {}
+
   '@svar-ui/lib-react@1.2.2':
     dependencies:
       '@svar-ui/lib-dom': 0.11.1
@@ -11500,6 +11514,14 @@ snapshots:
     dependencies:
       '@svar-ui/core-locales': 2.5.3
       '@svar-ui/lib-dom': 0.12.1
+      '@svar-ui/lib-react': 1.2.2
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
+
+  '@svar-ui/react-core@2.5.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
+    dependencies:
+      '@svar-ui/core-locales': 2.5.3
+      '@svar-ui/lib-dom': 0.12.2
       '@svar-ui/lib-react': 1.2.2
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)

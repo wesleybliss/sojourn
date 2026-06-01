@@ -69,6 +69,8 @@ export type TTripEditorViewModel = {
     setShowMap: Dispatch<SetStateAction<boolean>>
     isTripEditMode: boolean
     setIsTripEditMode: Dispatch<SetStateAction<boolean>>
+    isGanttChartLocked: boolean
+    setIsGanttChartLocked: Dispatch<SetStateAction<boolean>>
     
     // Memos
     filteredSegments: Segment[]
@@ -186,6 +188,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
     // Wire store is only used for UI preferences, not entity data
     const [showMap, setShowMap] = useWireState(store.showMap)
     const [isTripEditMode, setIsTripEditMode] = useWireState(store.isTripEditMode)
+    const [isGanttChartLocked, setIsGanttChartLocked] = useWireState(store.isGanttChartLocked)
     
     const isLoading = useMemo(() => (
         isLoadingInitial || tripIsLoading
@@ -509,6 +512,8 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         setShowMap,
         isTripEditMode,
         setIsTripEditMode,
+        isGanttChartLocked,
+        setIsGanttChartLocked,
         
         // Memos
         filteredSegments,

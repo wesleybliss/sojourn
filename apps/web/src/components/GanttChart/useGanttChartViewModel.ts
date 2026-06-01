@@ -10,6 +10,7 @@ export interface GanttChartSharedProps<T extends GanttChartItemPrimitive> {
     setItems: Dispatch<SetStateAction<T[]>>
     startDateKey: string & keyof T
     endDateKey: string & keyof T
+    enabled: boolean
 }
 
 export type TGanttChartViewModel = {
@@ -28,6 +29,7 @@ const useGanttChartViewModel = <T extends GanttChartItemPrimitive>({
     setItems,
     startDateKey,
     endDateKey,
+    enabled,
 }: GanttChartSharedProps<T>): TGanttChartViewModel => {
     
     const ganttRef = useRef<IApi | null>(null)
@@ -60,6 +62,8 @@ const useGanttChartViewModel = <T extends GanttChartItemPrimitive>({
     
     const handleUpdateTask = useCallback((task: ITask | null, event: any) => {
         
+        if (!enabled) return false
+        
         if (!task || !task.start || !task.end)
             return
         
@@ -77,9 +81,11 @@ const useGanttChartViewModel = <T extends GanttChartItemPrimitive>({
                 : item,
         ))
         
-    }, [])
+    }, [enabled])
     
     const handleDragTask = useCallback((task: ITask | null, event: any) => {
+        
+        if (!enabled) return false
         
         // Only update when the drag is complete
         if (event.inProgress) return
@@ -101,9 +107,11 @@ const useGanttChartViewModel = <T extends GanttChartItemPrimitive>({
                 : item,
         ))
         
-    }, [])
+    }, [enabled])
     
     const handleAddTask = useCallback((event: any) => {
+        
+        if (!enabled) return false
         
         const { task } = event
         
@@ -118,15 +126,17 @@ const useGanttChartViewModel = <T extends GanttChartItemPrimitive>({
             } as T,
         ])
         
-    }, [])
+    }, [enabled])
     
     const handleDeleteTask = useCallback((event: any) => {
+        
+        if (!enabled) return false
         
         const { id } = event
         
         setItems(prevItems => prevItems.filter(item => item.id !== id))
         
-    }, [])
+    }, [enabled])
     
     useEffect(() => {
         
