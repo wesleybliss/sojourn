@@ -27,16 +27,15 @@ const AppShell = ({ children }: AppShellProps) => {
     return (
         
         <div className={shellBackgroundClassName}>
-            <div
-                className="mx-auto flex min-h-screen w-full max-w-450 flex-col gap-5 px-1 py-1
-                    lg:flex-row lg:px-2 lg:py-2">
+            
+            <div className="mx-auto flex min-h-screen w-full flex-col gap-3 p-1 lg:flex-row lg:p-3">
                 
                 <Sidebar />
                 
                 <div
                     className={cn(
-                        'routes-panel flex min-h-[calc(100vh-1.5rem)] min-w-0 flex-1 flex-col overflow-hidden',
-                        'lg:min-h-[calc(100vh-2.5rem)]',
+                        'routes-panel flex min-h-[calc(100vh-1.5rem)] min-w-0',
+                        'flex-1 flex-col overflow-hidden lg:min-h-[calc(100vh-2.5rem)]',
                     )}>
                     {children}
                 </div>
@@ -53,6 +52,7 @@ const AppShell = ({ children }: AppShellProps) => {
                 </div>
             
             </div>
+        
         </div>
         
     )

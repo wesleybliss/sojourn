@@ -52,9 +52,9 @@ const Sidebar = ({
         <aside
             data-testid="Sidebar"
             className={cn(
-                'tropical-glow relative section-card shrink-0 flex-col overflow-hidden border-none',
+                'tropical-glow-muted relative section-card shrink-0 flex-col overflow-hidden border-none',
                 'bg-sidebar text-sidebar-foreground md:max-w-[18rem]',
-                'lg:top-2 lg:sticky lg:h-[calc(100vh-1.6rem)]',
+                'lg:top-3 lg:sticky lg:h-[calc(100vh-1.4rem)]',
                 'transition-width duration-300 ease-in-out', {
                     'flex p-0 shadow-lg outline': isChild,
                     'hidden md:flex max-w-full': !isChild,

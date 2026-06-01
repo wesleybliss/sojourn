@@ -14,8 +14,7 @@ const Navbar = () => {
     
     return (
         
-        <header className="sticky top-0 z-20 border-b border-border/70
-            bg-surface-container-lowest/92 backdrop-blur rounded-lg">
+        <header className="sticky top-0 z-20 section-card">
             
             <div className="flex flex-col gap-4 px-5 py-4 lg:px-8">
                 <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">

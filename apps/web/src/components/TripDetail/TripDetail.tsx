@@ -29,14 +29,15 @@ const TripDetail = ({
     
     return (
         
-        <div className="flex flex-1 flex-col gap-6 p-5 lg:p-0">
+        <div className="flex flex-1 flex-col gap-3 p-5 lg:p-0">
+            
             {vm.isLoading && (
-                <div className="section-card p-5 mt-6">
+                <div className="section-card p-5 mt-3">
                     <p className="mb-3 text-sm text-muted-foreground">Loading itinerary workspace...</p>
                     <Progress className="w-full" value={55} />
                 </div>
             )}
-            {/*<section className="grid gap-5 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">*/}
+            
             {vm.showMap ? (
                 DEBUG_USE_LEGACY_MAP ? <TripDetailMap vm={vm} /> : (
                     <section className="py-2">
@@ -45,9 +46,9 @@ const TripDetail = ({
                 )
             ) : (<>
                 
-                <section className="grid gap-5 xl:grid-cols-12 pt-6">
+                <section className="grid gap-3 xl:grid-cols-12 pt-3">
                     
-                    <div className="grid gap-5 md:grid-cols-2 xl:col-span-5 xl:grid-cols-1 xl:flex xl:flex-col">
+                    <div className="grid gap-3 md:grid-cols-2 xl:col-span-5 xl:grid-cols-1 xl:flex xl:flex-col">
                         <TripDetailComplianceCard shengenData={vm.shengenData} />
                         <TripDetailOperationalSnapshot segments={vm.segments} />
                     </div>
@@ -78,6 +79,7 @@ const TripDetail = ({
                 </section>
             
             </>)}
+        
         </div>
         
     )

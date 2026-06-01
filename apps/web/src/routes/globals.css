@@ -270,8 +270,10 @@ html[data-theme='dark'] {
 @layer components {
 
     .shell-background {
-        @apply bg-[radial-gradient(circle_at_top_left,rgba(221,231,243,0.9),transparent_38%),linear-gradient(180deg,var(--surface)_0%,#eef3f8_100%)];
-        @apply dark:bg-[radial-gradient(circle_at_top_left,rgba(42,61,87,0.35),transparent_35%),linear-gradient(180deg,#091426_0%,#0d1728_100%)];
+        /*@apply bg-[radial-gradient(circle_at_top_left,rgba(221,231,243,0.9),transparent_38%),linear-gradient(180deg,var(--surface)_0%,#eef3f8_100%)];
+        @apply dark:bg-[radial-gradient(circle_at_top_left,rgba(42,61,87,0.35),transparent_35%),linear-gradient(180deg,#091426_0%,#0d1728_100%)];*/
+        /*background-color: #0d0314;*/
+        background: linear-gradient(135deg, #24182b 0%, #0d0314 100%);
     }
     
     .app-panel {
@@ -307,5 +309,11 @@ html[data-theme='dark'] {
         box-shadow:
             0 0 0 1px rgb(244 166 183 / 0.12),
             0 10px 40px rgb(244 166 183 / 0.18);
+    }
+
+    .tropical-glow-muted {
+        box-shadow:
+            0 0 0 1px rgb(244 166 183 / 0.08),
+            0 6px 14px rgb(244 166 183 / 0.08);
     }
 }
