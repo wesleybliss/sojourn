@@ -1,6 +1,6 @@
 import { clsx } from 'clsx'
-import { twMerge } from 'tailwind-merge'
 import { RefObject } from 'react'
+import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: unknown[]) {
     return twMerge(clsx(inputs.filter(it => it !== undefined)))

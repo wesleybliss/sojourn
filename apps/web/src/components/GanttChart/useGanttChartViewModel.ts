@@ -10,7 +10,7 @@ export interface GanttChartSharedProps<T extends GanttChartItemPrimitive> {
     setItems: Dispatch<SetStateAction<T[]>>
     startDateKey: string & keyof T
     endDateKey: string & keyof T
-    enabled: boolean
+    enabled?: boolean
 }
 
 export type TGanttChartViewModel = {
