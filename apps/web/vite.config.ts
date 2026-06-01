@@ -41,11 +41,28 @@ export default defineConfig(({ mode }) => {
         }),
     ],
         resolve: {
-            alias: {
-                '@': path.resolve(rootDir, './src'),
-                '@shared': path.resolve(repoRoot, './packages/shared/src'),
-                '@repo/shared': path.resolve(repoRoot, './packages/shared/src'),
-            },
+            alias: [
+                {
+                    find: /^@\//,
+                    replacement: `${path.resolve(rootDir, './src')}/`,
+                },
+                {
+                    find: /^@shared\/(.*)$/,
+                    replacement: `${path.resolve(repoRoot, './packages/shared/src')}/$1`,
+                },
+                {
+                    find: /^@shared$/,
+                    replacement: path.resolve(repoRoot, './packages/shared/src/index.ts'),
+                },
+                {
+                    find: /^@repo\/shared\/(.*)$/,
+                    replacement: `${path.resolve(repoRoot, './packages/shared/src')}/$1`,
+                },
+                {
+                    find: /^@repo\/shared$/,
+                    replacement: path.resolve(repoRoot, './packages/shared/src/index.ts'),
+                },
+            ],
         },
         define,
         server: {
