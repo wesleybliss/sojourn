@@ -45,14 +45,27 @@ export const updateItemArray = <T extends { id: ID }, W extends T[] | null>(
     const index = prev.findIndex(it => it.id === item.id)
     
     if (index === -1) {
+        
         // Item not found - append it
         wire.setValue([...prev, item] as Defined<W>)
+        
     } else {
+        
         // Merge with the existing element (not the entire array)
-        const nextVal = prev.map(it =>
-            it.id === item.id ? deepmerge(it, item) : it,
-        )
+        // Replace arrays instead of merging them to avoid duplication
+        const nextVal = prev.map(it => {
+            
+            if (it.id === item.id)
+                return deepmerge(it, item, {
+                    arrayMerge: (_, src) => src,
+                })
+            
+            return it
+            
+        })
+        
         wire.setValue(nextVal as Defined<W>)
+        
     }
     
 }
