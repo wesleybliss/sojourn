@@ -6,6 +6,7 @@ import * as path from 'node:path'
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import { ID, Plan, Segment, Trip, TripInsert } from '@repo/shared/types'
+import { geocode } from '@repo/shared/utils'
 import { eq } from 'drizzle-orm'
 
 const args = process.argv.slice(2)
@@ -39,6 +40,20 @@ const importSegment = async (
     
     console.log('Creating segment', plan.name, '->', segment.name)
     
+    let latitude: number | null = segment.coordsLat ?? null
+    let longitude: number | null = segment.coordsLng ?? null
+    if (latitude === null || longitude === null) {
+        try {
+            const geoResult = await geocode(segment.name)
+            if (geoResult) {
+                latitude = geoResult.lat
+                longitude = geoResult.lng
+            }
+        } catch (geoError) {
+            console.warn('Geocoding failed for segment name:', segment.name, geoError)
+        }
+    }
+    
     await db
         .insert(schemas.segments)
         .values({
@@ -48,8 +63,8 @@ const importSegment = async (
             description: segment.description,
             startDate: new Date(segment.startDate as Date),
             endDate: new Date(segment.endDate as Date),
-            coordsLat: segment.coordsLat,
-            coordsLng: segment.coordsLng,
+            coordsLat: latitude,
+            coordsLng: longitude,
             color: segment.color,
             flightBooked: segment.flightBooked || false,
             stayBooked: segment.stayBooked || false,

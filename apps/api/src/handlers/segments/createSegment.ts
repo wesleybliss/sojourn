@@ -1,5 +1,6 @@
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
+import { geocode } from '@repo/shared/utils'
 import { apiResponse } from '@repo/shared/utils/api'
 import { type AuthContext, isUserTripMember, withAuth } from '@repo/shared/utils/auth'
 import type { Request, Response } from 'express'
@@ -19,6 +20,8 @@ export const createSegment = withAuth(async (
             endDate,
             name,
             color,
+            coordsLat,
+            coordsLng,
         } = req.body
         
         if (!tripId)
@@ -41,6 +44,27 @@ export const createSegment = withAuth(async (
         if (!isMember)
             return apiResponse.forbidden(res)
         
+        let latitude: number | null = null
+        let longitude: number | null = null
+        
+        // If coordinates are provided in the request, use them
+        if (typeof coordsLat === 'number' && typeof coordsLng === 'number') {
+            latitude = coordsLat
+            longitude = coordsLng
+        } else {
+            // Otherwise, attempt to geocode the segment name
+            try {
+                const geoResult = await geocode(name)
+                if (geoResult) {
+                    latitude = geoResult.lat
+                    longitude = geoResult.lng
+                }
+            } catch (geoError) {
+                console.warn('Geocoding failed for segment name:', name, geoError)
+                // Leave latitude and longitude as null
+            }
+        }
+        
         const [createdSegment] = await db
             .insert(schemas.segments)
             .values({
@@ -50,6 +74,8 @@ export const createSegment = withAuth(async (
                 endDate,
                 name,
                 color,
+                coordsLat: latitude,
+                coordsLng: longitude,
             })
             .returning()
         

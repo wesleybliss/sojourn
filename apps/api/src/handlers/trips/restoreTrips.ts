@@ -1,6 +1,7 @@
 import db from '@repo/shared/db/index'
 import * as schemas from '@repo/shared/db/schema'
 import type { SegmentInsert, TripInsert } from '@repo/shared/types'
+import { geocode } from '@repo/shared/utils'
 import { apiResponse } from '@repo/shared/utils/api'
 import { type AuthContext, withAuth } from '@repo/shared/utils/auth'
 import type { Dayjs } from 'dayjs'
@@ -96,6 +97,23 @@ export const restoreTrips = withAuth(async (
                         
                         for (const seg of plan.segments) {
                             
+                            let latitude: number | null = null
+                            let longitude: number | null = null
+                            if (seg.coords?.lat !== null && seg.coords?.lng !== null) {
+                                latitude = seg.coords.lat
+                                longitude = seg.coords.lng
+                            } else {
+                                try {
+                                    const geoResult = await geocode(seg.name || 'Imported Segment')
+                                    if (geoResult) {
+                                        latitude = geoResult.lat
+                                        longitude = geoResult.lng
+                                    }
+                                } catch (geoError) {
+                                    console.warn('Geocoding failed for segment name:', seg.name, geoError)
+                                }
+                            }
+                            
                             const segmentInsertData: SegmentInsert & {
                                 startDate: Date
                                 endDate: Date
@@ -106,8 +124,8 @@ export const restoreTrips = withAuth(async (
                                 description: seg.description || null,
                                 startDate: toDate(seg.startDate) as Date,
                                 endDate: toDate(seg.endDate) as Date,
-                                coordsLat: seg.coords?.lat ?? null,
-                                coordsLng: seg.coords?.lng ?? null,
+                                coordsLat: latitude,
+                                coordsLng: longitude,
                                 color: seg.color || 'bg-blue-500',
                                 flightBooked: seg.flightBooked,
                                 stayBooked: seg.stayBooked,

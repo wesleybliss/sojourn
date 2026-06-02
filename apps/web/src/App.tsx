@@ -7,6 +7,7 @@ import useDebug from '@/hooks/useDebug'
 import AppLayout from '@/layouts/AppLayout'
 import DebugLayout from '@/layouts/DebugLayout'
 import { Navigate } from '@/lib/router'
+import DebugGeocodeTool from '@/routes/debug/geocode-tool/page'
 import DebugMigrateTripsToPlans from '@/routes/debug/migrate-trips-plans/page'
 import DebugPage from '@/routes/debug/page'
 import DebugPlacesListPage from '@/routes/debug/places/page'
@@ -49,6 +50,7 @@ const App = () => {
                     <Route path="places" element={<DebugPlacesListPage />} />
                     <Route path="storage" element={<DebugUploadFileBlobStorage />} />
                     <Route path="migrate-trips-plans" element={<DebugMigrateTripsToPlans />} />
+                    <Route path="geocode-tool" element={<DebugGeocodeTool />} />
                 </Route>
                 <Route path="*" element={<Navigate href="/" replace />} />
             </Route>

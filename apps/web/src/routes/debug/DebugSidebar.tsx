@@ -4,6 +4,7 @@ const debugSidebarLinks = [
     ['Places', '/debug/places'],
     ['Migrate Trips to Plans', '/debug/migrate-trips-plans'],
     ['Storage', '/debug/storage'],
+    ['Geocode Tool', '/debug/geocode-tool'],
 ]
 
 interface DebugSidebarProps {
