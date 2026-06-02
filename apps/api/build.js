@@ -150,6 +150,7 @@ function pluginPathAliases() {
                 '@google-cloud/firestore',
                 '@google-cloud/storage',
                 '@libsql',
+                // 'dayjs' removed so it gets bundled - FIXES VERCEL DAYJS ERROR
                 'express/lib/router',
                 'express/lib/router/layer',
             ]
@@ -214,10 +215,9 @@ async function build() {
             },
             sourcemap: false,
             plugins: [pluginPathAliases()],
-            resolveExtensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+            resolveExtensions: ['.ts', '.tsx', '.js', '.json', '.mjs'],
             mainFields: ['module', 'main'],
             conditions: ['import', 'module', 'require', 'default'],
-            packages: 'external',
         })
         
     }
