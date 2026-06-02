@@ -11110,7 +11110,7 @@ var require_destroy = __commonJS({
       }
       if (isEventEmitter(stream) && suppress) {
         stream.removeAllListeners("error");
-        stream.addListener("error", noop2);
+        stream.addListener("error", noop);
       }
       return stream;
     }
@@ -11165,7 +11165,7 @@ var require_destroy = __commonJS({
     function isZlibStream(stream) {
       return stream instanceof Zlib.Gzip || stream instanceof Zlib.Gunzip || stream instanceof Zlib.Deflate || stream instanceof Zlib.DeflateRaw || stream instanceof Zlib.Inflate || stream instanceof Zlib.InflateRaw || stream instanceof Zlib.Unzip;
     }
-    function noop2() {
+    function noop() {
     }
     function onDrainClearBinding() {
       this._binding.clear();
@@ -14694,7 +14694,7 @@ var require_raw_body = __commonJS({
       var limit = bytes2.parse(opts.limit);
       var length = opts.length != null && !isNaN(opts.length) ? parseInt(opts.length, 10) : null;
       if (done) {
-        return readStream(stream, encoding, length, limit, wrap2(done));
+        return readStream(stream, encoding, length, limit, wrap(done));
       }
       return new Promise(function executor(resolve, reject) {
         readStream(stream, encoding, length, limit, function onRead(err, buf) {
@@ -14820,7 +14820,7 @@ var require_raw_body = __commonJS({
         return {};
       }
     }
-    function wrap2(fn) {
+    function wrap(fn) {
       var res;
       if (asyncHooks.AsyncResource) {
         res = new asyncHooks.AsyncResource(fn.name || "bound-anonymous-fn");
@@ -14905,7 +14905,7 @@ var require_on_finished = __commonJS({
         defer(listener, null, msg);
         return msg;
       }
-      attachListener(msg, wrap2(listener));
+      attachListener(msg, wrap(listener));
       return msg;
     }
     function isFinished(msg) {
@@ -14980,7 +14980,7 @@ var require_on_finished = __commonJS({
         return {};
       }
     }
-    function wrap2(fn) {
+    function wrap(fn) {
       var res;
       if (asyncHooks.AsyncResource) {
         res = new asyncHooks.AsyncResource(fn.name || "bound-anonymous-fn");
@@ -17027,10 +17027,10 @@ var require_get_intrinsic = __commonJS({
     var reEscapeChar = /\\(\\)?/g;
     var stringToPath = function stringToPath2(string5) {
       var first = $strSlice(string5, 0, 1);
-      var last2 = $strSlice(string5, -1);
-      if (first === "%" && last2 !== "%") {
+      var last = $strSlice(string5, -1);
+      if (first === "%" && last !== "%") {
         throw new $SyntaxError("invalid intrinsic syntax, expected closing `%`");
-      } else if (last2 === "%" && first !== "%") {
+      } else if (last === "%" && first !== "%") {
         throw new $SyntaxError("invalid intrinsic syntax, expected opening `%`");
       }
       var result = [];
@@ -17086,8 +17086,8 @@ var require_get_intrinsic = __commonJS({
       for (var i = 1, isOwn = true; i < parts.length; i += 1) {
         var part = parts[i];
         var first = $strSlice(part, 0, 1);
-        var last2 = $strSlice(part, -1);
-        if ((first === '"' || first === "'" || first === "`" || (last2 === '"' || last2 === "'" || last2 === "`")) && first !== last2) {
+        var last = $strSlice(part, -1);
+        if ((first === '"' || first === "'" || first === "`" || (last === '"' || last === "'" || last === "`")) && first !== last) {
           throw new $SyntaxError("property names with quotes must have matching quotes");
         }
         if (part === "constructor" || !isOwn) {
@@ -18953,10 +18953,10 @@ var require_layer = __commonJS({
     var pathRegexp = require_path_to_regexp();
     var debug2 = require_src()("express:router:layer");
     var hasOwnProperty = Object.prototype.hasOwnProperty;
-    module.exports = Layer2;
-    function Layer2(path, options, fn) {
-      if (!(this instanceof Layer2)) {
-        return new Layer2(path, options, fn);
+    module.exports = Layer;
+    function Layer(path, options, fn) {
+      if (!(this instanceof Layer)) {
+        return new Layer(path, options, fn);
       }
       debug2("new %o", path);
       var opts = options || {};
@@ -18968,7 +18968,7 @@ var require_layer = __commonJS({
       this.regexp.fast_star = path === "*";
       this.regexp.fast_slash = path === "/" && opts.end === false;
     }
-    Layer2.prototype.handle_error = function handle_error(error51, req, res, next) {
+    Layer.prototype.handle_error = function handle_error(error51, req, res, next) {
       var fn = this.handle;
       if (fn.length !== 4) {
         return next(error51);
@@ -18979,7 +18979,7 @@ var require_layer = __commonJS({
         next(err);
       }
     };
-    Layer2.prototype.handle_request = function handle(req, res, next) {
+    Layer.prototype.handle_request = function handle(req, res, next) {
       var fn = this.handle;
       if (fn.length > 3) {
         return next();
@@ -18990,7 +18990,7 @@ var require_layer = __commonJS({
         next(err);
       }
     };
-    Layer2.prototype.match = function match(path) {
+    Layer.prototype.match = function match(path) {
       var match2;
       if (path != null) {
         if (this.regexp.fast_slash) {
@@ -19091,7 +19091,7 @@ var require_route = __commonJS({
     "use strict";
     var debug2 = require_src()("express:router:route");
     var flatten = require_array_flatten();
-    var Layer2 = require_layer();
+    var Layer = require_layer();
     var methods = require_methods();
     var slice = Array.prototype.slice;
     var toString = Object.prototype.toString;
@@ -19168,7 +19168,7 @@ var require_route = __commonJS({
           var msg = "Route.all() requires a callback function but got a " + type;
           throw new TypeError(msg);
         }
-        var layer = Layer2("/", {}, handle);
+        var layer = Layer("/", {}, handle);
         layer.method = void 0;
         this.methods._all = true;
         this.stack.push(layer);
@@ -19186,7 +19186,7 @@ var require_route = __commonJS({
             throw new Error(msg);
           }
           debug2("%s %o", method, this.path);
-          var layer = Layer2("/", {}, handle);
+          var layer = Layer("/", {}, handle);
           layer.method = method;
           this.methods[method] = true;
           this.stack.push(layer);
@@ -19216,7 +19216,7 @@ var require_router = __commonJS({
   "../../node_modules/.pnpm/express@4.22.2/node_modules/express/lib/router/index.js"(exports, module) {
     "use strict";
     var Route = require_route();
-    var Layer2 = require_layer();
+    var Layer = require_layer();
     var methods = require_methods();
     var mixin = require_utils_merge();
     var debug2 = require_src()("express:router");
@@ -19229,17 +19229,17 @@ var require_router = __commonJS({
     var toString = Object.prototype.toString;
     var proto = module.exports = function(options) {
       var opts = options || {};
-      function router(req, res, next) {
-        router.handle(req, res, next);
+      function router2(req, res, next) {
+        router2.handle(req, res, next);
       }
-      setPrototypeOf(router, proto);
-      router.params = {};
-      router._params = [];
-      router.caseSensitive = opts.caseSensitive;
-      router.mergeParams = opts.mergeParams;
-      router.strict = opts.strict;
-      router.stack = [];
-      return router;
+      setPrototypeOf(router2, proto);
+      router2.params = {};
+      router2._params = [];
+      router2.caseSensitive = opts.caseSensitive;
+      router2.mergeParams = opts.mergeParams;
+      router2.strict = opts.strict;
+      router2.stack = [];
+      return router2;
     };
     proto.param = function param2(name2, fn) {
       if (typeof name2 === "function") {
@@ -19281,7 +19281,7 @@ var require_router = __commonJS({
       var done = restore(out, req, "baseUrl", "next", "params");
       req.next = next;
       if (req.method === "OPTIONS") {
-        done = wrap2(done, function(old, err) {
+        done = wrap(done, function(old, err) {
           if (err || options.length === 0) return old(err);
           sendOptionsResponse(res, options, old);
         });
@@ -19468,7 +19468,7 @@ var require_router = __commonJS({
           throw new TypeError("Router.use() requires a middleware function but got a " + gettype(fn));
         }
         debug2("use %o %s", path, fn.name || "<anonymous>");
-        var layer = new Layer2(path, {
+        var layer = new Layer(path, {
           sensitive: this.caseSensitive,
           strict: false,
           end: false
@@ -19480,7 +19480,7 @@ var require_router = __commonJS({
     };
     proto.route = function route(path) {
       var route2 = new Route(path);
-      var layer = new Layer2(path, {
+      var layer = new Layer(path, {
         sensitive: this.caseSensitive,
         strict: this.strict,
         end: true
@@ -19581,7 +19581,7 @@ var require_router = __commonJS({
         next(err);
       }
     }
-    function wrap2(old, fn) {
+    function wrap(old, fn) {
       return function proxy() {
         var args = new Array(arguments.length + 1);
         args[0] = old;
@@ -21774,7 +21774,7 @@ var require_application = __commonJS({
   "../../node_modules/.pnpm/express@4.22.2/node_modules/express/lib/application.js"(exports, module) {
     "use strict";
     var finalhandler = require_finalhandler();
-    var Router2 = require_router();
+    var Router = require_router();
     var methods = require_methods();
     var middleware = require_init();
     var query = require_query();
@@ -21839,7 +21839,7 @@ var require_application = __commonJS({
     };
     app4.lazyrouter = function lazyrouter() {
       if (!this._router) {
-        this._router = new Router2({
+        this._router = new Router({
           caseSensitive: this.enabled("case sensitive routing"),
           strict: this.enabled("strict routing")
         });
@@ -21848,17 +21848,17 @@ var require_application = __commonJS({
       }
     };
     app4.handle = function handle(req, res, callback) {
-      var router = this._router;
+      var router2 = this._router;
       var done = callback || finalhandler(req, res, {
         env: this.get("env"),
         onerror: logerror.bind(this)
       });
-      if (!router) {
+      if (!router2) {
         debug2("no routes defined on app");
         done();
         return;
       }
-      router.handle(req, res, done);
+      router2.handle(req, res, done);
     };
     app4.use = function use(fn) {
       var offset = 0;
@@ -21878,15 +21878,15 @@ var require_application = __commonJS({
         throw new TypeError("app.use() requires a middleware function");
       }
       this.lazyrouter();
-      var router = this._router;
+      var router2 = this._router;
       fns.forEach(function(fn2) {
         if (!fn2 || !fn2.handle || !fn2.set) {
-          return router.use(path, fn2);
+          return router2.use(path, fn2);
         }
         debug2(".use app under %s", path);
         fn2.mountpath = path;
         fn2.parent = this;
-        router.use(path, function mounted_app(req, res, next) {
+        router2.use(path, function mounted_app(req, res, next) {
           var orig = req.app;
           fn2.handle(req, res, function(err) {
             setPrototypeOf(req, orig.request);
@@ -23630,7 +23630,7 @@ var require_express = __commonJS({
     var mixin = require_merge_descriptors();
     var proto = require_application();
     var Route = require_route();
-    var Router2 = require_router();
+    var Router = require_router();
     var req = require_request();
     var res = require_response();
     exports = module.exports = createApplication;
@@ -23653,7 +23653,7 @@ var require_express = __commonJS({
     exports.request = req;
     exports.response = res;
     exports.Route = Route;
-    exports.Router = Router2;
+    exports.Router = Router;
     exports.json = bodyParser.json;
     exports.query = require_query();
     exports.raw = bodyParser.raw;
@@ -45147,7 +45147,7 @@ var require_connect = __commonJS({
     var util = require_util();
     var { InvalidArgumentError, ConnectTimeoutError } = require_errors();
     var timers = require_timers();
-    function noop2() {
+    function noop() {
     }
     var tls;
     var SessionCache;
@@ -45272,7 +45272,7 @@ var require_connect = __commonJS({
     }
     var setupConnectTimeout = process.platform === "win32" ? (socketWeakRef, opts) => {
       if (!opts.timeout) {
-        return noop2;
+        return noop;
       }
       let s1 = null;
       let s2 = null;
@@ -45288,7 +45288,7 @@ var require_connect = __commonJS({
       };
     } : (socketWeakRef, opts) => {
       if (!opts.timeout) {
-        return noop2;
+        return noop;
       }
       let s1 = null;
       const fastTimer = timers.setFastTimeout(() => {
@@ -48079,7 +48079,7 @@ var require_body = __commonJS({
       random = (max) => Math.floor(Math.random(max));
     }
     var textEncoder = new TextEncoder();
-    function noop2() {
+    function noop() {
     }
     var hasFinalizationRegistry = globalThis.FinalizationRegistry && process.version.indexOf("v18") !== 0;
     var streamRegistry;
@@ -48087,7 +48087,7 @@ var require_body = __commonJS({
       streamRegistry = new FinalizationRegistry((weakRef) => {
         const stream = weakRef.deref();
         if (stream && !stream.locked && !isDisturbed(stream) && !isErrored(stream)) {
-          stream.cancel("Response object has been garbage collected").catch(noop2);
+          stream.cancel("Response object has been garbage collected").catch(noop);
         }
       });
     }
@@ -50166,7 +50166,7 @@ var require_client = __commonJS({
     var connectH2 = require_client_h2();
     var deprecatedInterceptorWarned = false;
     var kClosedResolve = /* @__PURE__ */ Symbol("kClosedResolve");
-    var noop2 = () => {
+    var noop = () => {
     };
     function getPipelining(client) {
       return client[kPipelining] ?? client[kHTTPContext]?.defaultPipelining ?? 1;
@@ -50457,14 +50457,14 @@ var require_client = __commonJS({
           });
         });
         if (client.destroyed) {
-          util.destroy(socket.on("error", noop2), new ClientDestroyedError());
+          util.destroy(socket.on("error", noop), new ClientDestroyedError());
           return;
         }
         assert2(socket);
         try {
           client[kHTTPContext] = socket.alpnProtocol === "h2" ? await connectH2(client, socket) : await connectH1(client, socket);
         } catch (err) {
-          socket.destroy().on("error", noop2);
+          socket.destroy().on("error", noop);
           throw err;
         }
         client[kConnecting] = false;
@@ -51205,7 +51205,7 @@ var require_proxy_agent = __commonJS({
     function defaultFactory(origin, opts) {
       return new Pool(origin, opts);
     }
-    var noop2 = () => {
+    var noop = () => {
     };
     function defaultAgentFactory(origin, opts) {
       if (opts.connections === 1) {
@@ -51322,7 +51322,7 @@ var require_proxy_agent = __commonJS({
                 servername: this[kProxyTls]?.servername || proxyHostname
               });
               if (statusCode !== 200) {
-                socket.on("error", noop2).destroy();
+                socket.on("error", noop).destroy();
                 callback(new RequestAbortedError(`Proxy response (${statusCode}) !== 200 when HTTP Tunneling`));
               }
               if (opts2.protocol !== "https:") {
@@ -51887,7 +51887,7 @@ var require_readable = __commonJS({
     var kAbort = /* @__PURE__ */ Symbol("kAbort");
     var kContentType = /* @__PURE__ */ Symbol("kContentType");
     var kContentLength = /* @__PURE__ */ Symbol("kContentLength");
-    var noop2 = () => {
+    var noop = () => {
     };
     var BodyReadable = class extends Readable2 {
       constructor({
@@ -52019,7 +52019,7 @@ var require_readable = __commonJS({
             } else {
               resolve(null);
             }
-          }).on("error", noop2).on("data", function(chunk) {
+          }).on("error", noop).on("data", function(chunk) {
             limit -= chunk.length;
             if (limit <= 0) {
               this.destroy();
@@ -67908,53 +67908,13 @@ var require_ajv = __commonJS({
   }
 });
 
-// ../../node_modules/.pnpm/express-async-errors@3.1.1_express@4.22.2/node_modules/express-async-errors/index.js
-var Layer = __require("express/lib/router/layer");
-var Router = __require("express/lib/router");
-var last = (arr = []) => arr[arr.length - 1];
-var noop = Function.prototype;
-function copyFnProps(oldFn, newFn) {
-  Object.keys(oldFn).forEach((key) => {
-    newFn[key] = oldFn[key];
-  });
-  return newFn;
-}
-function wrap(fn) {
-  const newFn = function newFn2(...args) {
-    const ret = fn.apply(this, args);
-    const next = (args.length === 5 ? args[2] : last(args)) || noop;
-    if (ret && ret.catch) ret.catch((err) => next(err));
-    return ret;
-  };
-  Object.defineProperty(newFn, "length", {
-    value: fn.length,
-    writable: false
-  });
-  return copyFnProps(fn, newFn);
-}
-function patchRouterParam() {
-  const originalParam = Router.prototype.constructor.param;
-  Router.prototype.constructor.param = function param2(name2, fn) {
-    fn = wrap(fn);
-    return originalParam.call(this, name2, fn);
-  };
-}
-Object.defineProperty(Layer.prototype, "handle", {
-  enumerable: true,
-  get() {
-    return this.__handle;
-  },
-  set(fn) {
-    fn = wrap(fn);
-    this.__handle = fn;
-  }
-});
-patchRouterParam();
-
 // api/index.ts
 var import_compression = __toESM(require_compression(), 1);
 var import_cors = __toESM(require_lib(), 1);
-var import_express = __toESM(require_express2(), 1);
+var import_express2 = __toESM(require_express2(), 1);
+
+// src/routes.ts
+var import_express = __toESM(require_express2());
 
 // src/handlers/auth/createUser.ts
 init_db2();
@@ -78553,11 +78513,11 @@ var capitalizeFirstCharacter = (text3) => {
 };
 function getUnitTypeFromNumber(number5) {
   const abs = Math.abs(number5);
-  const last2 = abs % 10;
-  const last22 = abs % 100;
-  if (last22 >= 11 && last22 <= 19 || last2 === 0)
+  const last = abs % 10;
+  const last2 = abs % 100;
+  if (last2 >= 11 && last2 <= 19 || last === 0)
     return "many";
-  if (last2 === 1)
+  if (last === 1)
     return "one";
   return "few";
 }
@@ -85425,12 +85385,16 @@ function date5(params) {
 config(en_default());
 
 // src/handlers/trips/getTrip.ts
+var paramsSchema = external_exports.object({
+  tripId: external_exports.coerce.number()
+});
 var querySchema = external_exports.object({
-  tripId: external_exports.coerce.number(),
-  withDetails: external_exports.coerce.boolean()
+  withDetails: external_exports.coerce.boolean().default(false)
 });
 var getTrip = withAuth(async (req, res, _context) => {
-  const { tripId, withDetails } = querySchema.parse(req.query);
+  console.log("wtf", req.params);
+  const { tripId } = paramsSchema.parse(req.params);
+  const { withDetails } = querySchema.parse(req.query);
   const trip = withDetails ? await trips_default.findOneWithDetails(tripId, plans_default) : await trips_default.findOneById(tripId);
   return apiResponse.ok(res, trip);
 });
@@ -85579,18 +85543,49 @@ var getRandomPhoto = withAuth(async (req, res, _context) => {
   }
 });
 
+// src/routes.ts
+var asyncHandler = (fn) => {
+  return (req, res, next) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+};
+var router = import_express.default.Router();
+router.get("/auth", asyncHandler(getUser));
+router.post("/auth", asyncHandler(createUser));
+router.post("/debug/clear-all", asyncHandler(clearAll));
+router.post("/debug/storage/blob", asyncHandler(uploadBlob));
+router.get("/trips", asyncHandler(getTrips));
+router.post("/trips/backup", asyncHandler(backupTrips));
+router.post("/trips/restore", asyncHandler(restoreTrips));
+router.post("/trips/:tripId/invite", asyncHandler(inviteTripMember));
+router.get("/trips/:tripId", asyncHandler(getTrip));
+router.get("/plans/:planId", asyncHandler(getPlan));
+router.put("/plans/:planId", asyncHandler(updatePlan));
+router.post("/plans/:planId/clone", asyncHandler(clonePlan));
+router.delete("/plans/:planId", asyncHandler(deletePlan));
+router.get("/segments", asyncHandler(getSegments));
+router.post("/segments", asyncHandler(createSegment));
+router.put("/segments/:segmentId", asyncHandler(updateSegment));
+router.delete("/segments", asyncHandler(deleteSegment));
+router.get("/places", asyncHandler(getPlaces));
+router.get("/places/:placeId", asyncHandler(getPlace));
+router.post("/places", asyncHandler(createPlace));
+router.put("/places/:placeId", asyncHandler(updatePlace));
+router.get("/utils/random-photo", asyncHandler(getRandomPhoto));
+var routes_default = router;
+
 // api/index.ts
-var app3 = (0, import_express.default)();
+var app3 = (0, import_express2.default)();
 app3.use((0, import_cors.default)({
   origin: [
-    "http://localhost:4000",
+    "http://localhost:3001",
     "https://sojourn-app.vercel.app"
   ],
   credentials: true
 }));
 app3.use((0, import_compression.default)());
-app3.use(import_express.default.json());
-app3.use(import_express.default.urlencoded({ extended: true }));
+app3.use(import_express2.default.json());
+app3.use(import_express2.default.urlencoded({ extended: true }));
 app3.set("trust proxy", true);
 app3.use((req, _res, next) => {
   console.log(req.method, req.originalUrl);
@@ -85602,33 +85597,12 @@ app3.use((err, _req, res, _next) => {
     error: "Internal Server Error"
   });
 });
-app3.get("/auth", getUser);
-app3.post("/auth", createUser);
-app3.post("/debug/clear-all", clearAll);
-app3.post("/debug/storage/blob", uploadBlob);
-app3.get("/trips", getTrips);
-app3.post("/trips/backup", backupTrips);
-app3.post("/trips/restore", restoreTrips);
-app3.post("/trips/:id/invite", inviteTripMember);
-app3.get("/trips/:id", getTrip);
-app3.get("/plans/:id", getPlan);
-app3.put("/plans/:id", updatePlan);
-app3.post("/plans/:id/clone", clonePlan);
-app3.delete("/plans/:id", deletePlan);
-app3.get("/segments", getSegments);
-app3.post("/segments", createSegment);
-app3.put("/segments/:id", updateSegment);
-app3.delete("/segments", deleteSegment);
-app3.get("/places", getPlaces);
-app3.get("/places/:id", getPlace);
-app3.post("/places", createPlace);
-app3.put("/places/:id", updatePlace);
-app3.get("/utils/random-photo", getRandomPhoto);
-var index_default = app3;
+app3.use("/api", routes_default);
 var port = process.env.PORT || 4e3;
 app3.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+var index_default = app3;
 export {
   index_default as default
 };

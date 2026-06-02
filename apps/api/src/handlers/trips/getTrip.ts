@@ -5,9 +5,12 @@ import { type AuthContext, withAuth } from '@repo/shared/utils/auth'
 import type { Request, Response } from 'express'
 import { z } from 'zod'
 
-const querySchema = z.object({
+const paramsSchema = z.object({
     tripId: z.coerce.number(),
-    withDetails: z.coerce.boolean(),
+})
+
+const querySchema = z.object({
+    withDetails: z.coerce.boolean().default(false),
 })
 
 export const getTrip = withAuth(async (
@@ -15,8 +18,9 @@ export const getTrip = withAuth(async (
     res: Response,
     _context: AuthContext,
 ): Promise<void> => {
-    
-    const { tripId, withDetails } = querySchema.parse(req.query)
+    console.log('wtf', req.params)
+    const { tripId } = paramsSchema.parse(req.params)
+    const { withDetails } = querySchema.parse(req.query)
     
     // @todo auth via context.userId
     
