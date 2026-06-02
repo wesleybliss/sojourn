@@ -46,7 +46,7 @@ const GanttChart = <T extends GanttChartItemPrimitive,>({
                         <Button
                             variant="ghost"
                             size="icon"
-                            onClick={toggle}
+                            onClick={() => vm.handleFullScreenToggleClick(toggle)}
                             className="absolute right-4 bottom-4 z-10">
                             {isFullScreen ? <Minimize2 /> : <Maximize2 />}
                         </Button>

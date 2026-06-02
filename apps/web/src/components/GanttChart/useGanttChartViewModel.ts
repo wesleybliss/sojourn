@@ -2,6 +2,7 @@ import { GanttChartItemPrimitive } from '@repo/shared/types'
 import type { IApi, ITask } from '@svar-ui/react-gantt'
 import { differenceInDays } from 'date-fns'
 import { type Dispatch, RefObject, type SetStateAction, useCallback, useEffect, useMemo, useRef } from 'react'
+import { toast } from 'sonner'
 
 import useDarkMode from '@/hooks/useDarkMode'
 
@@ -22,6 +23,9 @@ export type TGanttChartViewModel = {
     
     // Memos
     svarTasks: any[]
+    
+    // Methods
+    handleFullScreenToggleClick: (toggle: () => void) => void
 }
 
 const useGanttChartViewModel = <T extends GanttChartItemPrimitive>({
@@ -138,6 +142,16 @@ const useGanttChartViewModel = <T extends GanttChartItemPrimitive>({
         
     }, [enabled])
     
+    const handleFullScreenToggleClick = (toggle: () => void) => {
+        
+        toggle()
+        
+        setTimeout(() => {
+            toast.info('Press the Escape key to exit fullscreen mode', {})
+        })
+        
+    }
+    
     useEffect(() => {
         
         const api = ganttRef.current
@@ -184,6 +198,9 @@ const useGanttChartViewModel = <T extends GanttChartItemPrimitive>({
         
         // Memos
         svarTasks,
+        
+        // Methods
+        handleFullScreenToggleClick,
         
     }
     
