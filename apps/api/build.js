@@ -149,7 +149,7 @@ function pluginPathAliases() {
                 'google-gax',
                 '@google-cloud/firestore',
                 '@google-cloud/storage',
-                '@libsql',
+                '@libsql/client',
                 // 'dayjs' removed so it gets bundled - FIXES VERCEL DAYJS ERROR
                 'express/lib/router',
                 'express/lib/router/layer',
