@@ -41,8 +41,10 @@ app.use('/api', router)
 
 const port = process.env.PORT || 4000
 
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`)
-})
+if (process.env.VERCEL !== '1') {
+    app.listen(port, () => {
+        console.log(`Server running on port ${port}`)
+    })
+}
 
 export default app

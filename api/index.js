@@ -85613,9 +85613,11 @@ app3.use((err, _req, res, _next) => {
 });
 app3.use("/api", routes_default);
 var port = process.env.PORT || 4e3;
-app3.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+if (process.env.VERCEL !== "1") {
+  app3.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+}
 var index_default = app3;
 export {
   index_default as default
