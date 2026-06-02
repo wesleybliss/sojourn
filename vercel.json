@@ -5,10 +5,7 @@
     "outputDirectory": "apps/web/dist",
     "installCommand": "pnpm install",
     "functions": {
-        "api/*.js": {
-            "maxDuration": 60
-        },
-        "api/**/*.js": {
+        "api/index.js": {
             "maxDuration": 60
         }
     },
