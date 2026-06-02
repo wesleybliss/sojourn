@@ -34,7 +34,7 @@ const AppShell = ({ children }: AppShellProps) => {
                 
                 <div
                     className={cn(
-                        'routes-panel flex min-h-[calc(100vh-1.5rem)] min-w-0',
+                        'routes-panel flex min-h-[calc(100vh-1.5rem)] min-w-0 mb-4',
                         'flex-1 flex-col overflow-hidden lg:min-h-[calc(100vh-2.5rem)]',
                     )}>
                     {children}

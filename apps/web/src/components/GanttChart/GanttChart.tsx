@@ -33,7 +33,7 @@ const GanttChart = <T extends GanttChartItemPrimitive,>({
     
     return (
         
-        <div className={cn('flex flex-col gap-2 h-full', {
+        <div className={cn('flex flex-col gap-2 h-full section-card', {
             'gantt-theme': !vm.isDarkMode,
             'gantt-dark-theme': vm.isDarkMode,
         })}>
