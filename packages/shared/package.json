@@ -32,6 +32,10 @@
             "types": "./src/utils/index.ts",
             "default": "./src/utils/index.ts"
         },
+        "./utils/storage/vercel-blob": {
+            "types": "./src/utils/storage/vercel-blob/index.ts",
+            "default": "./src/utils/storage/vercel-blob/index.ts"
+        },
         "./errors": {
             "types": "./src/errors/index.ts",
             "default": "./src/errors/index.ts"
