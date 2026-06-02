@@ -32938,4 +32938,3 @@ export {
   config2 as config,
   index_default as default
 };
-//# sourceMappingURL=index.js.map

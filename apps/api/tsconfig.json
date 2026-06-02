@@ -18,7 +18,9 @@
         "outDir": "../../api",
 
         "declaration": false,
-        "sourceMap": true,
+        "sourceMap": false,
+        "inlineSourceMap": false,
+        "inlineSources": false,
         "paths": {
             "@/*": ["./src/*"],
             "@api/*": ["./api/*"],

@@ -18273,4 +18273,3 @@ export {
   config,
   clear_all_default as default
 };
-//# sourceMappingURL=clear-all.js.map

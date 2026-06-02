@@ -209,7 +209,7 @@ async function build() {
             banner: {
                 js: 'import { createRequire } from \'module\'; const require = createRequire(import.meta.url);',
             },
-            sourcemap: true,
+            sourcemap: false,
             plugins: [pluginPathAliases()],
             resolveExtensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
             mainFields: ['module', 'main'],

@@ -18238,4 +18238,3 @@ export {
   config,
   planId_default as default
 };
-//# sourceMappingURL=%5BplanId%5D.js.map

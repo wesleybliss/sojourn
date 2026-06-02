@@ -2,7 +2,10 @@
     "extends": "./tsconfig.base.json",
     "files": [],
     "compilerOptions": {
-        "types": ["node"]
+        "types": ["node"],
+        "sourceMap": false,
+        "inlineSourceMap": false,
+        "inlineSources": false
     },
     "references": [
         { "path": "./apps/web/tsconfig.web.json" },

@@ -18447,4 +18447,3 @@ export {
   config,
   invite_default as default
 };
-//# sourceMappingURL=invite.js.map

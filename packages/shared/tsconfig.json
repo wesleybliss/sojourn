@@ -19,6 +19,9 @@
         "jsx": "react-jsx",
         "lib": ["ES2023", "DOM"],
         "types": ["node", "vite/client"],
+        "sourceMap": false,
+        "inlineSourceMap": false,
+        "inlineSources": false,
         "paths": {
             "@shared/*": ["./src/*"],
             "@repo/shared/*": ["../../packages/shared/src/*"],

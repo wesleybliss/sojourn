@@ -18220,4 +18220,3 @@ export {
   config,
   clone_default as default
 };
-//# sourceMappingURL=clone.js.map

@@ -13,4 +13,3 @@ export {
   config,
   handler as default
 };
-//# sourceMappingURL=index.js.map
