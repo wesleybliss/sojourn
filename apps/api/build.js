@@ -139,7 +139,11 @@ function pluginPathAliases() {
             // For other packages (node_modules), check if we should externalize them.
             // Major SDKs like firebase-admin are best externalized to avoid bundling issues.
             // Everything else will be bundled.
-            const majorDependencies = []
+            // @libsql contains platform-specific native binaries that can't be statically bundled;
+            // they must be externalized so Vercel can install and resolve them at runtime.
+            const majorDependencies = ['@libsql']
+            
+            // @todo keep this for posterity
                 /*'@vercel/functions',
                 '@vercel/queue',
                 'groq-sdk',
@@ -215,7 +219,7 @@ async function build() {
             resolveExtensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
             mainFields: ['module', 'main'],
             conditions: ['import', 'module', 'require', 'default'],
-            packages: 'bundle',
+            packages: 'external',
         })
         
     }
