@@ -139,7 +139,7 @@ function pluginPathAliases() {
             // For other packages (node_modules), check if we should externalize them.
             // Major SDKs like firebase-admin are best externalized to avoid bundling issues.
             // Everything else will be bundled.
-            // @libsql contains platform-specific native binaries that can't be statically bundled;
+            // Ex: @libsql contains platform-specific native binaries that can't be statically bundled;
             // they must be externalized so Vercel can install and resolve them at runtime.
             const majorDependencies = [
                 '@vercel/functions',
@@ -150,6 +150,7 @@ function pluginPathAliases() {
                 '@google-cloud/firestore',
                 '@google-cloud/storage',
                 '@libsql',
+                'dayjs',
                 'express/lib/router',
                 'express/lib/router/layer',
             ]
