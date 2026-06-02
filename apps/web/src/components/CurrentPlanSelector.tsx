@@ -26,7 +26,10 @@ const CurrentPlanSelector = () => {
             console.log('plan changed:', currentPlan.name)
     }, [currentPlan])
     
-    if (!currentPlans || !currentPlan)
+    const uniquePlans = currentPlans
+        ? Array.from(new Map(currentPlans.map(plan => [plan.id, plan])).values())
+        : []
+    if (!currentPlan || uniquePlans.length === 0)
         return null
     
     return (
@@ -45,7 +48,7 @@ const CurrentPlanSelector = () => {
             <SelectContent>
                 <SelectGroup>
                     <SelectLabel>Plans</SelectLabel>
-                    {currentPlans.map(it => (
+                    {uniquePlans.map(it => (
                         <SelectItem key={it.id} value={it.id.toString()}>
                             {it.name}
                         </SelectItem>

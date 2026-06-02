@@ -185,6 +185,43 @@ describe('updateItemArray', () => {
         
     })
     
+    test('should not duplicate nested array items', () => {
+        
+        //{ id: 1, name: 'Trip A', plans: [{ id: 10, segments: [{ id: 100 }] }] },
+        const newItem = {
+            id: 1,
+            name: 'Trip A',
+            plans: [
+                { id: 10, segments: [{ id: 100 }] },
+            ],
+        }
+        
+        const originalPlansLength = (wire.getValue() as MockTrip[])
+            ?.find(it => it.id === 1)
+            ?.plans
+            ?.length || 0
+        
+        expect(originalPlansLength).toEqual(1)
+        
+        updateItemArray<MockTrip, MockTrip[] | null>(wire, newItem)
+        
+        const result = wire.getValue()
+        
+        expect(result).toBeDefined()
+        
+        if (!result) throw new Error('Result is undefined')
+        
+        const updatedPlansLength = (wire.getValue() as MockTrip[])
+            ?.find(it => it.id === 1)
+            ?.plans
+            ?.length || 0
+        
+        // Should now have 4 items
+        expect(result.length).toBe(3)
+        expect(updatedPlansLength).toEqual(originalPlansLength)
+        
+    })
+    
 })
 
 describe('addItemArray', () => {
