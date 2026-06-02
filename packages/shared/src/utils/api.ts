@@ -130,6 +130,19 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
     
 }
 
+export const withBaseUrl = (url: string, overrideBaseUrl?: string | null) => {
+    
+    const baseUrl = overrideBaseUrl === undefined
+        ? import.meta.env.VITE_API_BASE_URL
+        : overrideBaseUrl
+    
+    if (baseUrl?.length)
+        return `${baseUrl}${url}`
+    
+    return url
+    
+}
+
 /**
  * Makes an authenticated API request and returns JSON
  */
@@ -137,7 +150,7 @@ export async function fetchJSON<T>(url: string, options: RequestInit = {}): Prom
     
     const fullUrl = url.startsWith('http')
         ? url
-        : `${import.meta.env.VITE_API_BASE_URL}/api/${url}`
+        : withBaseUrl(`/api/${url}`)
     
     const response = await fetchWithAuth(fullUrl, {
         ...options,
