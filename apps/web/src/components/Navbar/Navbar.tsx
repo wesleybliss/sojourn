@@ -12,6 +12,9 @@ const Navbar = () => {
     
     const vm = useNavbarViewModel()
     
+    if (vm.loading || !vm.firebaseUser)
+        return null
+    
     return (
         
         <header className="sticky top-0 z-20 section-card">

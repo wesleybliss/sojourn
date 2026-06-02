@@ -1,9 +1,11 @@
 import { useWireState, useWireValue } from '@forminator/react-wire'
 import { ApiResult, BackupTripsBody, Plan, Trip, TripInsert } from '@repo/shared/types'
 import { UseMutationResult } from '@tanstack/react-query'
+import { User as FirebaseUser } from 'firebase/auth'
 import { Dispatch, SetStateAction } from 'react'
 import { toast } from 'sonner'
 
+import { useAuth } from '@/components/providers/AuthProvider'
 import { useBackupTrips } from '@/lib/queries/backups'
 import { useCreateTripMutation } from '@/lib/queries/trip'
 import { RouterLike, usePathname, useRouter } from '@/lib/router'
@@ -13,6 +15,8 @@ export type TNavbarViewModel = {
     // Hooks
     router: RouterLike
     pathname: string
+    loading: boolean
+    firebaseUser: FirebaseUser | null
     
     // Global State
     currentTrip: Trip | null
@@ -44,6 +48,8 @@ const useNavbarViewModel = (): TNavbarViewModel => {
     
     const router = useRouter()
     const pathname = usePathname()
+    
+    const { firebaseUser, loading } = useAuth()
     
     const currentTrip = useWireValue(store.currentTrip)
     const currentPlan = useWireValue(store.currentPlan)
@@ -116,6 +122,8 @@ const useNavbarViewModel = (): TNavbarViewModel => {
         // Hooks
         router,
         pathname,
+        loading,
+        firebaseUser,
         
         // Global State
         currentTrip,
