@@ -149,6 +149,9 @@ function pluginPathAliases() {
                 'google-gax',
                 '@google-cloud/firestore',
                 '@google-cloud/storage',
+                
+                'express/lib/router',
+                'express/lib/router/layer',
             ]
             
             const isMajor = majorDependencies.some(dep =>

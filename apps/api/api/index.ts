@@ -43,6 +43,11 @@ app.use(express.urlencoded({ extended: true }))
 
 app.set('trust proxy', true)
 
+app.use((req: Request, _res: Response, next: NextFunction) => {
+    console.log(req.method, req.originalUrl)
+    next()
+})
+
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     
     console.error(err)
