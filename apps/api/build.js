@@ -150,7 +150,6 @@ function pluginPathAliases() {
                 '@google-cloud/firestore',
                 '@google-cloud/storage',
                 '@libsql',
-                'dayjs',
                 'express/lib/router',
                 'express/lib/router/layer',
             ]
