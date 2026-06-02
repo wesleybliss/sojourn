@@ -44,7 +44,13 @@ const TripMap = ({
         return coordsNYC
         
     }, [center, firstSegment?.coordsLat, firstSegment?.coordsLng])
-    
+    console.log('TripMap', {
+        segments,
+        validSegments,
+        firstSegment,
+        routeCoordinates,
+        centerCoords,
+    })
     return (
         
         <Card className={cn('h-80 p-0 overflow-hidden', className)}>

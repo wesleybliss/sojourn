@@ -1,5 +1,5 @@
 import { cn } from '@repo/shared/utils'
-import { FolderPen, FolderUp, Map as MapIcon, MapPlus, TableProperties } from 'lucide-react'
+import { FolderPen, Map as MapIcon, MapPlus, TableProperties } from 'lucide-react'
 
 import AccountMenu from '@/components/AccountMenu'
 import CurrentPlanSelector from '@/components/CurrentPlanSelector'
@@ -47,13 +47,6 @@ const Navbar = () => {
                             onClick={vm.handleCreateTrip}>
                             <MapPlus />
                             {vm.createTripMutation.isPending ? 'Creating...' : 'New Trip'}
-                        </Button>
-                        <Button
-                            variant="outline"
-                            disabled={vm.backupMutation.isPending}
-                            onClick={vm.handleImportOrBackup}>
-                            <FolderUp />
-                            {vm.backupMutation.isPending ? 'Working...' : vm.importButtonLabel}
                         </Button>
                         {vm.currentTrip && vm.isTripWorkspace && (
                             <TripActionsDropdown

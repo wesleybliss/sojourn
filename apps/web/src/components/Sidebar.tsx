@@ -5,6 +5,7 @@ import { memo, useMemo } from 'react'
 import { GoSidebarExpand } from 'react-icons/go'
 
 import AccountMenu from '@/components/AccountMenu'
+import ConditionalTooltip from '@/components/ConditionalTooltip'
 import { useAuth } from '@/components/providers/AuthProvider'
 import { Link, usePathname } from '@/lib/router'
 import * as store from '@/store'
@@ -31,6 +32,12 @@ const navigationItems = [
         icon: Settings2,
     },
 ]
+
+const linkClasses = {
+    active: 'border-sidebar-primary/10 bg-sidebar-primary text-sidebar-primary-foreground',
+    inactive: 'border-sidebar-border/70 bg-sidebar-accent/60 text-sidebar-foreground/80'
+        + ' group-hover:bg-sidebar-accent',
+}
 
 interface SidebarProps {
     isChild?: boolean
@@ -112,30 +119,38 @@ const Sidebar = ({
                     
                     return (
                         
-                        <Link
+                        <ConditionalTooltip
                             key={item.href}
-                            href={item.href}
-                            className={cn('group flex items-center gap-3', {
-                                'mx-auto translate-x-1.5': !isSidebarExpanded,
-                            })}>
-                            <span className={cn(
-                                'flex size-10 items-center justify-center rounded-xl border transition-colors',
-                                isActive
-                                    ? 'border-sidebar-primary/10 bg-sidebar-primary text-sidebar-primary-foreground'
-                                    : 'border-sidebar-border/70 bg-sidebar-accent/60 text-sidebar-foreground/80'
-                                        + ' group-hover:bg-sidebar-accent',
-                            )}>
-                                <Icon className="size-4.5" />
-                            </span>
-                            <span className={cn('min-w-0 transition-all duration-200 ease-in-out', {
-                                '-translate-x-20 w-0 overflow-hidden opacity-0': !isSidebarExpanded,
-                            })}>
-                                <span className="block text-sm font-semibold">{item.label}</span>
-                                <span className="block text-xs text-sidebar-foreground/55">
-                                    {item.caption}
+                            enabled={!isSidebarExpanded}
+                            content={item.caption}>
+                            
+                            <Link
+                                className={cn('group flex items-center gap-3', {
+                                    'mx-auto translate-x-1.5': !isSidebarExpanded,
+                                })}
+                                href={item.href}>
+                                
+                                <span className={cn(
+                                    'flex size-10 items-center justify-center rounded-xl border transition-colors',
+                                    isActive ? linkClasses.active : linkClasses.inactive,
+                                )}>
+                                    <Icon className="size-4.5" />
                                 </span>
-                            </span>
-                        </Link>
+                                
+                                <span className={cn('min-w-0 transition-all duration-200 ease-in-out', {
+                                    '-translate-x-20 w-0 overflow-hidden opacity-0': !isSidebarExpanded,
+                                })}>
+                                    <span className="block text-sm font-semibold">
+                                        {item.label}
+                                    </span>
+                                    <span className="block text-xs text-sidebar-foreground/55">
+                                        {item.caption}
+                                    </span>
+                                </span>
+                            
+                            </Link>
+                        
+                        </ConditionalTooltip>
                         
                     )
                     

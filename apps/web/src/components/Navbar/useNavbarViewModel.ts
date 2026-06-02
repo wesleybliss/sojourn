@@ -65,7 +65,7 @@ const useNavbarViewModel = (): TNavbarViewModel => {
     const title = isTripWorkspace
         ? currentTrip?.name || 'Trip Planner'
         : isPlacesPage
-            ? 'Future Destinations'
+            ? 'My Places'
             : isImportPage
                 ? 'Import & Restore'
                 : 'Ongoing Journeys'
@@ -100,21 +100,29 @@ const useNavbarViewModel = (): TNavbarViewModel => {
     const handleImportOrBackup = async () => {
         
         if (isTripWorkspace && currentTrip) {
+            
             try {
+                
                 await backupMutation.mutateAsync({
                     type: 'single',
                     tripId: currentTrip.id,
                 })
+                
                 toast.success('Backup generated')
-            } catch (error) {
-                console.error('Navbar.handleImportOrBackup', error)
+                
+            } catch (e) {
+                
+                console.error('Navbar.handleImportOrBackup', e)
                 toast.error('Backup failed')
+                
             }
             
             return
+            
         }
         
         router.push('/import-trips')
+        
     }
     
     return {

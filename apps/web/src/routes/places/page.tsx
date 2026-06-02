@@ -123,13 +123,13 @@ export default function PlacesPage() {
     return (
         
         <ProtectedRoute>
-            <div className="flex flex-col gap-8 p-5 lg:p-8">
+            <div className="flex flex-col gap-8 py-4">
                 <section className={`section-card overflow-hidden p-6 lg:p-8 ${sectionClasses.join(' ')}`}>
                     <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                         <div className="max-w-3xl">
                             <div className="eyebrow mb-3">Saved Places</div>
                             <h1 className="text-3xl font-semibold tracking-tighter lg:text-4xl">
-                                Future Destinations
+                                My Places
                             </h1>
                             <p className="mt-3 text-sm text-muted-foreground lg:text-base">
                                 Keep destination research, quick operational tips, and travel windows in a
@@ -173,7 +173,7 @@ export default function PlacesPage() {
                     </div>
                 </section>
                 
-                <section className="grid gap-5 md:grid-cols-2 2xl:grid-cols-3">
+                <section className="grid gap-5 md:grid-cols-3 2xl:grid-cols-4">
                     {filteredPlaces.map(place => {
                         const segmentCount = getSegmentCountForPlace(place)
                         
