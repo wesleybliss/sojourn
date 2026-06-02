@@ -1,17 +1,10 @@
 import { SegmentStatusLabel } from '@repo/shared/types'
-import { cn } from '@repo/shared/utils'
-import dayjs from 'dayjs'
-import { BedDouble, Globe2, Plane, TrainFront } from 'lucide-react'
 
+import TripDetailDenseItineraryTableRow from '@/components/TripDetail/TripDetailDenseItineraryTableRow'
 import { TTripEditorViewModel } from '@/components/TripEditor/useTripEditorViewModel'
+import { Button } from '@/components/ui/button'
 
-/*
-status === 'Completed' && 'bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-200',
-status === 'Confirmed' && 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/55 dark:text-emerald-300',
-status === 'Partial' && 'bg-amber-100 text-amber-700 dark:bg-amber-950/55 dark:text-amber-300',
-status === 'Planning' && 'bg-rose-100 text-rose-700 dark:bg-rose-950/55 dark:text-rose-300',
-*/
-const SegmentStatusLabelsColorMap: Record<SegmentStatusLabel, string> = {
+const segmentStatusLabelsColorMap: Record<SegmentStatusLabel, string> = {
     Completed: 'bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-200',
     Confirmed: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/55 dark:text-emerald-300',
     Partial: 'bg-amber-100 text-amber-700 dark:bg-amber-950/55 dark:text-amber-300',
@@ -42,59 +35,35 @@ const TripDetailDenseItineraryTable = ({
                 </tr>
             </thead>
             <tbody className="divide-y divide-border/60">
+                
+                {vm.completedSegmentCount > 0 && !vm.segmentsListShowCompleted && (
+                    <tr>
+                        <td className="px-4 py-1 italic text-muted-foreground" colSpan={7}>
+                            <span>Omitted {vm.completedSegmentCount} completed segments.</span>
+                            <Button
+                                className="ml-2 text-primary/70 hover:text-primary"
+                                variant="link"
+                                onClick={() => vm.setSegmentsListShowCompleted(true)}>
+                                Show completed
+                            </Button>
+                        </td>
+                    </tr>
+                )}
+                
                 {vm.filteredSegments.map((segment, index) => {
                     
-                    const status = vm.getStatusLabel(segment, vm)
+                    const status: SegmentStatusLabel = vm.getStatusLabel(segment, vm)
                     const originalIndex = vm.segments.findIndex(item => item.id === segment.id)
                     
                     return (
                         
-                        <tr className="h-10" key={segment.id}>
-                            <td className="px-4 py-3">
-                                <div className="font-medium">{segment.name}</div>
-                                {segment.description && (
-                                    <div className="line-clamp-1 text-xs text-muted-foreground">
-                                        {segment.description}
-                                    </div>
-                                )}
-                            </td>
-                            <td className="px-4 py-3 text-muted-foreground">
-                                {dayjs(segment.startDate as Date).format('MMM D')}
-                                &nbsp;-&nbsp;
-                                {dayjs(segment.endDate as Date).format('MMM D')}
-                            </td>
-                            <td className="px-4 py-3">{vm.getTotalDaysPerSegment(segment)}</td>
-                            <td className="px-4 py-3">
-                                {vm.getCumulativeDaysPerSegment(
-                                    originalIndex >= 0 ? originalIndex : index)}
-                            </td>
-                            <td className="px-4 py-3">
-                                <div className="flex items-center gap-2 text-muted-foreground">
-                                    <Plane className={cn('size-4', segment.flightBooked && 'text-emerald-500')} />
-                                    <TrainFront className="size-4 text-slate-400" />
-                                    <BedDouble className={cn('size-4', segment.stayBooked && 'text-sky-500')} />
-                                </div>
-                            </td>
-                            <td className="px-4 py-3">
-                                <span className={cn(
-                                    'inline-flex rounded-full px-2.5 py-1 text-xs font-medium',
-                                    segment.isShengenRegion
-                                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300'
-                                        : 'bg-surface-container-low text-muted-foreground',
-                                )}>
-                                    <Globe2 className="mr-1 size-3.5" />
-                                    {segment.isShengenRegion ? 'Schengen' : 'Open'}
-                                </span>
-                            </td>
-                            <td className="px-4 py-3">
-                                <span className={cn(
-                                    'inline-flex rounded-full px-2.5 py-1 text-xs font-semibold',
-                                    SegmentStatusLabelsColorMap[status],
-                                )}>
-                                    {status}
-                                </span>
-                            </td>
-                        </tr>
+                        <TripDetailDenseItineraryTableRow
+                            segment={segment}
+                            status={status}
+                            totalDaysPerSegment={vm.getTotalDaysPerSegment(segment)}
+                            cumulativeDaysPerSegment={vm.getCumulativeDaysPerSegment(
+                                originalIndex >= 0 ? originalIndex : index)}
+                            segmentStatusLabelsColor={segmentStatusLabelsColorMap[status]} />
                         
                     )
                     

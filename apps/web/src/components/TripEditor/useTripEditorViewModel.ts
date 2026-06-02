@@ -73,6 +73,7 @@ export type TTripEditorViewModel = {
     setIsGanttChartLocked: Dispatch<SetStateAction<boolean>>
     
     // Memos
+    completedSegmentCount: number
     filteredSegments: Segment[]
     shengenData: ShengenData | null
     summaryTripText: string
@@ -193,6 +194,12 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
     const isLoading = useMemo(() => (
         isLoadingInitial || tripIsLoading
     ), [isLoadingInitial, tripIsLoading])
+    
+    const completedSegmentCount = useMemo(() => (
+        segments
+            ?.filter((it: Segment) => !dayjs(it.endDate as Date).isAfter(dayjs()))
+            .length || 0
+    ), [segments])
     
     const filteredSegments = useMemo(() => {
         
@@ -516,6 +523,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         setIsGanttChartLocked,
         
         // Memos
+        completedSegmentCount,
         filteredSegments,
         shengenData,
         summaryTripText,

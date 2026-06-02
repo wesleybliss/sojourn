@@ -50,16 +50,6 @@ const CurrentPlanSelector = () => {
                             {it.name}
                         </SelectItem>
                     ))}
-                    {/* <SelectLabel><hr /></SelectLabel>
-                    <SelectItem
-                        value="action:create-new-plan"
-                        onClick={() => {
-                            console.log('new plan clicked')
-                            // open modal, etc.
-                        }}>
-                        <ListPlus />
-                        New Plan
-                    </SelectItem> */}
                 </SelectGroup>
             </SelectContent>
         

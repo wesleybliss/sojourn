@@ -4,6 +4,11 @@ import { apiResponse } from '@repo/shared/utils/api'
 import { type AuthContext, isUserTripMember, withAuth } from '@repo/shared/utils/auth'
 import { eq } from 'drizzle-orm'
 import type { Request, Response } from 'express'
+import { z } from 'zod'
+
+const paramsSchema = z.object({
+    planId: z.coerce.number(),
+})
 
 export const getPlan = withAuth(async (
     req: Request,
@@ -13,7 +18,7 @@ export const getPlan = withAuth(async (
     
     try {
         
-        const planId = parseInt(req.query.planId as string, 10)
+        const { planId } = paramsSchema.parse(req.params)
         const body = req.body
         
         const { tripId } = body

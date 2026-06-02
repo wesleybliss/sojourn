@@ -26,8 +26,12 @@ const TripItineraryCard = ({
             <div className="flex flex-col gap-4 border-b border-border/70 px-5 py-4
                 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                    <div className="eyebrow mb-2">Itinerary Ledger</div>
-                    <h2 className="text-xl font-semibold tracking-[-0.04em]">Dense Itinerary Table</h2>
+                    <div className="eyebrow mb-2">
+                        Itinerary Ledger
+                    </div>
+                    <h2 className="text-xl font-semibold tracking-[-0.04em]">
+                        Dense Itinerary Table
+                    </h2>
                 </div>
                 <div className="flex flex-col gap-2 sm:flex-row">
                     <div className="relative">

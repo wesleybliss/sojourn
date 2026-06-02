@@ -70206,670 +70206,6 @@ var createPlace = withAuth(async (req, res, _context) => {
   }
 });
 
-// src/handlers/places/getPlace.ts
-var getPlace = withAuth(async (req, res, _context) => {
-  try {
-    const placeId = parseInt(req.query.placeId, 10);
-    const place = await places_default.findOneById(placeId);
-    return apiResponse.ok(res, place);
-  } catch (e) {
-    console.error("Error getting place:", e);
-    return apiResponse.internalServerError(res);
-  }
-});
-
-// src/handlers/places/getPlaces.ts
-var getPlaces = withAuth(async (_req, res, _context) => {
-  try {
-    const places2 = await places_default.findAll();
-    return apiResponse.ok(res, places2);
-  } catch (e) {
-    console.error("Error getting places:", e);
-    return apiResponse.internalServerError(res);
-  }
-});
-
-// src/handlers/places/updatePlace.ts
-init_db2();
-init_schema();
-init_drizzle_orm();
-var updatePlace = withAuth(async (req, res, _context) => {
-  const placeId = parseInt(req.query.id, 10);
-  try {
-    const body = req.body;
-    if (!placeId)
-      return apiResponse.badRequest(res, `Invalid place ID: "${placeId}"`);
-    const [place] = await db_default.select().from(places).where(eq(places.id, placeId));
-    if (!place)
-      return apiResponse.notFound(res, "Place");
-    const [updatedPlace] = await db_default.update(places).set({
-      name: body.name,
-      coverImageUrl: body.coverImageUrl,
-      focus: body.focus,
-      quickTip: body.quickTip,
-      personalNotes: body.personalNotes,
-      region: body.region,
-      travelWindow: body.travelWindow,
-      isBookmarked: body.isBookmarked
-    }).where(eq(places.id, placeId)).returning();
-    if (!updatedPlace)
-      return apiResponse.notFound(res, "Place");
-    return apiResponse.ok(res, {
-      message: "Place updated successfully",
-      data: updatedPlace
-    });
-  } catch (e) {
-    console.error("Error updating place:", e);
-    return apiResponse.internalServerError(res);
-  }
-});
-
-// src/handlers/plans/clonePlan.ts
-init_db2();
-init_schema();
-init_drizzle_orm();
-var clonePlan = withAuth(async (req, res, _context) => {
-  try {
-    const planId = parseInt(req.query.planId, 10);
-    if (isNaN(planId))
-      return apiResponse.badRequest(res, `Invalid plan ID: "${planId}"`);
-    const [plan] = await db_default.select().from(plans).where(eq(plans.id, planId));
-    if (!plan)
-      return apiResponse.notFound(res, "Plan");
-    const result = await db_default.transaction(async (tx) => {
-      const [clonedPlan] = await tx.insert(plans).values({
-        tripId: plan.tripId,
-        name: `${plan.name}-${nanoid()}`,
-        description: plan.description
-      }).returning();
-      const segments2 = await db_default.select().from(segments).where(eq(segments.planId, planId));
-      const segmentInserts = segments2.map((it) => tx.insert(segments).values({
-        ...omit(it, ["id", "planId"]),
-        planId: clonedPlan.id
-      }));
-      await Promise.all(segmentInserts);
-      return clonedPlan;
-    });
-    return apiResponse.ok(res, {
-      message: "Plan cloned successfully",
-      data: result
-    });
-  } catch (e) {
-    console.error("Error cloning plan:", e);
-    return apiResponse.internalServerError(res);
-  }
-});
-
-// src/handlers/plans/deletePlan.ts
-init_db2();
-init_schema();
-init_drizzle_orm();
-var deletePlan = withAuth(async (req, res, context) => {
-  try {
-    const planId = parseInt(req.query.planId, 10);
-    if (!planId || isNaN(planId))
-      return apiResponse.badRequest(res, "Invalid plan ID");
-    const [plan] = await db_default.select().from(plans).where(eq(plans.id, planId));
-    if (!plan)
-      return apiResponse.notFound(res, "Plan");
-    const isMember = await isUserTripMember(context, plan.tripId);
-    if (!isMember)
-      return apiResponse.forbidden(res);
-    const [deletedPlan] = await db_default.delete(plans).where(eq(plans.id, planId)).returning();
-    if (!deletedPlan)
-      return apiResponse.notFound(res, "Plan");
-    return apiResponse.okMessage(res, "Plan deleted successfully");
-  } catch (e) {
-    console.error("Error deleting plan:", e);
-    return apiResponse.internalServerError(res);
-  }
-});
-
-// src/handlers/plans/getPlan.ts
-init_db2();
-init_schema();
-init_drizzle_orm();
-var getPlan = withAuth(async (req, res, context) => {
-  try {
-    const planId = parseInt(req.query.planId, 10);
-    const body = req.body;
-    const { tripId } = body;
-    const isMember = await isUserTripMember(context, tripId);
-    if (!isMember)
-      return apiResponse.forbidden(res);
-    if (!planId || isNaN(planId))
-      return apiResponse.badRequest(res, "Invalid plan ID");
-    const [plan] = await db_default.select().from(plans).where(eq(plans.id, planId));
-    if (!plan)
-      return apiResponse.notFound(res, "Plan");
-    return apiResponse.ok(res, { data: plan });
-  } catch (e) {
-    console.error("Error fetching plan:", e);
-    return apiResponse.internalServerError(res);
-  }
-});
-
-// src/handlers/plans/updatePlan.ts
-init_db2();
-init_schema();
-init_drizzle_orm();
-var updatePlan = withAuth(async (req, res, context) => {
-  try {
-    const planId = parseInt(req.query.planId, 10);
-    const body = req.body;
-    const tripId = body.tripId;
-    if (!planId || isNaN(planId))
-      return apiResponse.badRequest(res, "Invalid plan ID");
-    const isMember = await isUserTripMember(context, tripId);
-    if (!isMember)
-      return apiResponse.forbidden(res);
-    const [plan] = await db_default.select().from(plans).where(eq(plans.id, planId));
-    if (!plan)
-      return apiResponse.notFound(res, "Plan");
-    const [updatedPlan] = await db_default.update(plans).set({
-      name: body.name,
-      description: body.description
-    }).where(eq(plans.id, planId)).returning();
-    if (!updatedPlan)
-      return apiResponse.notFound(res, "Plan");
-    return apiResponse.ok(res, {
-      message: "Plan updated successfully",
-      data: updatedPlan
-    });
-  } catch (e) {
-    console.error("Error updating plan:", e);
-    return apiResponse.internalServerError(res);
-  }
-});
-
-// src/handlers/segments/createSegment.ts
-init_db2();
-init_schema();
-var createSegment = withAuth(async (req, res, context) => {
-  try {
-    const {
-      tripId,
-      planId,
-      startDate,
-      endDate,
-      name: name2,
-      color
-    } = req.body;
-    if (!tripId)
-      return apiResponse.invalidParams(res, "Param tripId is required");
-    if (!planId)
-      return apiResponse.invalidParams(res, "Param planId is required");
-    if (!name2?.length)
-      return apiResponse.invalidParams(res, "Param name is required");
-    if (!startDate?.length)
-      return apiResponse.invalidParams(res, "Param startDate is required");
-    if (!endDate?.length)
-      return apiResponse.invalidParams(res, "Param endDate is required");
-    const isMember = await isUserTripMember(context, tripId);
-    if (!isMember)
-      return apiResponse.forbidden(res);
-    const [createdSegment] = await db_default.insert(segments).values({
-      tripId,
-      planId,
-      startDate,
-      endDate,
-      name: name2,
-      color
-    }).returning();
-    return apiResponse.ok(res, {
-      message: "Segment created successfully",
-      data: createdSegment
-    });
-  } catch (e) {
-    console.error("Error creating segment:", e);
-    return apiResponse.internalServerError(res);
-  }
-});
-
-// src/handlers/segments/deleteSegment.ts
-init_db2();
-init_schema();
-init_drizzle_orm();
-var deleteSegment = withAuth(async (req, res, context) => {
-  try {
-    const { tripId, planId, segmentIds } = req.body;
-    if (!Array.isArray(segmentIds) || !segmentIds.length)
-      return apiResponse.invalidParams(res, "Param segmentIds is required and must be non-empty array");
-    if (!tripId)
-      return apiResponse.invalidParams(res, "Param tripId is required");
-    if (!planId)
-      return apiResponse.invalidParams(res, "Param planId is required");
-    const isMember = await isUserTripMember(context, tripId);
-    if (!isMember)
-      return apiResponse.forbidden(res);
-    await db_default.transaction(async (tx) => {
-      await tx.delete(segments).where(and(
-        eq(segments.tripId, tripId),
-        eq(segments.planId, planId),
-        inArray(segments.id, segmentIds)
-      ));
-    });
-    return apiResponse.okMessage(res, "Segments deleted successfully");
-  } catch (e) {
-    console.error("Error deleting segments:", e);
-    return apiResponse.internalServerError(res);
-  }
-});
-
-// ../../packages/shared/src/db/repos/segments.ts
-init_schema();
-init_drizzle_orm();
-var SegmentsRepository = class _SegmentsRepository extends repo_default {
-  constructor(db2) {
-    super("segment", "segments", segments, db2);
-  }
-  tx(transaction) {
-    return new _SegmentsRepository(transaction);
-  }
-  async createWithNextDate(data) {
-    if (!data.tripId)
-      throw new Error("createWithNextDate: tripId required");
-    const segments2 = await this.findAllByTripId(data.tripId);
-    console.log("@@@@ testing", segments2);
-    throw new Error("Not yet implemented");
-  }
-  async findAllByTripId(tripId) {
-    try {
-      const segments2 = await this.db.select().from(segments).where(eq(segments.tripId, tripId)).orderBy(asc(segments.startDate));
-      return segments2.map((s) => ({
-        ...s,
-        startDate: this.normalizeDateValue(s.startDate),
-        endDate: this.normalizeDateValue(s.endDate)
-      }));
-    } catch (e) {
-      console.error(`Error fetching ${this.plural} for trip ${tripId}:`, e);
-      throw new Error(`Failed to fetch ${this.plural}`);
-    }
-  }
-  async findAllByPlanId(planId) {
-    try {
-      const segments2 = await this.db.select().from(this.schema).where(eq(this.schema.planId, planId)).orderBy(asc(this.schema.startDate));
-      return segments2.map((s) => ({
-        ...s,
-        startDate: this.normalizeDateValue(s.startDate),
-        endDate: this.normalizeDateValue(s.endDate)
-      }));
-    } catch (e) {
-      console.error(`Error fetching ${this.plural} for plan ${planId}:`, e);
-      throw new Error(`Failed to fetch ${this.plural}`);
-    }
-  }
-};
-var segments_default = new SegmentsRepository();
-
-// src/handlers/segments/getSegments.ts
-var getSegments = withAuth(async (_req, res, _context) => {
-  try {
-    const segments2 = await segments_default.findAll();
-    return apiResponse.ok(res, segments2);
-  } catch (e) {
-    console.error("Error getting segments:", e);
-    return apiResponse.internalServerError(res);
-  }
-});
-
-// src/handlers/segments/updateSegment.ts
-init_schema();
-var import_dayjs3 = __toESM(require_dayjs_min());
-init_drizzle_orm();
-var updateSegment = withAuth(async (req, res, _context) => {
-  const segmentId = parseInt(req.query.id, 10);
-  try {
-    const segment = await segments_default.findOneById(segmentId);
-    if (!segment || segment.id !== segmentId)
-      return apiResponse.notFound(res, "Segment");
-    const segmentData = req.body;
-    const { cascadeEnabled } = segmentData;
-    let payload = getUpdatePayload(segment, segmentData, ["tripId", "planId", "cascadeEnabled"]);
-    payload = convertStringDates(payload, ["startDate", "endDate"]);
-    if (cascadeEnabled && (payload.startDate || payload.endDate)) {
-      const segments2 = await segments_default.findAllByPlanId(segment.planId);
-      const targetIndex = segments2.findIndex((s) => s.id === segmentId);
-      if (targetIndex === -1)
-        return apiResponse.notFound(res, "Segment not found in plan");
-      const currentSegment = segments2[targetIndex];
-      const originalDuration = (0, import_dayjs3.default)(currentSegment.endDate).diff((0, import_dayjs3.default)(currentSegment.startDate), "day");
-      const updates = [];
-      const newStartDate = payload.startDate ? (0, import_dayjs3.default)(payload.startDate) : (0, import_dayjs3.default)(currentSegment.startDate);
-      const newEndDate = payload.endDate ? (0, import_dayjs3.default)(payload.endDate) : newStartDate.add(originalDuration, "day");
-      updates.push({ id: currentSegment.id, startDate: newStartDate.toDate(), endDate: newEndDate.toDate() });
-      let prevEnd = newEndDate;
-      for (let i = targetIndex + 1; i < segments2.length; i++) {
-        const seg = segments2[i];
-        const dur = (0, import_dayjs3.default)(seg.endDate).diff((0, import_dayjs3.default)(seg.startDate), "day");
-        const sStart = prevEnd;
-        const sEnd = sStart.add(dur, "day");
-        updates.push({ id: seg.id, startDate: sStart.toDate(), endDate: sEnd.toDate() });
-        prevEnd = sEnd;
-      }
-      const db2 = await Promise.resolve().then(() => (init_db2(), db_exports));
-      await db2.default.transaction(async (tx) => {
-        for (const u of updates) {
-          await tx.update(segments).set({
-            startDate: u.startDate,
-            endDate: u.endDate
-          }).where(eq(segments.id, u.id));
-        }
-      });
-      const reloaded = await segments_default.findOneById(segmentId);
-      if (!reloaded)
-        return apiResponse.notFound(res, "Segment");
-      return apiResponse.ok(res, {
-        message: "Segment dates updated successfully",
-        data: reloaded
-      });
-    }
-    const updatedSegment = await segments_default.updateById(segmentId, payload);
-    if (!updatedSegment)
-      return apiResponse.notFound(res, "Updated segment not found");
-    return apiResponse.ok(res, {
-      message: "Segment updated successfully",
-      data: updatedSegment
-    });
-  } catch (e) {
-    console.error(`Error updating segment ${segmentId}:`, e);
-    return apiResponse.internalServerError(res);
-  }
-});
-
-// ../../packages/shared/src/db/repos/plans.ts
-init_schema();
-init_drizzle_orm();
-var PlansRepository = class _PlansRepository extends repo_default {
-  constructor(db2) {
-    super("plan", "plans", plans, db2);
-  }
-  tx(transaction) {
-    return new _PlansRepository(transaction);
-  }
-  async findAllByTripId(tripId) {
-    try {
-      const plansWithSegments = await this.db.select({
-        plan: plans,
-        segment: segments
-      }).from(plans).leftJoin(segments, eq(segments.planId, plans.id)).where(eq(plans.tripId, tripId)).orderBy(asc(plans.id), asc(segments.startDate));
-      const plansMap = /* @__PURE__ */ new Map();
-      plansWithSegments.forEach(({ plan, segment }) => {
-        if (!plansMap.has(plan.id))
-          plansMap.set(plan.id, {
-            ...plan,
-            segments: [],
-            updatedAt: plan.updatedAt,
-            createdAt: plan.createdAt
-          });
-        if (segment)
-          plansMap.get(plan.id)?.segments?.push({
-            ...segment,
-            startDate: this.normalizeDateValue(segment.startDate),
-            endDate: this.normalizeDateValue(segment.endDate)
-          });
-      });
-      return Array.from(plansMap.values());
-    } catch (e) {
-      console.error(`Error fetching ${this.plural} for trip ${tripId}:`, e);
-      throw new Error(`Failed to fetch ${this.plural}`);
-    }
-  }
-};
-var plans_default = new PlansRepository();
-
-// ../../packages/shared/src/db/repos/trips.ts
-init_schema();
-init_drizzle_orm();
-var TripsRepository = class _TripsRepository extends repo_default {
-  constructor(db2) {
-    super("trip", "trips", trips, db2);
-  }
-  tx(transaction) {
-    return new _TripsRepository(transaction);
-  }
-  async findAllByUserId(userId) {
-    try {
-      const trips2 = await this.db.select({ trip: this.schema }).from(this.schema).innerJoin(
-        userTrips,
-        eq(userTrips.tripId, this.schema.id)
-      ).where(eq(userTrips.userId, userId)).orderBy(desc(this.schema.id));
-      return trips2.map((result) => ({
-        ...result.trip,
-        updatedAt: result.trip.updatedAt,
-        createdAt: result.trip.createdAt
-      }));
-    } catch (e) {
-      console.error(`Error fetching ${this.plural} for user ${userId}:`, e);
-      throw new Error(`Failed to fetch ${this.plural}`);
-    }
-  }
-  async findAllByUserIdWithDetails(userId, plansRepo) {
-    try {
-      const trips2 = await this.findAllByUserId(userId);
-      return await Promise.all(trips2.map(async (trip) => ({
-        ...trip,
-        plans: await plansRepo.findAllByTripId(trip.id)
-      })));
-    } catch (e) {
-      console.error(`Error fetching ${this.plural} with details for user ${userId}:`, e);
-      throw new Error(`Failed to fetch ${this.plural} with details`);
-    }
-  }
-  async findOneByName(name2, plansRepo, withDetails) {
-    try {
-      const trip = await this.findOneBy("name", name2);
-      if (!trip) return null;
-      if (!withDetails) return trip;
-      const plans2 = await plansRepo.findAllByTripId(trip.id);
-      return {
-        ...trip,
-        plans: plans2
-      };
-    } catch (e) {
-      console.error(`Error fetching ${this.name} for name ${name2}:`, e);
-      throw new Error(`Failed to fetch ${this.name}`);
-    }
-  }
-  async findAllByUserIdWithSegmentCount(userId, segmentsRepo = segments_default) {
-    try {
-      const trips2 = await this.findAllByUserId(userId);
-      return await Promise.all(trips2.map(async (trip) => {
-        const segments2 = await segmentsRepo.findAllByTripId(trip.id);
-        return {
-          ...trip,
-          segmentCount: segments2.length
-        };
-      }));
-    } catch (e) {
-      console.error(`Error fetching ${this.plural} with segment counts for user ${userId}:`, e);
-      throw new Error(`Failed to fetch ${this.plural} with segment counts`);
-    }
-  }
-  async findAllByUserIdWithDetailsAndSegmentCount(userId, plansRepo) {
-    const trips2 = await this.findAllByUserIdWithDetails(userId, plansRepo);
-    return trips2.map((trip) => ({
-      ...trip,
-      segmentCount: trip.plans?.reduce((total, plan) => total + (plan.segments?.length || 0), 0) || 0
-    }));
-  }
-  async findOneWithDetails(id, plansRepo) {
-    try {
-      const trip = await this.findOneById(id);
-      if (!trip) return null;
-      const plans2 = await plansRepo.findAllByTripId(id);
-      return {
-        ...trip,
-        plans: plans2
-      };
-    } catch (e) {
-      console.error(`Error fetching ${this.name} details for ${id}:`, e);
-      throw new Error(`Failed to fetch ${this.name} details`);
-    }
-  }
-};
-var trips_default = new TripsRepository();
-
-// ../../packages/shared/src/utils/json-schemas/trip-backup.jsonschema.ts
-var coordsSchema = {
-  type: "object",
-  properties: {
-    lat: { anyOf: [{ type: "number" }, { type: "null" }] },
-    lng: { anyOf: [{ type: "number" }, { type: "null" }] }
-  },
-  required: ["lat", "lng"],
-  additionalProperties: true
-};
-var segmentSchema = {
-  type: "object",
-  properties: {
-    id: { type: "string" },
-    name: { type: "string" },
-    color: { type: "string" },
-    coords: coordsSchema,
-    tripId: { type: "string" },
-    planId: { type: "string" },
-    createdAt: { anyOf: [{ type: "string" }, { type: "null" }] },
-    updatedAt: { anyOf: [{ type: "string" }, { type: "null" }] },
-    startDate: { anyOf: [{ type: "string" }, { type: "null" }] },
-    endDate: { anyOf: [{ type: "string" }, { type: "null" }] },
-    stayBooked: { type: "boolean" },
-    flightBooked: { type: "boolean" },
-    description: { type: "string" }
-  },
-  additionalProperties: true
-};
-var planSchema = {
-  type: "object",
-  properties: {
-    id: { type: "string" },
-    name: { type: "string" },
-    tripId: { type: "string" },
-    createdAt: { anyOf: [{ type: "string" }, { type: "null" }] },
-    updatedAt: { anyOf: [{ type: "string" }, { type: "null" }] },
-    segments: { type: "array", items: segmentSchema }
-  },
-  additionalProperties: true
-};
-var tripSchema = {
-  type: "object",
-  properties: {
-    id: { type: "string" },
-    name: { type: "string" },
-    description: { anyOf: [{ type: "string" }, { type: "null" }] },
-    coverImageUrl: { anyOf: [{ type: "string" }, { type: "null" }] },
-    createdAt: { anyOf: [{ type: "string" }, { type: "null" }] },
-    updatedAt: { anyOf: [{ type: "string" }, { type: "null" }] },
-    startDate: { anyOf: [{ type: "string" }, { type: "null" }] },
-    endDate: { anyOf: [{ type: "string" }, { type: "null" }] },
-    segments: { type: "array", items: segmentSchema },
-    plans: { type: "array", items: planSchema }
-  },
-  additionalProperties: true
-};
-var tripsWithPlansSchema = {
-  $id: "trip-backup.jsonschema",
-  type: "object",
-  properties: {
-    type: { type: "string" },
-    trips: { type: "array", items: tripSchema }
-  },
-  required: ["type", "trips"],
-  additionalProperties: true
-};
-var trip_backup_jsonschema_default = tripsWithPlansSchema;
-
-// src/handlers/trips/backupTrips.ts
-var import_ajv = __toESM(require_ajv());
-var import_dayjs4 = __toESM(require_dayjs_min());
-var ajvDebug = true;
-var dateToString = (date6, name2 = "") => {
-  const val = (0, import_dayjs4.default)(date6).format();
-  if (name2)
-    console.log("dateToString", name2, date6, val);
-  return val;
-};
-var transformSegment = (seg) => ({
-  id: String(seg.id),
-  name: seg.name,
-  color: seg.color,
-  coords: {
-    lat: seg.coordsLat === null ? null : Number(seg.coordsLat),
-    lng: seg.coordsLng === null ? null : Number(seg.coordsLng)
-  },
-  tripId: String(seg.tripId),
-  planId: seg.planId ? String(seg.planId) : void 0,
-  createdAt: dateToString(seg.createdAt, "seg/createdAt"),
-  updatedAt: dateToString(seg.updatedAt, "seg/updatedAt"),
-  startDate: dateToString(seg.startDate, "seg/startDate"),
-  endDate: dateToString(seg.endDate, "seg/endDate"),
-  stayBooked: Boolean(seg.stayBooked),
-  flightBooked: Boolean(seg.flightBooked),
-  description: seg.description || ""
-});
-var transformPlan = (plan) => ({
-  id: plan.id ? String(plan.id) : void 0,
-  name: plan.name,
-  tripId: plan.tripId ? String(plan.tripId) : void 0,
-  createdAt: dateToString(plan.createdAt, "plan/createdAt"),
-  updatedAt: dateToString(plan.updatedAt, "plan/updatedAt"),
-  segments: Array.isArray(plan.segments) ? plan.segments.map(transformSegment) : []
-});
-var transformTrip = (trip) => ({
-  id: String(trip.id),
-  createdAt: dateToString(trip.createdAt, "trip/createdAt"),
-  updatedAt: dateToString(trip.updatedAt, "trip/updatedAt"),
-  name: trip.name,
-  description: trip.description || "",
-  coverImageUrl: trip.coverImageUrl || null,
-  plans: Array.isArray(trip.plans) ? trip.plans.map(transformPlan) : [],
-  segments: Array.isArray(trip.segments) ? trip.segments.map(transformSegment) : []
-});
-var backupTrips = withAuth(async (req, res, context) => {
-  try {
-    const { userId } = context;
-    const body = req.body;
-    const ajvProps = ajvDebug ? { allErrors: true, verbose: true } : {};
-    const ajv = new import_ajv.default(ajvProps);
-    const validate = ajv.compile(trip_backup_jsonschema_default);
-    let trips2 = [];
-    if (body?.type === "single") {
-      const tripId = parseInt(body.tripId, 10);
-      if (!tripId)
-        return apiResponse.invalidParams(res, "tripId required for single backup");
-      const isMember = await isUserTripMember(context, tripId);
-      if (!isMember)
-        return apiResponse.forbidden(res);
-      const trip = await trips_default.findOneWithDetails(Number(tripId), plans_default);
-      if (!trip)
-        return apiResponse.notFound(res, "Trip not found");
-      trips2 = [transformTrip(trip)];
-    } else {
-      const requestedIds = Array.isArray(body?.tripIds) ? body.tripIds.map((id) => Number(id)) : null;
-      const userTrips2 = await trips_default.findAllByUserId(userId);
-      const filtered = requestedIds ? userTrips2.filter((t) => requestedIds.includes(Number(t.id))) : userTrips2;
-      const detailsPromises = filtered.map((t) => trips_default.findOneWithDetails(Number(t.id), plans_default));
-      const details = await Promise.all(detailsPromises);
-      trips2 = details.filter(Boolean).map((t) => transformTrip(t));
-    }
-    const data = { type: "multiple", trips: trips2 };
-    const valid = validate(data);
-    const currentYear = (/* @__PURE__ */ new Date()).getFullYear().toString();
-    if (!valid || !data.trips[0].plans[0].segments[0].startDate.startsWith(currentYear))
-      return apiResponse.fail(res, "Validation failed", 400, {
-        data: {
-          details: validate.errors
-        }
-      });
-    const fileName = `trips-backup-${(/* @__PURE__ */ new Date()).toISOString().replace(/[:.]/g, "-")}on`;
-    res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
-    res.json(data);
-  } catch (e) {
-    console.error("Error creating backup:", e);
-    return apiResponse.internalServerError(res);
-  }
-});
-
 // ../../node_modules/.pnpm/zod@4.4.3/node_modules/zod/v4/classic/external.js
 var external_exports = {};
 __export(external_exports, {
@@ -85384,16 +84720,694 @@ function date5(params) {
 // ../../node_modules/.pnpm/zod@4.4.3/node_modules/zod/v4/classic/external.js
 config(en_default());
 
-// src/handlers/trips/getTrip.ts
+// src/handlers/places/getPlace.ts
 var paramsSchema = external_exports.object({
+  placeId: external_exports.coerce.number()
+});
+var getPlace = withAuth(async (req, res, _context) => {
+  try {
+    const { placeId } = paramsSchema.parse(req.params);
+    const place = await places_default.findOneById(placeId);
+    return apiResponse.ok(res, place);
+  } catch (e) {
+    console.error("Error getting place:", e);
+    return apiResponse.internalServerError(res);
+  }
+});
+
+// src/handlers/places/getPlaces.ts
+var getPlaces = withAuth(async (_req, res, _context) => {
+  try {
+    const places2 = await places_default.findAll();
+    return apiResponse.ok(res, places2);
+  } catch (e) {
+    console.error("Error getting places:", e);
+    return apiResponse.internalServerError(res);
+  }
+});
+
+// src/handlers/places/updatePlace.ts
+init_db2();
+init_schema();
+init_drizzle_orm();
+var paramsSchema2 = external_exports.object({
+  placeId: external_exports.coerce.number()
+});
+var updatePlace = withAuth(async (req, res, _context) => {
+  const { placeId } = paramsSchema2.parse(req.params);
+  try {
+    const body = req.body;
+    if (!placeId)
+      return apiResponse.badRequest(res, `Invalid place ID: "${placeId}"`);
+    const [place] = await db_default.select().from(places).where(eq(places.id, placeId));
+    if (!place)
+      return apiResponse.notFound(res, "Place");
+    const [updatedPlace] = await db_default.update(places).set({
+      name: body.name,
+      coverImageUrl: body.coverImageUrl,
+      focus: body.focus,
+      quickTip: body.quickTip,
+      personalNotes: body.personalNotes,
+      region: body.region,
+      travelWindow: body.travelWindow,
+      isBookmarked: body.isBookmarked
+    }).where(eq(places.id, placeId)).returning();
+    if (!updatedPlace)
+      return apiResponse.notFound(res, "Place");
+    return apiResponse.ok(res, {
+      message: "Place updated successfully",
+      data: updatedPlace
+    });
+  } catch (e) {
+    console.error("Error updating place:", e);
+    return apiResponse.internalServerError(res);
+  }
+});
+
+// src/handlers/plans/clonePlan.ts
+init_db2();
+init_schema();
+init_drizzle_orm();
+var clonePlan = withAuth(async (req, res, _context) => {
+  try {
+    const planId = parseInt(req.query.planId, 10);
+    if (isNaN(planId))
+      return apiResponse.badRequest(res, `Invalid plan ID: "${planId}"`);
+    const [plan] = await db_default.select().from(plans).where(eq(plans.id, planId));
+    if (!plan)
+      return apiResponse.notFound(res, "Plan");
+    const result = await db_default.transaction(async (tx) => {
+      const [clonedPlan] = await tx.insert(plans).values({
+        tripId: plan.tripId,
+        name: `${plan.name}-${nanoid()}`,
+        description: plan.description
+      }).returning();
+      const segments2 = await db_default.select().from(segments).where(eq(segments.planId, planId));
+      const segmentInserts = segments2.map((it) => tx.insert(segments).values({
+        ...omit(it, ["id", "planId"]),
+        planId: clonedPlan.id
+      }));
+      await Promise.all(segmentInserts);
+      return clonedPlan;
+    });
+    return apiResponse.ok(res, {
+      message: "Plan cloned successfully",
+      data: result
+    });
+  } catch (e) {
+    console.error("Error cloning plan:", e);
+    return apiResponse.internalServerError(res);
+  }
+});
+
+// src/handlers/plans/deletePlan.ts
+init_db2();
+init_schema();
+init_drizzle_orm();
+var deletePlan = withAuth(async (req, res, context) => {
+  try {
+    const planId = parseInt(req.query.planId, 10);
+    if (!planId || isNaN(planId))
+      return apiResponse.badRequest(res, "Invalid plan ID");
+    const [plan] = await db_default.select().from(plans).where(eq(plans.id, planId));
+    if (!plan)
+      return apiResponse.notFound(res, "Plan");
+    const isMember = await isUserTripMember(context, plan.tripId);
+    if (!isMember)
+      return apiResponse.forbidden(res);
+    const [deletedPlan] = await db_default.delete(plans).where(eq(plans.id, planId)).returning();
+    if (!deletedPlan)
+      return apiResponse.notFound(res, "Plan");
+    return apiResponse.okMessage(res, "Plan deleted successfully");
+  } catch (e) {
+    console.error("Error deleting plan:", e);
+    return apiResponse.internalServerError(res);
+  }
+});
+
+// src/handlers/plans/getPlan.ts
+init_db2();
+init_schema();
+init_drizzle_orm();
+var paramsSchema3 = external_exports.object({
+  planId: external_exports.coerce.number()
+});
+var getPlan = withAuth(async (req, res, context) => {
+  try {
+    const { planId } = paramsSchema3.parse(req.params);
+    const body = req.body;
+    const { tripId } = body;
+    const isMember = await isUserTripMember(context, tripId);
+    if (!isMember)
+      return apiResponse.forbidden(res);
+    if (!planId || isNaN(planId))
+      return apiResponse.badRequest(res, "Invalid plan ID");
+    const [plan] = await db_default.select().from(plans).where(eq(plans.id, planId));
+    if (!plan)
+      return apiResponse.notFound(res, "Plan");
+    return apiResponse.ok(res, { data: plan });
+  } catch (e) {
+    console.error("Error fetching plan:", e);
+    return apiResponse.internalServerError(res);
+  }
+});
+
+// src/handlers/plans/updatePlan.ts
+init_db2();
+init_schema();
+init_drizzle_orm();
+var paramsSchema4 = external_exports.object({
+  planId: external_exports.coerce.number()
+});
+var updatePlan = withAuth(async (req, res, context) => {
+  try {
+    const { planId } = paramsSchema4.parse(req.params);
+    const body = req.body;
+    const tripId = body.tripId;
+    if (!planId || isNaN(planId))
+      return apiResponse.badRequest(res, "Invalid plan ID");
+    const isMember = await isUserTripMember(context, tripId);
+    if (!isMember)
+      return apiResponse.forbidden(res);
+    const [plan] = await db_default.select().from(plans).where(eq(plans.id, planId));
+    if (!plan)
+      return apiResponse.notFound(res, "Plan");
+    const [updatedPlan] = await db_default.update(plans).set({
+      name: body.name,
+      description: body.description
+    }).where(eq(plans.id, planId)).returning();
+    if (!updatedPlan)
+      return apiResponse.notFound(res, "Plan");
+    return apiResponse.ok(res, {
+      message: "Plan updated successfully",
+      data: updatedPlan
+    });
+  } catch (e) {
+    console.error("Error updating plan:", e);
+    return apiResponse.internalServerError(res);
+  }
+});
+
+// src/handlers/segments/createSegment.ts
+init_db2();
+init_schema();
+var createSegment = withAuth(async (req, res, context) => {
+  try {
+    const {
+      tripId,
+      planId,
+      startDate,
+      endDate,
+      name: name2,
+      color
+    } = req.body;
+    if (!tripId)
+      return apiResponse.invalidParams(res, "Param tripId is required");
+    if (!planId)
+      return apiResponse.invalidParams(res, "Param planId is required");
+    if (!name2?.length)
+      return apiResponse.invalidParams(res, "Param name is required");
+    if (!startDate?.length)
+      return apiResponse.invalidParams(res, "Param startDate is required");
+    if (!endDate?.length)
+      return apiResponse.invalidParams(res, "Param endDate is required");
+    const isMember = await isUserTripMember(context, tripId);
+    if (!isMember)
+      return apiResponse.forbidden(res);
+    const [createdSegment] = await db_default.insert(segments).values({
+      tripId,
+      planId,
+      startDate,
+      endDate,
+      name: name2,
+      color
+    }).returning();
+    return apiResponse.ok(res, {
+      message: "Segment created successfully",
+      data: createdSegment
+    });
+  } catch (e) {
+    console.error("Error creating segment:", e);
+    return apiResponse.internalServerError(res);
+  }
+});
+
+// src/handlers/segments/deleteSegment.ts
+init_db2();
+init_schema();
+init_drizzle_orm();
+var deleteSegment = withAuth(async (req, res, context) => {
+  try {
+    const { tripId, planId, segmentIds } = req.body;
+    if (!Array.isArray(segmentIds) || !segmentIds.length)
+      return apiResponse.invalidParams(res, "Param segmentIds is required and must be non-empty array");
+    if (!tripId)
+      return apiResponse.invalidParams(res, "Param tripId is required");
+    if (!planId)
+      return apiResponse.invalidParams(res, "Param planId is required");
+    const isMember = await isUserTripMember(context, tripId);
+    if (!isMember)
+      return apiResponse.forbidden(res);
+    await db_default.transaction(async (tx) => {
+      await tx.delete(segments).where(and(
+        eq(segments.tripId, tripId),
+        eq(segments.planId, planId),
+        inArray(segments.id, segmentIds)
+      ));
+    });
+    return apiResponse.okMessage(res, "Segments deleted successfully");
+  } catch (e) {
+    console.error("Error deleting segments:", e);
+    return apiResponse.internalServerError(res);
+  }
+});
+
+// ../../packages/shared/src/db/repos/segments.ts
+init_schema();
+init_drizzle_orm();
+var SegmentsRepository = class _SegmentsRepository extends repo_default {
+  constructor(db2) {
+    super("segment", "segments", segments, db2);
+  }
+  tx(transaction) {
+    return new _SegmentsRepository(transaction);
+  }
+  async createWithNextDate(data) {
+    if (!data.tripId)
+      throw new Error("createWithNextDate: tripId required");
+    const segments2 = await this.findAllByTripId(data.tripId);
+    console.log("@@@@ testing", segments2);
+    throw new Error("Not yet implemented");
+  }
+  async findAllByTripId(tripId) {
+    try {
+      const segments2 = await this.db.select().from(segments).where(eq(segments.tripId, tripId)).orderBy(asc(segments.startDate));
+      return segments2.map((s) => ({
+        ...s,
+        startDate: this.normalizeDateValue(s.startDate),
+        endDate: this.normalizeDateValue(s.endDate)
+      }));
+    } catch (e) {
+      console.error(`Error fetching ${this.plural} for trip ${tripId}:`, e);
+      throw new Error(`Failed to fetch ${this.plural}`);
+    }
+  }
+  async findAllByPlanId(planId) {
+    try {
+      const segments2 = await this.db.select().from(this.schema).where(eq(this.schema.planId, planId)).orderBy(asc(this.schema.startDate));
+      return segments2.map((s) => ({
+        ...s,
+        startDate: this.normalizeDateValue(s.startDate),
+        endDate: this.normalizeDateValue(s.endDate)
+      }));
+    } catch (e) {
+      console.error(`Error fetching ${this.plural} for plan ${planId}:`, e);
+      throw new Error(`Failed to fetch ${this.plural}`);
+    }
+  }
+};
+var segments_default = new SegmentsRepository();
+
+// src/handlers/segments/getSegments.ts
+var getSegments = withAuth(async (_req, res, _context) => {
+  try {
+    const segments2 = await segments_default.findAll();
+    return apiResponse.ok(res, segments2);
+  } catch (e) {
+    console.error("Error getting segments:", e);
+    return apiResponse.internalServerError(res);
+  }
+});
+
+// src/handlers/segments/updateSegment.ts
+init_schema();
+var import_dayjs3 = __toESM(require_dayjs_min());
+init_drizzle_orm();
+var paramsSchema5 = external_exports.object({
+  segmentId: external_exports.coerce.number()
+});
+var updateSegment = withAuth(async (req, res, _context) => {
+  const { segmentId } = paramsSchema5.parse(req.params);
+  try {
+    const segment = await segments_default.findOneById(segmentId);
+    if (!segment || segment.id !== segmentId)
+      return apiResponse.notFound(res, "Segment");
+    const segmentData = req.body;
+    const { cascadeEnabled } = segmentData;
+    let payload = getUpdatePayload(segment, segmentData, ["tripId", "planId", "cascadeEnabled"]);
+    payload = convertStringDates(payload, ["startDate", "endDate"]);
+    if (cascadeEnabled && (payload.startDate || payload.endDate)) {
+      const segments2 = await segments_default.findAllByPlanId(segment.planId);
+      const targetIndex = segments2.findIndex((s) => s.id === segmentId);
+      if (targetIndex === -1)
+        return apiResponse.notFound(res, "Segment not found in plan");
+      const currentSegment = segments2[targetIndex];
+      const originalDuration = (0, import_dayjs3.default)(currentSegment.endDate).diff((0, import_dayjs3.default)(currentSegment.startDate), "day");
+      const updates = [];
+      const newStartDate = payload.startDate ? (0, import_dayjs3.default)(payload.startDate) : (0, import_dayjs3.default)(currentSegment.startDate);
+      const newEndDate = payload.endDate ? (0, import_dayjs3.default)(payload.endDate) : newStartDate.add(originalDuration, "day");
+      updates.push({ id: currentSegment.id, startDate: newStartDate.toDate(), endDate: newEndDate.toDate() });
+      let prevEnd = newEndDate;
+      for (let i = targetIndex + 1; i < segments2.length; i++) {
+        const seg = segments2[i];
+        const dur = (0, import_dayjs3.default)(seg.endDate).diff((0, import_dayjs3.default)(seg.startDate), "day");
+        const sStart = prevEnd;
+        const sEnd = sStart.add(dur, "day");
+        updates.push({ id: seg.id, startDate: sStart.toDate(), endDate: sEnd.toDate() });
+        prevEnd = sEnd;
+      }
+      const db2 = await Promise.resolve().then(() => (init_db2(), db_exports));
+      await db2.default.transaction(async (tx) => {
+        for (const u of updates) {
+          await tx.update(segments).set({
+            startDate: u.startDate,
+            endDate: u.endDate
+          }).where(eq(segments.id, u.id));
+        }
+      });
+      const reloaded = await segments_default.findOneById(segmentId);
+      if (!reloaded)
+        return apiResponse.notFound(res, "Segment");
+      return apiResponse.ok(res, {
+        message: "Segment dates updated successfully",
+        data: reloaded
+      });
+    }
+    const updatedSegment = await segments_default.updateById(segmentId, payload);
+    if (!updatedSegment)
+      return apiResponse.notFound(res, "Updated segment not found");
+    return apiResponse.ok(res, {
+      message: "Segment updated successfully",
+      data: updatedSegment
+    });
+  } catch (e) {
+    console.error(`Error updating segment ${segmentId}:`, e);
+    return apiResponse.internalServerError(res);
+  }
+});
+
+// ../../packages/shared/src/db/repos/plans.ts
+init_schema();
+init_drizzle_orm();
+var PlansRepository = class _PlansRepository extends repo_default {
+  constructor(db2) {
+    super("plan", "plans", plans, db2);
+  }
+  tx(transaction) {
+    return new _PlansRepository(transaction);
+  }
+  async findAllByTripId(tripId) {
+    try {
+      const plansWithSegments = await this.db.select({
+        plan: plans,
+        segment: segments
+      }).from(plans).leftJoin(segments, eq(segments.planId, plans.id)).where(eq(plans.tripId, tripId)).orderBy(asc(plans.id), asc(segments.startDate));
+      const plansMap = /* @__PURE__ */ new Map();
+      plansWithSegments.forEach(({ plan, segment }) => {
+        if (!plansMap.has(plan.id))
+          plansMap.set(plan.id, {
+            ...plan,
+            segments: [],
+            updatedAt: plan.updatedAt,
+            createdAt: plan.createdAt
+          });
+        if (segment)
+          plansMap.get(plan.id)?.segments?.push({
+            ...segment,
+            startDate: this.normalizeDateValue(segment.startDate),
+            endDate: this.normalizeDateValue(segment.endDate)
+          });
+      });
+      return Array.from(plansMap.values());
+    } catch (e) {
+      console.error(`Error fetching ${this.plural} for trip ${tripId}:`, e);
+      throw new Error(`Failed to fetch ${this.plural}`);
+    }
+  }
+};
+var plans_default = new PlansRepository();
+
+// ../../packages/shared/src/db/repos/trips.ts
+init_schema();
+init_drizzle_orm();
+var TripsRepository = class _TripsRepository extends repo_default {
+  constructor(db2) {
+    super("trip", "trips", trips, db2);
+  }
+  tx(transaction) {
+    return new _TripsRepository(transaction);
+  }
+  async findAllByUserId(userId) {
+    try {
+      const trips2 = await this.db.select({ trip: this.schema }).from(this.schema).innerJoin(
+        userTrips,
+        eq(userTrips.tripId, this.schema.id)
+      ).where(eq(userTrips.userId, userId)).orderBy(desc(this.schema.id));
+      return trips2.map((result) => ({
+        ...result.trip,
+        updatedAt: result.trip.updatedAt,
+        createdAt: result.trip.createdAt
+      }));
+    } catch (e) {
+      console.error(`Error fetching ${this.plural} for user ${userId}:`, e);
+      throw new Error(`Failed to fetch ${this.plural}`);
+    }
+  }
+  async findAllByUserIdWithDetails(userId, plansRepo) {
+    try {
+      const trips2 = await this.findAllByUserId(userId);
+      return await Promise.all(trips2.map(async (trip) => ({
+        ...trip,
+        plans: await plansRepo.findAllByTripId(trip.id)
+      })));
+    } catch (e) {
+      console.error(`Error fetching ${this.plural} with details for user ${userId}:`, e);
+      throw new Error(`Failed to fetch ${this.plural} with details`);
+    }
+  }
+  async findOneByName(name2, plansRepo, withDetails) {
+    try {
+      const trip = await this.findOneBy("name", name2);
+      if (!trip) return null;
+      if (!withDetails) return trip;
+      const plans2 = await plansRepo.findAllByTripId(trip.id);
+      return {
+        ...trip,
+        plans: plans2
+      };
+    } catch (e) {
+      console.error(`Error fetching ${this.name} for name ${name2}:`, e);
+      throw new Error(`Failed to fetch ${this.name}`);
+    }
+  }
+  async findAllByUserIdWithSegmentCount(userId, segmentsRepo = segments_default) {
+    try {
+      const trips2 = await this.findAllByUserId(userId);
+      return await Promise.all(trips2.map(async (trip) => {
+        const segments2 = await segmentsRepo.findAllByTripId(trip.id);
+        return {
+          ...trip,
+          segmentCount: segments2.length
+        };
+      }));
+    } catch (e) {
+      console.error(`Error fetching ${this.plural} with segment counts for user ${userId}:`, e);
+      throw new Error(`Failed to fetch ${this.plural} with segment counts`);
+    }
+  }
+  async findAllByUserIdWithDetailsAndSegmentCount(userId, plansRepo) {
+    const trips2 = await this.findAllByUserIdWithDetails(userId, plansRepo);
+    return trips2.map((trip) => ({
+      ...trip,
+      segmentCount: trip.plans?.reduce((total, plan) => total + (plan.segments?.length || 0), 0) || 0
+    }));
+  }
+  async findOneWithDetails(id, plansRepo) {
+    try {
+      const trip = await this.findOneById(id);
+      if (!trip) return null;
+      const plans2 = await plansRepo.findAllByTripId(id);
+      return {
+        ...trip,
+        plans: plans2
+      };
+    } catch (e) {
+      console.error(`Error fetching ${this.name} details for ${id}:`, e);
+      throw new Error(`Failed to fetch ${this.name} details`);
+    }
+  }
+};
+var trips_default = new TripsRepository();
+
+// ../../packages/shared/src/utils/json-schemas/trip-backup.jsonschema.ts
+var coordsSchema = {
+  type: "object",
+  properties: {
+    lat: { anyOf: [{ type: "number" }, { type: "null" }] },
+    lng: { anyOf: [{ type: "number" }, { type: "null" }] }
+  },
+  required: ["lat", "lng"],
+  additionalProperties: true
+};
+var segmentSchema = {
+  type: "object",
+  properties: {
+    id: { type: "string" },
+    name: { type: "string" },
+    color: { type: "string" },
+    coords: coordsSchema,
+    tripId: { type: "string" },
+    planId: { type: "string" },
+    createdAt: { anyOf: [{ type: "string" }, { type: "null" }] },
+    updatedAt: { anyOf: [{ type: "string" }, { type: "null" }] },
+    startDate: { anyOf: [{ type: "string" }, { type: "null" }] },
+    endDate: { anyOf: [{ type: "string" }, { type: "null" }] },
+    stayBooked: { type: "boolean" },
+    flightBooked: { type: "boolean" },
+    description: { type: "string" }
+  },
+  additionalProperties: true
+};
+var planSchema = {
+  type: "object",
+  properties: {
+    id: { type: "string" },
+    name: { type: "string" },
+    tripId: { type: "string" },
+    createdAt: { anyOf: [{ type: "string" }, { type: "null" }] },
+    updatedAt: { anyOf: [{ type: "string" }, { type: "null" }] },
+    segments: { type: "array", items: segmentSchema }
+  },
+  additionalProperties: true
+};
+var tripSchema = {
+  type: "object",
+  properties: {
+    id: { type: "string" },
+    name: { type: "string" },
+    description: { anyOf: [{ type: "string" }, { type: "null" }] },
+    coverImageUrl: { anyOf: [{ type: "string" }, { type: "null" }] },
+    createdAt: { anyOf: [{ type: "string" }, { type: "null" }] },
+    updatedAt: { anyOf: [{ type: "string" }, { type: "null" }] },
+    startDate: { anyOf: [{ type: "string" }, { type: "null" }] },
+    endDate: { anyOf: [{ type: "string" }, { type: "null" }] },
+    segments: { type: "array", items: segmentSchema },
+    plans: { type: "array", items: planSchema }
+  },
+  additionalProperties: true
+};
+var tripsWithPlansSchema = {
+  $id: "trip-backup.jsonschema",
+  type: "object",
+  properties: {
+    type: { type: "string" },
+    trips: { type: "array", items: tripSchema }
+  },
+  required: ["type", "trips"],
+  additionalProperties: true
+};
+var trip_backup_jsonschema_default = tripsWithPlansSchema;
+
+// src/handlers/trips/backupTrips.ts
+var import_ajv = __toESM(require_ajv());
+var import_dayjs4 = __toESM(require_dayjs_min());
+var ajvDebug = true;
+var dateToString = (date6, name2 = "") => {
+  const val = (0, import_dayjs4.default)(date6).format();
+  if (name2)
+    console.log("dateToString", name2, date6, val);
+  return val;
+};
+var transformSegment = (seg) => ({
+  id: String(seg.id),
+  name: seg.name,
+  color: seg.color,
+  coords: {
+    lat: seg.coordsLat === null ? null : Number(seg.coordsLat),
+    lng: seg.coordsLng === null ? null : Number(seg.coordsLng)
+  },
+  tripId: String(seg.tripId),
+  planId: seg.planId ? String(seg.planId) : void 0,
+  createdAt: dateToString(seg.createdAt, "seg/createdAt"),
+  updatedAt: dateToString(seg.updatedAt, "seg/updatedAt"),
+  startDate: dateToString(seg.startDate, "seg/startDate"),
+  endDate: dateToString(seg.endDate, "seg/endDate"),
+  stayBooked: Boolean(seg.stayBooked),
+  flightBooked: Boolean(seg.flightBooked),
+  description: seg.description || ""
+});
+var transformPlan = (plan) => ({
+  id: plan.id ? String(plan.id) : void 0,
+  name: plan.name,
+  tripId: plan.tripId ? String(plan.tripId) : void 0,
+  createdAt: dateToString(plan.createdAt, "plan/createdAt"),
+  updatedAt: dateToString(plan.updatedAt, "plan/updatedAt"),
+  segments: Array.isArray(plan.segments) ? plan.segments.map(transformSegment) : []
+});
+var transformTrip = (trip) => ({
+  id: String(trip.id),
+  createdAt: dateToString(trip.createdAt, "trip/createdAt"),
+  updatedAt: dateToString(trip.updatedAt, "trip/updatedAt"),
+  name: trip.name,
+  description: trip.description || "",
+  coverImageUrl: trip.coverImageUrl || null,
+  plans: Array.isArray(trip.plans) ? trip.plans.map(transformPlan) : [],
+  segments: Array.isArray(trip.segments) ? trip.segments.map(transformSegment) : []
+});
+var backupTrips = withAuth(async (req, res, context) => {
+  try {
+    const { userId } = context;
+    const body = req.body;
+    const ajvProps = ajvDebug ? { allErrors: true, verbose: true } : {};
+    const ajv = new import_ajv.default(ajvProps);
+    const validate = ajv.compile(trip_backup_jsonschema_default);
+    let trips2 = [];
+    if (body?.type === "single") {
+      const tripId = parseInt(body.tripId, 10);
+      if (!tripId)
+        return apiResponse.invalidParams(res, "tripId required for single backup");
+      const isMember = await isUserTripMember(context, tripId);
+      if (!isMember)
+        return apiResponse.forbidden(res);
+      const trip = await trips_default.findOneWithDetails(Number(tripId), plans_default);
+      if (!trip)
+        return apiResponse.notFound(res, "Trip not found");
+      trips2 = [transformTrip(trip)];
+    } else {
+      const requestedIds = Array.isArray(body?.tripIds) ? body.tripIds.map((id) => Number(id)) : null;
+      const userTrips2 = await trips_default.findAllByUserId(userId);
+      const filtered = requestedIds ? userTrips2.filter((t) => requestedIds.includes(Number(t.id))) : userTrips2;
+      const detailsPromises = filtered.map((t) => trips_default.findOneWithDetails(Number(t.id), plans_default));
+      const details = await Promise.all(detailsPromises);
+      trips2 = details.filter(Boolean).map((t) => transformTrip(t));
+    }
+    const data = { type: "multiple", trips: trips2 };
+    const valid = validate(data);
+    const currentYear = (/* @__PURE__ */ new Date()).getFullYear().toString();
+    if (!valid || !data.trips[0].plans[0].segments[0].startDate.startsWith(currentYear))
+      return apiResponse.fail(res, "Validation failed", 400, {
+        data: {
+          details: validate.errors
+        }
+      });
+    const fileName = `trips-backup-${(/* @__PURE__ */ new Date()).toISOString().replace(/[:.]/g, "-")}on`;
+    res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
+    res.json(data);
+  } catch (e) {
+    console.error("Error creating backup:", e);
+    return apiResponse.internalServerError(res);
+  }
+});
+
+// src/handlers/trips/getTrip.ts
+var paramsSchema6 = external_exports.object({
   tripId: external_exports.coerce.number()
 });
 var querySchema = external_exports.object({
   withDetails: external_exports.coerce.boolean().default(false)
 });
 var getTrip = withAuth(async (req, res, _context) => {
-  console.log("wtf", req.params);
-  const { tripId } = paramsSchema.parse(req.params);
+  const { tripId } = paramsSchema6.parse(req.params);
   const { withDetails } = querySchema.parse(req.query);
   const trip = withDetails ? await trips_default.findOneWithDetails(tripId, plans_default) : await trips_default.findOneById(tripId);
   return apiResponse.ok(res, trip);

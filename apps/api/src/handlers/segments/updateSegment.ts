@@ -7,6 +7,11 @@ import { type AuthContext, withAuth } from '@repo/shared/utils/auth'
 import dayjs from 'dayjs'
 import { eq } from 'drizzle-orm'
 import type { Request, Response } from 'express'
+import { z } from 'zod'
+
+const paramsSchema = z.object({
+    segmentId: z.coerce.number(),
+})
 
 export const updateSegment = withAuth(async (
     req: Request,
@@ -14,7 +19,7 @@ export const updateSegment = withAuth(async (
     _context: AuthContext,
 ): Promise<void> => {
     
-    const segmentId = parseInt(req.query.id as string, 10)
+    const { segmentId } = paramsSchema.parse(req.params)
     
     try {
         

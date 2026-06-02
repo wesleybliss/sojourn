@@ -4,6 +4,11 @@ import { apiResponse } from '@repo/shared/utils/api'
 import { type AuthContext, withAuth } from '@repo/shared/utils/auth'
 import { eq } from 'drizzle-orm'
 import type { Request, Response } from 'express'
+import { z } from 'zod'
+
+const paramsSchema = z.object({
+    placeId: z.coerce.number(),
+})
 
 export const updatePlace = withAuth(async (
     req: Request,
@@ -11,7 +16,7 @@ export const updatePlace = withAuth(async (
     _context: AuthContext,
 ): Promise<void> => {
     
-    const placeId = parseInt(req.query.id as string, 10)
+    const { placeId } = paramsSchema.parse(req.params)
     
     try {
         
