@@ -140,8 +140,6 @@ function pluginPathAliases() {
             // Major SDKs like firebase-admin are best externalized to avoid bundling issues.
             // Everything else will be bundled.
             const majorDependencies = [
-                'firebase-admin',
-                'firebase',
                 '@vercel/functions',
                 '@vercel/queue',
                 'groq-sdk',
