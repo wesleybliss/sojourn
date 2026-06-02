@@ -4,9 +4,9 @@ import type { Plan, Segment, Trip } from '@repo/shared/types'
 import { apiResponse } from '@repo/shared/utils/api'
 import { type AuthContext, isUserTripMember, withAuth } from '@repo/shared/utils/auth'
 import tripsWithPlansSchema from '@repo/shared/utils/json-schemas/trip-backup.jsonschema'
-import type { VercelRequest, VercelResponse } from '@vercel/node'
 import Ajv from 'ajv'
 import dayjs from 'dayjs'
+import type { Request, Response } from 'express'
 
 const ajvDebug = true
 
@@ -57,10 +57,10 @@ const transformTrip = (trip: Trip) => ({
 })
 
 export const backupTrips = withAuth(async (
-    req: VercelRequest,
-    res: VercelResponse,
+    req: Request,
+    res: Response,
     context: AuthContext,
-): Promise<VercelResponse> => {
+): Promise<void> => {
     
     try {
         
@@ -130,8 +130,7 @@ export const backupTrips = withAuth(async (
         const fileName = `trips-backup-${new Date().toISOString().replace(/[:.]/g, '-')}on`
         
         res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`)
-        
-        return res.json(data)
+        res.json(data)
         
     } catch (e) {
         console.error('Error creating backup:', e)

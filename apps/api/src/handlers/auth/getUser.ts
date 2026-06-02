@@ -1,13 +1,13 @@
 import HttpError from '@repo/shared/errors/HttpError'
 import { apiResponse } from '@repo/shared/utils/api'
 import { type AuthContext, authorize, withAuth } from '@repo/shared/utils/auth'
-import type { VercelRequest, VercelResponse } from '@vercel/node'
+import type { Request, Response } from 'express'
 
 export const getUser = withAuth(async (
-    req: VercelRequest,
-    res: VercelResponse,
+    req: Request,
+    res: Response,
     _context: AuthContext,
-): Promise<VercelResponse> => {
+): Promise<void> => {
     
     try {
         

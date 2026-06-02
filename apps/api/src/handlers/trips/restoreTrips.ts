@@ -3,9 +3,9 @@ import * as schemas from '@repo/shared/db/schema'
 import type { SegmentInsert, TripInsert } from '@repo/shared/types'
 import { apiResponse } from '@repo/shared/utils/api'
 import { type AuthContext, withAuth } from '@repo/shared/utils/auth'
-import type { VercelRequest, VercelResponse } from '@vercel/node'
 import type { Dayjs } from 'dayjs'
 import dayjs from 'dayjs'
+import type { Request, Response } from 'express'
 
 const toDate = (v: string | number | Date | Dayjs | null | undefined) => {
     const value = dayjs(v).toDate()
@@ -20,10 +20,10 @@ const toDate = (v: string | number | Date | Dayjs | null | undefined) => {
 }
 
 export const restoreTrips = withAuth(async (
-    req: VercelRequest,
-    res: VercelResponse,
+    req: Request,
+    res: Response,
     context: AuthContext,
-): Promise<VercelResponse> => {
+): Promise<void> => {
     
     try {
         

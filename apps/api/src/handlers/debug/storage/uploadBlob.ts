@@ -4,13 +4,13 @@ import usersRepo from '@repo/shared/db/repos/users'
 import { apiResponse } from '@repo/shared/utils/api'
 import { type AuthContext, withAuth } from '@repo/shared/utils/auth'
 import { putPlaceImageBuffer } from '@repo/shared/utils/storage/vercel-blob'
-import type { VercelRequest, VercelResponse } from '@vercel/node'
+import type { Request, Response } from 'express'
 
 export const uploadBlob = withAuth(async (
-    req: VercelRequest,
-    res: VercelResponse,
+    req: Request,
+    res: Response,
     context: AuthContext,
-): Promise<VercelResponse> => {
+): Promise<void> => {
     
     try {
         

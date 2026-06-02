@@ -3,14 +3,16 @@ import usersRepo from '@repo/shared/db/repos/users'
 import * as schemas from '@repo/shared/db/schema'
 import { apiResponse } from '@repo/shared/utils/api'
 import { type AuthContext, withAuth } from '@repo/shared/utils/auth'
-import type { VercelRequest, VercelResponse } from '@vercel/node'
+import type { Request, Response } from 'express'
 
 export const clearAll = withAuth(async (
-    _req: VercelRequest,
-    res: VercelResponse,
+    _req: Request,
+    res: Response,
     context: AuthContext,
-): Promise<VercelResponse> => {
+): Promise<void> => {
+    
     try {
+        
         const { userId } = context
         
         const user = await usersRepo.findOneById(userId)
@@ -26,8 +28,12 @@ export const clearAll = withAuth(async (
         await db.delete(schemas.trips)
         
         return apiResponse.okMessage(res, 'Database cleared successfully')
+        
     } catch (e) {
+        
         console.error('❌ Error clearing database:', e)
         return apiResponse.internalServerError(res)
+        
     }
+    
 })

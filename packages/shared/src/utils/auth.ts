@@ -3,29 +3,10 @@ import * as schemas from '@repo/shared/db/schema'
 import HttpError from '@repo/shared/errors/HttpError'
 import type { ID } from '@repo/shared/types/data'
 import type { UserSelect } from '@repo/shared/types/database'
-import { setCorsHeaders } from '@repo/shared/utils/api'
 import { adminAuth } from '@repo/shared/utils/firebase/admin'
-import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { and, eq, sql } from 'drizzle-orm'
+import type { Request, Response } from 'express'
 import type { DecodedIdToken } from 'firebase-admin/auth'
-
-/** @deprecated use verifyFirebaseToken instead */
-const verifyFirebaseTokenDeprecated = async (request: Request): Promise<DecodedIdToken> => {
-    const authHeader = request.headers.get('Authorization')
-    
-    if (!authHeader || !authHeader.startsWith('Bearer '))
-        throw new HttpError(401, 'Missing or invalid authorization header')
-    
-    const idToken = authHeader.substring(7)
-    
-    try {
-        // Decoded token
-        return await adminAuth.verifyIdToken(idToken)
-    } catch (error) {
-        console.error('Firebase token verification failed:', error)
-        throw new HttpError(401, 'Invalid or expired token')
-    }
-}
 
 /**
  * Extracts and verifies Firebase ID token from request Authorization header.
@@ -34,7 +15,7 @@ const verifyFirebaseTokenDeprecated = async (request: Request): Promise<DecodedI
  * @returns Decoded Firebase token
  * @throws HttpError 401 - If token is missing or invalid
  */
-const verifyFirebaseToken = async (request: VercelRequest): Promise<DecodedIdToken> => {
+const verifyFirebaseToken = async (request: Request): Promise<DecodedIdToken> => {
     
     const authHeader = request.headers.authorization
     
@@ -56,8 +37,8 @@ const verifyFirebaseToken = async (request: VercelRequest): Promise<DecodedIdTok
  * Gets or creates a user based on Firebase authentication.
  *
  * - If firebaseUid exists in DB, returns that user
- * - If not, attempts to link by email (claim legacy account)
- * - If no match, creates new user
+ * - If not, attempts to link by email (claim the legacy account)
+ * - If no match, creates a new user
  * - Handles enabled flag for beta access control
  *
  * @param firebaseUser - Decoded Firebase token containing uid, email, name, picture
@@ -72,7 +53,7 @@ const getOrCreateUser = async (firebaseUser: DecodedIdToken): Promise<UserSelect
     
     const normalizedEmail = email.toLowerCase().trim()
     
-    // 1. Try to find user by firebaseUid
+    // 1. Try to find a user by firebaseUid
     const [existingByUid] = await db
         .select()
         .from(schemas.users)
@@ -109,7 +90,7 @@ const getOrCreateUser = async (firebaseUser: DecodedIdToken): Promise<UserSelect
         return updated
     }
     
-    // 3. Create new user (enabled=false by default, will need invite code)
+    // 3. Create a new user (enabled=false by default, will need an invitation code)
     const [newUser] = await db
         .insert(schemas.users)
         .values({
@@ -124,25 +105,12 @@ const getOrCreateUser = async (firebaseUser: DecodedIdToken): Promise<UserSelect
     return newUser
 }
 
-/** @deprecated Use authorize instead */
-export const authorizeDeprecated = async (
-    request: Request,
-): Promise<{ user: UserSelect; firebaseToken: DecodedIdToken; userId: ID }> => {
-    
-    const firebaseToken = await verifyFirebaseTokenDeprecated(request)
-    
-    const user = await getOrCreateUser(firebaseToken)
-    
-    return { user, firebaseToken, userId: user.id }
-    
-}
-
 /**
  * Authorizes a user based on Firebase ID token from request.
  * Verifies Firebase token, gets or creates user in the database, and returns auth context.
  */
 export const authorize = async (
-    request: VercelRequest,
+    request: Request,
 ): Promise<{ user: UserSelect; firebaseToken: DecodedIdToken; userId: ID }> => {
     
     const firebaseToken = await verifyFirebaseToken(request)
@@ -159,79 +127,15 @@ export type AuthContext = {
     userId: ID
 }
 
-/** @deprecated Use AuthHandlerContext instead */
-export type AuthHandlerContextDeprecated<T = Record<string, never>> = {
-    auth: AuthContext
-    params: Promise<T>
-}
-
-export type AuthHandlerContext = {
-    auth: AuthContext
-}
-
-/** @deprecated Use withAuth instead */
-export const withAuthDeprecated = <T = Record<string, never>>(
-    handler: (_req: Request, _context: AuthHandlerContextDeprecated<T>) => Promise<Response>,
-) => async (request: Request, context: Partial<AuthHandlerContextDeprecated<T>> = {}) => {
-    
-    try {
-        
-        const auth = await authorizeDeprecated(request)
-        const newContext: AuthHandlerContextDeprecated<T> = {
-            ...context,
-            auth,
-            params: context.params ?? Promise.resolve({} as T),
-        }
-        
-        return await handler(request, newContext)
-        
-    } catch (e) {
-        
-        if (e instanceof HttpError)
-            return new Response(
-                JSON.stringify({ success: false, error: (e as HttpError).message }),
-                { status: (e as HttpError).status, headers: { 'Content-Type': 'application/json' } },
-            )
-        
-        console.error('Authorization error:', e)
-        return new Response(
-            JSON.stringify({ success: false, error: 'Internal Server Error' }),
-            { status: 500, headers: { 'Content-Type': 'application/json' } },
-        )
-        
-    }
-    
-}
-
-export const withCors = (
-    handler: (
-        req: VercelRequest,
-        res: VercelResponse,
-    ) => Promise<VercelResponse>,
-): (req: VercelRequest, res: VercelResponse) => Promise<VercelResponse> => {
-    
-    return async (req: VercelRequest, res: VercelResponse) => {
-        
-        const isCorsHandled = setCorsHeaders(req, res)
-        
-        if (isCorsHandled)
-            return isCorsHandled
-        
-        return handler(req, res)
-        
-    }
-    
-}
-
 export const withAuth = (
     handler: (
-        req: VercelRequest,
-        res: VercelResponse,
+        req: Request,
+        res: Response,
         context: AuthContext,
-    ) => VercelResponse | Promise<VercelResponse>,
-): (req: VercelRequest, res: VercelResponse) => Promise<VercelResponse> => {
+    ) => void | Promise<void>,
+): (req: Request, res: Response) => Promise<void> => {
     
-    return withCors(async (req: VercelRequest, res: VercelResponse) => {
+    return async (req: Request, res: Response): Promise<void> => {
         
         try {
             
@@ -243,14 +147,16 @@ export const withAuth = (
             
             console.error('Authorization error:', e)
             
-            if (e instanceof HttpError)
-                return res.status(e.status).json({ error: (e as HttpError).message })
+            if (e instanceof HttpError) {
+                res.status(e.status).json({ error: (e as HttpError).message })
+                return
+            }
             
-            return res.status(500).json({ error: 'Internal Server Error' })
+            res.status(500).json({ error: 'Internal Server Error' })
             
         }
         
-    })
+    }
     
 }
 

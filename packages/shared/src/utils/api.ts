@@ -1,11 +1,11 @@
 import type { ApiResult } from '@repo/shared/types'
 import { auth } from '@repo/shared/utils/firebase/client'
 import logger from '@repo/shared/utils/logger'
-import type { VercelRequest, VercelResponse } from '@vercel/node'
+import type { Request, Response } from 'express'
 
 /**
  * Adds CORS headers to the response.
- * Returns true if the request is an OPTIONS request, and was automatically handled.
+ * Returns true if the request is an OPTIONS request and was automatically handled.
  */
 const allowedHeaders = [
     'Authorization',
@@ -14,7 +14,7 @@ const allowedHeaders = [
     'Cache-Control',
 ].join(', ')
 
-export const setCorsHeaders = (req: VercelRequest, res: VercelResponse) => {
+export const setCorsHeaders = (req: Request, res: Response) => {
     
     const log = logger('setCorsHeaders')
     
@@ -55,23 +55,24 @@ export class ApiResponse<T> implements ApiResult<T> {
 }
 
 type ApiResponseHelper = {
-    ok: <T>(res: VercelResponse, data: T, status?: number) => VercelResponse
-    fail: <T>(res: VercelResponse, error: string, status: number, data?: T) => VercelResponse
-    okMessage: (res: VercelResponse, message: string) => VercelResponse
-    notFound: (res: VercelResponse, resource?: string) => VercelResponse
-    badRequest: (res: VercelResponse, message?: string) => VercelResponse
-    unauthorized: (res: VercelResponse, message?: string) => VercelResponse
-    forbidden: (res: VercelResponse, message?: string) => VercelResponse
-    invalidParams: (res: VercelResponse, message?: string) => VercelResponse
-    internalServerError: (res: VercelResponse, message?: string) => VercelResponse
+    ok: <T>(res: Response, data: T, status?: number) => void
+    fail: <T>(res: Response, error: string, status: number, data?: T) => void
+    okMessage: (res: Response, message: string) => void
+    notFound: (res: Response, resource?: string) => void
+    badRequest: (res: Response, message?: string) => void
+    unauthorized: (res: Response, message?: string) => void
+    forbidden: (res: Response, message?: string) => void
+    invalidParams: (res: Response, message?: string) => void
+    internalServerError: (res: Response, message?: string) => void
 }
 
 const apiResponseBase = {
-    ok: <T>(res: VercelResponse, data: T, status: number = 200): VercelResponse =>
-        res.status(status).json(new ApiResponse(data)),
-    fail: <T>(res: VercelResponse, error: string, status: number, data?: T): VercelResponse => {
+    ok: <T>(res: Response, data: T, status: number = 200): void => {
+        res.status(status).json(new ApiResponse(data))
+    },
+    fail: <T>(res: Response, error: string, status: number, data?: T): void => {
         console.error('apiResponse/fail', error, new Error('apiResponse fail'))
-        return res.status(status).json(new ApiResponse(data, error))
+        res.status(status).json(new ApiResponse(data, error))
     },
 }
 
@@ -79,22 +80,29 @@ export const apiResponse: ApiResponseHelper = {
     ...apiResponseBase,
     
     // Success helpers
-    okMessage: (res: VercelResponse, message: string) =>
-        apiResponseBase.ok<{ message: string }>(res, { message }),
+    okMessage: (res: Response, message: string) => {
+        apiResponseBase.ok<{ message: string }>(res, { message })
+    },
     
     // Failure helpers
-    notFound: (res: VercelResponse, resource: string = 'Resource') =>
-        apiResponseBase.fail(res, `${resource} not found`, 404),
-    badRequest: (res: VercelResponse, message: string = 'Bad request') =>
-        apiResponseBase.fail(res, message, 400),
-    unauthorized: (res: VercelResponse, message: string = 'Unauthorized') =>
-        apiResponseBase.fail(res, message, 401),
-    forbidden: (res: VercelResponse, message: string = 'Forbidden') =>
-        apiResponseBase.fail(res, message, 403),
-    invalidParams: (res: VercelResponse, message: string = 'Invalid params') =>
-        apiResponseBase.fail(res, message, 422),
-    internalServerError: (res: VercelResponse, message: string = 'Internal server error') =>
-        apiResponseBase.fail(res, message ?? 'Unknown error', 500),
+    notFound: (res: Response, resource: string = 'Resource') => {
+        apiResponseBase.fail(res, `${resource} not found`, 404)
+    },
+    badRequest: (res: Response, message: string = 'Bad request') => {
+        apiResponseBase.fail(res, message, 400)
+    },
+    unauthorized: (res: Response, message: string = 'Unauthorized') => {
+        apiResponseBase.fail(res, message, 401)
+    },
+    forbidden: (res: Response, message: string = 'Forbidden') => {
+        apiResponseBase.fail(res, message, 403)
+    },
+    invalidParams: (res: Response, message: string = 'Invalid params') => {
+        apiResponseBase.fail(res, message, 422)
+    },
+    internalServerError: (res: Response, message: string = 'Internal server error') => {
+        apiResponseBase.fail(res, message ?? 'Unknown error', 500)
+    },
 }
 
 /**

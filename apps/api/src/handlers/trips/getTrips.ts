@@ -1,13 +1,13 @@
 import tripsRepo from '@repo/shared/db/repos/trips'
 import { apiResponse } from '@repo/shared/utils/api'
-import { type AuthContext } from '@repo/shared/utils/auth'
-import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { type AuthContext, withAuth } from '@repo/shared/utils/auth'
+import type { Request, Response } from 'express'
 
-export const getTrips = async (
-    _req: VercelRequest,
-    res: VercelResponse,
+export const getTrips = withAuth(async (
+    _req: Request,
+    res: Response,
     context: AuthContext,
-): Promise<VercelResponse> => {
+): Promise<void> => {
     
     const trips = await tripsRepo.findAllByUserId(context.userId)
     
@@ -17,4 +17,4 @@ export const getTrips = async (
     
     return apiResponse.ok(res, trips)
     
-}
+})

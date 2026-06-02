@@ -2,14 +2,14 @@ import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import { apiResponse } from '@repo/shared/utils/api'
 import { type AuthContext, withAuth } from '@repo/shared/utils/auth'
-import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { eq } from 'drizzle-orm'
+import type { Request, Response } from 'express'
 
 export const updatePlace = withAuth(async (
-    req: VercelRequest,
-    res: VercelResponse,
+    req: Request,
+    res: Response,
     _context: AuthContext,
-): Promise<VercelResponse> => {
+): Promise<void> => {
     
     const placeId = parseInt(req.query.id as string, 10)
     
