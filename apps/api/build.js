@@ -139,8 +139,9 @@ function pluginPathAliases() {
             // For other packages (node_modules), check if we should externalize them.
             // Major SDKs like firebase-admin are best externalized to avoid bundling issues.
             // Everything else will be bundled.
-            // Ex: @libsql contains platform-specific native binaries that can't be statically bundled;
-            // they must be externalized so Vercel can install and resolve them at runtime.
+            // Important: do not externalize @libsql/client in this app.
+            // The Vercel deploy ships prebuilt /api/*.js files from the repo root, not an app-local
+            // node_modules tree. The shared DB layer uses the HTTP-only libsql driver so it can stay bundled.
             const majorDependencies = [
                 '@vercel/functions',
                 '@vercel/queue',
