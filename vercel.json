@@ -19,6 +19,12 @@
             "dest": "/index.html"
         }
     ],
+    "rewrites": [
+        {
+            "source": "/api/:path*",
+            "destination": "/api"
+        }
+    ],
     "github": {
         "silent": true
     }
