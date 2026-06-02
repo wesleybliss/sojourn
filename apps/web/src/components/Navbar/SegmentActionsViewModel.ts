@@ -46,6 +46,7 @@ const SegmentActionsViewModel = (
         addSegmentMutation.mutate(newSegment, {
             onSuccess: () => {
                 toast('Segment added')
+                queryClient.invalidateQueries({ queryKey: ['trip', currentTrip.id] })
             },
         })
         

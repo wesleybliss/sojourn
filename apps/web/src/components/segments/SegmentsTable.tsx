@@ -1,5 +1,5 @@
+import { useWireValue } from '@forminator/react-wire'
 import { ID, ItemWithId, Segment } from '@repo/shared/types'
-import { cn } from '@repo/shared/utils'
 import dayjs from 'dayjs'
 import {
     BedDouble,
@@ -8,7 +8,7 @@ import {
     Check,
     CheckCheck,
     Clock,
-    Globe,
+    Globe, MapPinPlus,
     Plane,
     SquareArrowDown,
     SquareArrowUp,
@@ -18,20 +18,13 @@ import { useCallback } from 'react'
 import ConfirmDeleteSegmentsDialog from '@/components/ConfirmDeleteSegmentsDialog'
 import DatePicker from '@/components/DatePicker'
 import EditableTextField from '@/components/EditableTextField'
+import useSegmentActionsViewModel from '@/components/Navbar/SegmentActionsViewModel'
 import TailwindPrimaryColorPicker from '@/components/TailwindPrimaryColorPicker'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Switch } from '@/components/ui/switch'
-import {
-    Table,
-    TableBody,
-    TableCell,
-    // TableCaption,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table'
 import useCheckItems from '@/hooks/useCheckItems'
+import * as store from '@/store'
 
 interface SegmentsTableProps {
     segments: Segment[]
@@ -53,6 +46,9 @@ const SegmentsTable = ({
     getSegmentCompleted,
 }: SegmentsTableProps) => {
     
+    const currentTrip = useWireValue(store.currentTrip)
+    const currentPlan = useWireValue(store.currentPlan)
+    
     const {
         checked,
         anyChecked,
@@ -62,6 +58,8 @@ const SegmentsTable = ({
         toggleChecked,
         toggleAllChecked,
     } = useCheckItems(segments as ItemWithId[])
+    
+    const segmentActionsViewModel = useSegmentActionsViewModel(currentTrip, currentPlan)
     
     const updateCheckedSegments = useCallback((field: keyof Segment) => async (e: boolean) => {
         
@@ -74,197 +72,212 @@ const SegmentsTable = ({
     
     return (
         
-        <Table>
-            {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-            <TableHeader>
-                <TableRow>
-                    <TableHead>
+        <table className="table-auto min-w-full text-sm">
+            
+            <thead className="bg-surface-container-low text-left text-xs 
+                uppercase tracking-[0.18em] text-muted-foreground">
+                <tr>
+                    <th className="px-4 py-3 font-medium w-5">
                         <Checkbox
                             checked={allChecked ? true : someChecked ? 'indeterminate' : false}
                             onCheckedChange={checked => toggleAllChecked(checked === true)} />
-                    </TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Start Date</TableHead>
-                    <TableHead>End Date</TableHead>
-                    <TableHead>
-                        <div
-                            className="mx-auto size-6 rounded-full bg-conic/decreasing
-                                from-violet-700 via-lime-300 to-violet-700 opacity-60"
+                    </th>
+                    <th className="px-4 py-3 font-medium">Name</th>
+                    <th className="px-4 py-3 font-medium">Start Date</th>
+                    <th className="px-4 py-3 font-medium">End Date</th>
+                    <th className="px-4 py-3 font-medium">
+                        <div className="flex items-center justify-center">
+                            <div className="
+                             mx-auto size-6 rounded-full 
+                             bg-conic/decreasing from-violet-700 via-lime-300 to-violet-700 opacity-60"
                             title="Segment Color" />
-                    </TableHead>
-                    <TableHead>
-                        <div title="Segment Days">
+                        </div>
+                    </th>
+                    <th className="px-4 py-3 font-medium">
+                        <div title="Segment Days" className="flex items-center justify-center">
                             <CalendarCheck className="mx-auto" />
                         </div>
-                    </TableHead>
-                    <TableHead>
-                        <div title="Cumulative Days">
+                    </th>
+                    <th className="px-4 py-3 font-medium">
+                        <div title="Cumulative Days" className="flex items-center justify-center">
                             <CalendarRange className="mx-auto" />
                         </div>
-                    </TableHead>
-                    <TableHead>
-                        <div title="Flight Booked">
+                    </th>
+                    <th className="px-4 py-3 font-medium">
+                        <div title="Flight Booked" className="flex items-center justify-center">
                             <Plane />
                         </div>
-                    </TableHead>
-                    <TableHead>
-                        <div title="Stay Booked">
+                    </th>
+                    <th className="px-4 py-3 font-medium">
+                        <div title="Stay Booked" className="flex items-center justify-center">
                             <BedDouble />
                         </div>
-                    </TableHead>
-                    <TableHead>
-                        <div title="Shengen Region">
+                    </th>
+                    <th className="px-4 py-3 font-medium">
+                        <div title="Shengen Region" className="flex items-center justify-center">
                             <Globe size="1.5rem" />
                         </div>
-                    </TableHead>
-                    <TableHead className="w-5 pl-2 pr-0">
-                        <div className="flex items-center" title="Segment completed, planned, or pending">
+                    </th>
+                    <th className="px-4 py-3 font-medium w-5">
+                        <div className="
+                         flex items-center justify-center"
+                        title="Segment completed, planned, or pending">
                             <Clock size="1.5rem" />
                         </div>
-                    </TableHead>
-                    <TableHead>{/* Delete Icon */}&nbsp;</TableHead>
-                </TableRow>
+                    </th>
+                    <th className="px-4 py-3 font-medium">Actions</th>
+                </tr>
                 {anyChecked && (
-                    <TableRow>
-                        <TableHead>&nbsp;</TableHead>
-                        <TableHead>&nbsp;</TableHead>
-                        <TableHead>&nbsp;</TableHead>
-                        <TableHead>&nbsp;</TableHead>
-                        <TableHead>
-                            <div className={cn(
-                                'flex flex-col items-center justify-center',
-                                'border border-slate-400 rounded-md',
-                            )}>
+                    <tr>
+                        <td className="px-4 py-3">&nbsp;</td>
+                        <td className="px-4 py-3">&nbsp;</td>
+                        <td className="px-4 py-3">&nbsp;</td>
+                        <td className="px-4 py-3">&nbsp;</td>
+                        <td className="px-4 py-3">
+                            <div className="flex flex-col items-center justify-center 
+                                border border-slate-400 rounded-md">
                                 <TailwindPrimaryColorPicker
                                     value="bg-rainbow-right"
                                     onChange={updateCheckedSegments('color')} />
                             </div>
-                        </TableHead>
-                        <TableHead>&nbsp;</TableHead>
-                        <TableHead>&nbsp;</TableHead>
-                        <TableHead>&nbsp;</TableHead>
-                        <TableHead>&nbsp;</TableHead>
-                        <TableHead>&nbsp;</TableHead>
-                        <TableHead>&nbsp;</TableHead>
-                        <TableHead>
+                        </td>
+                        <td className="px-4 py-3">&nbsp;</td>
+                        <td className="px-4 py-3">&nbsp;</td>
+                        <td className="px-4 py-3">&nbsp;</td>
+                        <td className="px-4 py-3">&nbsp;</td>
+                        <td className="px-4 py-3">&nbsp;</td>
+                        <td className="px-4 py-3">
                             <ConfirmDeleteSegmentsDialog
                                 className={anyChecked ? '' : 'hidden'}
                                 isMultiple={anyChecked}
                                 disabled={!anyChecked}
                                 onConfirm={() => deleteSegments(checked)} />
-                        </TableHead>
-                    </TableRow>
+                        </td>
+                    </tr>
                 )}
-            </TableHeader>
-            <TableBody>
+            </thead>
+            <tbody className="divide-y divide-border/60">
                 {segments.map((it, i) => (
-                    <TableRow
+                    <tr
                         key={it.id}
                         data-id={it?.id}
                         className={dayjs(it.startDate as Date)
                             .isAfter(dayjs(it.endDate as Date)) ? 'border border-red-500' : ''}>
                         
-                        <TableCell className="w-5">
+                        <td className="px-4 py-3 w-5">
                             <Checkbox
                                 checked={hasChecked(it.id)}
                                 onCheckedChange={() => toggleChecked(it.id)} />
-                        </TableCell>
+                        </td>
                         
-                        <TableCell className="font-medium">
+                        <td className="px-4 py-3 min-w-40 font-medium">
                             <EditableTextField
                                 value={it.name || ''}
                                 placeholder="New segment"
                                 as="h5"
                                 onChange={updateSegment(it.id, 'name')} />
-                        </TableCell>
+                        </td>
                         
-                        <TableCell>
+                        <td className="px-4 py-3">
                             <DatePicker
-                                buttonClassName="!p-0 border-b border-secondary rounded-none
-                                    hover:no-underline hover:border-primary"
+                                buttonClassName="
+                                  !p-0 border-b border-secondary rounded-none 
+                                  hover:no-underline hover:border-primary"
                                 buttonVariant="link"
                                 date={it.startDate as Date || Date.now()}
                                 onSelect={updateSegment(it.id, 'startDate')} />
-                        </TableCell>
+                        </td>
                         
-                        <TableCell>
+                        <td className="px-4 py-3">
                             <DatePicker
-                                buttonClassName="!p-0 border-b border-secondary rounded-none
-                                    hover:no-underline hover:border-primary"
+                                buttonClassName="
+                                  !p-0 border-b border-secondary rounded-none 
+                                  hover:no-underline hover:border-primary"
                                 buttonVariant="link"
                                 date={it.endDate as Date || Date.now()}
                                 onSelect={updateSegment(it.id, 'endDate')} />
-                        </TableCell>
+                        </td>
                         
-                        <TableCell>
-                            <div className={cn(
-                                'flex flex-col items-center justify-center',
-                                'border border-secondary rounded-md',
-                            )}>
+                        <td className="px-4 py-3">
+                            <div className="
+                             flex flex-col items-center justify-center 
+                             border border-secondary rounded-md">
                                 <TailwindPrimaryColorPicker
                                     value={it.color}
                                     onChange={updateSegment(it.id, 'color')} />
                             </div>
-                        </TableCell>
+                        </td>
                         
-                        <TableCell className="text-center">
+                        <td className="px-4 py-3 text-center">
                             {getTotalDaysPerSegment(it)}
-                        </TableCell>
+                        </td>
                         
-                        <TableCell className="text-center">
+                        <td className="px-4 py-3 text-center">
                             {getCumulativeDaysPerSegment(i)}
-                        </TableCell>
+                        </td>
                         
-                        <TableCell>
+                        <td className="px-4 py-3">
                             <Switch
                                 checked={it.flightBooked}
                                 onCheckedChange={updateSegment(it.id, 'flightBooked')} />
-                        </TableCell>
+                        </td>
                         
-                        <TableCell>
+                        <td className="px-4 py-3">
                             <Switch
                                 checked={it.stayBooked}
                                 onCheckedChange={updateSegment(it.id, 'stayBooked')} />
-                        </TableCell>
+                        </td>
                         
-                        <TableCell>
+                        <td className="px-4 py-3">
                             <Switch
                                 checked={it.isShengenRegion}
                                 onCheckedChange={updateSegment(it.id, 'isShengenRegion')} />
-                        </TableCell>
+                        </td>
                         
-                        <TableCell className="text-center">
-                            <div className="flex items-center">
+                        <td className="px-4 py-3 text-center">
+                            <div className="flex items-center justify-center">
                                 {getSegmentCompleted(it)
                                     ? <CheckCheck className="text-emerald-500" />
                                     : getSegmentPlanned(it)
                                         ? <CheckCheck className="text-gray-500" />
                                         : <Check className="text-orange-500" />}
                             </div>
-                        </TableCell>
+                        </td>
                         
-                        <TableCell>
-                            <ConfirmDeleteSegmentsDialog
-                                isMultiple={someChecked}
-                                onConfirm={() => deleteSegments([it.id])} />
-                            <Button
-                                className="opacity-50 hover:opacity-100"
-                                variant="ghost"
-                                title="Move segment up">
-                                <SquareArrowUp />
-                            </Button>
-                            <Button
-                                className="opacity-50 hover:opacity-100"
-                                variant="ghost"
-                                title="Move segment down">
-                                <SquareArrowDown />
-                            </Button>
-                        </TableCell>
-                    
-                    </TableRow>
+                        <td className="px-4 py-3">
+                            <div className="flex items-center justify-center space-x-2">
+                                <ConfirmDeleteSegmentsDialog
+                                    isMultiple={someChecked}
+                                    onConfirm={() => deleteSegments([it.id])} />
+                                <Button
+                                    className="opacity-50 hover:opacity-100"
+                                    variant="ghost"
+                                    title="Move segment up">
+                                    <SquareArrowUp />
+                                </Button>
+                                <Button
+                                    className="opacity-50 hover:opacity-100"
+                                    variant="ghost"
+                                    title="Move segment down">
+                                    <SquareArrowDown />
+                                </Button>
+                            </div>
+                        </td>
+                    </tr>
                 ))}
-            </TableBody>
-        </Table>
+                
+                <tr>
+                    <td className="px-4 py-3 w-5" colSpan={12}>
+                        <Button
+                            variant="outline"
+                            onClick={segmentActionsViewModel.addSegment}>
+                            <MapPinPlus className="text-green-500" />
+                            Add a new segment
+                        </Button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
         
     )
     

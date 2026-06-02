@@ -35,9 +35,9 @@ const TripEditor = ({
     
     return (
         
-        <div className="Trip w-full flex flex-col flex-1 gap-4 p-4">
+        <div className="Trip w-full flex flex-col flex-1 gap-4">
             
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-2 section-card p-4 mt-3">
                 <div className="flex flex-col gap-2 w-fit">
                     {/* Only show empty state when trip is fully loaded, has a plan, and truly has no segments */}
                     {/* Don't show during fetching to avoid flash */}
@@ -63,8 +63,10 @@ const TripEditor = ({
             </div>
             
             {vm.trip && vm.currentPlan && vm.segments?.length > 0 && (
-                <div className="mt-4">
-                    <h3 className="text-lg font-semibold mb-2">Timeline</h3>
+                <div className="section-card p-4">
+                    <h3 className="text-lg font-semibold mb-2">
+                        Timeline
+                    </h3>
                     <SegmentsGanttChart plan={vm.currentPlan} />
                 </div>
             )}
