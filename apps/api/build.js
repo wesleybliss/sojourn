@@ -141,20 +141,18 @@ function pluginPathAliases() {
             // Everything else will be bundled.
             // @libsql contains platform-specific native binaries that can't be statically bundled;
             // they must be externalized so Vercel can install and resolve them at runtime.
-            const majorDependencies = ['@libsql']
-            
-            // @todo keep this for posterity
-                /*'@vercel/functions',
+            const majorDependencies = [
+                '@vercel/functions',
                 '@vercel/queue',
                 'groq-sdk',
                 'papaparse',
                 'google-gax',
                 '@google-cloud/firestore',
                 '@google-cloud/storage',
-                
+                '@libsql',
                 'express/lib/router',
                 'express/lib/router/layer',
-            ]*/
+            ]
             
             const isMajor = majorDependencies.some(dep =>
                 args.path === dep ||
