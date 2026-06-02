@@ -139,8 +139,8 @@ function pluginPathAliases() {
             // For other packages (node_modules), check if we should externalize them.
             // Major SDKs like firebase-admin are best externalized to avoid bundling issues.
             // Everything else will be bundled.
-            const majorDependencies = [
-                '@vercel/functions',
+            const majorDependencies = []
+                /*'@vercel/functions',
                 '@vercel/queue',
                 'groq-sdk',
                 'papaparse',
@@ -150,7 +150,7 @@ function pluginPathAliases() {
                 
                 'express/lib/router',
                 'express/lib/router/layer',
-            ]
+            ]*/
             
             const isMajor = majorDependencies.some(dep =>
                 args.path === dep ||
