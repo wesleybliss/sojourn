@@ -1,0 +1,14 @@
+
+.font-mono {
+    font-family: var(--font-data-mono), monospace;
+}
+
+.font-headline {
+    font-family: var(--font-headline-md), sans-serif;
+}
+
+.font-label-caps {
+    font-family: var(--font-label-caps), sans-serif;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}

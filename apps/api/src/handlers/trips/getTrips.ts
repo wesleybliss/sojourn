@@ -1,19 +1,45 @@
+import plansRepo from '@repo/shared/db/repos/plans'
 import tripsRepo from '@repo/shared/db/repos/trips'
 import { apiResponse } from '@repo/shared/utils/api'
 import { type AuthContext, withAuth } from '@repo/shared/utils/auth'
 import type { Request, Response } from 'express'
+import { z } from 'zod'
+
+const querySchema = z.object({
+    withCounts: z.coerce.boolean().default(false),
+    withDetails: z.coerce.boolean().default(false),
+})
 
 export const getTrips = withAuth(async (
-    _req: Request,
+    req: Request,
     res: Response,
     context: AuthContext,
 ): Promise<void> => {
     
-    const trips = await tripsRepo.findAllByUserId(context.userId)
+    const { withCounts, withDetails } = querySchema.parse(req.query)
     
-    /*return res.json({
-        data: trips,
-    })*/
+    if (withCounts && withDetails) {
+        const trips = await tripsRepo.findAllByUserIdWithDetailsAndSegmentCount(
+            context.userId,
+            plansRepo,
+        )
+        return apiResponse.ok(res, trips)
+    }
+    
+    if (withDetails) {
+        const trips = await tripsRepo.findAllByUserIdWithDetails(
+            context.userId,
+            plansRepo,
+        )
+        return apiResponse.ok(res, trips)
+    }
+    
+    if (withCounts) {
+        const trips = await tripsRepo.findAllByUserIdWithSegmentCount(context.userId)
+        return apiResponse.ok(res, trips)
+    }
+    
+    const trips = await tripsRepo.findAllByUserId(context.userId)
     
     return apiResponse.ok(res, trips)
     

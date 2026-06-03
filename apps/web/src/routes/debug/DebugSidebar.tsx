@@ -17,8 +17,8 @@ const DebugSidebar = ({
     
     return (
         
-        <aside className={`DebugSidebar h-screen bg-gray-100
-            border-r p-3 flex flex-col gap-2 text-sm ${className || ''}`}>
+        <aside className={`DebugSidebar h-screen section-card
+            p-8 flex flex-col gap-2 text-sm ${className || ''}`}>
             
             <header className="flex items-center justify-between mb-8">
                 <h1 className="font-bold opacity-50">Debug</h1>

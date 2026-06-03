@@ -1,0 +1,11 @@
+
+@layer utilities {
+    .absolute-center {
+        @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
+    }
+}
+
+.scrollbar-minimal::-webkit-scrollbar-thumb {
+    background-color: rgb(244 166 183 / 0.45);
+    border-radius: 999px;
+}

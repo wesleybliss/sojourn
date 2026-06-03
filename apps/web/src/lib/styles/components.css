@@ -1,0 +1,55 @@
+
+@layer components {
+
+    .shell-background {
+        /* @apply bg-[radial-gradient(circle_at_top_left,rgba(221,231,243,0.9),transparent_38%),linear-gradient(180deg,var(--surface)_0%,#eef3f8_100%)];
+        @apply dark:bg-[radial-gradient(circle_at_top_left,rgba(42,61,87,0.35),transparent_35%),linear-gradient(180deg,#091426_0%,#0d1728_100%)]; */
+        /* background-color: #0d0314; */
+        /* background: linear-gradient(135deg, #24182b 0%, #0d0314 100%); */
+        /* fffcfd fff7fa */
+        @apply bg-[linear-gradient(135deg,#fff7fa_0%,#f2fceb_100%)];
+        /* @apply dark:bg-[linear-gradient(135deg,#24182b_0%,#0d0314_100%)]; */
+        @apply dark:bg-[linear-gradient(135deg,#15061f_0%,#07020a_100%)];
+    }
+
+    .app-panel {
+        @apply rounded-[9px] border border-border/70 bg-surface-container-lowest;
+    }
+
+    .section-card {
+        @apply rounded-lg border border-border/70 bg-surface-container-lowest;
+    }
+
+    .hero-gradient {
+        background:
+                radial-gradient(circle at top, rgb(244 166 183 / 0.18), transparent 42%),
+                radial-gradient(circle at bottom right, rgb(138 215 203 / 0.08), transparent 28%),
+                linear-gradient(180deg, #14051f 0%, #210b30 100%);
+    }
+
+    .eyebrow {
+        @apply font-label-caps text-[0.68rem] text-muted-foreground;
+        letter-spacing: 0.22em;
+    }
+
+    .brand-gradient {
+        background: linear-gradient(
+                135deg,
+                #f4a6b7 0%,
+                #ef8ea6 45%,
+                #74c7ba 100%
+        );
+    }
+
+    .tropical-glow {
+        box-shadow:
+                0 0 0 1px rgb(244 166 183 / 0.12),
+                0 10px 40px rgb(244 166 183 / 0.18);
+    }
+
+    .tropical-glow-muted {
+        box-shadow:
+                0 0 0 1px rgb(244 166 183 / 0.08),
+                0 6px 14px rgb(244 166 183 / 0.08);
+    }
+}

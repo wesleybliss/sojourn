@@ -45,12 +45,6 @@ const TripCard = ({
         
     }, [trip.plans])
     
-    const statusLabel = segmentCount > 4
-        ? 'In Motion'
-        : segmentCount > 1
-            ? 'Drafting'
-            : 'New'
-    
     return (
         
         <article
@@ -72,12 +66,6 @@ const TripCard = ({
                             dark:bg-[linear-gradient(135deg,_#203149_0%,_#152235_55%,_#2a3d57_100%)]" />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#091426]/55 via-transparent to-transparent" />
-                <span
-                    className="absolute right-4 top-4 rounded-full bg-surface-container-lowest/92
-                        px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em]
-                        text-foreground shadow-sm">
-                    {statusLabel}
-                </span>
             </div>
             
             <div className="space-y-4 p-5">
