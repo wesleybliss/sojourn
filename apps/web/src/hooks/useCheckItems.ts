@@ -31,10 +31,7 @@ const useCheckItems = <T extends ItemWithId>(items: T[]): TCheckItems => {
         [items, checked],
     )
     
-    const anyChecked = useMemo(
-        () => allChecked || someChecked,
-        [allChecked, someChecked],
-    )
+    const anyChecked = checked.size > 0
     
     const hasChecked = useCallback((idOrIds: ID | ID[]) => {
         
@@ -121,13 +118,15 @@ const useCheckItems = <T extends ItemWithId>(items: T[]): TCheckItems => {
         } else if (forceAll === false) {
             setChecked(new Set())
         } else {
-            if (allChecked)
-                setChecked(new Set())
-            else
-                setChecked(new Set(items.map(it => it.id)))
+            setChecked(prev => {
+                const isAllChecked = items.length > 0 && prev.size === items.length
+                return isAllChecked
+                    ? new Set()
+                    : new Set(items.map(it => it.id))
+            })
         }
         
-    }, [allChecked, items])
+    }, [items])
     
     return {
         checked,
