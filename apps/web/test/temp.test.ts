@@ -1,4 +1,4 @@
-import { describe, expect, test } from '@jest/globals'
+import { describe, expect, test } from 'vitest'
 
 // @todo fix imports & move this to shared
 const withBaseUrl = (url: string, overrideBaseUrl?: string | null) => {

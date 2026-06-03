@@ -76,5 +76,10 @@ export default defineConfig(({ mode }) => {
         build: {
             outDir: 'dist',
         },
+        test: {
+            globals: true,
+            environment: 'jsdom',
+            setupFiles: './vitest.setup.ts',
+        },
     }
 })

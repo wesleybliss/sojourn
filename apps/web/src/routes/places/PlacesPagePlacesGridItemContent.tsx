@@ -1,28 +1,38 @@
-import { Place } from '@repo/shared/types'
+import { ListViewMode, ListViewModes, Place } from '@repo/shared/types'
 import { Bookmark, BookmarkCheck, CalendarRange, MapPinned } from 'lucide-react'
+
+import { cn } from '@/utils'
 
 export interface PlacesPagePlacesGridItemContentProps {
     place: Place
     segmentCount: number
+    listViewMode: ListViewMode
     toggleBookmark: (place: Place) => void
 }
 
 const PlacesPagePlacesGridItemContent = ({
     place,
     segmentCount,
+    listViewMode,
     toggleBookmark,
 }: PlacesPagePlacesGridItemContentProps) => {
     
     return (
         
-        <div className="space-y-4 p-5">
+        <div className={cn('w-full', {
+            'space-y-1 px-5': listViewMode === ListViewModes.list,
+            'space-y-4 p-5': listViewMode === ListViewModes.grid,
+        })}>
             
             <div className="flex items-start justify-between gap-3">
                 <div>
                     <div className="eyebrow mb-2">
                         Destination Card
                     </div>
-                    <h2 className="font-headline text-2xl font-semibold">
+                    <h2 className={cn('font-headline font-semibold', {
+                        'text-xl': listViewMode === ListViewModes.list,
+                        'text-2xl': listViewMode === ListViewModes.grid,
+                    })}>
                         {place.name}
                     </h2>
                 </div>
@@ -37,24 +47,30 @@ const PlacesPagePlacesGridItemContent = ({
                 </button>
             </div>
             
-            <div className="space-y-3 text-sm">
+            <div className={cn('space-y-3 text-sm', {
+                'flex flex-col lg:flex-row justify-between items-start gap-8': listViewMode === ListViewModes.list,
+            })}>
                 <div>
-                    <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                        Focus
+                    <div>
+                        <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                            Focus
+                        </div>
+                        <p className="mt-1 text-foreground/90">
+                            {place.focus || 'Add a destination focus to clarify '
+                                + 'why this place is on the shortlist.'}
+                        </p>
                     </div>
-                    <p className="mt-1 text-foreground/90">
-                        {place.focus || 'Add a destination focus to clarify '
-                            + 'why this place is on the shortlist.'}
-                    </p>
-                </div>
-                <div className="rounded-2xl bg-surface-container-low px-4 py-3">
-                    <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                        Quick tip
+                    <div className={cn('rounded-2xl bg-surface-container-low py-3', {
+                        'px-4': listViewMode === ListViewModes.list,
+                    })}>
+                        <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                            Quick tip
+                        </div>
+                        <p className="mt-1 text-foreground/90">
+                            {place.quickTip || 'Capture internet, transit, '
+                                + 'or neighborhood notes here.'}
+                        </p>
                     </div>
-                    <p className="mt-1 text-foreground/90">
-                        {place.quickTip || 'Capture internet, transit, '
-                            + 'or neighborhood notes here.'}
-                    </p>
                 </div>
                 <div>
                     <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">

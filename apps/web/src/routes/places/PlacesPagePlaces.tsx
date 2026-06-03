@@ -1,5 +1,6 @@
 import { ListViewMode, ListViewModes, Place } from '@repo/shared/types'
 
+import IndeterminateCheckbox from '@/components/IndeterminateCheckbox'
 import { Checkbox } from '@/components/ui/checkbox'
 import useCheckItems from '@/hooks/useCheckItems'
 import PlacesPagePlacesGridItemContent from '@/routes/places/PlacesPagePlacesGridItemContent'
@@ -22,7 +23,13 @@ const PlacesPagePlaces = ({
     toggleBookmark,
 }: PlacesPagePlacesProps) => {
     
-    const { hasChecked, toggleChecked } = useCheckItems(filteredPlaces)
+    const {
+        hasChecked,
+        allChecked,
+        anyChecked,
+        toggleChecked,
+        toggleAllChecked,
+    } = useCheckItems(filteredPlaces)
     
     if (isLoading) return <div className="section-card col-span-full">Loading...</div>
     
@@ -37,38 +44,47 @@ const PlacesPagePlaces = ({
     
     if (placesListViewMode === ListViewModes.list) return (
         
-        <div className="space-y-4">
+        <section className="space-y-4">
+            
+            <header className="w-full flex items-center">
+                <IndeterminateCheckbox
+                    checked={allChecked}
+                    indeterminate={anyChecked}
+                    onChange={() => toggleAllChecked(!allChecked)} />
+            </header>
             
             {filteredPlaces.map(place => {
                 
                 const segmentCount = getSegmentCountForPlace(place)
                 
                 return (
-                    <div key={place.id} className="flex items-start space-x-4 p-4 border rounded-md">
+                    
+                    <article key={place.id} className="flex items-start gap-4 p-4 border rounded-md">
+                        
                         <Checkbox
                             checked={hasChecked(place.id)}
                             onCheckedChange={() => toggleChecked(place.id)} />
-                        {/*<input
-                            type="checkbox"
-                            checked={checked.includes(place.id)}
-                            onChange={() => toggleChecked(place.id)}
-                            className="h-4 w-4 text-primary-600
-                                focus:ring-primary-500 border-gray-300 rounded" />*/}
-                        <div className="flex-1 space-y-2">
+                        
+                        <div className="flex-1 flex items-start gap-2">
+                            
                             <PlacesPagePlacesGridItemCoverImage
                                 place={place}
                                 listViewMode={placesListViewMode} />
+                            
                             <PlacesPagePlacesGridItemContent
                                 place={place}
                                 segmentCount={segmentCount}
+                                listViewMode={placesListViewMode}
                                 toggleBookmark={toggleBookmark}/>
+                        
                         </div>
-                    </div>
+                    
+                    </article>
                 )
                 
             })}
         
-        </div>
+        </section>
         
     )
     
@@ -85,7 +101,7 @@ const PlacesPagePlaces = ({
                     <article
                         key={place.id}
                         className="overflow-hidden rounded-[28px] border border-border/70
-                            bg-surface-container-lowest shadow-sm">
+                            bg-surface-container-lowest shadow-sm space-y-2">
                         
                         <PlacesPagePlacesGridItemCoverImage
                             place={place}
@@ -94,6 +110,7 @@ const PlacesPagePlaces = ({
                         <PlacesPagePlacesGridItemContent
                             place={place}
                             segmentCount={segmentCount}
+                            listViewMode={placesListViewMode}
                             toggleBookmark={toggleBookmark} />
                     
                     </article>

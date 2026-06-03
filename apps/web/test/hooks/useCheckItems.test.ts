@@ -1,6 +1,6 @@
-import { describe, expect, test } from '@jest/globals'
 import type { ItemWithId } from '@repo/shared/types/data'
 import { act, renderHook } from '@testing-library/react'
+import { describe, expect, test } from 'vitest'
 
 import useCheckItems from '@/hooks/useCheckItems'
 

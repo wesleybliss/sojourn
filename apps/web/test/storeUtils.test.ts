@@ -1,6 +1,6 @@
 import { createWire, Wire } from '@forminator/react-wire'
-import { beforeEach,describe, expect, test } from '@jest/globals'
 import { ID } from '@repo/shared/types'
+import { beforeEach,describe, expect, test } from 'vitest'
 
 import {
     addItemArray,

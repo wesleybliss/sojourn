@@ -16,13 +16,15 @@ const PlacesPagePlacesGridItemCoverImage = ({
         
         <div className={cn({
             'relative aspect-video overflow-hidden bg-surface-container': listViewMode === ListViewModes.grid,
-            'h-24 w-24 object-cover rounded-md shrink-0': listViewMode === ListViewModes.list,
+            'size-48 object-cover rounded-md shrink-0': listViewMode === ListViewModes.list,
         })}>
             
             {place.coverImageUrl ? (
                 <img
+                    className={cn('h-full w-full object-cover', {
+                        'rounded-md': listViewMode === ListViewModes.list,
+                    })}
                     alt={place.name}
-                    className="h-full w-full object-cover"
                     src={place.coverImageUrl} />
             ) : (
                 <div className="h-full w-full

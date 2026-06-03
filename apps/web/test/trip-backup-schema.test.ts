@@ -1,8 +1,8 @@
-import { test } from '@jest/globals'
 import schema from '@repo/shared/utils/json-schemas/trip-backup.jsonschema'
 import Ajv from 'ajv'
 import fs from 'fs'
 import path from 'path'
+import { test } from 'vitest'
 
 test('sample backup JSON validates against schema', () => {
     

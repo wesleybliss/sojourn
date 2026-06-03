@@ -41,9 +41,15 @@ const PlacesPageToolbar = ({
                         size-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
                         className="rounded-full pl-9"
-                        onChange={e => setQuery(e.target.value)}
                         placeholder="Search by name, notes, quick tip, or region"
-                        value={query} />
+                        value={query}
+                        onKeyUp={e => {
+                            if (e.key === 'Escape') {
+                                setQuery('')
+                                e.currentTarget.blur()
+                            }
+                        }}
+                        onChange={e => setQuery(e.target.value)} />
                 </div>
                 
                 <div className="flex items-center justify-center gap-2">
