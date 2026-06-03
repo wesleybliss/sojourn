@@ -23,11 +23,13 @@ const Navbar = () => {
                 <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                     <div className="min-w-0">
                         <div className="eyebrow mb-2">
-                            {vm.isTripWorkspace
-                                ? 'Trip Workspace'
-                                : vm.isPlacesPage
-                                    ? 'Saved Places'
-                                    : 'My Trips'}
+                            {vm.isDebugPage
+                                ? 'Debug'
+                                : vm.isTripWorkspace
+                                    ? 'Trip Workspace'
+                                    : vm.isPlacesPage
+                                        ? 'Saved Places'
+                                        : 'My Trips'}
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="min-w-0">

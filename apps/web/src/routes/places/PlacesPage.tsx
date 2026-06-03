@@ -1,6 +1,5 @@
 import InputDialog from '@/components/InputDialog'
 import ProtectedRoute from '@/components/ProtectedRoute'
-import PlacesPageHeader from '@/routes/places/PlacesPageHeader'
 import PlacesPagePlaces from '@/routes/places/PlacesPagePlaces'
 import PlacesPageRecentSegments from '@/routes/places/PlacesPageRecentSegments'
 import PlacesPageToolbar from '@/routes/places/PlacesPageToolbar'
@@ -16,9 +15,6 @@ const PlacesPage = () => {
             
             <div className="flex flex-col gap-8 py-4">
                 
-                <PlacesPageHeader
-                    onAddPlaceClick={() => vm.setAddPlaceDialogOpen(true)} />
-                
                 <PlacesPageToolbar
                     query={vm.search}
                     setQuery={vm.setSearch}
@@ -26,7 +22,8 @@ const PlacesPage = () => {
                     setPlacesListViewMode={vm.setPlacesListViewMode}
                     regionFilters={vm.regionFilters}
                     activeRegion={vm.activeRegion}
-                    setActiveRegion={vm.setActiveRegion} />
+                    setActiveRegion={vm.setActiveRegion}
+                    onAddPlaceClick={() => vm.setAddPlaceDialogOpen(true)} />
                 
                 <PlacesPagePlaces
                     isLoading={vm.isLoading}

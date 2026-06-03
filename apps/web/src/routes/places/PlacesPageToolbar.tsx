@@ -1,9 +1,10 @@
 import { ListViewMode, ListViewModes } from '@repo/shared/types'
 import { cn } from '@repo/shared/utils'
-import { Search } from 'lucide-react'
+import { Plus, Search } from 'lucide-react'
 import { Grid2x2, List } from 'lucide-react'
 import { Dispatch, SetStateAction } from 'react'
 
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
     ToggleGroup,
@@ -18,6 +19,7 @@ export interface PlacesPageSearchProps {
     regionFilters: string[]
     activeRegion: string
     setActiveRegion: Dispatch<SetStateAction<string>>
+    onAddPlaceClick: () => void
 }
 
 const PlacesPageToolbar = ({
@@ -28,6 +30,7 @@ const PlacesPageToolbar = ({
     regionFilters,
     activeRegion,
     setActiveRegion,
+    onAddPlaceClick,
 }: PlacesPageSearchProps) => {
     
     return (
@@ -68,6 +71,13 @@ const PlacesPageToolbar = ({
                 </div>
                 
                 <div className="flex flex-wrap gap-2">
+                    <Button className="rounded-full" onClick={onAddPlaceClick}>
+                        <Plus/>
+                        Add Place
+                    </Button>
+                    <div className="flex items-center content-center mx-4">
+                        <div className="h-6 w-px bg-primary/20" />
+                    </div>
                     {regionFilters.map(region => (
                         <button
                             className={cn(

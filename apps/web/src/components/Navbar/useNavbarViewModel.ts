@@ -31,6 +31,7 @@ export type TNavbarViewModel = {
     backupMutation: UseMutationResult<{ filename: string }, Error, BackupTripsBody, unknown>
     
     // Memos
+    isDebugPage: boolean
     isTripWorkspace: boolean
     isPlacesPage: boolean
     isImportPage: boolean
@@ -59,6 +60,7 @@ const useNavbarViewModel = (): TNavbarViewModel => {
     const createTripMutation = useCreateTripMutation()
     const backupMutation = useBackupTrips()
     
+    const isDebugPage = pathname?.startsWith('/debug')
     const isTripWorkspace = pathname?.startsWith('/trips/')
     const isPlacesPage = pathname?.startsWith('/places')
     const isImportPage = pathname?.startsWith('/import-trips')
@@ -146,6 +148,7 @@ const useNavbarViewModel = (): TNavbarViewModel => {
         backupMutation,
         
         // Memos
+        isDebugPage,
         isTripWorkspace,
         isPlacesPage,
         isImportPage,

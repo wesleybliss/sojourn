@@ -2,6 +2,7 @@ import { ListViewMode, ListViewModes, Place } from '@repo/shared/types'
 
 import IndeterminateCheckbox from '@/components/IndeterminateCheckbox'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
 import useCheckItems from '@/hooks/useCheckItems'
 import PlacesPagePlacesGridItemContent from '@/routes/places/PlacesPagePlacesGridItemContent'
 import PlacesPagePlacesGridItemCoverImage from '@/routes/places/PlacesPagePlacesGridItemCoverImage'
@@ -47,10 +48,15 @@ const PlacesPagePlaces = ({
         <section className="space-y-4">
             
             <header className="w-full flex items-center">
-                <IndeterminateCheckbox
-                    checked={allChecked}
-                    indeterminate={anyChecked}
-                    onChange={() => toggleAllChecked(!allChecked)} />
+                <div className="p-3 bg-secondary rounded-md">
+                    <Label className="text-muted-foreground">
+                        <IndeterminateCheckbox
+                            checked={allChecked}
+                            indeterminate={anyChecked}
+                            onChange={() => toggleAllChecked(!allChecked)} />
+                        Toggle All
+                    </Label>
+                </div>
             </header>
             
             {filteredPlaces.map(place => {
