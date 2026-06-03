@@ -101,6 +101,8 @@ export type Place = InferSelectModel<typeof schemas.places> & {
     region: string | null
     travelWindow: string | null
     isBookmarked: boolean
+    coordsLat?: number | null
+    coordsLng?: number | null
 }
 export type PlaceSelect = z.infer<typeof placeSelectSchema>
 export type PlaceInsert = z.infer<typeof placeInsertSchema> & {
@@ -110,6 +112,8 @@ export type PlaceInsert = z.infer<typeof placeInsertSchema> & {
     region?: string | null
     travelWindow?: string | null
     isBookmarked?: boolean
+    coordsLat?: number | null
+    coordsLng?: number | null
 }
 
 // Helper types

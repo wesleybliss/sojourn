@@ -64,6 +64,8 @@ export const places = table('places', {
     region: text('region'),
     travelWindow: text('travelWindow'),
     isBookmarked: integer('isBookmarked', { mode: 'boolean' }).default(false).notNull(),
+    coordsLat: real('coordsLat'),
+    coordsLng: real('coordsLng'),
 })
 
 /*

@@ -46,12 +46,19 @@ export const createSegment = withAuth(async (
         
         let latitude: number | null = null
         let longitude: number | null = null
-        
         // If coordinates are provided in the request, use them
-        if (typeof coordsLat === 'number' && typeof coordsLng === 'number') {
-            latitude = coordsLat
-            longitude = coordsLng
-        } else {
+        if (coordsLat != null && coordsLng != null) {
+            const latNum = Number(coordsLat)
+            const lngNum = Number(coordsLng)
+            if (!isNaN(latNum) && !isNaN(lngNum)) {
+                latitude = latNum
+                longitude = lngNum
+            } else {
+                console.warn('Invalid coordinates provided:', coordsLat, coordsLng)
+            }
+        }
+        // If coordinates are not valid, attempt to geocode the segment name
+        if (latitude === null || longitude === null) {
             // Otherwise, attempt to geocode the segment name
             try {
                 const geoResult = await geocode(name)

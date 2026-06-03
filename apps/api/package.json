@@ -18,7 +18,9 @@
         "eslint": "eslint .",
         "eslint:dry": "eslint --fix-dry-run .",
         "eslint:fix": "eslint --fix .",
-        "test": "vitest"
+        "test": "vitest",
+        "db:pull": "drizzle-kit pull",
+        "db:push": "drizzle-kit push"
     },
     "dependencies": {
         "@repo/shared": "workspace:*",
