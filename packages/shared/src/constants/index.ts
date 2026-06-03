@@ -15,6 +15,8 @@ key('isSidebarExpanded')
 key('trips')
 key('currentTrip')
 
+key('placesListViewMode')
+
 //
 
 export const themes = ['light', 'dark']

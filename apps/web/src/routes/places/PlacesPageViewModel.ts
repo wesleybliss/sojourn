@@ -1,4 +1,5 @@
-import { ApiResult } from '@repo/shared/types'
+import { useWireState } from '@forminator/react-wire'
+import { ApiResult, ListViewMode } from '@repo/shared/types'
 import { Place, Trip } from '@repo/shared/types/database'
 import { UseMutationResult } from '@tanstack/react-query'
 import dayjs from 'dayjs'
@@ -13,6 +14,7 @@ import {
     useUpdatePlace,
 } from '@/lib/queries/places'
 import { useTripsQuery } from '@/lib/queries/trips'
+import * as store from '@/store'
 
 export type PlaceRecord = Place & {
     focus?: string | null
@@ -39,6 +41,9 @@ export const sectionClasses = [
 ]
 
 export type TPlacesPageViewModel = {
+    // Global State
+    placesListViewMode: ListViewMode
+    setPlacesListViewMode: Dispatch<SetStateAction<ListViewMode>>
     // State
     search: string
     setSearch: Dispatch<SetStateAction<string>>
@@ -75,6 +80,8 @@ export type TPlacesPageViewModel = {
 }
 
 const usePlacesPageViewModel = (): TPlacesPageViewModel => {
+    
+    const [placesListViewMode, setPlacesListViewMode] = useWireState(store.placesListViewMode)
     
     const [search, setSearch] = useState('')
     const [activeRegion, setActiveRegion] = useState('All')
@@ -188,6 +195,10 @@ const usePlacesPageViewModel = (): TPlacesPageViewModel => {
     }
     
     return {
+        
+        // Global State
+        placesListViewMode,
+        setPlacesListViewMode,
         
         // State
         search,

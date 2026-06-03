@@ -3,7 +3,7 @@ import ProtectedRoute from '@/components/ProtectedRoute'
 import PlacesPageHeader from '@/routes/places/PlacesPageHeader'
 import PlacesPagePlacesGrid from '@/routes/places/PlacesPagePlacesGrid'
 import PlacesPageRecentSegments from '@/routes/places/PlacesPageRecentSegments'
-import PlacesPageSearch from '@/routes/places/PlacesPageSearch'
+import PlacesPageToolbar from '@/routes/places/PlacesPageToolbar'
 import usePlacesPageViewModel from '@/routes/places/PlacesPageViewModel'
 
 const PlacesPage = () => {
@@ -19,9 +19,11 @@ const PlacesPage = () => {
                 <PlacesPageHeader
                     onAddPlaceClick={() => vm.setAddPlaceDialogOpen(true)} />
                 
-                <PlacesPageSearch
+                <PlacesPageToolbar
                     query={vm.search}
                     setQuery={vm.setSearch}
+                    placesListViewMode={vm.placesListViewMode}
+                    setPlacesListViewMode={vm.setPlacesListViewMode}
                     regionFilters={vm.regionFilters}
                     activeRegion={vm.activeRegion}
                     setActiveRegion={vm.setActiveRegion} />
@@ -30,6 +32,7 @@ const PlacesPage = () => {
                     isLoading={vm.isLoading}
                     filteredPlaces={vm.filteredPlaces}
                     getSegmentCountForPlace={vm.getSegmentCountForPlace}
+                    placesListViewMode={vm.placesListViewMode}
                     toggleBookmark={vm.toggleBookmark} />
                 
                 <PlacesPageRecentSegments recentSegments={vm.recentSegments} />

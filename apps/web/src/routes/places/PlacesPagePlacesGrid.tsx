@@ -1,4 +1,4 @@
-import { Place } from '@repo/shared/types'
+import { ListViewMode, Place } from '@repo/shared/types'
 
 import PlacesPagePlacesGridItemContent from '@/routes/places/PlacesPagePlacesGridItemContent'
 import PlacesPagePlacesGridItemCoverImage from '@/routes/places/PlacesPagePlacesGridItemCoverImage'
@@ -6,6 +6,7 @@ import PlacesPagePlacesGridItemCoverImage from '@/routes/places/PlacesPagePlaces
 export interface PlacesPagePlacesGridProps {
     isLoading: boolean
     filteredPlaces: Place[]
+    placesListViewMode: ListViewMode
     getSegmentCountForPlace: (place: Place) => number
     toggleBookmark: (place: Place) => void
 }
@@ -13,6 +14,7 @@ export interface PlacesPagePlacesGridProps {
 const PlacesPagePlacesGrid = ({
     isLoading,
     filteredPlaces,
+    placesListViewMode,
     getSegmentCountForPlace,
     toggleBookmark,
 }: PlacesPagePlacesGridProps) => {

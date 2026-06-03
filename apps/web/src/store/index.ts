@@ -1,6 +1,6 @@
 import { createSelector,createWire } from '@forminator/react-wire'
 import { keys } from '@repo/shared/constants'
-import { ShengenData, Theme } from '@repo/shared/types'
+import { ListViewMode, ListViewModes, ShengenData, Theme } from '@repo/shared/types'
 import { ID } from '@repo/shared/types/data'
 import { Place, Plan, Segment, Trip } from '@repo/shared/types/database'
 import { calculateTotalDays } from '@repo/shared/utils'
@@ -52,6 +52,8 @@ export const showMap = createWire<boolean>(false)
 export const isTripEditMode = createWire<boolean>(false)
 
 export const isGanttChartLocked = createWire<boolean>(true)
+
+export const placesListViewMode = createPersistedWire<ListViewMode>(keys.placesListViewMode, ListViewModes.grid)
 
 //
 
