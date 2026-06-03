@@ -3,6 +3,7 @@ import { UpdatePlaceBody } from '@repo/shared/types/mutations'
 import { fetchJSON } from '@repo/shared/utils/api'
 import { keepPreviousData, useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query'
 
+import { useAuth } from '@/components/providers/AuthProvider'
 import { placesWithCoverImages } from '@/store'
 
 export type ShufflePlaceCoverPhotoBody = {
@@ -30,30 +31,34 @@ export type CreatePlaceBody = {
     isBookmarked?: boolean
 }
 
-export const usePlacesQuery = () => useQuery({
-    queryKey: ['places'],
-    queryFn: async () => {
-        
-        try {
-            
-            const result = await fetchJSON<Place[]>('places')
-            
-            if (result?.data?.length)
-                placesWithCoverImages.setValue(result.data)
-            
-            return result.data
-            
-        } catch (e) {
-            
-            console.error('queries/places', e)
-            throw e
-            
-        }
-        
-    },
-    placeholderData: keepPreviousData,
-    retry: 0,
-})
+export const usePlacesQuery = (opts = {}) => {
+    const { firebaseUser } = useAuth()
+
+    return useQuery({
+        queryKey: ['places'],
+        queryFn: async () => {
+            try {
+                const result = await fetchJSON<Place[]>('places')
+
+                if (result?.data?.length)
+                    placesWithCoverImages.setValue(result.data)
+
+                return result.data
+
+            } catch (e) {
+
+                console.error('queries/places', e)
+                throw e
+
+            }
+
+        },
+        enabled: !!firebaseUser,
+        placeholderData: keepPreviousData,
+        retry: 0,
+        ...opts,
+    })
+}
 
 export const useUpdatePlace = (): UseMutationResult<
     ApiResult<Place | null>,
