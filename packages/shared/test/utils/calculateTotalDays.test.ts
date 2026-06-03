@@ -3,6 +3,7 @@ import { calculateTotalDays } from '@repo/shared/utils'
 import dayjs from 'dayjs'
 
 describe('calculateTotalDays', () => {
+    
     test('should calculate total days between two dates', () => {
         const startDate = new Date('2023-01-01')
         const endDate = new Date('2023-01-05')
@@ -35,4 +36,5 @@ describe('calculateTotalDays', () => {
         
         expect(result.totalDays).toBe(4)
     })
+    
 })

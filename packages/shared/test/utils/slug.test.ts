@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { generateSlug } from '@repo/shared/utils'
 
 describe('generateSlug', () => {
+    
     test('should convert a simple title to slug', () => {
         expect(generateSlug('Hello World')).toBe('hello-world')
     })
@@ -33,4 +34,5 @@ describe('generateSlug', () => {
     test('should handle only special characters', () => {
         expect(generateSlug('@#$%')).toBe('')
     })
+    
 })

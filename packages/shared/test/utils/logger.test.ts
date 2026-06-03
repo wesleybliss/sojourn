@@ -3,6 +3,7 @@ import { describe, expect, test, vi } from 'vitest'
 import { LogLevels, Logger, defaultOptions, createLogger } from '@repo/shared/utils/logger'
 
 describe('LogLevels', () => {
+    
     test('should have correct log levels', () => {
         expect(LogLevels).toEqual({
             log: 'log',
@@ -18,9 +19,11 @@ describe('LogLevels', () => {
         const level: LogLevels['log'] = 'log'
         expect(level).toBe('log')
     })
+    
 })
 
 describe('Logger', () => {
+    
     test('should create instance with correct tag and options', () => {
         const tag = 'test-tag'
         const logger = new Logger(tag)
@@ -81,9 +84,11 @@ describe('Logger', () => {
         expect(typeof logger.w).toBe('function')
         expect(typeof logger.e).toBe('function')
     })
+    
 })
 
 describe('defaultOptions', () => {
+    
     test('should have correct default values', () => {
         expect(defaultOptions).toEqual({
             printLevel: true,
@@ -91,13 +96,16 @@ describe('defaultOptions', () => {
             colorize: process.env.LOG_COLORIZE === 'true',
         })
     })
+    
 })
 
 describe('createLogger', () => {
+    
     test('should create Logger instance', () => {
         const logger = createLogger('test-tag')
         
         expect(logger).toBeInstanceOf(Logger)
         expect(logger.tag).toBe('test-tag')
     })
+    
 })

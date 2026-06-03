@@ -5,6 +5,7 @@ import { createUser } from '#handlers/auth/createUser'
 import { getUser } from '#handlers/auth/getUser'
 import { clearAll } from '#handlers/debug/clearAll'
 import { uploadBlob } from '#handlers/debug/storage/uploadBlob'
+import { getIndex } from '#handlers/health'
 import { createPlace } from '#handlers/places/createPlace'
 import { getPlace } from '#handlers/places/getPlace'
 import { getPlaces } from '#handlers/places/getPlaces'
@@ -33,6 +34,9 @@ const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => P
 }
 
 const router = express.Router()
+
+router.get('/', getIndex)
+router.get('/health', getIndex)
 
 router.get('/auth', asyncHandler(getUser))
 router.post('/auth', asyncHandler(createUser))

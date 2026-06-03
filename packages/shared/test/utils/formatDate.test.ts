@@ -1,18 +1,19 @@
-import { describe, expect, test, vi } from 'vitest'
+import { describe, expect, test, beforeEach, afterEach } from 'vitest'
 import { formatDate } from '@repo/shared/utils'
 import dayjs from 'dayjs'
 
 const originalEnv = process.env.TZ
 
-beforeEach(() => {
-    process.env.TZ = 'UTC'
-})
-
-afterEach(() => {
-    process.env.TZ = originalEnv
-})
-
 describe('formatDate', () => {
+    
+    beforeEach(() => {
+        process.env.TZ = 'UTC'
+    })
+    
+    afterEach(() => {
+        process.env.TZ = originalEnv
+    })
+    
     test('should format date with default format', () => {
         const date = new Date('2023-01-01')
         const result = formatDate(date)
@@ -38,4 +39,5 @@ describe('formatDate', () => {
         // Just check that it returns a string
         expect(typeof result).toBe('string')
     })
+    
 })
