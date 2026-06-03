@@ -33,25 +33,25 @@ export type CreatePlaceBody = {
 
 export const usePlacesQuery = (opts = {}) => {
     const { firebaseUser } = useAuth()
-
+    
     return useQuery({
         queryKey: ['places'],
         queryFn: async () => {
             try {
                 const result = await fetchJSON<Place[]>('places')
-
+                
                 if (result?.data?.length)
                     placesWithCoverImages.setValue(result.data)
-
+                
                 return result.data
-
+                
             } catch (e) {
-
+                
                 console.error('queries/places', e)
                 throw e
-
+                
             }
-
+            
         },
         enabled: !!firebaseUser,
         placeholderData: keepPreviousData,

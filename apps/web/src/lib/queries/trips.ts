@@ -30,37 +30,37 @@ export const useTripsQuery = ({
     options,
 }: UseTripsQueryParams = {}): TripsQueryResult => {
     const { firebaseUser } = useAuth()
-
+    
     return useQuery({
         queryKey: ['trips', { withCounts, withDetails }],
         queryFn: async () => {
-
+            
             try {
-
+                
                 const searchParams = new URLSearchParams()
-
+                
                 if (withCounts)
                     searchParams.set('withCounts', 'true')
-
+                
                 if (withDetails)
                     searchParams.set('withDetails', 'true')
-
+                
                 const queryString = searchParams.toString()
                 const result = await fetchJSON<Array<Trip | TripWithSegmentCount>>(
                     `trips${queryString ? `?${queryString}` : ''}`,
                 )
-
+                
                 store.trips.setValue((result.data as Trip[]) || [])
-
+                
                 return result.data
-
+                
             } catch (e) {
-
+                
                 console.error('queries/trips', e)
                 throw e
-
+                
             }
-
+            
         },
         enabled: !!firebaseUser,
         placeholderData: keepPreviousData,

@@ -52,11 +52,11 @@ const useCheckItems = <T extends ItemWithId>(items: T[]): TCheckItems => {
             if (override)
                 setChecked(idOrIds)
             else
-                setChecked(prev => idOrIds.reduce((acc, it) => {
-                    if (!acc.includes(it))
-                        acc.push(it)
-                    return acc
-                }, prev))
+                setChecked(prev => {
+                    const next = new Set(prev)
+                    idOrIds.forEach(id => next.add(id))
+                    return Array.from(next)
+                })
             
         } else {
             

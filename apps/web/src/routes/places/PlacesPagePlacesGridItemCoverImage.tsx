@@ -1,16 +1,23 @@
-import { Place } from '@repo/shared/types'
+import { ListViewMode, ListViewModes, Place } from '@repo/shared/types'
+
+import { cn } from '@/utils'
 
 export interface PlacesPagePlacesGridItemCoverImageProps {
     place: Place
+    listViewMode: ListViewMode
 }
 
 const PlacesPagePlacesGridItemCoverImage = ({
     place,
+    listViewMode,
 }: PlacesPagePlacesGridItemCoverImageProps) => {
     
     return (
         
-        <div className="relative aspect-video overflow-hidden bg-surface-container">
+        <div className={cn({
+            'relative aspect-video overflow-hidden bg-surface-container': listViewMode === ListViewModes.grid,
+            'h-24 w-24 object-cover rounded-md shrink-0': listViewMode === ListViewModes.list,
+        })}>
             
             {place.coverImageUrl ? (
                 <img

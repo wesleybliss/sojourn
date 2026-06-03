@@ -1,7 +1,7 @@
 import InputDialog from '@/components/InputDialog'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import PlacesPageHeader from '@/routes/places/PlacesPageHeader'
-import PlacesPagePlacesGrid from '@/routes/places/PlacesPagePlacesGrid'
+import PlacesPagePlaces from '@/routes/places/PlacesPagePlaces'
 import PlacesPageRecentSegments from '@/routes/places/PlacesPageRecentSegments'
 import PlacesPageToolbar from '@/routes/places/PlacesPageToolbar'
 import usePlacesPageViewModel from '@/routes/places/PlacesPageViewModel'
@@ -28,7 +28,7 @@ const PlacesPage = () => {
                     activeRegion={vm.activeRegion}
                     setActiveRegion={vm.setActiveRegion} />
                 
-                <PlacesPagePlacesGrid
+                <PlacesPagePlaces
                     isLoading={vm.isLoading}
                     filteredPlaces={vm.filteredPlaces}
                     getSegmentCountForPlace={vm.getSegmentCountForPlace}
