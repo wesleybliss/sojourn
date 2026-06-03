@@ -2,6 +2,7 @@ import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import { apiResponse } from '@repo/shared/utils/api'
 import { type AuthContext, withAuth } from '@repo/shared/utils/auth'
+import { getUpdatePayload } from '@repo/shared/utils'
 import { eq } from 'drizzle-orm'
 import type { Request, Response } from 'express'
 import { z } from 'zod'
@@ -32,18 +33,11 @@ export const updatePlace = withAuth(async (
         if (!place)
             return apiResponse.notFound(res, 'Place')
         
+        const payload = getUpdatePayload(place, body, ['id'])
+        
         const [updatedPlace] = await db
             .update(schemas.places)
-            .set({
-                name: body.name,
-                coverImageUrl: body.coverImageUrl,
-                focus: body.focus,
-                quickTip: body.quickTip,
-                personalNotes: body.personalNotes,
-                region: body.region,
-                travelWindow: body.travelWindow,
-                isBookmarked: body.isBookmarked,
-            })
+            .set(payload)
             .where(eq(schemas.places.id, placeId))
             .returning()
         

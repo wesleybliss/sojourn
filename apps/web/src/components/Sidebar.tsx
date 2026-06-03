@@ -16,7 +16,7 @@ const navigationItems = [
     {
         href: '/',
         label: 'My Trips',
-        caption: 'Journeys',
+        caption: 'My Trips',
         icon: Map,
     },
     {
