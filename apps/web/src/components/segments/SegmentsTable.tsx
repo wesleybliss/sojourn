@@ -66,7 +66,8 @@ const SegmentsTable = ({
         if (!anyChecked)
             return console.warn('updateCheckedSegments called, but no segments checked')
         
-        await Promise.all(checked.map(it => updateSegment(it, field)(e)))
+        await Promise.all(Array.from(checked)
+            .map(it => updateSegment(it, field)(e)))
         
     }, [checked, anyChecked, updateSegment])
     
@@ -151,7 +152,7 @@ const SegmentsTable = ({
                                 className={anyChecked ? '' : 'hidden'}
                                 isMultiple={anyChecked}
                                 disabled={!anyChecked}
-                                onConfirm={() => deleteSegments(checked)} />
+                                onConfirm={() => deleteSegments(Array.from(checked))} />
                         </td>
                     </tr>
                 )}

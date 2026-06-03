@@ -16,7 +16,7 @@ describe('hooks/useCheckItems', () => {
         
         const { result } = renderHook(() => useCheckItems(items))
         
-        expect(result.current.checked).toEqual([])
+        expect(result.current.checked).toEqual(new Set([]))
         expect(result.current.allChecked).toBe(false)
         expect(result.current.someChecked).toBe(false)
         expect(result.current.anyChecked).toBe(false)
@@ -31,7 +31,7 @@ describe('hooks/useCheckItems', () => {
             result.current.setChecked(1)
         })
         
-        expect(result.current.checked).toEqual([1])
+        expect(result.current.checked).toEqual(new Set([1]))
         expect(result.current.hasChecked(1)).toBe(true)
         
     })
@@ -44,7 +44,7 @@ describe('hooks/useCheckItems', () => {
             result.current.setChecked([1, 2])
         })
         
-        expect(result.current.checked).toEqual([1, 2])
+        expect(result.current.checked).toEqual(new Set([1, 2]))
         expect(result.current.hasChecked([1, 2])).toBe(true)
         
     })
@@ -58,7 +58,7 @@ describe('hooks/useCheckItems', () => {
             result.current.setChecked(1)
         })
         
-        expect(result.current.checked).toEqual([1])
+        expect(result.current.checked).toEqual(new Set([1]))
         
     })
     
@@ -71,7 +71,7 @@ describe('hooks/useCheckItems', () => {
             result.current.setChecked([3], true)
         })
         
-        expect(result.current.checked).toEqual([3])
+        expect(result.current.checked).toEqual(new Set([3]))
         
     })
     
@@ -96,13 +96,13 @@ describe('hooks/useCheckItems', () => {
             result.current.toggleChecked(1)
         })
         
-        expect(result.current.checked).toEqual([1])
+        expect(result.current.checked).toEqual(new Set([1]))
         
         act(() => {
             result.current.toggleChecked(1)
         })
         
-        expect(result.current.checked).toEqual([])
+        expect(result.current.checked).toEqual(new Set([]))
         
     })
     
@@ -114,13 +114,13 @@ describe('hooks/useCheckItems', () => {
             result.current.toggleChecked([1, 2])
         })
         
-        expect(result.current.checked).toEqual([1, 2])
+        expect(result.current.checked).toEqual(new Set([1, 2]))
         
         act(() => {
             result.current.toggleChecked([2, 3])
         })
         
-        expect(result.current.checked.sort()).toEqual([1, 3])
+        expect(Array.from(result.current.checked).sort()).toEqual([1, 3])
         
     })
     
@@ -133,10 +133,14 @@ describe('hooks/useCheckItems', () => {
         })
         
         act(() => {
-            result.current.updateChecked(prev => [...prev, 2])
+            result.current.updateChecked(prev => {
+                const next = new Set(prev)
+                next.add(2)
+                return next
+            })
         })
         
-        expect(result.current.checked).toEqual([1, 2])
+        expect(result.current.checked).toEqual(new Set([1, 2]))
         
     })
     
@@ -148,7 +152,7 @@ describe('hooks/useCheckItems', () => {
             result.current.updateChecked([2, 3])
         })
         
-        expect(result.current.checked).toEqual([2, 3])
+        expect(result.current.checked).toEqual(new Set([2, 3]))
         
     })
     
@@ -160,7 +164,7 @@ describe('hooks/useCheckItems', () => {
             result.current.toggleAllChecked()
         })
         
-        expect(result.current.checked).toEqual([1, 2, 3])
+        expect(result.current.checked).toEqual(new Set([1, 2, 3]))
         expect(result.current.allChecked).toBe(true)
         expect(result.current.anyChecked).toBe(true)
         
@@ -178,7 +182,7 @@ describe('hooks/useCheckItems', () => {
             result.current.toggleAllChecked()
         })
         
-        expect(result.current.checked).toEqual([])
+        expect(result.current.checked).toEqual(new Set([]))
         expect(result.current.allChecked).toBe(false)
         
     })
@@ -191,7 +195,7 @@ describe('hooks/useCheckItems', () => {
             result.current.toggleAllChecked(true)
         })
         
-        expect(result.current.checked).toEqual([1, 2, 3])
+        expect(result.current.checked).toEqual(new Set([1, 2, 3]))
         
     })
     
@@ -204,7 +208,7 @@ describe('hooks/useCheckItems', () => {
             result.current.toggleAllChecked(false)
         })
         
-        expect(result.current.checked).toEqual([])
+        expect(result.current.checked).toEqual(new Set([]))
         
     })
     

@@ -2,13 +2,13 @@ import { ID, ItemWithId } from '@repo/shared/types/data'
 import { useCallback,useMemo, useState } from 'react'
 
 export type TCheckItems = {
-    checked: ID[]
+    checked: Set<ID>
     allChecked: boolean
     someChecked: boolean
     anyChecked: boolean
     hasChecked: (idOrIds: (ID | ID[])) => boolean
     setChecked: (idOrIds: (ID | ID[]), override?: boolean) => void
-    updateChecked: (fn: (ID[] | ((prev: ID[]) => ID[]))) => void
+    updateChecked: (fn: (ID[] | ((prev: Set<ID>) => Set<ID>))) => void
     toggleChecked: (idOrIds: (ID | ID[])) => void
     toggleAllChecked: (forceAll?: boolean) => void
 }
@@ -19,15 +19,15 @@ export type TCheckItems = {
  */
 const useCheckItems = <T extends ItemWithId>(items: T[]): TCheckItems => {
     
-    const [checked, setChecked] = useState<ID[]>([])
+    const [checked, setChecked] = useState<Set<ID>>(new Set())
     
     const allChecked = useMemo(
-        () => items.length > 0 && checked.length === items.length,
+        () => items.length > 0 && checked.size === items.length,
         [items, checked],
     )
     
     const someChecked = useMemo(
-        () => checked.length > 0 && checked.length < items.length,
+        () => checked.size > 0 && checked.size < items.length,
         [items, checked],
     )
     
@@ -39,9 +39,9 @@ const useCheckItems = <T extends ItemWithId>(items: T[]): TCheckItems => {
     const hasChecked = useCallback((idOrIds: ID | ID[]) => {
         
         if (!Array.isArray(idOrIds))
-            return checked.includes(idOrIds)
+            return checked.has(idOrIds)
         
-        return !idOrIds.some(it => !checked.includes(it))
+        return idOrIds.every(id => checked.has(id))
         
     }, [checked])
     
@@ -50,24 +50,30 @@ const useCheckItems = <T extends ItemWithId>(items: T[]): TCheckItems => {
         if (Array.isArray(idOrIds)) {
             
             if (override)
-                setChecked(idOrIds)
+                setChecked(new Set(idOrIds))
             else
                 setChecked(prev => {
                     const next = new Set(prev)
                     idOrIds.forEach(id => next.add(id))
-                    return Array.from(next)
+                    return next
                 })
             
         } else {
             
             if (override)
-                setChecked([idOrIds])
+                setChecked(new Set([idOrIds]))
             else
-                setChecked(prev => (
-                    prev.includes(idOrIds)
-                        ? prev
-                        : [...prev, idOrIds]
-                ))
+                setChecked(prev => {
+                    
+                    if (prev.has(idOrIds))
+                        return prev
+                    
+                    const next = new Set(prev)
+                    
+                    next.add(idOrIds)
+                    
+                    return next
+                })
             
         }
         
@@ -78,12 +84,12 @@ const useCheckItems = <T extends ItemWithId>(items: T[]): TCheckItems => {
      * list is passed to an update function (similar to `useState`), removing
      * the need to keep `checked` as a dependency for a `useEffect` hook
      */
-    const updateChecked = useCallback((fn: ID[] | ((prev: ID[]) => ID[])) => {
+    const updateChecked = useCallback((callbackOrNext: ID[] | ((prev: Set<ID>) => Set<ID>)) => {
         
         setChecked(prev =>
-            typeof fn === 'function'
-                ? fn([...prev])
-                : fn,
+            typeof callbackOrNext === 'function'
+                ? callbackOrNext(new Set(prev))
+                : new Set(callbackOrNext),
         )
         
     }, [])
@@ -92,27 +98,18 @@ const useCheckItems = <T extends ItemWithId>(items: T[]): TCheckItems => {
         
         if (Array.isArray(idOrIds))
             setChecked(prev => {
-                
-                let next = [...prev]
-                
-                idOrIds.forEach(id => {
-                    if (next.includes(id))
-                        next = next.filter(it => it !== id)
-                    else
-                        next = [...next, id]
-                })
-                
+                const next = new Set(prev)
+                idOrIds.forEach(id => next.has(id) ? next.delete(id) : next.add(id))
                 return next
-                
             })
         else
             setChecked(prev => {
-                
-                if (prev.includes(idOrIds))
-                    return prev.filter(it => it !== idOrIds)
+                const next = new Set(prev)
+                if (next.has(idOrIds))
+                    next.delete(idOrIds)
                 else
-                    return [...prev, idOrIds]
-                
+                    next.add(idOrIds)
+                return next
             })
         
     }, [])
@@ -120,14 +117,14 @@ const useCheckItems = <T extends ItemWithId>(items: T[]): TCheckItems => {
     const toggleAllChecked = useCallback((forceAll?: boolean | undefined) => {
         
         if (forceAll === true) {
-            setChecked(items.map(it => it.id))
+            setChecked(new Set(items.map(it => it.id)))
         } else if (forceAll === false) {
-            setChecked([])
+            setChecked(new Set())
         } else {
             if (allChecked)
-                setChecked([])
+                setChecked(new Set())
             else
-                setChecked(items.map(it => it.id))
+                setChecked(new Set(items.map(it => it.id)))
         }
         
     }, [allChecked, items])

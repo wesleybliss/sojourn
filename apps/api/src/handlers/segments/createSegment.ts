@@ -46,8 +46,10 @@ export const createSegment = withAuth(async (
         
         let latitude: number | null = null
         let longitude: number | null = null
+        
         // If coordinates are provided in the request, use them
-        if (coordsLat != null && coordsLng != null) {
+        if (coordsLat !== null && coordsLat !== undefined &&
+            coordsLng !== null && coordsLng !== undefined) {
             const latNum = Number(coordsLat)
             const lngNum = Number(coordsLng)
             if (!isNaN(latNum) && !isNaN(lngNum)) {
