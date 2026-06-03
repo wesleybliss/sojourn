@@ -1,6 +1,6 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "Sojourn",
+    "short_name": "Sojourn",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
@@ -8,7 +8,7 @@
             "type": "image/png"
         }
     ],
-    "theme_color": "#ffffff",
+    "theme_color": "#e57393",
     "background_color": "#ffffff",
     "display": "standalone"
 }

@@ -14,8 +14,8 @@ const PlacesPagePlacesGridItemCoverImage = ({
     
     return (
         
-        <div className={cn({
-            'relative aspect-video overflow-hidden bg-surface-container': listViewMode === ListViewModes.grid,
+        <div className={cn('relative ', {
+            'aspect-video overflow-hidden bg-surface-container': listViewMode === ListViewModes.grid,
             'size-48 object-cover rounded-md shrink-0': listViewMode === ListViewModes.list,
         })}>
             
