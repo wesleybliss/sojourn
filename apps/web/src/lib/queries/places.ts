@@ -5,11 +5,11 @@ import { keepPreviousData, useMutation, UseMutationResult, useQuery, useQueryCli
 
 import { placesWithCoverImages } from '@/store'
 
-type ShufflePlaceCoverPhotoBody = {
+export type ShufflePlaceCoverPhotoBody = {
     topic: string
 }
 
-type ExtendedUpdatePlaceBody = UpdatePlaceBody & {
+export type ExtendedUpdatePlaceBody = UpdatePlaceBody & {
     name?: string | null
     coverImageUrl?: string | null
     focus?: string | null
@@ -20,7 +20,7 @@ type ExtendedUpdatePlaceBody = UpdatePlaceBody & {
     isBookmarked?: boolean
 }
 
-type CreatePlaceBody = {
+export type CreatePlaceBody = {
     name: string
     focus?: string
     quickTip?: string

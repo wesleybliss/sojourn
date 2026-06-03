@@ -101,7 +101,7 @@ We will add the following columns:
 ### Saved Places (New Screen)
 
 #### 9. Saved Places Dashboard
-- File: `apps/web/src/app/places/page.tsx`
+- File: `apps/web/src/app/places/PlacesPage.tsx`
 - Build the Saved Places screen:
   - Header: "Future Destinations" with "Add Place" button.
   - Search bar input to filter cards by name, note details, or region.
