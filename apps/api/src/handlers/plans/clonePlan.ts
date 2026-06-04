@@ -5,6 +5,11 @@ import { apiResponse } from '@repo/shared/utils/api'
 import { eq } from 'drizzle-orm'
 import type { Request, Response } from 'express'
 import { nanoid } from 'nanoid'
+import { z } from 'zod'
+
+const paramsSchema = z.object({
+    planId: z.coerce.number(),
+})
 
 export const clonePlan = async (
     req: Request,
@@ -13,9 +18,9 @@ export const clonePlan = async (
     
     try {
         
-        const planId = parseInt(req.query.planId as string, 10)
+        const { planId } = paramsSchema.parse(req.params)
         
-        if (isNaN(planId))
+        if (!planId)
             return apiResponse.badRequest(res, `Invalid plan ID: "${planId}"`)
         
         const [plan] = await db.select()

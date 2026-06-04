@@ -4,6 +4,12 @@ import { apiResponse } from '@repo/shared/utils/api'
 import { isUserTripMember } from '@repo/shared/utils/auth'
 import { eq } from 'drizzle-orm'
 import type { Request, Response } from 'express'
+import { z } from 'zod'
+
+const paramsSchema = z.object({
+    tripId: z.coerce.number(),
+    planId: z.coerce.number(),
+})
 
 export const deletePlan = async (
     req: Request,
@@ -12,7 +18,7 @@ export const deletePlan = async (
     
     try {
         
-        const planId = parseInt(req.query.planId as string, 10)
+        const { tripId, planId } = paramsSchema.parse(req.params)
         
         if (!planId || isNaN(planId))
             return apiResponse.badRequest(res, 'Invalid plan ID')
@@ -24,7 +30,7 @@ export const deletePlan = async (
         if (!plan)
             return apiResponse.notFound(res, 'Plan')
         
-        const isMember = await isUserTripMember(req.auth, plan.tripId)
+        const isMember = await isUserTripMember(req.auth, tripId)
         
         if (!isMember)
             return apiResponse.forbidden(res)

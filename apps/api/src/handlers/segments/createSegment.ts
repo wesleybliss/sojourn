@@ -4,6 +4,12 @@ import { geocode } from '@repo/shared/utils'
 import { apiResponse } from '@repo/shared/utils/api'
 import { isUserTripMember } from '@repo/shared/utils/auth'
 import type { Request, Response } from 'express'
+import { z } from 'zod'
+
+const paramsSchema = z.object({
+    tripId: z.coerce.number(),
+    planId: z.coerce.number(),
+})
 
 export const createSegment = async (
     req: Request,
@@ -12,9 +18,9 @@ export const createSegment = async (
     
     try {
         
+        const { tripId, planId } = paramsSchema.parse(req.params)
+        
         const {
-            tripId,
-            planId,
             startDate,
             endDate,
             name,
@@ -22,12 +28,6 @@ export const createSegment = async (
             coordsLat,
             coordsLng,
         } = req.body
-        
-        if (!tripId)
-            return apiResponse.invalidParams(res, 'Param tripId is required')
-        
-        if (!planId)
-            return apiResponse.invalidParams(res, 'Param planId is required')
         
         if (!name?.length)
             return apiResponse.invalidParams(res, 'Param name is required')

@@ -4,8 +4,7 @@ import { ChangeEvent, useState } from 'react'
 import { useCallback } from 'react'
 import { toast } from 'sonner'
 
-import { useClonePlan, useCreatePlan,useUpdatePlan } from '@/lib/queries/plans'
-import { useDeletePlan } from '@/lib/queries/trip'
+import { useClonePlan, useCreatePlan,useDeletePlan, useUpdatePlan } from '@/lib/queries/plans'
 import { useRouter } from '@/lib/router'
 
 const PlanActionsViewModel = (
@@ -73,7 +72,7 @@ const PlanActionsViewModel = (
         if (!confirm('Are you sure you want to delete this plan?'))
             return
         
-        deletePlanMutation.mutate({ planId: currentPlan.id }, {
+        deletePlanMutation.mutate({ tripId: currentTrip.id, planId: currentPlan.id }, {
             onSuccess: () => {
                 toast('Plan deleted')
                 // queryClient.invalidateQueries(['trip', currentTrip.id])
@@ -87,7 +86,7 @@ const PlanActionsViewModel = (
         
         if (!currentTrip || !currentPlan) return toast.error('No trip or plan selected to clone')
         
-        clonePlanMutation.mutate({ planId: currentPlan.id }, {
+        clonePlanMutation.mutate({ tripId: currentTrip.id, planId: currentPlan.id }, {
             onSuccess: result => {
                 toast('Plan cloned')
                 // queryClient.invalidateQueries(['trip', currentTrip.id])

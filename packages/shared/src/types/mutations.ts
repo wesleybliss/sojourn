@@ -25,10 +25,12 @@ export type CreatePlanBody = PlanInsert & {
 }
 
 export type UpdatePlanBody = Partial<Plan> & {
+    tripId: ID
     planId: ID
 }
 
 export type ClonePlanBody = {
+    tripId: ID
     planId: ID
 }
 
@@ -43,18 +45,20 @@ export type UpdateSegmentBody = Partial<Segment> & {
     cascadeEnabled?: boolean
 }
 
+export type DeleteSegmentBody = {
+    tripId: ID
+    planId: ID
+    segmentId: ID
+}
+
 export type DeleteSegmentsBody = {
     tripId: ID
     planId: ID
     segmentIds: ID[]
 }
 
-export type RenamePlanBody = {
-    planId: ID
-    name: string
-}
-
 export type DeletePlanBody = {
+    tripId: ID
     planId: ID
 }
 

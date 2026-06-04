@@ -4,6 +4,11 @@ import userTripsRepo from '@repo/shared/db/repos/userTrips'
 import { apiResponse } from '@repo/shared/utils/api'
 import { isUserTripMember } from '@repo/shared/utils/auth'
 import type { Request, Response } from 'express'
+import { z } from 'zod'
+
+const paramsSchema = z.object({
+    tripId: z.coerce.number(),
+})
 
 export const inviteTripMember = async (
     req: Request,
@@ -12,7 +17,7 @@ export const inviteTripMember = async (
     
     try {
         
-        const tripId = parseInt(req.query.tripId as string, 10)
+        const { tripId } = paramsSchema.parse(req.params)
         const { inviteeEmail } = req.body
         
         if (!inviteeEmail?.length)

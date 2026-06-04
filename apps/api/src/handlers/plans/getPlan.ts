@@ -7,6 +7,7 @@ import type { Request, Response } from 'express'
 import { z } from 'zod'
 
 const paramsSchema = z.object({
+    tripId: z.coerce.number(),
     planId: z.coerce.number(),
 })
 
@@ -17,10 +18,7 @@ export const getPlan = async (
     
     try {
         
-        const { planId } = paramsSchema.parse(req.params)
-        const body = req.body
-        
-        const { tripId } = body
+        const { tripId, planId } = paramsSchema.parse(req.params)
         
         const isMember = await isUserTripMember(req.auth, tripId)
         

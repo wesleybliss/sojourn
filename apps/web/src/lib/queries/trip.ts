@@ -1,12 +1,6 @@
 import { ApiResult, ID } from '@repo/shared/types/data'
-import { Plan, Segment, SegmentInsert, Trip, TripInsert } from '@repo/shared/types/database'
-import {
-    DeletePlanBody,
-    DeleteSegmentsBody,
-    RenamePlanBody,
-    UpdateSegmentBody,
-    UpdateTripBody,
-} from '@repo/shared/types/mutations'
+import { Trip, TripInsert } from '@repo/shared/types/database'
+import { UpdateTripBody } from '@repo/shared/types/mutations'
 import { fetchJSON } from '@repo/shared/utils/api'
 import { keepPreviousData, useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query'
 
@@ -70,6 +64,7 @@ export const useCreateTripMutation = () => {
 }
 
 export const useUpdateTrip = () => {
+    
     const queryClient = useQueryClient()
     
     return useMutation({
@@ -81,150 +76,6 @@ export const useUpdateTrip = () => {
         },
         onSuccess: (_data: ApiResult<Trip | null>, variables) => {
             queryClient.invalidateQueries({ queryKey: ['trip', variables.tripId] })
-        },
-    })
-}
-
-export const useAddSegment = (): UseMutationResult<ApiResult<Segment | null>, Error, SegmentInsert, unknown> => {
-    const queryClient = useQueryClient()
-    
-    return useMutation({
-        mutationFn: async (segmentData: SegmentInsert): Promise<ApiResult<Segment | null>> => {
-            return fetchJSON<Segment>('segments', {
-                method: 'POST',
-                body: JSON.stringify(segmentData),
-            })
-        },
-        onSuccess: (data: ApiResult<Segment | null>) => {
-            queryClient.invalidateQueries({ queryKey: ['trip', data?.data?.tripId] })
-        },
-    })
-}
-
-export const useUpdateSegment = (): UseMutationResult<Segment | null, Error, UpdateSegmentBody, unknown> => {
-    
-    const queryClient = useQueryClient()
-    
-    return useMutation({
-        
-        mutationFn: async ({ segmentId, tripId, ...segmentData }: UpdateSegmentBody): Promise<Segment | null> => {
-            const data = await fetchJSON<Segment>(`segments/${segmentId}`, {
-                method: 'PUT',
-                body: JSON.stringify(segmentData),
-            })
-            
-            if (!data?.data?.tripId)
-                return null
-            
-            // Attach tripId to the response for onSettled
-            return { ...data, tripId } as Segment
-        },
-        // Optimistic update: immediately update the cache before the server responds
-        onMutate: async ({ segmentId, tripId, planId, cascadeEnabled, ...updates }) => {
-            // Cancel any outgoing refetches so they don't overwrite our optimistic update
-            await queryClient.cancelQueries({ queryKey: ['trip', tripId] })
-            
-            // Snapshot the previous value
-            const previousTrip = queryClient.getQueryData(['trip', tripId])
-            
-            // Optimistically update the cache
-            if (previousTrip && !cascadeEnabled) {
-                queryClient.setQueryData(['trip', tripId], (old: Trip | undefined) => {
-                    if (!old?.plans) return old
-                    
-                    return {
-                        ...old,
-                        plans: old.plans.map(plan => {
-                            if (plan.id.toString() !== planId?.toString()) return plan
-                            
-                            return {
-                                ...plan,
-                                segments: plan.segments?.map(seg => {
-                                    if (seg.id !== segmentId) return seg
-                                    return { ...seg, ...updates }
-                                }),
-                            }
-                        }),
-                    }
-                })
-            }
-            
-            // Return context with the snapshotted value
-            return { previousTrip, tripId }
-        },
-        // If mutation fails, rollback to the previous value
-        onError: (err, variables, context) => {
-            
-            console.error('useUpdateSegment', err)
-            console.log('useUpdateSegment', variables)
-            
-            if (context?.previousTrip)
-                queryClient.setQueryData(['trip', context.tripId], context.previousTrip)
-            
-        },
-        // Always refetch after error or success to ensure server state is correct
-        onSettled: (data, error, variables) => {
-            
-            if (error)
-                console.error('useUpdateSegment', error)
-            
-            const tid = data?.tripId || variables?.tripId
-            
-            if (tid)
-                queryClient.invalidateQueries({ queryKey: ['trip', tid] })
-            
-        },
-    })
-    
-}
-
-export const useDeleteSegments = () => {
-    const queryClient = useQueryClient()
-    
-    return useMutation({
-        mutationFn: async ({ tripId, planId, segmentIds }: DeleteSegmentsBody) => {
-            return fetchJSON<Segment>('segments', {
-                method: 'DELETE',
-                body: JSON.stringify({ tripId, planId, segmentIds }),
-            })
-        },
-        onSuccess: data => {
-            queryClient.invalidateQueries({ queryKey: ['trip', data?.data?.tripId] })
-        },
-    })
-}
-
-/**
- * @deprecated
- */
-export const useRenamePlan = () => {
-    const queryClient = useQueryClient()
-    
-    return useMutation({
-        mutationFn: async ({ planId, name }: RenamePlanBody) => {
-            return fetchJSON<Plan>(`plans/${planId}`, {
-                method: 'PUT',
-                body: JSON.stringify({ name }),
-            })
-        },
-        onSuccess: data => {
-            queryClient.invalidateQueries({ queryKey: ['trip', data?.data?.tripId] })
-        },
-    })
-}
-
-export const useDeletePlan = () => {
-    
-    const queryClient = useQueryClient()
-    
-    return useMutation({
-        mutationFn: async ({ planId }: DeletePlanBody) => {
-            return fetchJSON<Plan>(`plans/${planId}`, {
-                method: 'DELETE',
-            })
-        },
-        onSuccess: data => {
-            queryClient.invalidateQueries({ queryKey: ['trip', data?.data?.tripId] })
         },
     })
     

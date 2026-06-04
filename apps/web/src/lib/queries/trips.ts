@@ -29,6 +29,7 @@ export const useTripsQuery = ({
     withDetails = false,
     options,
 }: UseTripsQueryParams = {}): TripsQueryResult => {
+    
     const { firebaseUser } = useAuth()
     
     return useQuery({
@@ -67,4 +68,5 @@ export const useTripsQuery = ({
         retry: 3,
         ...options,
     })
+    
 }

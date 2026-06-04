@@ -7,6 +7,7 @@ import type { Request, Response } from 'express'
 import { z } from 'zod'
 
 const paramsSchema = z.object({
+    tripId: z.coerce.number(),
     planId: z.coerce.number(),
 })
 
@@ -17,10 +18,7 @@ export const updatePlan = async (
     
     try {
         
-        const { planId } = paramsSchema.parse(req.params)
-        const body = req.body
-        
-        const tripId = body.tripId
+        const { tripId, planId } = paramsSchema.parse(req.params)
         
         if (!planId || isNaN(planId))
             return apiResponse.badRequest(res, 'Invalid plan ID')
@@ -40,8 +38,8 @@ export const updatePlan = async (
         const [updatedPlan] = await db
             .update(schemas.plans)
             .set({
-                name: body.name,
-                description: body.description,
+                name: req.body.name,
+                description: req.body.description,
             })
             .where(eq(schemas.plans.id, planId))
             .returning()

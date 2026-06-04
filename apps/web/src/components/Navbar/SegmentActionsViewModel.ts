@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 import { useCallback } from 'react'
 import { toast } from 'sonner'
 
-import { useAddSegment } from '@/lib/queries/trip'
+import { useCreateSegment } from '@/lib/queries/segments'
 
 const SegmentActionsViewModel = (
     currentTrip: Trip | null,
@@ -14,7 +14,7 @@ const SegmentActionsViewModel = (
     
     // React Query
     const queryClient = useQueryClient()
-    const addSegmentMutation = useAddSegment()
+    const addSegmentMutation = useCreateSegment()
     
     const segments = currentPlan?.segments
     

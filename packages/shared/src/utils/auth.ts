@@ -32,6 +32,7 @@ const verifyFirebaseToken = async (request: Request): Promise<DecodedIdToken> =>
         console.error('Firebase token verification failed:', error)
         throw new HttpError(401, 'Invalid or expired token')
     }
+    
 }
 
 /**
@@ -47,6 +48,7 @@ const verifyFirebaseToken = async (request: Request): Promise<DecodedIdToken> =>
  * @throws HttpError For validation or conflict errors
  */
 const getOrCreateUser = async (firebaseUser: DecodedIdToken): Promise<UserSelect> => {
+    
     const { uid: firebaseUid, email, name, picture } = firebaseUser
     
     if (!email)
@@ -104,6 +106,7 @@ const getOrCreateUser = async (firebaseUser: DecodedIdToken): Promise<UserSelect
         .returning()
     
     return newUser
+    
 }
 
 /**

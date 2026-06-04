@@ -1,10 +1,8 @@
 import { ApiResult, ID } from '@repo/shared/types/data'
 import { Plan } from '@repo/shared/types/database'
-import { ClonePlanBody, CreatePlanBody, UpdatePlanBody } from '@repo/shared/types/mutations'
+import { ClonePlanBody, CreatePlanBody, DeletePlanBody, UpdatePlanBody } from '@repo/shared/types/mutations'
 import { fetchJSON } from '@repo/shared/utils/api'
 import { keepPreviousData, useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query'
-/* import * as store from '@/store'
-import { updateItemArray } from '@/lib/storeUtils' */
 
 const plansQueryKey = (tripId: ID, exclusive = false) =>
     exclusive ? [tripId] : ['trips', tripId, 'plans']
@@ -17,20 +15,21 @@ export const usePlansQuery = (tripId: ID, opts = {}) => useQuery({
     ...opts,
 })
 
-export const usePlanQuery = (planId: ID, opts = {}) => useQuery({
+export const usePlanQuery = (tripId: ID, planId: ID, opts = {}) => useQuery({
     queryKey: ['plans', planId],
-    queryFn: () => fetchJSON(`plans/${planId}`),
+    queryFn: () => fetchJSON(`trips/${tripId}/plans/${planId}`),
     enabled: !!planId,
     placeholderData: keepPreviousData,
     ...opts,
 })
 
 export const useCreatePlan = (): UseMutationResult<ApiResult<Plan | null>, Error, CreatePlanBody, unknown> => {
+    
     const queryClient = useQueryClient()
     
     return useMutation({
         mutationFn: async ({ tripId, ...planData }: CreatePlanBody) => {
-            return fetchJSON<Plan>('plans', {
+            return fetchJSON<Plan>('trips/${tripId}/plans', {
                 method: 'POST',
                 body: JSON.stringify({ tripId, ...planData }),
             })
@@ -42,14 +41,16 @@ export const useCreatePlan = (): UseMutationResult<ApiResult<Plan | null>, Error
             queryClient.invalidateQueries({ queryKey: ['trip', variables.tripId] })
         },
     })
+    
 }
 
 export const useUpdatePlan = (): UseMutationResult<ApiResult<Plan | null>, Error, UpdatePlanBody, unknown> => {
+    
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ /* tripId, */ planId, ...planData }: UpdatePlanBody) => {
-            return fetchJSON<Plan>(`plans/${planId}`, {
+        mutationFn: async ({ tripId, planId, ...planData }: UpdatePlanBody) => {
+            return fetchJSON<Plan>(`trips/${tripId}/plans/${planId}`, {
                 method: 'PUT',
                 body: JSON.stringify(planData),
             })
@@ -59,30 +60,33 @@ export const useUpdatePlan = (): UseMutationResult<ApiResult<Plan | null>, Error
             queryClient.invalidateQueries({ queryKey: ['trip', 'trips'] })
         },
     })
+    
 }
 
-export const useDeletePlan = (): UseMutationResult<ApiResult<Plan | null>, Error, Plan, unknown> => {
+export const useDeletePlan = () => {
+    
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async (plan: Plan) => {
-            return fetchJSON<Plan>(`plans/${plan.id}`, {
+        mutationFn: async ({ tripId, planId }: DeletePlanBody) => {
+            return fetchJSON<Plan>(`trips/${tripId}/plans/${planId}`, {
                 method: 'DELETE',
             })
         },
-        onSuccess: (_data: ApiResult<Plan | null>, variables) => {
-            // @todo use _data
-            queryClient.invalidateQueries({ queryKey: ['trip', variables.tripId] })
+        onSuccess: data => {
+            queryClient.invalidateQueries({ queryKey: ['trip', data?.data?.tripId] })
         },
     })
+    
 }
 
 export const useClonePlan = () => {
+    
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ planId }: ClonePlanBody) => {
-            return fetchJSON<Plan>(`plans/${planId}/clone`, {
+        mutationFn: async ({ tripId, planId }: ClonePlanBody) => {
+            return fetchJSON<Plan>(`trips/${tripId}/plans/${planId}/clone`, {
                 method: 'POST',
             })
         },
@@ -90,4 +94,5 @@ export const useClonePlan = () => {
             queryClient.invalidateQueries({ queryKey: ['trip', data?.data?.tripId] })
         },
     })
+    
 }

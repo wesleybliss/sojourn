@@ -2,8 +2,15 @@ import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import { apiResponse } from '@repo/shared/utils/api'
 import { isUserTripMember } from '@repo/shared/utils/auth'
-import { and, eq, inArray } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import type { Request, Response } from 'express'
+import { z } from 'zod'
+
+const paramsSchema = z.object({
+    tripId: z.coerce.number(),
+    planId: z.coerce.number(),
+    segmentId: z.coerce.number(),
+})
 
 export const deleteSegment = async (
     req: Request,
@@ -12,16 +19,7 @@ export const deleteSegment = async (
     
     try {
         
-        const { tripId, planId, segmentIds } = req.body
-        
-        if (!Array.isArray(segmentIds) || !segmentIds.length)
-            return apiResponse.invalidParams(res, 'Param segmentIds is required and must be non-empty array')
-        
-        if (!tripId)
-            return apiResponse.invalidParams(res, 'Param tripId is required')
-        
-        if (!planId)
-            return apiResponse.invalidParams(res, 'Param planId is required')
+        const { tripId, planId, segmentId } = paramsSchema.parse(req.params)
         
         const isMember = await isUserTripMember(req.auth, tripId)
         
@@ -33,7 +31,7 @@ export const deleteSegment = async (
                 .where(and(
                     eq(schemas.segments.tripId, tripId),
                     eq(schemas.segments.planId, planId),
-                    inArray(schemas.segments.id, segmentIds),
+                    eq(schemas.segments.id, segmentId),
                 ))
         })
         

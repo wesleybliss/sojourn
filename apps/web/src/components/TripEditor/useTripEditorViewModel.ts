@@ -13,15 +13,9 @@ import { toast } from 'sonner'
 import { useBackupTrips } from '@/lib/queries/backups'
 import { useShufflePlaceCoverPhoto, useUpdatePlace } from '@/lib/queries/places'
 import { useUpdatePlan } from '@/lib/queries/plans'
-import {
-    useAddSegment,
-    useDeletePlan,
-    useDeleteSegments,
-    useRenamePlan,
-    useTripQuery,
-    useUpdateSegment,
-    useUpdateTrip,
-} from '@/lib/queries/trip'
+import { useDeletePlan } from '@/lib/queries/plans'
+import { useCreateSegment, useDeleteSegments, useUpdateSegment } from '@/lib/queries/segments'
+import { useTripQuery, useUpdateTrip } from '@/lib/queries/trip'
 import { useParams, useRouter } from '@/lib/router'
 import * as store from '@/store'
 
@@ -98,7 +92,7 @@ export type TTripEditorViewModel = {
     backupTrip: () => Promise<void>
     renamePlan: (planIdToRename: ID) => Promise<void>
     deletePlan: (planIdToDelete: ID) => Promise<void>
-    updatePlanMutation: UseMutationResult<unknown, Error, UpdatePlanBody, unknown>
+    updatePlanMutation: UseMutationResult<unknown, Error, UpdatePlanBody>
     shufflePlaceCoverPhoto: (placeId: ID, topic?: string) => Promise<void>
     getStatusLabel: (segment: Segment, vm: TTripEditorViewModel) => SegmentStatusLabel
     
@@ -145,6 +139,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
     
     // Compute shengenData locally instead of from wire selector
     const shengenData = useMemo<ShengenData | null>(() => {
+        
         const shengenSegments = segments?.filter((it: Segment) => it.isShengenRegion) || []
         
         if (!shengenSegments.length) return null
@@ -163,15 +158,15 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
             totalDays,
             remainingDays,
         } as ShengenData
+        
     }, [segments])
     
     // Mutations
     const updateTripMutation = useUpdateTrip()
     const backupMutation = useBackupTrips()
-    const addSegmentMutation = useAddSegment()
+    const addSegmentMutation = useCreateSegment()
     const updateSegmentMutation = useUpdateSegment()
     const deleteSegmentsMutation = useDeleteSegments()
-    const renamePlanMutation = useRenamePlan()
     const deletePlanMutation = useDeletePlan()
     const updatePlanMutation = useUpdatePlan()
     const updatePlace = useUpdatePlace()
@@ -374,11 +369,13 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         if (!newName?.trim()) return
         
         // Mutation hook handles invalidation
-        renamePlanMutation.mutate({ planId: planIdToRename, name: newName }, {
-            onSuccess: () => toast('Plan renamed'),
+        await updatePlanMutation.mutateAsync({
+            tripId,
+            planId: planIdToRename,
+            name: newName,
         })
         
-    }, [renamePlanMutation])
+    }, [tripId, updatePlanMutation])
     
     const deletePlan = useCallback(async (planIdToDelete: ID) => {
         
@@ -386,7 +383,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
             return
         
         // Mutation hook handles invalidation
-        deletePlanMutation.mutate({ planId: planIdToDelete }, {
+        await deletePlanMutation.mutateAsync({ tripId, planId: planIdToDelete }, {
             onSuccess: () => {
                 toast('Plan deleted')
                 router.push(`/trips/${tripId}`)
