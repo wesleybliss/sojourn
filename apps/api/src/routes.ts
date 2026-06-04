@@ -7,6 +7,7 @@ import { clearAll } from '#handlers/debug/clearAll'
 import { uploadBlob } from '#handlers/debug/storage/uploadBlob'
 import { getIndex } from '#handlers/health'
 import { createPlace } from '#handlers/places/createPlace'
+import { deletePlaces } from '#handlers/places/deletePlaces'
 import { getPlace } from '#handlers/places/getPlace'
 import { getPlaces } from '#handlers/places/getPlaces'
 import { updatePlace } from '#handlers/places/updatePlace'
@@ -64,6 +65,7 @@ router.get('/places', asyncHandler(getPlaces))
 router.get('/places/:placeId', asyncHandler(getPlace))
 router.post('/places', asyncHandler(createPlace))
 router.put('/places/:placeId', asyncHandler(updatePlace))
+router.delete('/places', asyncHandler(deletePlaces))
 
 router.get('/utils/random-photo', asyncHandler(getRandomPhoto))
 

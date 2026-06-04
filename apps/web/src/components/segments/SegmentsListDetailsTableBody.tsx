@@ -13,7 +13,7 @@ interface SegmentsListDetailsTableBodyProps {
     isSegmentCompleted?: boolean
 }
 
-const SegmentsListDetailsTableBody = ({
+const SegmentsListDetailsTableBody = memo(({
     totalDaysPerSegment = 0,
     cumulativeDaysPerSegment = 0,
     flightBooked = false,
@@ -68,6 +68,6 @@ const SegmentsListDetailsTableBody = ({
         
     )
     
-}
+})
 
-export default memo(SegmentsListDetailsTableBody)
+export default SegmentsListDetailsTableBody

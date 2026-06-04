@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import { memo } from 'react'
 
 import { RecentSegment } from '@/routes/places/PlacesPageViewModel'
 
@@ -6,7 +7,7 @@ export interface PlacesPageRecentSegmentsProps {
     recentSegments: RecentSegment[]
 }
 
-const PlacesPageRecentSegments = ({
+const PlacesPageRecentSegments = memo(({
     recentSegments,
 }: PlacesPageRecentSegmentsProps) => {
     
@@ -63,6 +64,6 @@ const PlacesPageRecentSegments = ({
         
     )
     
-}
+})
 
 export default PlacesPageRecentSegments

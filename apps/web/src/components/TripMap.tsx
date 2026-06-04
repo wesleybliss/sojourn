@@ -15,7 +15,7 @@ interface TripMapProps extends ComponentProps<'div'> {
 
 const coordsNYC: [number, number] = [-74.0060, 40.7128]
 
-const TripMap = ({
+const TripMap = memo(({
     className,
     center,
     zoom = 5,
@@ -94,6 +94,6 @@ const TripMap = ({
         
     )
     
-}
+})
 
-export default memo(TripMap)
+export default TripMap

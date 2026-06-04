@@ -14,7 +14,7 @@ import {
     TableRow,
 } from '@/components/ui/table'
 
-const SegmentsListDetailsTableHeader = () => {
+const SegmentsListDetailsTableHeader = memo(() => {
     
     return (
         
@@ -59,6 +59,6 @@ const SegmentsListDetailsTableHeader = () => {
         
     )
     
-}
+})
 
-export default memo(SegmentsListDetailsTableHeader)
+export default SegmentsListDetailsTableHeader

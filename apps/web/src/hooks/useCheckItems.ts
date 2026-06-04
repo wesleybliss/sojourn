@@ -3,6 +3,7 @@ import { useCallback,useMemo, useState } from 'react'
 
 export type TCheckItems = {
     checked: Set<ID>
+    checkedCount: number
     allChecked: boolean
     someChecked: boolean
     anyChecked: boolean
@@ -20,6 +21,8 @@ export type TCheckItems = {
 const useCheckItems = <T extends ItemWithId>(items: T[]): TCheckItems => {
     
     const [checked, setChecked] = useState<Set<ID>>(new Set())
+    
+    const checkedCount = checked.size
     
     const allChecked = useMemo(
         () => items.length > 0 && checked.size === items.length,
@@ -130,6 +133,7 @@ const useCheckItems = <T extends ItemWithId>(items: T[]): TCheckItems => {
     
     return {
         checked,
+        checkedCount,
         allChecked,
         someChecked,
         anyChecked,

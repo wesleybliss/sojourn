@@ -1,3 +1,4 @@
+import ConfirmDialog from '@/components/ConfirmDialog'
 import InputDialog from '@/components/InputDialog'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import PlacesPagePlaces from '@/routes/places/PlacesPagePlaces'
@@ -13,7 +14,7 @@ const PlacesPage = () => {
         
         <ProtectedRoute>
             
-            <div className="flex flex-col gap-8 py-4">
+            <div className="flex flex-col gap-3 py-4">
                 
                 <PlacesPageToolbar
                     query={vm.search}
@@ -23,13 +24,18 @@ const PlacesPage = () => {
                     regionFilters={vm.regionFilters}
                     activeRegion={vm.activeRegion}
                     setActiveRegion={vm.setActiveRegion}
+                    allChecked={vm.allChecked}
+                    anyChecked={vm.anyChecked}
+                    toggleAllChecked={vm.toggleAllChecked}
                     onAddPlaceClick={() => vm.setAddPlaceDialogOpen(true)} />
                 
                 <PlacesPagePlaces
                     isLoading={vm.isLoading}
                     filteredPlaces={vm.filteredPlaces}
-                    getSegmentCountForPlace={vm.getSegmentCountForPlace}
                     placesListViewMode={vm.placesListViewMode}
+                    hasChecked={vm.hasChecked}
+                    toggleChecked={vm.toggleChecked}
+                    getSegmentCountForPlace={vm.getSegmentCountForPlace}
                     toggleBookmark={vm.toggleBookmark} />
                 
                 <PlacesPageRecentSegments recentSegments={vm.recentSegments} />
@@ -44,6 +50,15 @@ const PlacesPage = () => {
                 open={vm.addPlaceDialogOpen}
                 setOpen={vm.setAddPlaceDialogOpen}
                 title="Add Place" />
+            
+            <ConfirmDialog
+                open={vm.deletePlacesDialogOpen}
+                title="Delete Places"
+                message="Are you sure you want to delete these places?"
+                cancelLabel="Cancel"
+                onCancel={() => vm.setDeletePlacesDialogOpen(false)}
+                confirmLabel="Delete Places"
+                onConfirm={vm.handleDeletePlaces} />
         
         </ProtectedRoute>
         

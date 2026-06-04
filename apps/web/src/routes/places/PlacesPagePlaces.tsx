@@ -1,9 +1,7 @@
-import { ListViewMode, ListViewModes, Place } from '@repo/shared/types'
+import { ID, ListViewMode, ListViewModes, Place } from '@repo/shared/types'
+import { memo } from 'react'
 
-import IndeterminateCheckbox from '@/components/IndeterminateCheckbox'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
-import useCheckItems from '@/hooks/useCheckItems'
 import PlacesPagePlacesGridItemContent from '@/routes/places/PlacesPagePlacesGridItemContent'
 import PlacesPagePlacesGridItemCoverImage from '@/routes/places/PlacesPagePlacesGridItemCoverImage'
 import { cn } from '@/utils'
@@ -12,25 +10,21 @@ export interface PlacesPagePlacesProps {
     isLoading: boolean
     filteredPlaces: Place[]
     placesListViewMode: ListViewMode
+    hasChecked: (idOrIds: (ID | ID[])) => boolean
+    toggleChecked: (idOrIds: (ID | ID[])) => void
     getSegmentCountForPlace: (place: Place) => number
     toggleBookmark: (place: Place) => void
 }
 
-const PlacesPagePlaces = ({
+const PlacesPagePlaces = memo(({
     isLoading,
     filteredPlaces,
     placesListViewMode,
+    hasChecked,
+    toggleChecked,
     getSegmentCountForPlace,
     toggleBookmark,
 }: PlacesPagePlacesProps) => {
-    
-    const {
-        hasChecked,
-        allChecked,
-        anyChecked,
-        toggleChecked,
-        toggleAllChecked,
-    } = useCheckItems(filteredPlaces)
     
     if (isLoading) return <div className="section-card col-span-full">Loading...</div>
     
@@ -45,19 +39,7 @@ const PlacesPagePlaces = ({
     
     if (placesListViewMode === ListViewModes.list) return (
         
-        <section className="space-y-4">
-            
-            <header className="w-full flex items-center">
-                <div className="p-3 bg-secondary rounded-md">
-                    <Label className="text-muted-foreground">
-                        <IndeterminateCheckbox
-                            checked={allChecked}
-                            indeterminate={anyChecked}
-                            onChange={() => toggleAllChecked(!allChecked)} />
-                        Toggle All
-                    </Label>
-                </div>
-            </header>
+        <section className="space-y-3">
             
             {filteredPlaces.map(place => {
                 
@@ -128,6 +110,6 @@ const PlacesPagePlaces = ({
         
     )
     
-}
+})
 
 export default PlacesPagePlaces

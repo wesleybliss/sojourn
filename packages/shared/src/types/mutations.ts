@@ -57,3 +57,7 @@ export type RenamePlanBody = {
 export type DeletePlanBody = {
     planId: ID
 }
+
+export type DeletePlacesBody = {
+    placeIds: ID[]
+}

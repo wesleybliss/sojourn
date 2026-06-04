@@ -45,4 +45,4 @@ const ThemeSwitcher = memo(() => {
     
 })
 
-export default memo(ThemeSwitcher)
+export default ThemeSwitcher

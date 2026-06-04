@@ -1,15 +1,16 @@
 import { useWireState } from '@forminator/react-wire'
-import { ApiResult, ListViewMode } from '@repo/shared/types'
+import { ApiResult, DeletePlacesBody, ID, ListViewMode } from '@repo/shared/types'
 import { Place, Trip } from '@repo/shared/types/database'
 import { UseMutationResult } from '@tanstack/react-query'
 import dayjs from 'dayjs'
-import { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 
+import useCheckItems from '@/hooks/useCheckItems'
 import {
     CreatePlaceBody,
     ExtendedUpdatePlaceBody,
-    useCreatePlace,
+    useCreatePlace, useDeletePlaces,
     usePlacesQuery,
     useUpdatePlace,
 } from '@/lib/queries/places'
@@ -35,15 +36,13 @@ export type RecentSegment = {
 
 export const defaultRegions = ['All', 'Europe', 'Asia', 'Americas']
 
-export const sectionClasses = [
-    'bg-[linear-gradient(135deg,_rgba(233,238,243,1)_0%,_rgba(247,249,251,1)_55%,_rgba(216,226,238,0.85)_100%)]',
-    'dark:bg-[linear-gradient(135deg,_rgba(32,49,73,0.9)_0%,_rgba(17,28,45,1)_55%,_rgba(42,61,87,0.7)_100%)]',
-]
-
 export type TPlacesPageViewModel = {
     // Global State
     placesListViewMode: ListViewMode
     setPlacesListViewMode: Dispatch<SetStateAction<ListViewMode>>
+    deletePlacesDialogOpen: boolean
+    setDeletePlacesDialogOpen: Dispatch<SetStateAction<boolean>>
+    
     // State
     search: string
     setSearch: Dispatch<SetStateAction<string>>
@@ -71,17 +70,27 @@ export type TPlacesPageViewModel = {
     // Mutations
     updatePlace: UseMutationResult<ApiResult<Place | null>, Error, ExtendedUpdatePlaceBody, unknown>
     createPlace: UseMutationResult<ApiResult<Place | null>, Error, CreatePlaceBody, unknown>
+    deletePlacesMutation: UseMutationResult<ApiResult<Place | null>, Error, DeletePlacesBody, unknown>
+    
+    // Hooks
+    hasChecked: (idOrIds: (ID | ID[])) => boolean
+    allChecked: boolean
+    anyChecked: boolean
+    toggleChecked: (idOrIds: (ID | ID[])) => void
+    toggleAllChecked: (forceAll?: boolean) => void
     
     // Methods
     getSegmentCountForPlace: (place: PlaceRecord) => number
     filteredPlaces: PlaceRecord[]
     handleCreatePlace: (name: string) => Promise<void>
+    handleDeletePlaces: () => Promise<void>
     toggleBookmark: (place: PlaceRecord) => Promise<void>
 }
 
 const usePlacesPageViewModel = (): TPlacesPageViewModel => {
     
     const [placesListViewMode, setPlacesListViewMode] = useWireState(store.placesListViewMode)
+    const [deletePlacesDialogOpen, setDeletePlacesDialogOpen] = useWireState(store.deletePlacesDialogOpen)
     
     const [search, setSearch] = useState('')
     const [activeRegion, setActiveRegion] = useState('All')
@@ -94,6 +103,7 @@ const usePlacesPageViewModel = (): TPlacesPageViewModel => {
     
     const updatePlace = useUpdatePlace()
     const createPlace = useCreatePlace()
+    const deletePlacesMutation = useDeletePlaces()
     
     const trips = useMemo(() => (tripsData || []) as Trip[], [tripsData])
     const places = useMemo(() => (placesData || []) as PlaceRecord[], [placesData])
@@ -151,6 +161,15 @@ const usePlacesPageViewModel = (): TPlacesPageViewModel => {
         
     }), [activeRegion, places, search])
     
+    const {
+        checked,
+        hasChecked,
+        allChecked,
+        anyChecked,
+        toggleChecked,
+        toggleAllChecked,
+    } = useCheckItems(filteredPlaces)
+    
     const handleCreatePlace = async (name: string) => {
         
         try {
@@ -176,6 +195,24 @@ const usePlacesPageViewModel = (): TPlacesPageViewModel => {
         
     }
     
+    const handleDeletePlaces = useCallback(async () => {
+        
+        try {
+            
+            await deletePlacesMutation.mutateAsync({ placeIds: Array.from(checked) })
+            toast.success('Places deleted successfully')
+            
+        } catch (e) {
+            
+            console.error('Error deleting places:', e)
+            toast.error('Failed to delete places')
+            
+        }
+        
+        setDeletePlacesDialogOpen(false)
+        
+    }, [deletePlacesMutation, checked])
+    
     const toggleBookmark = async (place: PlaceRecord) => {
         
         try {
@@ -199,6 +236,8 @@ const usePlacesPageViewModel = (): TPlacesPageViewModel => {
         // Global State
         placesListViewMode,
         setPlacesListViewMode,
+        deletePlacesDialogOpen,
+        setDeletePlacesDialogOpen,
         
         // State
         search,
@@ -227,11 +266,20 @@ const usePlacesPageViewModel = (): TPlacesPageViewModel => {
         // Mutations
         updatePlace,
         createPlace,
+        deletePlacesMutation,
+        
+        // Hooks
+        hasChecked,
+        allChecked,
+        anyChecked,
+        toggleChecked,
+        toggleAllChecked,
         
         // Methods
         getSegmentCountForPlace,
         filteredPlaces,
         handleCreatePlace,
+        handleDeletePlaces,
         toggleBookmark,
         
     }

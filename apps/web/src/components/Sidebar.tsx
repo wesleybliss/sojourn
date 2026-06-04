@@ -43,7 +43,7 @@ interface SidebarProps {
     isChild?: boolean
 }
 
-const Sidebar = ({
+const Sidebar = memo(({
     isChild = false,
 }: SidebarProps) => {
     
@@ -175,6 +175,6 @@ const Sidebar = ({
         
     )
     
-}
+})
 
-export default memo(Sidebar)
+export default Sidebar

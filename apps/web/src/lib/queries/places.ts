@@ -1,4 +1,4 @@
-import { ApiResult, Place } from '@repo/shared/types'
+import { ApiResult, DeletePlacesBody, Place } from '@repo/shared/types'
 import { UpdatePlaceBody } from '@repo/shared/types/mutations'
 import { fetchJSON } from '@repo/shared/utils/api'
 import { keepPreviousData, useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -100,6 +100,24 @@ export const useCreatePlace = (): UseMutationResult<
             return fetchJSON('places', {
                 method: 'POST',
                 body: JSON.stringify(placeData),
+            })
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['places'] })
+        },
+    })
+    
+}
+
+export const useDeletePlaces = () => {
+    
+    const queryClient = useQueryClient()
+    
+    return useMutation({
+        mutationFn: async ({ placeIds }: DeletePlacesBody) => {
+            return fetchJSON<Place>('places', {
+                method: 'DELETE',
+                body: JSON.stringify({ placeIds }),
             })
         },
         onSuccess: () => {
