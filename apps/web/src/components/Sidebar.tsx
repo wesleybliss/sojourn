@@ -69,7 +69,7 @@ const Sidebar = memo(({
                 'lg:top-3 lg:sticky lg:h-[calc(100vh-1.4rem)]',
                 'transition-width duration-300 ease-in-out', {
                     'flex p-0 shadow-lg outline': isChild,
-                    'hidden md:flex max-w-full': !isChild,
+                    'hidden lg:flex max-w-full': !isChild,
                     'w-full md:w-auto lg:w-70': isSidebarExpanded,
                     'w-18': !isSidebarExpanded,
                 })}>

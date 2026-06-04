@@ -1,5 +1,4 @@
 import ConfirmDialog from '@/components/ConfirmDialog'
-import DebugTailwindMediaQueries from '@/components/DebugTailwindMediaQueries'
 import InputDialog from '@/components/InputDialog'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import PlacesPagePlaces from '@/routes/places/PlacesPagePlaces'
@@ -14,7 +13,7 @@ const PlacesPage = () => {
     return (
         
         <ProtectedRoute>
-            <DebugTailwindMediaQueries />
+            
             <div className="flex flex-col gap-3 py-4">
                 
                 <PlacesPageToolbar
