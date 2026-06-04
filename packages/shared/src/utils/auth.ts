@@ -9,6 +9,7 @@ import { and, eq, sql } from 'drizzle-orm'
 import type { Request } from 'express'
 import type { DecodedIdToken } from 'firebase-admin/auth'
 
+
 /**
  * Extracts and verifies Firebase ID token from request Authorization header.
  *
@@ -110,14 +111,14 @@ const getOrCreateUser = async (firebaseUser: DecodedIdToken): Promise<UserSelect
 }
 
 /**
- * Authorizes a user based on Firebase ID token from request.
+ * Authenticates a user based on Firebase ID token from request.
  * Verifies Firebase token, gets or creates user in the database, and returns auth context.
  */
-export const authorize = async (
-    request: Request,
+export const authenticate = async (
+    req: Request,
 ): Promise<{ user: UserSelect; firebaseToken: DecodedIdToken; userId: ID }> => {
     
-    const firebaseToken = await verifyFirebaseToken(request)
+    const firebaseToken = await verifyFirebaseToken(req)
     
     const user = await getOrCreateUser(firebaseToken)
     
@@ -125,6 +126,7 @@ export const authorize = async (
     
 }
 
+/** @deprecated Use `authorize` instead */
 export const isUserTripMember = async ({ userId }: AuthContext, tripId: ID): Promise<boolean> => {
     try {
         if (!userId || !tripId)

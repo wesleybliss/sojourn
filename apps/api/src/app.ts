@@ -23,7 +23,13 @@ app.use(middleware.globalErrorHandler)
 
 app.set('trust proxy', true)
 
-app.use('/api', routes.public)
-app.use('/api', routes.protected)
+app.use('/api', routes.unauthenticated)
+app.use('/api', routes.auth)
+app.use('/api', routes.debug)
+app.use('/api', routes.trips)
+app.use('/api', routes.plans)
+app.use('/api', routes.segments)
+app.use('/api', routes.places)
+app.use('/api', routes.utilities)
 
 export default app

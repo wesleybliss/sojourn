@@ -2,7 +2,7 @@ import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import HttpError from '@repo/shared/errors/HttpError'
 import { apiResponse } from '@repo/shared/utils/api'
-import { authorize } from '@repo/shared/utils/auth'
+import { authenticate } from '@repo/shared/utils/auth'
 import { eq } from 'drizzle-orm'
 import type { Request, Response } from 'express'
 
@@ -13,7 +13,7 @@ export const createUser = async (
     
     try {
         
-        const { user } = await authorize(req)
+        const { user } = await authenticate(req)
         const { inviteCode } = req.body
         
         if (!inviteCode)

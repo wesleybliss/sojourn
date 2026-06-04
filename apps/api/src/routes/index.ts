@@ -1,3 +1,9 @@
 
-export { default as protected } from './protected'
-export { default as public } from './public'
+export { default as auth } from './authRoutes'
+export { default as debug } from './debugRoutes'
+export { default as places } from './placeRoutes'
+export { default as plans } from './planRoutes'
+export { default as segments } from './segmentRoutes'
+export { default as trips } from './tripRoutes'
+export { default as unauthenticated } from './unauthenticatedRoutes'
+export { default as utilities } from './utilityRoutes'

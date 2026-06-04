@@ -56,7 +56,7 @@ const MapLibreMap = ({
         mapRef.current.flyTo({
             center: latLng,
             essential: true, // If using flyTo
-            zoom: 12, // Optional: reset zoom or adjust as needed
+            zoom: 12,
         })
         // Or: mapRef.current.setCenter(latLng)
         

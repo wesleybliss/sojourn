@@ -4,8 +4,11 @@ import { apiResponse } from '@repo/shared/utils/api'
 import type { Request, Response } from 'express'
 import { z } from 'zod'
 
-const bodySchema = z.object({
+const paramsSchema = z.object({
     tripId: z.coerce.number(),
+})
+
+const bodySchema = z.object({
     name: z.coerce.string(),
     description: z.coerce.string().nullable(),
 })
@@ -17,8 +20,9 @@ export const createPlan = async (
     
     try {
         
+        const { tripId } = paramsSchema.parse(req.params)
+        
         const {
-            tripId,
             name,
             description,
         } = bodySchema.parse(req.body)

@@ -8,6 +8,7 @@ import { nanoid } from 'nanoid'
 import { z } from 'zod'
 
 const paramsSchema = z.object({
+    tripId: z.coerce.number(),
     planId: z.coerce.number(),
 })
 
@@ -18,7 +19,7 @@ export const clonePlan = async (
     
     try {
         
-        const { planId } = paramsSchema.parse(req.params)
+        const { tripId, planId } = paramsSchema.parse(req.params)
         
         if (!planId)
             return apiResponse.badRequest(res, `Invalid plan ID: "${planId}"`)
@@ -35,7 +36,7 @@ export const clonePlan = async (
             const [clonedPlan] = await tx
                 .insert(schemas.plans)
                 .values({
-                    tripId: plan.tripId,
+                    tripId: tripId,
                     name: `${plan.name}-${nanoid()}`,
                     description: plan.description,
                 })

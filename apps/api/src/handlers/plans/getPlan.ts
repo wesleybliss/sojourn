@@ -1,8 +1,7 @@
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import { apiResponse } from '@repo/shared/utils/api'
-import { isUserTripMember } from '@repo/shared/utils/auth'
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import type { Request, Response } from 'express'
 import { z } from 'zod'
 
@@ -20,17 +19,15 @@ export const getPlan = async (
         
         const { tripId, planId } = paramsSchema.parse(req.params)
         
-        const isMember = await isUserTripMember(req.auth, tripId)
-        
-        if (!isMember)
-            return apiResponse.forbidden(res)
-        
-        if (!planId || isNaN(planId))
+        if (!planId)
             return apiResponse.badRequest(res, 'Invalid plan ID')
         
         const [plan] = await db.select()
             .from(schemas.plans)
-            .where(eq(schemas.plans.id, planId))
+            .where(and(
+                eq(schemas.plans.tripId, tripId),
+                eq(schemas.plans.id, planId),
+            ))
         
         if (!plan)
             return apiResponse.notFound(res, 'Plan')
