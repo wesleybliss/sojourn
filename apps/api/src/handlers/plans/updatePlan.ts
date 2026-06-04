@@ -1,7 +1,7 @@
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import { apiResponse } from '@repo/shared/utils/api'
-import { type AuthContext, isUserTripMember, withAuth } from '@repo/shared/utils/auth'
+import { isUserTripMember } from '@repo/shared/utils/auth'
 import { eq } from 'drizzle-orm'
 import type { Request, Response } from 'express'
 import { z } from 'zod'
@@ -10,10 +10,9 @@ const paramsSchema = z.object({
     planId: z.coerce.number(),
 })
 
-export const updatePlan = withAuth(async (
+export const updatePlan = async (
     req: Request,
     res: Response,
-    context: AuthContext,
 ): Promise<void> => {
     
     try {
@@ -26,7 +25,7 @@ export const updatePlan = withAuth(async (
         if (!planId || isNaN(planId))
             return apiResponse.badRequest(res, 'Invalid plan ID')
         
-        const isMember = await isUserTripMember(context, tripId)
+        const isMember = await isUserTripMember(req.auth, tripId)
         
         if (!isMember)
             return apiResponse.forbidden(res)
@@ -62,4 +61,4 @@ export const updatePlan = withAuth(async (
         
     }
     
-})
+}

@@ -2,13 +2,12 @@ import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import { geocode } from '@repo/shared/utils'
 import { apiResponse } from '@repo/shared/utils/api'
-import { type AuthContext, isUserTripMember, withAuth } from '@repo/shared/utils/auth'
+import { isUserTripMember } from '@repo/shared/utils/auth'
 import type { Request, Response } from 'express'
 
-export const createSegment = withAuth(async (
+export const createSegment = async (
     req: Request,
     res: Response,
-    context: AuthContext,
 ): Promise<void> => {
     
     try {
@@ -39,7 +38,7 @@ export const createSegment = withAuth(async (
         if (!endDate?.length)
             return apiResponse.invalidParams(res, 'Param endDate is required')
         
-        const isMember = await isUserTripMember(context, tripId)
+        const isMember = await isUserTripMember(req.auth, tripId)
         
         if (!isMember)
             return apiResponse.forbidden(res)
@@ -100,4 +99,4 @@ export const createSegment = withAuth(async (
         
     }
     
-})
+}

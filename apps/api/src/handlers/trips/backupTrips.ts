@@ -2,7 +2,7 @@ import plansRepo from '@repo/shared/db/repos/plans'
 import tripsRepo from '@repo/shared/db/repos/trips'
 import type { Plan, Segment, Trip } from '@repo/shared/types'
 import { apiResponse } from '@repo/shared/utils/api'
-import { type AuthContext, isUserTripMember, withAuth } from '@repo/shared/utils/auth'
+import { isUserTripMember } from '@repo/shared/utils/auth'
 import tripsWithPlansSchema from '@repo/shared/utils/json-schemas/trip-backup.jsonschema'
 import Ajv from 'ajv'
 import dayjs from 'dayjs'
@@ -56,15 +56,14 @@ const transformTrip = (trip: Trip) => ({
     segments: Array.isArray(trip.segments) ? trip.segments.map(transformSegment) : [],
 })
 
-export const backupTrips = withAuth(async (
+export const backupTrips = async (
     req: Request,
     res: Response,
-    context: AuthContext,
 ): Promise<void> => {
     
     try {
         
-        const { userId } = context
+        const userId = req.auth?.user?.id
         
         const body = req.body
         const ajvProps = ajvDebug ? { allErrors: true, verbose: true } : {}
@@ -81,7 +80,7 @@ export const backupTrips = withAuth(async (
             if (!tripId)
                 return apiResponse.invalidParams(res, 'tripId required for single backup')
             
-            const isMember = await isUserTripMember(context, tripId)
+            const isMember = await isUserTripMember(req.auth, tripId)
             
             if (!isMember)
                 return apiResponse.forbidden(res )
@@ -137,4 +136,4 @@ export const backupTrips = withAuth(async (
         return apiResponse.internalServerError(res)
     }
     
-})
+}

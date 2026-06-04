@@ -2,13 +2,12 @@ import tripsRepo from '@repo/shared/db/repos/trips'
 import usersRepo from '@repo/shared/db/repos/users'
 import userTripsRepo from '@repo/shared/db/repos/userTrips'
 import { apiResponse } from '@repo/shared/utils/api'
-import { type AuthContext, isUserTripMember, withAuth } from '@repo/shared/utils/auth'
+import { isUserTripMember } from '@repo/shared/utils/auth'
 import type { Request, Response } from 'express'
 
-export const inviteTripMember = withAuth(async (
+export const inviteTripMember = async (
     req: Request,
     res: Response,
-    context: AuthContext,
 ): Promise<void> => {
     
     try {
@@ -19,7 +18,7 @@ export const inviteTripMember = withAuth(async (
         if (!inviteeEmail?.length)
             return apiResponse.invalidParams(res, 'Param "inviteeEmail" is required')
         
-        const isMember = await isUserTripMember(context, tripId)
+        const isMember = await isUserTripMember(req.auth, tripId)
         
         if (!isMember)
             return apiResponse.forbidden(res)
@@ -54,4 +53,4 @@ export const inviteTripMember = withAuth(async (
         
     }
     
-})
+}

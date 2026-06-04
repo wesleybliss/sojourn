@@ -2,19 +2,17 @@ import { Buffer } from 'node:buffer'
 
 import usersRepo from '@repo/shared/db/repos/users'
 import { apiResponse } from '@repo/shared/utils/api'
-import { type AuthContext, withAuth } from '@repo/shared/utils/auth'
 import { putPlaceImageBuffer } from '@repo/shared/utils/storage/vercel-blob'
 import type { Request, Response } from 'express'
 
-export const uploadBlob = withAuth(async (
+export const uploadBlob = async (
     req: Request,
     res: Response,
-    context: AuthContext,
 ): Promise<void> => {
     
     try {
         
-        const { userId } = context
+        const userId = req.auth?.user?.id
         
         if (!userId)
             return apiResponse.unauthorized(res)
@@ -47,4 +45,4 @@ export const uploadBlob = withAuth(async (
         
     }
     
-})
+}

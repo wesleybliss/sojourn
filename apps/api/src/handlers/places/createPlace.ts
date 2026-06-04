@@ -1,13 +1,11 @@
 import placesRepo from '@repo/shared/db/repos/places'
 import { getRandomUnsplashImageUrl } from '@repo/shared/utils'
 import { apiResponse } from '@repo/shared/utils/api'
-import { type AuthContext, withAuth } from '@repo/shared/utils/auth'
 import type { Request, Response } from 'express'
 
-export const createPlace = withAuth(async (
+export const createPlace = async (
     req: Request,
     res: Response,
-    _context: AuthContext,
 ): Promise<void> => {
     
     try {
@@ -47,4 +45,4 @@ export const createPlace = withAuth(async (
         
     }
     
-})
+}

@@ -4,8 +4,9 @@ import HttpError from '@repo/shared/errors/HttpError'
 import type { ID } from '@repo/shared/types/data'
 import type { UserSelect } from '@repo/shared/types/database'
 import { adminAuth } from '@repo/shared/utils/firebase/admin'
+import { AuthContext } from '@shared/types/express'
 import { and, eq, sql } from 'drizzle-orm'
-import type { Request, Response } from 'express'
+import type { Request } from 'express'
 import type { DecodedIdToken } from 'firebase-admin/auth'
 
 /**
@@ -118,45 +119,6 @@ export const authorize = async (
     const user = await getOrCreateUser(firebaseToken)
     
     return { user, firebaseToken, userId: user.id }
-    
-}
-
-export type AuthContext = {
-    user: UserSelect
-    firebaseToken: DecodedIdToken
-    userId: ID
-}
-
-export const withAuth = (
-    handler: (
-        req: Request,
-        res: Response,
-        context: AuthContext,
-    ) => void | Promise<void>,
-): (req: Request, res: Response) => Promise<void> => {
-    
-    return async (req: Request, res: Response): Promise<void> => {
-        
-        try {
-            
-            const auth = await authorize(req)
-            
-            return await handler(req, res, auth)
-            
-        } catch (e) {
-            
-            console.error('Authorization error:', e)
-            
-            if (e instanceof HttpError) {
-                res.status(e.status).json({ error: (e as HttpError).message })
-                return
-            }
-            
-            res.status(500).json({ error: 'Internal Server Error' })
-            
-        }
-        
-    }
     
 }
 

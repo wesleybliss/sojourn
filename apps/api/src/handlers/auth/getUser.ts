@@ -1,17 +1,15 @@
 import HttpError from '@repo/shared/errors/HttpError'
 import { apiResponse } from '@repo/shared/utils/api'
-import { type AuthContext, authorize, withAuth } from '@repo/shared/utils/auth'
 import type { Request, Response } from 'express'
 
-export const getUser = withAuth(async (
+export const getUser = async (
     req: Request,
     res: Response,
-    _context: AuthContext,
 ): Promise<void> => {
     
     try {
         
-        const { user } = await authorize(req)
+        const { user } = req.auth
         
         return apiResponse.ok(res, {
             user: {
@@ -34,4 +32,4 @@ export const getUser = withAuth(async (
         
     }
     
-})
+}

@@ -1,14 +1,13 @@
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import { apiResponse } from '@repo/shared/utils/api'
-import { type AuthContext, isUserTripMember, withAuth } from '@repo/shared/utils/auth'
+import { isUserTripMember } from '@repo/shared/utils/auth'
 import { and, eq, inArray } from 'drizzle-orm'
 import type { Request, Response } from 'express'
 
-export const deleteSegment = withAuth(async (
+export const deleteSegment = async (
     req: Request,
     res: Response,
-    context: AuthContext,
 ): Promise<void> => {
     
     try {
@@ -24,7 +23,7 @@ export const deleteSegment = withAuth(async (
         if (!planId)
             return apiResponse.invalidParams(res, 'Param planId is required')
         
-        const isMember = await isUserTripMember(context, tripId)
+        const isMember = await isUserTripMember(req.auth, tripId)
         
         if (!isMember)
             return apiResponse.forbidden(res)
@@ -47,4 +46,4 @@ export const deleteSegment = withAuth(async (
         
     }
     
-})
+}

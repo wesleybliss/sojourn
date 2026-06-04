@@ -2,7 +2,6 @@ import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import { getUpdatePayload } from '@repo/shared/utils'
 import { apiResponse } from '@repo/shared/utils/api'
-import { type AuthContext, withAuth } from '@repo/shared/utils/auth'
 import { eq } from 'drizzle-orm'
 import type { Request, Response } from 'express'
 import { z } from 'zod'
@@ -11,10 +10,9 @@ const paramsSchema = z.object({
     placeId: z.coerce.number(),
 })
 
-export const updatePlace = withAuth(async (
+export const updatePlace = async (
     req: Request,
     res: Response,
-    _context: AuthContext,
 ): Promise<void> => {
     
     const { placeId } = paramsSchema.parse(req.params)
@@ -56,4 +54,4 @@ export const updatePlace = withAuth(async (
         
     }
     
-})
+}

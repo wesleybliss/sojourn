@@ -2,14 +2,13 @@ import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import HttpError from '@repo/shared/errors/HttpError'
 import { apiResponse } from '@repo/shared/utils/api'
-import { type AuthContext, authorize, withAuth } from '@repo/shared/utils/auth'
+import { authorize } from '@repo/shared/utils/auth'
 import { eq } from 'drizzle-orm'
 import type { Request, Response } from 'express'
 
-export const createUser = withAuth(async (
+export const createUser = async (
     req: Request,
     res: Response,
-    _context: AuthContext,
 ): Promise<void> => {
     
     try {
@@ -74,4 +73,4 @@ export const createUser = withAuth(async (
         
     }
     
-})
+}

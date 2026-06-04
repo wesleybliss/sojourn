@@ -3,7 +3,6 @@ import * as schemas from '@repo/shared/db/schema'
 import type { SegmentInsert, TripInsert } from '@repo/shared/types'
 import { geocode } from '@repo/shared/utils'
 import { apiResponse } from '@repo/shared/utils/api'
-import { type AuthContext, withAuth } from '@repo/shared/utils/auth'
 import type { Dayjs } from 'dayjs'
 import dayjs from 'dayjs'
 import type { Request, Response } from 'express'
@@ -20,15 +19,14 @@ const toDate = (v: string | number | Date | Dayjs | null | undefined) => {
     return value
 }
 
-export const restoreTrips = withAuth(async (
+export const restoreTrips = async (
     req: Request,
     res: Response,
-    context: AuthContext,
 ): Promise<void> => {
     
     try {
         
-        const { userId } = context
+        const userId = req.auth?.user?.id
         
         const body = req.body
         
@@ -154,4 +152,4 @@ export const restoreTrips = withAuth(async (
         
     }
     
-})
+}

@@ -2,15 +2,13 @@ import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import { omit } from '@repo/shared/utils'
 import { apiResponse } from '@repo/shared/utils/api'
-import { type AuthContext, withAuth } from '@repo/shared/utils/auth'
 import { eq } from 'drizzle-orm'
 import type { Request, Response } from 'express'
 import { nanoid } from 'nanoid'
 
-export const clonePlan = withAuth(async (
+export const clonePlan = async (
     req: Request,
     res: Response,
-    _context: AuthContext,
 ): Promise<void> => {
     
     try {
@@ -67,4 +65,4 @@ export const clonePlan = withAuth(async (
         
     }
     
-})
+}

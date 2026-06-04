@@ -1,12 +1,10 @@
 import { getRandomUnsplashImageUrl } from '@repo/shared/utils'
 import { apiResponse } from '@repo/shared/utils/api'
-import { type AuthContext, withAuth } from '@repo/shared/utils/auth'
 import type { Request, Response } from 'express'
 
-export const getRandomPhoto = withAuth(async (
+export const getRandomPhoto = async (
     req: Request,
     res: Response,
-    _context: AuthContext,
 ): Promise<void> => {
     
     const { topic } = req.body
@@ -24,4 +22,4 @@ export const getRandomPhoto = withAuth(async (
         
     }
     
-})
+}
