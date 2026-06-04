@@ -50,7 +50,11 @@ const Sidebar = memo(({
     const pathname = usePathname()
     const { firebaseUser } = useAuth()
     
-    const [isSidebarExpanded, setIsSidebarExpanded] = useWireState(store.isSidebarExpanded)
+    const [isSidebarExpandedValue, setIsSidebarExpanded] = useWireState(store.isSidebarExpanded)
+    
+    const isSidebarExpanded = useMemo(() => (
+        isChild ? true : isSidebarExpandedValue
+    ), [isChild, isSidebarExpandedValue])
     
     const showSignedInState = useMemo(() => Boolean(firebaseUser), [firebaseUser])
     
@@ -58,6 +62,7 @@ const Sidebar = memo(({
         
         <aside
             data-testid="Sidebar"
+            data-wtf={JSON.stringify({ isChild })}
             className={cn(
                 'tropical-glow-muted relative section-card shrink-0 flex-col overflow-hidden border-none',
                 'bg-sidebar text-sidebar-foreground md:max-w-[18rem]',

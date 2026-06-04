@@ -40,7 +40,7 @@ const AppShell = ({ children }: AppShellProps) => {
                     {children}
                 </div>
                 
-                <div className="md:hidden fixed inset-y-4 right-4 z-20">
+                <div className="lg:hidden fixed inset-y-4 right-4 z-20">
                     <Button
                         className="peer rounded-full"
                         variant="outline">

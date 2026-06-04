@@ -48,31 +48,27 @@ const PlacesPagePlacesGridItemContent = ({
             </div>
             
             <div className={cn('space-y-3 text-sm', {
-                'flex flex-col lg:flex-row justify-between items-start gap-8': listViewMode === ListViewModes.list,
+                'flex flex-col lg:flex-row justify-between items-start gap-4': listViewMode === ListViewModes.list,
             })}>
-                <div>
-                    <div>
-                        <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                            Focus
-                        </div>
-                        <p className="mt-1 text-foreground/90">
-                            {place.focus || 'Add a destination focus to clarify '
-                                + 'why this place is on the shortlist.'}
-                        </p>
+                <div className="rounded-2xl bg-surface-container-low/50 py-3 px-4">
+                    <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                        Focus
                     </div>
-                    <div className={cn('rounded-2xl bg-surface-container-low py-3', {
-                        'px-4': listViewMode === ListViewModes.list,
-                    })}>
-                        <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                            Quick tip
-                        </div>
-                        <p className="mt-1 text-foreground/90">
-                            {place.quickTip || 'Capture internet, transit, '
-                                + 'or neighborhood notes here.'}
-                        </p>
-                    </div>
+                    <p className="mt-1 text-foreground/90">
+                        {place.focus || 'Add a destination focus to clarify '
+                            + 'why this place is on the shortlist.'}
+                    </p>
                 </div>
-                <div>
+                <div className="rounded-2xl bg-surface-container-low/50 py-3 px-4">
+                    <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                        Quick tip
+                    </div>
+                    <p className="mt-1 text-foreground/90">
+                        {place.quickTip || 'Capture internet, transit, '
+                            + 'or neighborhood notes here.'}
+                    </p>
+                </div>
+                <div className="rounded-2xl bg-surface-container-low/50 py-3 px-4">
                     <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
                         Personal notes
                     </div>

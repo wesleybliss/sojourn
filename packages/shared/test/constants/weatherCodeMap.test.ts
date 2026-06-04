@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { weatherCodeMap } from '@repo/shared/constants'
 
 describe('weatherCodeMap', () => {
+    
     test('should be a record mapping numbers to strings', () => {
         expect(typeof weatherCodeMap).toBe('object')
         expect(weatherCodeMap).not.toBeNull()
@@ -58,4 +59,5 @@ describe('weatherCodeMap', () => {
         const entries = Object.keys(weatherCodeMap)
         expect(entries).toHaveLength(12) // 0,1,2,3,45,48,51,61,63,71,80,95
     })
+    
 })

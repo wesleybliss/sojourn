@@ -66,11 +66,12 @@ describe('getUpdatePayload', () => {
 describe('cn', () => {
     
     test('should merge class names', () => {
+        const falseyValue = false
         // This is a basic test - actual behavior depends on tailwind-merge and clsx
         expect(cn('hello', 'world')).toBe('hello world')
         expect(cn('hello', undefined, 'world')).toBe('hello world')
         // noinspection PointlessBooleanExpressionJS
-        expect(cn(false && 'hello', 'world')).toBe('world')
+        expect(cn(falseyValue && 'hello', 'world')).toBe('world')
     })
     
 })
