@@ -82,5 +82,6 @@ turso db tokens create sojourn
 
 ## TODO
 
+- [ ] Enforce RBAC on all API routes
 - [ ] Invite other users to join a trip (UI implementation)
-- [ ] Simplified trip viewer, similar to TripIt
+- [ ] Either make places the source of truth, and autocomplete when adding new segments, or find a way to dedupe them, since currently there are many duplicate places.
