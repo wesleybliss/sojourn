@@ -1,5 +1,5 @@
-import { describe, expect, test } from 'vitest'
 import { HttpError } from '@repo/shared/errors'
+import { describe, expect, test } from 'vitest'
 
 describe('HttpError', () => {
     test('should create an instance with correct status and message', () => {

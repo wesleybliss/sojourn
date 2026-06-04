@@ -1,5 +1,5 @@
-import { describe, expect, test } from 'vitest'
 import { weatherCodeMap } from '@repo/shared/constants'
+import { describe, expect, test } from 'vitest'
 
 describe('weatherCodeMap', () => {
     

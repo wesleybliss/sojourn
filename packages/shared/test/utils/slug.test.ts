@@ -1,5 +1,5 @@
-import { describe, expect, test } from 'vitest'
 import { generateSlug } from '@repo/shared/utils'
+import { describe, expect, test } from 'vitest'
 
 describe('generateSlug', () => {
     

@@ -1,13 +1,13 @@
-import { describe, expect, test } from 'vitest'
 import {
+    lower,
+    optsCascadeAll,
+    table,
+    timestamps,
     timestampSeconds,
     ts,
-    timestamps,
-    lower,
-    table,
     updateTimestampTrigger,
-    optsCascadeAll,
 } from '@repo/shared/db/dbUtils'
+import { describe, expect, test } from 'vitest'
 
 describe('timestampSeconds', () => {
     

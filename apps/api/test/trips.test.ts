@@ -1,19 +1,20 @@
-import { describe, expect, test } from 'vitest'
 import request from 'supertest'
-import app from '../api'
+import { describe, expect, test } from 'vitest'
+
+import app from '../src/app'
 
 describe('trips', () => {
     
     test('should return OK on the default/index endpoint', async () => {
-        const res = await request(app).get('/api');
-        expect(res.status).toBe(200);
+        const res = await request(app).get('/api')
+        expect(res.status).toBe(200)
         expect(res.body).toHaveProperty('data')
         expect(res.body.data).toHaveProperty('status', 'OK')
     })
     
     test('should return OK on the health check endpoint', async () => {
         const res = await request(app).get('/api/health')
-        expect(res.status).toBe(200);
+        expect(res.status).toBe(200)
         expect(res.body).toHaveProperty('data')
         expect(res.body.data).toHaveProperty('status', 'OK')
     })
