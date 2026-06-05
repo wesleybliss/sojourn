@@ -1,5 +1,5 @@
 import { useWire, useWireState } from '@forminator/react-wire'
-import { ApiResult, ID, Trip, TripInsert, TripWithSegmentCount } from '@repo/shared/types'
+import { ApiResult, CreateTripBody, ID, Trip, TripWithSegmentCount } from '@repo/shared/types'
 import { QueryObserverResult, RefetchOptions, UseMutationResult } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -12,6 +12,9 @@ import * as store from '@/store'
 type TripListItem = Trip | TripWithSegmentCount
 
 type TTripsPageViewModel = {
+    // State
+    isDeletingTrip: boolean
+    
     // Queries
     trips: TripListItem[]
     tripsError: Error | null
@@ -20,7 +23,7 @@ type TTripsPageViewModel = {
         QueryObserverResult<TripListItem[] | null | undefined, Error>>
     
     // Mutations
-    createTripMutation: UseMutationResult<ApiResult<Trip | null>, Error, Partial<TripInsert>, unknown>
+    createTripMutation: UseMutationResult<ApiResult<Trip | null>, Error, CreateTripBody, unknown>
     deleteTripMutation: UseMutationResult<void, Error, number, unknown>
     
     // Methods
@@ -36,6 +39,8 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     
     const createTripDialogOpen = useWire(store.createTripDialogOpen)
     const [deleteTripDialogId, setDeleteTripDialogId] = useWireState(store.deleteTripDialogId)
+    
+    const [isDeletingTrip, setIsDeletingTrip] = useState(false)
     
     const [isUpdatingCoverImages, setIsUpdatingCoverImages] = useState<{
         value: boolean
@@ -62,6 +67,8 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     
     const handleDeleteTrip = useCallback(async () => {
         
+        setIsDeletingTrip(true)
+        
         try {
             
             if (!deleteTripDialogId)
@@ -78,6 +85,7 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
             
         }
         
+        setIsDeletingTrip(false)
         setDeleteTripDialogId(null)
         
     }, [deleteTripDialogId])
@@ -119,6 +127,9 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     }, [isUpdatingCoverImages, shuffleTripCoverPhotoMutation, trips])
     
     return {
+        
+        // State
+        isDeletingTrip,
         
         // Queries
         trips: (trips as TripListItem[]) ?? [],

@@ -5,10 +5,12 @@ import * as store from '@/store'
 
 export interface DeleteTripDialogProps {
     onConfirm: () => Promise<void>
+    isLoading?: boolean
 }
 
 const DeleteTripDialog = ({
     onConfirm,
+    isLoading = false,
 }: DeleteTripDialogProps) => {
     
     const [deleteTripDialogId, setDeleteTripDialogId] = useWireState(store.deleteTripDialogId)
@@ -22,7 +24,8 @@ const DeleteTripDialog = ({
             cancelLabel="Cancel"
             onCancel={() => setDeleteTripDialogId(null)}
             confirmLabel="Delete Trip"
-            onConfirm={onConfirm} />
+            onConfirm={onConfirm}
+            isLoading={isLoading} />
         
     )
     

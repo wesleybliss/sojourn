@@ -1,6 +1,7 @@
 // noinspection ShadcnComponentComposition
 
 import { useWireState } from '@forminator/react-wire'
+import { useState } from 'react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
@@ -15,6 +16,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Spinner } from '@/components/ui/spinner'
 import useCreateTripForm, { CreateTripForm, createTripFormSchema } from '@/hooks/forms/useCreateTripForm'
 import { useCreateTripMutation } from '@/lib/queries/trip'
 import { useRouter } from '@/lib/router'
@@ -26,9 +28,13 @@ const CreateTripDialog = () => {
     
     const [createTripDialogOpen, setCreateTripDialogOpen] = useWireState(store.createTripDialogOpen)
     
+    const [isCreatingTrip, setIsCreatingTrip] = useState(false)
+    
     const createTripMutation = useCreateTripMutation()
     
     const createNewTrip = async (value: CreateTripForm) => {
+        
+        setIsCreatingTrip(true)
         
         try {
             
@@ -45,6 +51,7 @@ const CreateTripDialog = () => {
             
         }
         
+        setIsCreatingTrip(false)
         setCreateTripDialogOpen(false)
         
     }
@@ -124,7 +131,10 @@ const CreateTripDialog = () => {
                             Cancel
                         </Button>
                     </DialogClose>
-                    <Button onClick={form.handleSubmit}>
+                    <Button
+                        disabled={isCreatingTrip}
+                        onClick={form.handleSubmit}>
+                        {isCreatingTrip && <Spinner data-icon="inline-start" />}
                         Create Trip
                     </Button>
                 </DialogFooter>

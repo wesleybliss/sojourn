@@ -11,6 +11,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog'
+import { Spinner } from '@/components/ui/spinner'
 
 interface ConfirmDialogProps {
     open: boolean | null | undefined
@@ -22,6 +23,7 @@ interface ConfirmDialogProps {
     confirmLabel: string
     confirmProps?: Record<string, unknown>
     onConfirm: MouseEventHandler<HTMLButtonElement>
+    isLoading?: boolean
 }
 
 const ConfirmDialog = ({
@@ -34,6 +36,7 @@ const ConfirmDialog = ({
     confirmLabel,
     confirmProps = {},
     onConfirm,
+    isLoading = false,
     ...props
 }: ConfirmDialogProps) => {
     
@@ -68,7 +71,10 @@ const ConfirmDialog = ({
                             </Button>
                         </DialogClose>
                     )}
-                    <Button onClick={onConfirm} {...confirmProps}>
+                    <Button
+                        disabled={isLoading}
+                        onClick={onConfirm} {...confirmProps}>
+                        {isLoading && <Spinner data-icon="inline-start" />}
                         {confirmLabel}
                     </Button>
                 </DialogFooter>

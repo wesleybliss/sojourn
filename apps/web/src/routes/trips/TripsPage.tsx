@@ -58,7 +58,7 @@ const TripsPage = () => {
     
     return (
         
-        <div data-testid="TripsPage" className="flex flex-col gap-8 py-2">
+        <div data-testid="TripsPage" className="flex flex-col gap-8 py-3">
             
             {!trips.length && (
                 <div
@@ -195,7 +195,10 @@ const TripsPage = () => {
             </section>
             
             <CreateTripDialog />
-            <DeleteTripDialog onConfirm={vm.handleDeleteTrip} />
+            
+            <DeleteTripDialog
+                onConfirm={vm.handleDeleteTrip}
+                isLoading={vm.isDeletingTrip} />
         
         </div>
         
