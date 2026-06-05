@@ -1,6 +1,7 @@
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import { apiResponse } from '@repo/shared/utils/api'
+import dayjs from 'dayjs'
 import type { Request, Response } from 'express'
 import { z } from 'zod'
 
@@ -42,7 +43,18 @@ export const createTrip = async (
                     tripId: createdTrip.id,
                 })
             
-            return createdTrip
+            const [createdPlan] = await tx
+                .insert(schemas.plans)
+                .values({
+                    tripId: createdTrip.id,
+                    name: `Primary ${dayjs().format('YYYY')}`,
+                })
+                .returning()
+            
+            return {
+                ...createdTrip,
+                plans: [createdPlan],
+            }
             
         })
         

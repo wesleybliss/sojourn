@@ -40,7 +40,7 @@ const CreateTripDialog = () => {
             
             const result = await createTripMutation.mutateAsync(value)
             const newTrip = result.data
-            console.log('wtf', { newTrip })
+            
             if (newTrip)
                 router.push(`/trips/${newTrip.id}`)
             

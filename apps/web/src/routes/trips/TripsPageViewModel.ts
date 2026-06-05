@@ -98,7 +98,7 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     
     useEffect(() => {
         
-        if (!trips?.length || isUpdatingCoverImages || isUpdatingCoverImages.count > 3)
+        if (!trips?.length || isUpdatingCoverImages.value || isUpdatingCoverImages.count > 3)
             return
         
         setIsUpdatingCoverImages(prev => ({

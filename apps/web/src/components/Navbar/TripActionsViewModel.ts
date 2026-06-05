@@ -41,7 +41,7 @@ const TripActionsViewModel = (currentTrip: Trip | null): TTripActionsViewModel =
         
         if (!value?.length) return console.warn('updateTrip empty name')
         
-        updateTripMutation.mutate({ tripId: currentTrip.id, [field]: value }, {
+        updateTripMutation.mutate({ id: currentTrip.id, [field]: value }, {
             onSuccess: () => {
                 toast('Trip updated')
                 

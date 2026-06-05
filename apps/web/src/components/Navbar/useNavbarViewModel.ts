@@ -1,5 +1,5 @@
 import { useWireState, useWireValue } from '@forminator/react-wire'
-import { ApiResult, BackupTripsBody, Plan, Trip, TripInsert } from '@repo/shared/types'
+import { ApiResult, BackupTripsBody, CreateTripBody, Plan, Trip } from '@repo/shared/types'
 import { UseMutationResult } from '@tanstack/react-query'
 import { User as FirebaseUser } from 'firebase/auth'
 import { Dispatch, SetStateAction } from 'react'
@@ -27,7 +27,7 @@ export type TNavbarViewModel = {
     setIsTripEditMode: Dispatch<SetStateAction<boolean>>
     
     // Mutations
-    createTripMutation: UseMutationResult<ApiResult<Trip | null>, Error, Partial<TripInsert>, unknown>
+    createTripMutation: UseMutationResult<ApiResult<Trip | null>, Error, CreateTripBody, unknown>
     backupMutation: UseMutationResult<{ filename: string }, Error, BackupTripsBody, unknown>
     
     // Memos

@@ -241,7 +241,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
                 : e
             
             // Mutation hook handles invalidation
-            updateTripMutation.mutate({ tripId, [field]: value }, {
+            updateTripMutation.mutate({ id: tripId, [field]: value }, {
                 onSuccess: () => toast('Trip updated'),
             })
             
