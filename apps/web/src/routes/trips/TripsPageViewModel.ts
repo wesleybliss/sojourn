@@ -1,7 +1,7 @@
 import { useWire, useWireState } from '@forminator/react-wire'
 import { ApiResult, CreateTripBody, ID, Trip, TripWithSegmentCount } from '@repo/shared/types'
 import { QueryObserverResult, RefetchOptions, UseMutationResult } from '@tanstack/react-query'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 import { useCreateTripMutation, useDeleteTripMutation, useShuffleTripCoverPhoto } from '@/lib/queries/trip'
@@ -35,6 +35,11 @@ type TTripsPageViewModel = {
 
 const TripsPageViewModel = (): TTripsPageViewModel => {
     
+    const isUpdatingCoverImagesRef = useRef<{
+        value: boolean
+        count: number
+    }>({ value: false, count: 0 })
+    
     const router = useRouter()
     
     const createTripDialogOpen = useWire(store.createTripDialogOpen)
@@ -42,10 +47,10 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     
     const [isDeletingTrip, setIsDeletingTrip] = useState(false)
     
-    const [isUpdatingCoverImages, setIsUpdatingCoverImages] = useState<{
+    /*const [isUpdatingCoverImages, setIsUpdatingCoverImages] = useState<{
         value: boolean
         count: number
-    }>({ value: false, count: 0 })
+    }>({ value: false, count: 0 })*/
     
     const {
         data: trips,
@@ -98,18 +103,18 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     
     useEffect(() => {
         
-        if (!trips?.length || isUpdatingCoverImages.value || isUpdatingCoverImages.count > 3)
+        if (!trips?.length || isUpdatingCoverImagesRef.current.value || isUpdatingCoverImagesRef.current.count > 3)
             return
         
-        setIsUpdatingCoverImages(prev => ({
+        isUpdatingCoverImagesRef.current = {
             value: true,
-            count: prev.count + 1,
-        }))
+            count: isUpdatingCoverImagesRef.current.count + 1,
+        }
         
         const tripsMissingCoverImage = trips.filter(it => !it.coverImageUrl?.length)
         
         if (!tripsMissingCoverImage.length) {
-            setIsUpdatingCoverImages({ value: false, count: 0 })
+            isUpdatingCoverImagesRef.current = { value: false, count: 0 }
             return
         }
         
@@ -122,9 +127,11 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
         
         Promise.all(promises)
             .catch(e => console.error('Failed to update cover images', e))
-            .finally(() => setIsUpdatingCoverImages({ value: false, count: 0 }))
+            .finally(() => {
+                isUpdatingCoverImagesRef.current = { value: false, count: 0 }
+            })
         
-    }, [isUpdatingCoverImages, shuffleTripCoverPhotoMutation, trips])
+    }, [isUpdatingCoverImagesRef, shuffleTripCoverPhotoMutation, trips])
     
     return {
         

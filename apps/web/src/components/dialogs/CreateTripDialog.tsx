@@ -1,7 +1,7 @@
 // noinspection ShadcnComponentComposition
 
 import { useWireState } from '@forminator/react-wire'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
@@ -32,7 +32,7 @@ const CreateTripDialog = () => {
     
     const createTripMutation = useCreateTripMutation()
     
-    const createNewTrip = async (value: CreateTripForm) => {
+    const createNewTrip = useCallback(async (value: CreateTripForm) => {
         
         setIsCreatingTrip(true)
         
@@ -54,7 +54,7 @@ const CreateTripDialog = () => {
         setIsCreatingTrip(false)
         setCreateTripDialogOpen(false)
         
-    }
+    }, [createTripMutation, router, setCreateTripDialogOpen])
     
     const form = useCreateTripForm(createNewTrip)
     

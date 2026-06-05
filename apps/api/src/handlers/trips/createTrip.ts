@@ -1,5 +1,6 @@
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
+import { getRandomUnsplashImageUrl } from '@repo/shared/utils'
 import { apiResponse } from '@repo/shared/utils/api'
 import dayjs from 'dayjs'
 import type { Request, Response } from 'express'
@@ -21,8 +22,11 @@ export const createTrip = async (
         const {
             name,
             description,
-            coverImageUrl,
+            coverImageUrl: manualCoverImageUrl,
         } = bodySchema.parse(req.body)
+        
+        const coverImageUrl = manualCoverImageUrl
+            ?? await getRandomUnsplashImageUrl(name)
         
         const result = await db.transaction(async tx => {
             
