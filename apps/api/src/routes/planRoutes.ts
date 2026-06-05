@@ -14,30 +14,30 @@ const router = express.Router()
 router.use(middleware.authentication)
 router.use(middleware.authorizeTrip)
 
-router.get('/trips/:tripId/plans',
+router.get('/',
     asyncHandler(getPlans),
 )
 
-router.post('/trips/:tripId/plans',
+router.post('/',
     asyncHandler(createPlan),
 )
 
-router.get('/trips/:tripId/plans/:planId',
+router.get('/:planId',
     middleware.authorizePlan,
     asyncHandler(getPlan),
 )
 
-router.put('/trips/:tripId/plans/:planId',
+router.put('/:planId',
     middleware.authorizePlan,
     asyncHandler(updatePlan),
 )
 
-router.post('/trips/:tripId/plans/:planId/clone',
+router.post('/:planId/clone',
     middleware.authorizePlan,
     asyncHandler(clonePlan),
 )
 
-router.delete('/trips/:tripId/plans/:planId',
+router.delete('/:planId',
     middleware.authorizePlan,
     asyncHandler(deletePlan),
 )

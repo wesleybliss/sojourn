@@ -10,9 +10,9 @@ import type { NextFunction, Request, Response } from 'express'
 import { z } from 'zod'
 
 const paramsSchema = z.object({
-    tripId: z.coerce.number().nullable(),
-    planId: z.coerce.number().nullable(),
-    segmentId: z.coerce.number().nullable(),
+    tripId: z.coerce.number().optional(),
+    planId: z.coerce.number().optional(),
+    segmentId: z.coerce.number().optional(),
 })
 
 export const logger = (req: Request, _res: Response, next: NextFunction) => {
@@ -64,9 +64,9 @@ export const authorization = (options: AuthorizeOptions) => {
             const { tripId, planId, segmentId } = paramsSchema.parse(req.params)
             
             // Determine what level of authorization is needed
-            const needsTripAuth = options.requireTrip ?? (tripId !== null)
-            const needsPlanAuth = options.requirePlan ?? (planId !== null)
-            const needsSegmentAuth = options.requireSegment ?? (segmentId !== null)
+            const needsTripAuth = options.requireTrip ?? (tripId !== null && tripId !== undefined)
+            const needsPlanAuth = options.requirePlan ?? (planId !== null && planId !== undefined)
+            const needsSegmentAuth = options.requireSegment ?? (segmentId !== null && segmentId !== undefined)
             
             // If no IDs provided, nothing to authorize (allow through)
             if (!needsTripAuth && !needsPlanAuth && !needsSegmentAuth)
@@ -165,8 +165,10 @@ export const authorization = (options: AuthorizeOptions) => {
             
         } catch (e) {
             
-            if (e instanceof z.ZodError)
+            if (e instanceof z.ZodError) {
+                console.error('Validation error:', { params: req.params }, e.cause, e.stack)
                 return next(new HttpError(400, 'Invalid parameter format'))
+            }
             
             next(e)
             

@@ -1,6 +1,6 @@
 import { ApiResult, DeletePlacesBody, Place } from '@repo/shared/types'
-import { UpdatePlaceBody } from '@repo/shared/types/mutations'
 import { fetchJSON } from '@repo/shared/utils/api'
+import { UpdatePlaceBody } from '@shared/types/mutations.types'
 import { keepPreviousData, useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { useAuth } from '@/components/providers/AuthProvider'

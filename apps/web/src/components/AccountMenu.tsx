@@ -1,5 +1,5 @@
-import { Trip, User } from '@repo/shared/types/database'
 import { fetchJSON } from '@repo/shared/utils/api'
+import { Trip, User } from '@shared/types/database.types'
 import { ChevronUp, LogOut } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'

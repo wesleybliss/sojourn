@@ -1,6 +1,6 @@
 import { useWireState } from '@forminator/react-wire'
 import { ApiResult, DeletePlacesBody, ID, ListViewMode } from '@repo/shared/types'
-import { Place, Trip } from '@repo/shared/types/database'
+import { Place, Trip } from '@shared/types/database.types'
 import { UseMutationResult } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'

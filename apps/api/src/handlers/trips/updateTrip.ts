@@ -1,13 +1,18 @@
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import { apiResponse } from '@repo/shared/utils/api'
-import { isUserTripMember } from '@repo/shared/utils/auth'
 import { eq } from 'drizzle-orm'
 import type { Request, Response } from 'express'
 import { z } from 'zod'
 
 const paramsSchema = z.object({
     tripId: z.coerce.number(),
+})
+
+const bodySchema = z.object({
+    name: z.coerce.string().optional(),
+    description: z.coerce.string().optional(),
+    coverImageUrl: z.coerce.string().optional(),
 })
 
 export const updateTrip = async (
@@ -18,12 +23,15 @@ export const updateTrip = async (
     try {
         
         const { tripId } = paramsSchema.parse(req.params)
-        const body = req.body
         
-        const isMember = await isUserTripMember(req.auth, tripId)
+        if (!Object.keys(req.body).length)
+            throw new Error('No data provided')
         
-        if (!isMember)
-            return apiResponse.forbidden(res)
+        const {
+            name,
+            description,
+            coverImageUrl,
+        } = bodySchema.parse(req.body)
         
         const [trip] = await db.select()
             .from(schemas.trips)
@@ -35,8 +43,9 @@ export const updateTrip = async (
         const [updatedTrip] = await db
             .update(schemas.trips)
             .set({
-                name: body.name,
-                description: body.description,
+                name,
+                description,
+                coverImageUrl,
             })
             .where(eq(schemas.trips.id, tripId))
             .returning()

@@ -1,10 +1,13 @@
+import { useWireState } from '@forminator/react-wire'
 import { ApiResult, ID, Trip, TripInsert, TripWithSegmentCount } from '@repo/shared/types'
 import { QueryObserverResult, RefetchOptions, UseMutationResult } from '@tanstack/react-query'
-import { SyntheticEvent, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 import { useCreateTripMutation, useDeleteTripMutation, useShuffleTripCoverPhoto } from '@/lib/queries/trip'
 import { useTripsQuery } from '@/lib/queries/trips'
 import { useRouter } from '@/lib/router'
+import * as store from '@/store'
 
 type TripListItem = Trip | TripWithSegmentCount
 
@@ -22,7 +25,7 @@ type TTripsPageViewModel = {
     
     // Methods
     createNewTrip: () => Promise<void>
-    onDeleteTripClick: (id: ID) => (e: SyntheticEvent) => Promise<void>
+    handleDeleteTrip: () => Promise<void>
     navigateToImportTrips: () => void
     handleTripClick: (tripId: ID) => void
 }
@@ -31,7 +34,12 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     
     const router = useRouter()
     
-    const [isUpdatingCoverImages, setIsUpdatingCoverImages] = useState(false)
+    const [deleteTripDialogId, setDeleteTripDialogId] = useWireState(store.deleteTripDialogId)
+    
+    const [isUpdatingCoverImages, setIsUpdatingCoverImages] = useState<{
+        value: boolean
+        count: number
+    }>({ value: false, count: 0 })
     
     const {
         data: trips,
@@ -58,9 +66,6 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
                 endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],*/
             })
             
-            // setTrips(prevTrips => [...prevTrips, newTrip])
-            await tripsRefetch()
-            
             const newTrip = result.data
             
             if (newTrip)
@@ -74,23 +79,27 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
         
     }
     
-    const onDeleteTripClick = (id: ID) => async (e: SyntheticEvent) => {
-        
-        e.preventDefault()
-        e.stopPropagation()
-        
-        if (!confirm('Are you sure you want to delete this trip?'))
-            return
+    const handleDeleteTrip = useCallback(async () => {
         
         try {
-            await deleteTripMutation.mutateAsync(id)
-            // setTrips(prevTrips => prevTrips.filter(trip => trip.id !== id))
-            await tripsRefetch()
-        } catch (error) {
-            console.error('Error deleting trip:', error)
+            
+            if (!deleteTripDialogId)
+                return console.warn('handleDeleteTrip: no deleteTripDialogId set')
+            
+            await deleteTripMutation.mutateAsync(deleteTripDialogId)
+            
+            toast.success('Trip deleted successfully')
+            
+        } catch (e) {
+            
+            console.error('Error deleting trip:', e)
+            toast.error('Failed to delete trip')
+            
         }
         
-    }
+        setDeleteTripDialogId(null)
+        
+    }, [deleteTripDialogId])
     
     const navigateToImportTrips = () =>
         router.push('/import-trips')
@@ -100,24 +109,31 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     
     useEffect(() => {
         
-        if (!trips?.length || isUpdatingCoverImages) return
+        if (!trips?.length || isUpdatingCoverImages || isUpdatingCoverImages.count > 3)
+            return
         
-        setIsUpdatingCoverImages(true)
+        setIsUpdatingCoverImages(prev => ({
+            value: true,
+            count: prev.count + 1,
+        }))
         
         const tripsMissingCoverImage = trips.filter(it => !it.coverImageUrl?.length)
         
         if (!tripsMissingCoverImage.length) {
-            setIsUpdatingCoverImages(false)
+            setIsUpdatingCoverImages({ value: false, count: 0 })
             return
         }
         
         const promises = tripsMissingCoverImage.map(it => {
-            return shuffleTripCoverPhotoMutation.mutateAsync({ tripId: it.id, topic: it.name })
+            return shuffleTripCoverPhotoMutation.mutateAsync({
+                tripId: it.id,
+                topic: it.name,
+            })
         })
         
         Promise.all(promises)
             .catch(e => console.error('Failed to update cover images', e))
-            .finally(() => setIsUpdatingCoverImages(false))
+            .finally(() => setIsUpdatingCoverImages({ value: false, count: 0 }))
         
     }, [isUpdatingCoverImages, shuffleTripCoverPhotoMutation, trips])
     
@@ -135,7 +151,7 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
         
         // Methods
         createNewTrip,
-        onDeleteTripClick,
+        handleDeleteTrip,
         navigateToImportTrips,
         handleTripClick,
         

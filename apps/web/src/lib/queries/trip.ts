@@ -1,7 +1,7 @@
-import { ApiResult, ID } from '@repo/shared/types/data'
-import { Trip, TripInsert } from '@repo/shared/types/database'
-import { UpdateTripBody } from '@repo/shared/types/mutations'
 import { fetchJSON } from '@repo/shared/utils/api'
+import { ApiResult, ID } from '@shared/types/data.types'
+import { Trip, TripInsert } from '@shared/types/database.types'
+import { UpdateTripBody } from '@shared/types/mutations.types'
 import { keepPreviousData, useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { updateItemArray } from '@/lib/storeUtils'
@@ -69,6 +69,7 @@ export const useUpdateTrip = () => {
     
     return useMutation({
         mutationFn: async ({ tripId, ...tripData }: UpdateTripBody) => {
+            
             return fetchJSON<Trip | null>(`trips/${tripId}`, {
                 method: 'PUT',
                 body: JSON.stringify(tripData),
@@ -77,6 +78,8 @@ export const useUpdateTrip = () => {
         onSuccess: (_data: ApiResult<Trip | null>, variables) => {
             queryClient.invalidateQueries({ queryKey: ['trip', variables.tripId] })
         },
+        retry: 1,
+        retryDelay: 3_000,
     })
     
 }
@@ -110,14 +113,12 @@ export const useShuffleTripCoverPhoto = (): UseMutationResult<
     return useMutation({
         mutationFn: async ({ tripId, topic }: ShuffleTripCoverPhotoBody) => {
             
-            console.log('useShuffleTripCoverPhoto.mutate', { tripId, topic })
-            
-            const photoResult = await fetchJSON<string | null>('utils/random-photo', {
+            const photoResult = await fetchJSON<ApiResult<string | null>>('utils/random-photo', {
                 method: 'POST',
                 body: JSON.stringify({ topic }),
             })
             
-            if (!photoResult.data) {
+            if (!photoResult.data?.data) {
                 console.error('Failed to fetch new trip cover photo')
                 return { data: null, error: 'Failed to fetch new trip cover photo' } as ApiResult<Trip>
             }
@@ -125,10 +126,10 @@ export const useShuffleTripCoverPhoto = (): UseMutationResult<
             const result = await fetchJSON<Trip | null>(`trips/${tripId}`, {
                 method: 'PUT',
                 body: JSON.stringify({
-                    coverImageUrl: photoResult.data,
+                    coverImageUrl: photoResult.data.data,
                 }),
             })
-            
+            console.log('wtf', result.data)
             if (result.data)
                 updateItemArray(store.trips, result.data)
             
@@ -139,6 +140,8 @@ export const useShuffleTripCoverPhoto = (): UseMutationResult<
             console.log('useShufflePlaceCoverPhoto', result)
             queryClient.invalidateQueries({ queryKey: ['trip', variables.tripId] })
         },
+        retry: 1,
+        retryDelay: 3_000,
     })
     
 }

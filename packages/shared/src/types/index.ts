@@ -1,11 +1,12 @@
-export * from '@repo/shared/types/data'
-export * from '@repo/shared/types/database'
-export * from '@repo/shared/types/firebase'
-export * from '@repo/shared/types/mutations'
-export type * from '@repo/shared/types/summarizer.d'
-export * from '@repo/shared/types/trips'
-export * from '@repo/shared/types/ui'
-export type * from '@repo/shared/types/window.d'
+export * from '@shared/types/data.types'
+export * from '@shared/types/database.types'
+export * from '@shared/types/firebase.types'
+export * from '@shared/types/mutations.types'
+export * from '@shared/types/segments.types'
+export type * from '@shared/types/summarizer.d'
+export * from '@shared/types/trips.types'
+export * from '@shared/types/ui.types'
+export type * from '@shared/types/window.d'
 
 export const Themes = {
     system: 'system',

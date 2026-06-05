@@ -1,11 +1,10 @@
-/* eslint-disable @stylistic/max-len */
-import { Trip } from '@repo/shared/types/database'
 import { cn } from '@repo/shared/utils'
+import { Trip } from '@shared/types/database.types'
 import dayjs from 'dayjs'
-import { ArrowUpRight, BookX, CalendarRange, Route } from 'lucide-react'
-import { MouseEventHandler, useMemo } from 'react'
+import { ArrowUpRight, CalendarRange, Route } from 'lucide-react'
+import { useMemo } from 'react'
 
-import { Button } from '@/components/ui/button'
+import TripCardMenu from '@/components/TripCardMenu'
 
 type TripCardTrip = Trip & {
     segmentCount?: number
@@ -14,13 +13,11 @@ type TripCardTrip = Trip & {
 interface TripCardProps {
     trip: TripCardTrip
     onClick: () => void
-    onDeleteTripClick: MouseEventHandler<HTMLButtonElement>
 }
 
 const TripCard = ({
     trip,
     onClick,
-    onDeleteTripClick,
 }: TripCardProps) => {
     
     const segmentCount = trip.segmentCount
@@ -50,10 +47,11 @@ const TripCard = ({
         <article
             className="group relative overflow-hidden rounded-[28px] border border-border/70
                 bg-surface-container-lowest shadow-sm transition-all duration-300
-                hover:-translate-y-1 hover:shadow-xl"
+                hover:shadow-xl cursor-pointer"
             data-id={trip.id}
             onClick={onClick}>
-            <div className="relative aspect-[16/9] overflow-hidden bg-surface-container">
+            
+            <div className="relative aspect-video overflow-hidden bg-surface-container">
                 {trip.coverImageUrl ? (
                     <img
                         alt={`${trip.name} cover`}
@@ -62,10 +60,10 @@ const TripCard = ({
                 ) : (
                     <div
                         className="h-full w-full
-                            bg-[linear-gradient(135deg,_#dbe5f0_0%,_#f8fafc_45%,_#c8d4e2_100%)]
-                            dark:bg-[linear-gradient(135deg,_#203149_0%,_#152235_55%,_#2a3d57_100%)]" />
+                            bg-[linear-gradient(135deg,#dbe5f0_0%,#f8fafc_45%,#c8d4e2_100%)]
+                            dark:bg-[linear-gradient(135deg,#203149_0%,#152235_55%,#2a3d57_100%)]" />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#091426]/55 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-[#091426]/55 via-transparent to-transparent" />
             </div>
             
             <div className="space-y-4 p-5">
@@ -79,9 +77,13 @@ const TripCard = ({
                                     || 'A deliberately paced itinerary with room for edits and route research.'}
                             </p>
                         </div>
-                        <span className="rounded-full border border-border/70 bg-surface-container-low px-2.5 py-1 text-muted-foreground">
-                            <ArrowUpRight className="size-4" />
-                        </span>
+                        <div className="flex justify-end items-center gap-2">
+                            <div className="rounded-full border border-border/70
+                                bg-surface-container-low px-2.5 py-1 text-muted-foreground">
+                                <ArrowUpRight className="size-4" />
+                            </div>
+                            <TripCardMenu tripId={trip?.id} />
+                        </div>
                     </div>
                 </div>
                 
@@ -100,17 +102,9 @@ const TripCard = ({
                         {segmentCount} segment{segmentCount === 1 ? '' : 's'}
                     </span>
                 </div>
-                
-                <div className="flex items-center justify-end border-t border-border/60 pt-4">
-                    <Button
-                        aria-label={`Delete ${trip.name}`}
-                        onClick={onDeleteTripClick}
-                        size="icon-sm"
-                        variant="outline">
-                        <BookX />
-                    </Button>
-                </div>
+            
             </div>
+        
         </article>
         
     )

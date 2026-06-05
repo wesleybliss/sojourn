@@ -1,4 +1,4 @@
-import { Segment } from '@repo/shared/types/database'
+import { Segment } from '@shared/types/database.types'
 import { CalendarClock, LockKeyhole, LockKeyholeOpen } from 'lucide-react'
 import { useEffect, useState } from 'react'
 

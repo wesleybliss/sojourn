@@ -1,4 +1,4 @@
-import type { ItemWithId } from '@repo/shared/types/data'
+import type { ItemWithId } from '@shared/types/data.types'
 import { act, renderHook } from '@testing-library/react'
 import { describe, expect, test } from 'vitest'
 

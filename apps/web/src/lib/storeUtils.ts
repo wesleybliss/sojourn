@@ -1,5 +1,5 @@
 import { Defined, Wire } from '@forminator/react-wire'
-import { ID, ItemWithId } from '@repo/shared/types/data'
+import { ID, ItemWithId } from '@shared/types/data.types'
 import deepmerge from 'deepmerge'
 
 export const addItemObject = (wire: Wire<Record<string, ItemWithId>>, item: ItemWithId) =>

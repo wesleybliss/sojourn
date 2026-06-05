@@ -6,8 +6,8 @@ import { z } from 'zod'
 
 const bodySchema = z.object({
     name: z.coerce.string(),
-    description: z.coerce.string().nullable(),
-    coverImageUrl: z.coerce.string().nullable(),
+    description: z.coerce.string().optional(),
+    coverImageUrl: z.coerce.string().optional(),
 })
 
 export const createTrip = async (

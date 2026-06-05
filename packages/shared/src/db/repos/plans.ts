@@ -1,7 +1,7 @@
 import Repository from '@repo/shared/db/repos/repo'
 import * as schemas from '@repo/shared/db/schema'
-import type { ID } from '@repo/shared/types/data'
-import type { Database, Plan, PlanSelect } from '@repo/shared/types/database'
+import type { ID } from '@shared/types/data.types'
+import type { Database, Plan, PlanSelect } from '@shared/types/database.types'
 import { asc,eq } from 'drizzle-orm'
 
 export class PlansRepository extends Repository<Plan, typeof schemas.plans> {

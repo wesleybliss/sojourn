@@ -14,15 +14,41 @@ import { asyncHandler } from '#handlers/utils/asyncHandler'
 const router = express.Router()
 
 router.use(middleware.authentication)
-router.use(middleware.authorization)
 
-router.get('/trips', asyncHandler(getTrips))
-router.post('/trips', asyncHandler(createTrip))
-router.post('/trips/backup', asyncHandler(backupTrips))
-router.post('/trips/restore', asyncHandler(restoreTrips))
-router.get('/trips/:tripId', asyncHandler(getTrip))
-router.put('/trips/:tripId', asyncHandler(updateTrip))
-router.delete('/trips/:tripId', asyncHandler(deleteTrip))
-router.post('/trips/:tripId/invite', asyncHandler(inviteTripMember))
+router.get('/',
+    asyncHandler(getTrips),
+)
+
+router.post('/',
+    asyncHandler(createTrip),
+)
+
+router.post('/backup',
+    asyncHandler(backupTrips),
+)
+
+router.post('/restore',
+    asyncHandler(restoreTrips),
+)
+
+router.get('/:tripId',
+    middleware.authorizeTrip,
+    asyncHandler(getTrip),
+)
+
+router.put('/:tripId',
+    middleware.authorizeTrip,
+    asyncHandler(updateTrip),
+)
+
+router.delete('/:tripId',
+    middleware.authorizeTrip,
+    asyncHandler(deleteTrip),
+)
+
+router.post('/:tripId/invite',
+    middleware.authorizeTrip,
+    asyncHandler(inviteTripMember),
+)
 
 export default router

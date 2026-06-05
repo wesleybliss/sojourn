@@ -39,7 +39,7 @@ const PlacesPagePlaces = memo(({
     
     if (placesListViewMode === ListViewModes.list) return (
         
-        <section className="space-y-3">
+        <section className="section-card space-y-3">
             
             {filteredPlaces.map(place => {
                 

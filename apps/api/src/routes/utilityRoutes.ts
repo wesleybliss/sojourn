@@ -8,6 +8,6 @@ const router = express.Router()
 
 router.use(middleware.authentication)
 
-router.get('/utils/random-photo', asyncHandler(getRandomPhoto))
+router.post('/random-photo', asyncHandler(getRandomPhoto))
 
 export default router

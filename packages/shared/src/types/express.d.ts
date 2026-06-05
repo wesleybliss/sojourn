@@ -1,5 +1,5 @@
-import type { ID } from '@shared/types/data'
-import type { PlanSelect, SegmentSelect, TripSelect, UserSelect } from '@shared/types/database'
+import type { ID } from '@shared/types/data.types'
+import type { PlanSelect, SegmentSelect, TripSelect, UserSelect } from '@shared/types/database.types'
 import type { DecodedIdToken } from 'firebase-admin/auth'
 
 export type AuthContext = {

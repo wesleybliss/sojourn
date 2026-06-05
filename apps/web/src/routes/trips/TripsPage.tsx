@@ -1,10 +1,9 @@
-/* eslint-disable @stylistic/max-len */
-
-import { Trip } from '@repo/shared/types/database'
 import { cn } from '@repo/shared/utils'
+import { RecentUpdate, SegmentStatus, SegmentStatuses, Trip } from '@shared/types'
 import dayjs from 'dayjs'
 import { FolderUp, MapPlus } from 'lucide-react'
 
+import DeleteTripDialog from '@/components/dialogs/DeleteTripDialog'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import TripCard from '@/components/TripCard'
 import { Button } from '@/components/ui/button'
@@ -15,29 +14,35 @@ type TripWithCount = Trip & {
     segmentCount?: number
 }
 
+const recentUpdateClasses: Record<SegmentStatus, string> = {
+    [SegmentStatuses.confirmed]: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/55 dark:text-emerald-300',
+    [SegmentStatuses.waitlist]: 'bg-amber-100 text-amber-700 dark:bg-amber-950/55 dark:text-amber-300',
+    [SegmentStatuses.actionNeeded]: 'bg-rose-100 text-rose-700 dark:bg-rose-950/55 dark:text-rose-300',
+}
+
 const TripsPage = () => {
     
     const vm = useTripsPageViewModel()
     const trips = vm.trips as TripWithCount[]
     
-    const recentUpdates = trips
+    const recentUpdates: RecentUpdate[] = trips
         .flatMap(trip => (
             (trip.plans || []).flatMap(plan => (
                 (plan.segments || []).map(segment => ({
                     tripId: trip.id,
                     tripName: trip.name,
+                    planName: plan.name,
                     segmentName: segment.name,
                     updatedAt: segment.updatedAt as Date,
                     status: segment.flightBooked && segment.stayBooked
-                        ? 'Confirmed'
+                        ? SegmentStatuses.confirmed
                         : segment.flightBooked || segment.stayBooked
-                            ? 'Waitlist'
-                            : 'Action Needed',
+                            ? SegmentStatuses.waitlist
+                            : SegmentStatuses.actionNeeded,
                     dateRange: [
                         dayjs(segment.startDate as Date).format('MMM D'),
                         dayjs(segment.endDate as Date).format('MMM D'),
                     ].join(' - '),
-                    planName: plan.name,
                 }))
             ))
         ))
@@ -71,13 +76,12 @@ const TripsPage = () => {
             )}
             
             <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-                <button
-                    className={cn(
-                        'group flex min-h-104 flex-col justify-between rounded-[14px] border border-dashed border-border/80',
-                        'bg-surface-container-low px-5 py-6 text-left transition-colors hover:border-primary/30 hover:bg-surface-container',
-                    )}
-                    onClick={vm.createNewTrip}
-                    type="button">
+                
+                <div
+                    data-testid="TripsPage-CreateTripCard"
+                    className="group flex min-h-104 flex-col justify-between rounded-[14px]
+                        border border-dashed border-border/80 bg-surface-container
+                        px-5 py-6 text-left transition-colors hover:border-primary/30 hover:bg-surface-container">
                     <div>
                         <span
                             className="inline-flex size-12 items-center justify-center rounded-xl
@@ -95,20 +99,25 @@ const TripsPage = () => {
                         </div>
                     </div>
                     <div
-                        className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground
+                        className="flex justify-end items-center gap-2 text-sm font-medium text-muted-foreground
                             transition-colors group-hover:text-foreground">
-                        Start itinerary
-                        <MapPlus className="size-4" />
+                        <Button
+                            className="cursor-pointer"
+                            variant="secondary"
+                            onClick={vm.createNewTrip}>
+                            <MapPlus className="size-4" />
+                            Start Now &rarr;
+                        </Button>
                     </div>
-                </button>
+                </div>
                 
                 {trips.map(trip => (
                     <TripCard
                         key={trip.id}
                         trip={trip}
-                        onClick={() => vm.handleTripClick(trip.id)}
-                        onDeleteTripClick={e => vm.onDeleteTripClick(trip.id)(e)} />
+                        onClick={() => vm.handleTripClick(trip.id)} />
                 ))}
+            
             </section>
             
             <section className="section-card overflow-hidden">
@@ -135,7 +144,8 @@ const TripsPage = () => {
                 
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-border/70 text-sm">
-                        <thead className="bg-surface-container-low text-left text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                        <thead className="bg-surface-container-low text-left text-xs
+                            uppercase tracking-[0.18em] text-muted-foreground">
                             <tr>
                                 <th className="px-6 py-4 font-medium">Trip</th>
                                 <th className="px-6 py-4 font-medium">Segment</th>
@@ -164,12 +174,7 @@ const TripsPage = () => {
                                         <span
                                             className={cn(
                                                 'inline-flex rounded-full px-3 py-1 text-xs font-semibold',
-                                                update.status === 'Confirmed'
-                                                    && 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/55 dark:text-emerald-300',
-                                                update.status === 'Waitlist'
-                                                    && 'bg-amber-100 text-amber-700 dark:bg-amber-950/55 dark:text-amber-300',
-                                                update.status === 'Action Needed'
-                                                    && 'bg-rose-100 text-rose-700 dark:bg-rose-950/55 dark:text-rose-300',
+                                                recentUpdateClasses[update.status],
                                             )}>
                                             {update.status}
                                         </span>
@@ -187,6 +192,9 @@ const TripsPage = () => {
                     </table>
                 </div>
             </section>
+            
+            <DeleteTripDialog onConfirm={vm.handleDeleteTrip} />
+        
         </div>
         
     )

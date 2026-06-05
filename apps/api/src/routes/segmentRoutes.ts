@@ -13,30 +13,30 @@ const router = express.Router()
 router.use(middleware.authentication)
 router.use(middleware.authorizePlan)
 
-router.get('/trips/:tripId/plans/:planId/segments',
+router.get('/',
     asyncHandler(getSegments),
 )
 
-router.post('/trips/:tripId/plans/:planId/segments',
+router.post('/',
     asyncHandler(createSegment),
 )
 
-router.get('/trips/:tripId/plans/:planId/segments/:segmentId',
+router.get('/:segmentId',
     middleware.authorizeSegment,
     asyncHandler(getSegments),
 )
 
-router.put('/trips/:tripId/plans/:planId/segments/:segmentId',
+router.put('/:segmentId',
     middleware.authorizeSegment,
     asyncHandler(updateSegment),
 )
 
-router.delete('/trips/:tripId/plans/:planId/segments',
+router.delete('/',
     middleware.authorizeSegment,
     asyncHandler(deleteSegments),
 )
 
-router.delete('/trips/:tripId/plans/:planId/segments/:segmentId',
+router.delete('/:segmentId',
     middleware.authorizeSegment,
     asyncHandler(deleteSegment),
 )

@@ -1,4 +1,4 @@
-import { Segment } from '@repo/shared/types/database'
+import { Segment } from '@shared/types/database.types'
 import dayjs from 'dayjs'
 import { ComponentProps, memo, useMemo } from 'react'
 

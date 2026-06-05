@@ -18,7 +18,7 @@ interface ConfirmDialogProps {
     title: string
     message: string
     cancelLabel: string
-    onCancel?: MouseEventHandler<HTMLButtonElement> | null
+    onCancel?: (() => void) | MouseEventHandler<HTMLButtonElement> | null
     confirmLabel: string
     confirmProps?: Record<string, unknown>
     onConfirm: MouseEventHandler<HTMLButtonElement>
@@ -39,7 +39,9 @@ const ConfirmDialog = ({
     
     return (
         
-        <Dialog open={open === true}>
+        <Dialog
+            open={open === true}
+            onOpenChange={(open: boolean) => !open && onCancel?.(null as never)}>
             
             {trigger && (
                 <DialogTrigger asChild>

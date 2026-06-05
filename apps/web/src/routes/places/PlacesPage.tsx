@@ -1,5 +1,5 @@
-import ConfirmDialog from '@/components/ConfirmDialog'
-import InputDialog from '@/components/InputDialog'
+import CreatePlaceDialog from '@/components/dialogs/CreatePlaceDialog'
+import DeletePlacesDialog from '@/components/dialogs/DeletePlacesDialog'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import PlacesPagePlaces from '@/routes/places/PlacesPagePlaces'
 import PlacesPageRecentSegments from '@/routes/places/PlacesPageRecentSegments'
@@ -42,23 +42,8 @@ const PlacesPage = () => {
             
             </div>
             
-            <InputDialog
-                description="Create a saved place card with a generated cover image and planning notes scaffold."
-                initialValue=""
-                inputFieldLabel="Place name"
-                onSubmit={vm.handleCreatePlace}
-                open={vm.addPlaceDialogOpen}
-                setOpen={vm.setAddPlaceDialogOpen}
-                title="Add Place" />
-            
-            <ConfirmDialog
-                open={vm.deletePlacesDialogOpen}
-                title="Delete Places"
-                message="Are you sure you want to delete these places?"
-                cancelLabel="Cancel"
-                onCancel={() => vm.setDeletePlacesDialogOpen(false)}
-                confirmLabel="Delete Places"
-                onConfirm={vm.handleDeletePlaces} />
+            <CreatePlaceDialog onConfirm={vm.handleCreatePlace} />
+            <DeletePlacesDialog onConfirm={vm.handleDeletePlaces} />
         
         </ProtectedRoute>
         

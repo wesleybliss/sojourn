@@ -1,7 +1,7 @@
-import { ApiResult, ID } from '@repo/shared/types/data'
-import { Plan } from '@repo/shared/types/database'
-import { ClonePlanBody, CreatePlanBody, DeletePlanBody, UpdatePlanBody } from '@repo/shared/types/mutations'
 import { fetchJSON } from '@repo/shared/utils/api'
+import { ApiResult, ID } from '@shared/types/data.types'
+import { Plan } from '@shared/types/database.types'
+import { ClonePlanBody, CreatePlanBody, DeletePlanBody, UpdatePlanBody } from '@shared/types/mutations.types'
 import { keepPreviousData, useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const plansQueryKey = (tripId: ID, exclusive = false) =>

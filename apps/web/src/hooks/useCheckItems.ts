@@ -1,4 +1,4 @@
-import { ID, ItemWithId } from '@repo/shared/types/data'
+import { ID, ItemWithId } from '@shared/types/data.types'
 import { useCallback,useMemo, useState } from 'react'
 
 export type TCheckItems = {

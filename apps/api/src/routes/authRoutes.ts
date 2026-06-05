@@ -8,7 +8,7 @@ const router = express.Router()
 
 router.use(middleware.authentication)
 
-router.get('/auth', asyncHandler(getUser))
-router.post('/auth', asyncHandler(createUser))
+router.get('/', asyncHandler(getUser))
+router.post('/', asyncHandler(createUser))
 
 export default router

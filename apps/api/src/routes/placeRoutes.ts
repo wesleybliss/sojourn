@@ -13,11 +13,11 @@ const router = express.Router()
 
 router.use(middleware.authentication)
 
-router.get('/places', asyncHandler(getPlaces))
-router.post('/places', asyncHandler(createPlace))
-router.get('/places/:placeId', asyncHandler(getPlace))
-router.put('/places/:placeId', asyncHandler(updatePlace))
-router.delete('/places', asyncHandler(deletePlaces))
-router.delete('/places/:placeId', asyncHandler(deletePlace))
+router.get('/', asyncHandler(getPlaces))
+router.post('/', asyncHandler(createPlace))
+router.get('/:placeId', asyncHandler(getPlace))
+router.put('/:placeId', asyncHandler(updatePlace))
+router.delete('', asyncHandler(deletePlaces))
+router.delete('/:placeId', asyncHandler(deletePlace))
 
 export default router

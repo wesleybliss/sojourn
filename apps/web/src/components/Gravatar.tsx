@@ -1,6 +1,6 @@
-import { User } from '@repo/shared/types/database'
 import { loadImageAsync } from '@repo/shared/utils'
 import { cn } from '@repo/shared/utils'
+import { User } from '@shared/types/database.types'
 import md5 from 'md5'
 import { CSSProperties, JSX, ReactNode, useMemo, useState } from 'react'
 

@@ -1,5 +1,5 @@
-import { ListViewMode } from '@repo/shared/types/ui'
 import { cn } from '@repo/shared/utils'
+import { ListViewMode } from '@shared/types/ui.types'
 import { Eye, EyeOff, FolderPen, Grid2x2,List } from 'lucide-react'
 
 import { TTripEditorViewModel } from '@/components/TripEditor/useTripEditorViewModel'

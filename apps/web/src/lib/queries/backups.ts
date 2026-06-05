@@ -1,6 +1,6 @@
-import { ItemWithId } from '@repo/shared/types/data'
-import { BackupTripsBody } from '@repo/shared/types/mutations'
 import { fetchJSON, fetchWithAuth } from '@repo/shared/utils/api'
+import { ItemWithId } from '@shared/types/data.types'
+import { BackupTripsBody } from '@shared/types/mutations.types'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 const idToInt = (obj: ItemWithId | null) => obj?.id ?? null

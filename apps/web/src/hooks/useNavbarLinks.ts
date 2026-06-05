@@ -1,5 +1,5 @@
-import { Trip, User } from '@repo/shared/types/database'
-import { BackupTripsBody } from '@repo/shared/types/mutations'
+import { Trip, User } from '@shared/types/database.types'
+import { BackupTripsBody } from '@shared/types/mutations.types'
 import { UseMutationResult } from '@tanstack/react-query'
 import { Dispatch, SetStateAction, useMemo } from 'react'
 import { toast } from 'sonner'

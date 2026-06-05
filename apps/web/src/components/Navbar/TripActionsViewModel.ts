@@ -1,4 +1,4 @@
-import { Trip } from '@repo/shared/types/database'
+import { Trip } from '@shared/types/database.types'
 import { QueryClient, useQueryClient } from '@tanstack/react-query'
 import { ChangeEvent,Dispatch, SetStateAction, useState } from 'react'
 import { useCallback } from 'react'

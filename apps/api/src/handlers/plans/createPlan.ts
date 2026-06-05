@@ -10,7 +10,7 @@ const paramsSchema = z.object({
 
 const bodySchema = z.object({
     name: z.coerce.string(),
-    description: z.coerce.string().nullable(),
+    description: z.coerce.string().optional(),
 })
 
 export const createPlan = async (

@@ -9,7 +9,7 @@ const router = express.Router()
 
 router.use(middleware.authentication)
 
-router.post('/debug/clear-all', asyncHandler(clearAll))
-router.post('/debug/storage/blob', asyncHandler(uploadBlob))
+router.post('/clear-all', asyncHandler(clearAll))
+router.post('/storage/blob', asyncHandler(uploadBlob))
 
 export default router
