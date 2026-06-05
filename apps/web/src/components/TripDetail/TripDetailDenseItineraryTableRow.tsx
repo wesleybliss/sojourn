@@ -22,7 +22,7 @@ const TripDetailDenseItineraryTableRow = ({
     
     return (
         
-        <tr className="h-10" key={segment.id}>
+        <tr className="h-10">
             
             <td className="px-4 py-3">
                 <div className="font-medium">{segment.name}</div>

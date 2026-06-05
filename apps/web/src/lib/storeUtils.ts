@@ -47,6 +47,7 @@ export const updateItemArray = <T extends { id: ID }, W extends T[] | null>(
     if (index === -1) {
         
         // Item not found - append it
+        console.warn('updateItemArray item not found, adding', item)
         wire.setValue([...prev, item] as Defined<W>)
         
     } else {
@@ -64,7 +65,7 @@ export const updateItemArray = <T extends { id: ID }, W extends T[] | null>(
             
         })
         
-        wire.setValue(nextVal as Defined<W>)
+        wire.setValue([...nextVal] as Defined<W>)
         
     }
     

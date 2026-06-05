@@ -62,7 +62,6 @@ const Sidebar = memo(({
         
         <aside
             data-testid="Sidebar"
-            data-wtf={JSON.stringify({ isChild })}
             className={cn(
                 'tropical-glow-muted relative section-card shrink-0 flex-col overflow-hidden border-none',
                 'bg-sidebar text-sidebar-foreground md:max-w-[18rem]',

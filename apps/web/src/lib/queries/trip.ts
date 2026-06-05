@@ -127,7 +127,7 @@ export const useShuffleTripCoverPhoto = (): UseMutationResult<
                     coverImageUrl: photoResult.data.data,
                 }),
             })
-            console.log('wtf', result.data)
+            
             if (result.data)
                 updateItemArray(store.trips, result.data)
             
@@ -135,7 +135,7 @@ export const useShuffleTripCoverPhoto = (): UseMutationResult<
             
         },
         onSuccess: (result: ApiResult<Trip | null>, variables) => {
-            console.log('useShufflePlaceCoverPhoto', result)
+            console.log('useShuffleTripCoverPhoto', result)
             queryClient.invalidateQueries({ queryKey: ['trip', variables.tripId] })
         },
         retry: 1,

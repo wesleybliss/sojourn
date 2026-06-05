@@ -58,6 +58,7 @@ const TripDetailDenseItineraryTable = ({
                     return (
                         
                         <TripDetailDenseItineraryTableRow
+                            key={segment.id}
                             segment={segment}
                             status={status}
                             totalDaysPerSegment={vm.getTotalDaysPerSegment(segment)}

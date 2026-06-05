@@ -82,7 +82,9 @@ const TripCard = ({
                                 bg-surface-container-low px-2.5 py-1 text-muted-foreground">
                                 <ArrowUpRight className="size-4" />
                             </div>
-                            <TripCardMenu tripId={trip?.id} />
+                            <TripCardMenu
+                                tripId={trip?.id}
+                                tripName={trip?.name} />
                         </div>
                     </div>
                 </div>

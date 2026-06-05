@@ -1,4 +1,4 @@
-import { useWire, useWireState } from '@forminator/react-wire'
+import { useWire, useWireState, useWireValue } from '@forminator/react-wire'
 import { ApiResult, CreateTripBody, ID, Trip, TripWithSegmentCount } from '@repo/shared/types'
 import { QueryObserverResult, RefetchOptions, UseMutationResult } from '@tanstack/react-query'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -42,6 +42,7 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     
     const router = useRouter()
     
+    const trips = useWireValue(store.trips)
     const createTripDialogOpen = useWire(store.createTripDialogOpen)
     const [deleteTripDialogId, setDeleteTripDialogId] = useWireState(store.deleteTripDialogId)
     
@@ -53,7 +54,7 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     }>({ value: false, count: 0 })*/
     
     const {
-        data: trips,
+        // data: trips,
         error: tripsError,
         isLoading: tripsLoading,
         refetch: tripsRefetch,
