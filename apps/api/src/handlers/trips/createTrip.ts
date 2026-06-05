@@ -46,10 +46,7 @@ export const createTrip = async (
             
         })
         
-        return apiResponse.ok(res, {
-            message: 'Trip created successfully',
-            data: result,
-        })
+        return apiResponse.ok(res, result)
         
     } catch (e) {
         

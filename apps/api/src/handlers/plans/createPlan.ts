@@ -36,10 +36,7 @@ export const createPlan = async (
             })
             .returning()
         
-        return apiResponse.ok(res, {
-            message: 'Plan created successfully',
-            data: createdPlan,
-        })
+        return apiResponse.ok(res, createdPlan)
         
     } catch (e) {
         

@@ -143,7 +143,7 @@ export const restoreTrips = async (
             results.push({ importedTripId: newTrip.id, name: tripName })
         }
         
-        return apiResponse.ok(res, { data: results })
+        return apiResponse.ok(res, results)
         
     } catch (e) {
         

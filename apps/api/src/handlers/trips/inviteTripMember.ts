@@ -44,12 +44,7 @@ export const inviteTripMember = async (
             tripId: trip.id,
         })
         
-        return apiResponse.ok(res, {
-            data: {
-                trip,
-                inviteeEmail,
-            },
-        })
+        return apiResponse.ok(res, { trip, inviteeEmail })
         
     } catch (e) {
         

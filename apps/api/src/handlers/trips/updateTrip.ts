@@ -53,10 +53,7 @@ export const updateTrip = async (
         if (!updatedTrip)
             return apiResponse.notFound(res, 'Trip')
         
-        return apiResponse.ok(res, {
-            message: 'Trip updated successfully',
-            data: updatedTrip,
-        })
+        return apiResponse.ok(res, updatedTrip)
         
     } catch (e) {
         

@@ -87,10 +87,7 @@ export const createSegment = async (
             })
             .returning()
         
-        return apiResponse.ok(res, {
-            message: 'Segment created successfully',
-            data: createdSegment,
-        })
+        return apiResponse.ok(res, createdSegment)
         
     } catch (e) {
         

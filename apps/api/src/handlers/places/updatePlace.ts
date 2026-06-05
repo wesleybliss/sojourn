@@ -42,10 +42,7 @@ export const updatePlace = async (
         if (!updatedPlace)
             return apiResponse.notFound(res, 'Place')
         
-        return apiResponse.ok(res, {
-            message: 'Place updated successfully',
-            data: updatedPlace,
-        })
+        return apiResponse.ok(res, updatedPlace)
         
     } catch (e) {
         

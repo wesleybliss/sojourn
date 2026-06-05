@@ -47,10 +47,7 @@ export const updatePlan = async (
         if (!updatedPlan)
             return apiResponse.notFound(res, 'Plan')
         
-        return apiResponse.ok(res, {
-            message: 'Plan updated successfully',
-            data: updatedPlan,
-        })
+        return apiResponse.ok(res, updatedPlan)
         
     } catch (e) {
         

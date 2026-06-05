@@ -59,10 +59,7 @@ export const clonePlan = async (
             
         })
         
-        return apiResponse.ok(res, {
-            message: 'Plan cloned successfully',
-            data: result,
-        })
+        return apiResponse.ok(res, result)
         
     } catch (e) {
         

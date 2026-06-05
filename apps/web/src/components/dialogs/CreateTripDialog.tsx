@@ -121,7 +121,7 @@ const CreateTripDialog = () => {
                 <DialogFooter className="sm:justify-start">
                     <DialogClose asChild>
                         <Button type="button" variant="secondary" onClick={onCancel}>
-                            'Cancel'
+                            Cancel
                         </Button>
                     </DialogClose>
                     <Button onClick={form.handleSubmit}>

@@ -85,10 +85,7 @@ export const updateSegment = async (
             if (!reloaded)
                 return apiResponse.notFound(res, 'Segment')
             
-            return apiResponse.ok(res, {
-                message: 'Segment dates updated successfully',
-                data: reloaded,
-            })
+            return apiResponse.ok(res, reloaded)
             
         }
         
@@ -97,10 +94,7 @@ export const updateSegment = async (
         if (!updatedSegment)
             return apiResponse.notFound(res, 'Updated segment not found')
         
-        return apiResponse.ok(res, {
-            message: 'Segment updated successfully',
-            data: updatedSegment,
-        })
+        return apiResponse.ok(res, updatedSegment)
         
     } catch (e) {
         
