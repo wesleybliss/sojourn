@@ -1,4 +1,4 @@
-import { useWireState } from '@forminator/react-wire'
+import { useWire, useWireState } from '@forminator/react-wire'
 import { ApiResult, ID, Trip, TripInsert, TripWithSegmentCount } from '@repo/shared/types'
 import { QueryObserverResult, RefetchOptions, UseMutationResult } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
@@ -24,7 +24,7 @@ type TTripsPageViewModel = {
     deleteTripMutation: UseMutationResult<void, Error, number, unknown>
     
     // Methods
-    createNewTrip: () => Promise<void>
+    onCreateTripClick: () => void
     handleDeleteTrip: () => Promise<void>
     navigateToImportTrips: () => void
     handleTripClick: (tripId: ID) => void
@@ -34,6 +34,7 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     
     const router = useRouter()
     
+    const createTripDialogOpen = useWire(store.createTripDialogOpen)
     const [deleteTripDialogId, setDeleteTripDialogId] = useWireState(store.deleteTripDialogId)
     
     const [isUpdatingCoverImages, setIsUpdatingCoverImages] = useState<{
@@ -55,28 +56,8 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     const deleteTripMutation = useDeleteTripMutation()
     const shuffleTripCoverPhotoMutation = useShuffleTripCoverPhoto()
     
-    const createNewTrip = async () => {
-        
-        try {
-            
-            const result = await createTripMutation.mutateAsync({
-                name: 'New Trip',
-                description: '',
-                /*startDate: new Date().toISOString().split('T')[0],
-                endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],*/
-            })
-            
-            const newTrip = result.data
-            
-            if (newTrip)
-                router.push(`/trips/${newTrip.id}`)
-            
-        } catch (e) {
-            
-            console.error('Error creating trip:', e)
-            
-        }
-        
+    const onCreateTripClick = () => {
+        createTripDialogOpen.setValue(true)
     }
     
     const handleDeleteTrip = useCallback(async () => {
@@ -150,7 +131,7 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
         deleteTripMutation,
         
         // Methods
-        createNewTrip,
+        onCreateTripClick,
         handleDeleteTrip,
         navigateToImportTrips,
         handleTripClick,

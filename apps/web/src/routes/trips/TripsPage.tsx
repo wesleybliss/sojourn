@@ -3,6 +3,7 @@ import { RecentUpdate, SegmentStatus, SegmentStatuses, Trip } from '@shared/type
 import dayjs from 'dayjs'
 import { FolderUp, MapPlus } from 'lucide-react'
 
+import CreateTripDialog from '@/components/dialogs/CreateTripDialog'
 import DeleteTripDialog from '@/components/dialogs/DeleteTripDialog'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import TripCard from '@/components/TripCard'
@@ -68,7 +69,7 @@ const TripsPage = () => {
                         No trips exist yet. Start with a new itinerary and the workspace
                         will begin populating recent updates automatically.
                     </p>
-                    <Button onClick={vm.createNewTrip}>
+                    <Button onClick={vm.onCreateTripClick}>
                         <MapPlus />
                         Plan a New Adventure
                     </Button>
@@ -104,7 +105,7 @@ const TripsPage = () => {
                         <Button
                             className="cursor-pointer"
                             variant="secondary"
-                            onClick={vm.createNewTrip}>
+                            onClick={vm.onCreateTripClick}>
                             <MapPlus className="size-4" />
                             Start Now &rarr;
                         </Button>
@@ -193,6 +194,7 @@ const TripsPage = () => {
                 </div>
             </section>
             
+            <CreateTripDialog />
             <DeleteTripDialog onConfirm={vm.handleDeleteTrip} />
         
         </div>

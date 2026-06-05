@@ -1,6 +1,12 @@
 import type { ID } from '@shared/types/data.types'
-import type { Place } from '@shared/types/database.types'
+import type { Place, TripInsert } from '@shared/types/database.types'
 import type { Plan, PlanInsert, Segment,Trip } from '@shared/types/database.types'
+
+export type CreateTripBody = Omit<TripInsert, 'userId'>
+
+export type UpdateTripBody = Partial<Trip> & {
+    id: ID
+}
 
 export type BackupTripsBody = {
     type: 'single' | 'multiple'
@@ -32,10 +38,6 @@ export type UpdatePlanBody = Partial<Plan> & {
 export type ClonePlanBody = {
     tripId: ID
     planId: ID
-}
-
-export type UpdateTripBody = Partial<Trip> & {
-    tripId: ID
 }
 
 export type UpdateSegmentBody = Partial<Segment> & {

@@ -58,6 +58,7 @@
     "@svar-ui/react-gantt": "^2.6.1",
     "@tailwindcss/postcss": "^4.3.0",
     "@tailwindcss/vite": "^4.3.0",
+    "@tanstack/react-form": "^1.33.0",
     "@tanstack/react-query": "^5.100.11",
     "@tanstack/react-query-devtools": "^5.100.11",
     "@vercel/blob": "^2.4.0",

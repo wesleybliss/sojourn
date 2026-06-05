@@ -1,7 +1,7 @@
 import { fetchJSON } from '@repo/shared/utils/api'
 import { ApiResult, ID } from '@shared/types/data.types'
-import { Trip, TripInsert } from '@shared/types/database.types'
-import { UpdateTripBody } from '@shared/types/mutations.types'
+import { Trip } from '@shared/types/database.types'
+import { CreateTripBody, UpdateTripBody } from '@shared/types/mutations.types'
 import { keepPreviousData, useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { updateItemArray } from '@/lib/storeUtils'
@@ -45,12 +45,12 @@ export const useTripQuery = (tripId: ID) => useQuery({
     retry: 0,
 })
 
-export const useCreateTripMutation = () => {
+export const useCreateTripMutation = (): UseMutationResult<ApiResult<Trip | null>, Error, CreateTripBody, unknown> => {
     
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async (tripData: Partial<TripInsert>) => {
+        mutationFn: async (tripData: CreateTripBody) => {
             return await fetchJSON<Trip | null>('trips', {
                 method: 'POST',
                 body: JSON.stringify(tripData),
@@ -68,15 +68,14 @@ export const useUpdateTrip = () => {
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ tripId, ...tripData }: UpdateTripBody) => {
-            
-            return fetchJSON<Trip | null>(`trips/${tripId}`, {
+        mutationFn: async ({ id, ...tripData }: UpdateTripBody) => {
+            return fetchJSON<Trip | null>(`trips/${id}`, {
                 method: 'PUT',
                 body: JSON.stringify(tripData),
             })
         },
         onSuccess: (_data: ApiResult<Trip | null>, variables) => {
-            queryClient.invalidateQueries({ queryKey: ['trip', variables.tripId] })
+            queryClient.invalidateQueries({ queryKey: ['trip', variables.id] })
         },
         retry: 1,
         retryDelay: 3_000,
@@ -104,8 +103,7 @@ export const useDeleteTripMutation = () => {
 export const useShuffleTripCoverPhoto = (): UseMutationResult<
     ApiResult<Trip | null>,
     Error,
-    ShuffleTripCoverPhotoBody,
-    unknown
+    ShuffleTripCoverPhotoBody
 > => {
     
     const queryClient = useQueryClient()
