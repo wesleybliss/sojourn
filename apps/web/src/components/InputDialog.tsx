@@ -48,9 +48,11 @@ const InputDialog = ({
     
     return (
         
-        <Dialog open={open}>
+        <Dialog open={open} onOpenChange={setOpen}>
             
-            <DialogContent className={`sm:max-w-106.25 ${className}`}>
+            <DialogContent
+                className={`sm:max-w-106.25 ${className}`}
+                onClick={e => e.stopPropagation()}>
                 
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
@@ -73,12 +75,13 @@ const InputDialog = ({
                 <DialogFooter>
                     <DialogClose asChild>
                         <Button
+                            type="button"
                             variant="outline"
                             onClick={() => setOpen(false)}>
                             Cancel
                         </Button>
                     </DialogClose>
-                    <Button onClick={async () => {
+                    <Button type="button" onClick={async () => {
                         
                         if (!value?.trim()) return
                         
