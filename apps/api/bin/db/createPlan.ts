@@ -4,7 +4,7 @@ import path from 'node:path'
 
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
-import { PlanInsert } from '@repo/shared/types'
+import type { PlanInsert } from '@repo/shared/types'
 import { eq } from 'drizzle-orm'
 
 const args = process.argv.slice(2)

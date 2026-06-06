@@ -5,7 +5,7 @@ import * as path from 'node:path'
 
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
-import { ID, Plan, Segment, Trip, TripInsert } from '@repo/shared/types'
+import type { ID, Plan, Segment, Trip, TripInsert } from '@repo/shared/types'
 import { geocode } from '@repo/shared/utils'
 import { eq } from 'drizzle-orm'
 

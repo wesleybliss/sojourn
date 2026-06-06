@@ -1,6 +1,7 @@
 
 export { default as auth } from './authRoutes'
 export { default as debug } from './debugRoutes'
+export { default as geonamesCities } from './geonamesCitiesRoutes'
 export { default as places } from './placeRoutes'
 export { default as plans } from './planRoutes'
 export { default as segments } from './segmentRoutes'

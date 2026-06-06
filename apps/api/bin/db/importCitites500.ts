@@ -2,8 +2,9 @@
 
 import { Buffer } from 'node:buffer'
 import fs from 'node:fs'
-import path from 'node:path'
+import path, { dirname } from 'node:path'
 import readline from 'node:readline'
+import { fileURLToPath } from 'node:url'
 import { promisify } from 'node:util'
 
 import db from '@repo/shared/db'
@@ -13,6 +14,7 @@ import yauzl from 'yauzl'
 
 const fromBuffer = promisify(yauzl.fromBuffer)
 
+const __dirname = dirname(fileURLToPath(import.meta.url))
 const DATA_FILE = path.resolve(__dirname, '../data/cities500.txt')
 const BATCH_SIZE = 1000
 

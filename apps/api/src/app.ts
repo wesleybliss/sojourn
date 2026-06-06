@@ -30,6 +30,7 @@ app.use('/api/trips', routes.trips)
 app.use('/api/trips/:tripId/plans', routes.plans)
 app.use('/api/trips/:tripId/plans/:planId/segments', routes.segments)
 app.use('/api/places', routes.places)
+app.use('/api/cities', routes.geonamesCities)
 app.use('/api/utils', routes.utilities)
 
 export default app

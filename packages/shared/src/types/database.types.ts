@@ -116,6 +116,30 @@ export type PlaceInsert = z.infer<typeof placeInsertSchema> & {
     coordsLng?: number | null
 }
 
+export const geonamesCitySelectSchema = createSelectSchema(schemas.geonamesCities)
+export const geonamesCityInsertSchema = createInsertSchema(schemas.geonamesCities)
+export type GeonamesCity = InferSelectModel<typeof schemas.geonamesCities> & {
+    focus: string | null
+    quickTip: string | null
+    personalNotes: string | null
+    region: string | null
+    travelWindow: string | null
+    isBookmarked: boolean
+    coordsLat?: number | null
+    coordsLng?: number | null
+}
+export type GeonamesCitySelect = z.infer<typeof geonamesCitySelectSchema>
+export type GeonamesCityInsert = z.infer<typeof geonamesCityInsertSchema> & {
+    focus?: string | null
+    quickTip?: string | null
+    personalNotes?: string | null
+    region?: string | null
+    travelWindow?: string | null
+    isBookmarked?: boolean
+    coordsLat?: number | null
+    coordsLng?: number | null
+}
+
 // Helper types
 export type RequiredPartialTrip = Partial<Trip> & {
     userId: number
