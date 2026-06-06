@@ -71,7 +71,7 @@ const getOrCreateUser = async (firebaseUser: DecodedIdToken): Promise<UserSelect
     const [existingByEmail] = await db
         .select()
         .from(schemas.users)
-        .where(sql.raw(`lower(${schemas.users.email}) = ${normalizedEmail}`))
+        .where(sql.raw(`lower(${schemas.users.email.name}) = '${normalizedEmail}'`))
         .limit(1)
     
     if (existingByEmail) {

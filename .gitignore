@@ -37,3 +37,5 @@ db-wal
 backups/
 .vercel
 .env*.local
+
+apps/api/src/data
