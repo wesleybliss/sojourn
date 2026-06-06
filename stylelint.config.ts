@@ -4,6 +4,7 @@ import type { Config } from 'stylelint'
 // https://github.com/stylelint/awesome-stylelint
 
 export default {
+    cache: true,
     extends: [
         'stylelint-config-standard',
         'stylelint-config-recommended',

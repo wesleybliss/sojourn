@@ -14,8 +14,8 @@
     "lint:js:dry": "oxlint && eslint --fix-dry-run .",
     "lint:js:fix": "oxlint --fix && eslint --fix .",
     "lint:js:fix:one": "eslint --fix",
-    "lint:css": "stylelint --rd --risd --cache './src/**/*.css'",
-    "lint:css:fix": "stylelint --rd --risd --cache --fix './src/**/*.css'"
+    "lint:css": "stylelint --rd --risd --cache --cache-location 'node_modules/cache/.stylelintcache' './src/**/*.css'",
+    "lint:css:fix": "stylelint --rd --risd --cache --cache-location 'node_modules/cache/.stylelintcache' --fix './src/**/*.css'"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
