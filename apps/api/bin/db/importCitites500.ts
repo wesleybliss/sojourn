@@ -16,7 +16,7 @@ const fromBuffer = promisify(yauzl.fromBuffer)
 const DATA_FILE = path.resolve(__dirname, '../data/cities500.txt')
 const BATCH_SIZE = 1000
 
-const downloadCities500 = async () => {
+const downloadCities500 = async (): Promise<NodeJS.ReadableStream> => {
     
     try {
         
@@ -49,54 +49,12 @@ const downloadCities500 = async () => {
         if (!txtEntry)
             throw new Error('cities500.txt not found in zip')
         
-        // Read the entry content
-        const content = await new Promise<string>((resolve, reject) => {
+        // Return a readable stream for the entry content
+        return await new Promise<NodeJS.ReadableStream>((resolve, reject) => {
             zipFile.openReadStream(txtEntry, (err, readStream) => {
-                
-                if (err) return reject(err)
-                
-                let data = ''
-                readStream.on('data', (chunk: unknown) => {
-                    // @ts-expect-error raw data
-                    data += chunk.toString('utf8')
-                })
-                readStream.on('end', () => resolve(data))
-                readStream.on('error', reject)
-                
+                return err ? reject(err) : resolve(readStream)
             })
         })
-        
-        // Parse the content
-        const lines = content.split('\n')
-        const cities = []
-        
-        for (const line of lines) {
-            if (!line.trim()) continue
-            const fields = line.split('\t')
-            cities.push({
-                geonameId: parseInt(fields[0]),
-                name: fields[1],
-                asciiName: fields[2],
-                alternateNames: fields[3],
-                latitude: parseFloat(fields[4]),
-                longitude: parseFloat(fields[5]),
-                featureClass: fields[6],
-                featureCode: fields[7],
-                countryCode: fields[8],
-                cc2: fields[9],
-                admin1Code: fields[10],
-                admin2Code: fields[11],
-                admin3Code: fields[12],
-                admin4Code: fields[13],
-                population: fields[14] ? parseInt(fields[14]) : null,
-                elevation: fields[15] ? parseInt(fields[15]) : null,
-                dem: fields[16] ? parseInt(fields[16]) : null,
-                timezone: fields[17],
-                modificationDate: fields[18],
-            })
-        }
-        
-        return cities
         
     } catch (e) {
         
@@ -107,16 +65,10 @@ const downloadCities500 = async () => {
     
 }
 
-const importGeonamesData = async (filePath: string) => {
+const importGeonamesData = async (fileStream: NodeJS.ReadableStream) => {
     
-    if (!fs.existsSync(filePath)) {
-        console.error(`Error: File not found - ${filePath}`)
-        process.exit(1)
-    }
+    console.log('Importing data...')
     
-    console.log(`Importing data from ${filePath}...`)
-    
-    const fileStream = fs.createReadStream(filePath)
     const rl = readline.createInterface({
         input: fileStream,
         crlfDelay: Infinity,
@@ -180,11 +132,18 @@ const main = async () => {
     
     try {
         
-        // If a local `cities500.txt` exists, use it, otherwise download it to memory (not disk)
-        // if (!fs.existsSync(DATA_FILE))
+        let fileStream: NodeJS.ReadableStream
         
+        // If a local cities500.txt exists, use it; otherwise download it
+        if (fs.existsSync(DATA_FILE)) {
+            console.log(`Using local file: ${DATA_FILE}`)
+            fileStream = fs.createReadStream(DATA_FILE)
+        } else {
+            console.log('Downloading cities500.zip...')
+            fileStream = await downloadCities500()
+        }
         
-        await importGeonamesData(DATA_FILE)
+        await importGeonamesData(fileStream)
         
         const result = await db.select({ count: sql < number > `count(*)` }).from(geonamesCities)
         console.log(`\n✓ Verification: ${result[0].count.toLocaleString()} total records`)
