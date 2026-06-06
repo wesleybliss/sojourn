@@ -17,11 +17,13 @@ export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof sc
         
     }
     
-    async searchCities(searchTerm: string) {
+    async searchCities(searchTerm: string): Promise<Partial<GeonamesCity>[]> {
         
-        return this.db
+        const results: Partial<GeonamesCity>[] = await this.db
             .select({
+                id: this.schema.id,
                 name: this.schema.name,
+                alternateNames: this.schema.alternateNames,
                 countryCode: this.schema.countryCode,
                 population: this.schema.population,
                 latitude: this.schema.latitude,
@@ -40,6 +42,33 @@ export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof sc
             )
             .orderBy(desc(this.schema.population))
             .limit(10)
+        
+        const hasExactMatch = results.find((it: Partial<GeonamesCity>) => {
+            return it?.name?.toLowerCase() === searchTerm.toLowerCase()
+        })
+        
+        if (hasExactMatch)
+            return results
+        
+        const exactAltNameMatch = results.reduce((acc: Partial<GeonamesCity> | null, it: Partial<GeonamesCity>) => {
+            
+            const match = it?.alternateNames?.split(',')
+                ?.find(altName => altName.toLowerCase() === searchTerm.toLowerCase())
+            
+            if (!match?.length) return acc
+            
+            return {
+                ...it,
+                name: match,
+                alternateNames: `${it.name},${it.alternateNames}`,
+            } as Partial<GeonamesCity>
+            
+        }, null as Partial<GeonamesCity> | null)
+        
+        if (exactAltNameMatch)
+            results.unshift(exactAltNameMatch)
+        
+        return results
         
     }
     

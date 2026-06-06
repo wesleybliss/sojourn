@@ -1,3 +1,4 @@
+import type { GeonamesCity } from '@repo/shared/types'
 import { fetchJSON } from '@repo/shared/utils/api'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -9,12 +10,12 @@ const DebugCitySearch = () => {
     const { loading } = useAuth()
     
     const [query, setQuery] = useState('')
-    const [results, setResults] = useState<Record<string, unknown>[]>([])
+    const [results, setResults] = useState<Partial<GeonamesCity>[]>([])
     
     const searchCitiesDebug = useCallback(async (searchQuery: string) => {
         
         try {
-            const res = await fetchJSON<Record<string, unknown>[]>(`cities/search?query=${searchQuery}`)
+            const res = await fetchJSON<Partial<GeonamesCity>[]>(`cities/search?query=${searchQuery}`)
             console.log('res', res)
             setResults(res.data || [])
         } catch (e) {
