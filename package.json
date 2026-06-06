@@ -28,6 +28,7 @@
         "install-all": "./bin/install-all.sh",
         "fix:parallel": "pnpm --filter \"*\" --parallel --stream check && pnpm --filter \"*\" --parallel --stream lint:fix",
         "update-shared": "pnpm -r update-shared",
+        "db:studio": "drizzle-kit studio",
         "db:pull": "drizzle-kit pull",
         "db:push": "drizzle-kit push",
         "db:backup": "./bin/backup-database.sh",

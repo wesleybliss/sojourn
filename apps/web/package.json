@@ -7,10 +7,6 @@
     "test": "vitest",
     "build": "vite build",
     "start": "vite preview --host --port 3001",
-    "db:push": "npx drizzle-kit push",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio",
     "check": "tsc -p tsconfig.web.json",
     "lint": "pnpm lint:js && pnpm lint:css",
     "lint:fix": "pnpm lint:js:fix && pnpm lint:css:fix",
@@ -19,10 +15,7 @@
     "lint:js:fix": "oxlint --fix && eslint --fix .",
     "lint:js:fix:one": "eslint --fix",
     "lint:css": "stylelint --rd --risd --cache './src/**/*.css'",
-    "lint:css:fix": "stylelint --rd --risd --cache --fix './src/**/*.css'",
-    "db:dump": "turso db shell sojourn .dump > backups/dump_`ts`.sql",
-    "db:restore": "echo 'turso db shell sojourn < backups/dump-.sql'",
-    "db:seed": "turso db shell sojourn < backups/seed.sql"
+    "lint:css:fix": "stylelint --rd --risd --cache --fix './src/**/*.css'"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",

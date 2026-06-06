@@ -1,5 +1,5 @@
 import { lower, optsCascadeAll, table, timestamps, timestampSeconds } from '@repo/shared/db/dbUtils'
-import { integer, primaryKey, real,text, uniqueIndex } from 'drizzle-orm/sqlite-core'
+import { index, integer, primaryKey, real, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
 
 export const users = table('users', {
     email: text('email').notNull(),
@@ -67,6 +67,43 @@ export const places = table('places', {
     coordsLat: real('coordsLat'),
     coordsLng: real('coordsLng'),
 })
+
+
+export const geonamesCities = table('geonamesCities', {
+    /*id: false,
+    geonameId: integer('geonameId').primaryKey(),*/
+    name: text('name', { length: 200 }),
+    asciiName: text('asciiName', { length: 200 }),
+    alternateNames: text('alternateNames'),
+    latitude: real('latitude'),
+    longitude: real('longitude'),
+    featureClass: text('featureClass', { length: 1 }),
+    featureCode: text('featureCode', { length: 10 }),
+    countryCode: text('countryCode', { length: 2 }),
+    cc2: text('cc2', { length: 200 }),
+    admin1Code: text('admin1Code', { length: 20 }),
+    admin2Code: text('admin2Code', { length: 80 }),
+    admin3Code: text('admin3Code', { length: 20 }),
+    admin4Code: text('admin4Code', { length: 20 }),
+    population: integer('population', { mode: 'number' }),
+    elevation: integer('elevation'),
+    dem: integer('dem'),
+    timezone: text('timezone', { length: 40 }),
+    modificationDate: text('modificationDate'),
+}, table => ({
+    // Regular indexes for SQLite
+    nameIdx: index('idx_geonames_name').on(table.name),
+    asciiNameIdx: index('idx_geonames_ascii_name').on(table.asciiName),
+    countryCodeIdx: index('idx_geonames_country_code').on(table.countryCode),
+    populationIdx: index('idx_geonames_population').on(table.population),
+    
+    // SQLite doesn't support GIN indexes, but we can create regular indexes
+    // for the columns we'll search on frequently
+    alternateNamesIdx: index('idx_geonames_alternate_names').on(table.alternateNames),
+    
+    // Composite index for common query patterns
+    countryPopulationIdx: index('idx_country_population').on(table.countryCode, table.population),
+}))
 
 /*
 SQLite Reference:

@@ -1,0 +1,218 @@
+import 'dotenv/config'
+
+import * as fs from 'node:fs'
+import * as path from 'node:path'
+
+import db from '@repo/shared/db'
+import * as schemas from '@repo/shared/db/schema'
+import { ID, Plan, Segment, Trip, TripInsert } from '@repo/shared/types'
+import { geocode } from '@repo/shared/utils'
+import { eq } from 'drizzle-orm'
+
+const args = process.argv.slice(2)
+const [tripsFile] = args
+
+const script = path.basename(process.argv[0])
+const usage = `USAGE: ${script} <tripsFileon>`
+
+export type ImportTripData = {
+    type: 'single' | 'multiple'
+    name: string
+    owner: string // email address
+    description?: string | null
+    coverImageUrl?: string | null
+    plans?: Plan[] | undefined
+}
+
+const importSegment = async (
+    tripId: ID,
+    plan: Partial<Plan>,
+    segment: Segment,
+) => {
+    
+    if (!tripId?.toString()?.length)
+        throw new Error(`importSegment: Invalid trip ID "${tripId}"`)
+    
+    if (!plan?.id?.toString()?.length) {
+        console.error('importSegment: Invalid plan', plan)
+        throw new Error('importSegment: Invalid plan')
+    }
+    
+    console.log('Creating segment', plan.name, '->', segment.name)
+    
+    let latitude: number | null = segment.coordsLat ?? null
+    let longitude: number | null = segment.coordsLng ?? null
+    if (latitude === null || longitude === null) {
+        try {
+            const geoResult = await geocode(segment.name)
+            if (geoResult) {
+                latitude = geoResult.lat
+                longitude = geoResult.lng
+            }
+        } catch (geoError) {
+            console.warn('Geocoding failed for segment name:', segment.name, geoError)
+        }
+    }
+    
+    await db
+        .insert(schemas.segments)
+        .values({
+            tripId,
+            planId: plan.id,
+            name: segment.name,
+            description: segment.description,
+            startDate: new Date(segment.startDate as Date),
+            endDate: new Date(segment.endDate as Date),
+            coordsLat: latitude,
+            coordsLng: longitude,
+            color: segment.color,
+            flightBooked: segment.flightBooked || false,
+            stayBooked: segment.stayBooked || false,
+            isShengenRegion: segment.isShengenRegion || false,
+        })
+    
+}
+
+const importTrip = async (data: ImportTripData) => {
+    
+    if (data.type !== 'single')
+        throw new Error('Invalid trip type (not "single") ' + JSON.stringify(data, null, 4))
+    
+    const {
+        name,
+        owner,
+        description,
+        coverImageUrl,
+        plans,
+    } = data
+    
+    let email = owner
+    
+    if (!email) {
+        const allUsers = await db.select().from(schemas.users)
+        
+        if (allUsers.length === 1) {
+            email = allUsers[0].email
+            console.log('No owner specified in trip; using only user in DB:', email)
+        } else if (process.env.IMPORT_OWNER_EMAIL) {
+            email = process.env.IMPORT_OWNER_EMAIL
+            console.log('No owner specified in trip; using IMPORT_OWNER_EMAIL:', email)
+        } else {
+            throw new Error('No owner specified in trip and unable to infer user. ' +
+                'Set IMPORT_OWNER_EMAIL or include owner in the trip data')
+        }
+    }
+    
+    const user = await db
+        .select()
+        .from(schemas.users)
+        .where(eq(schemas.users.email, email))
+    
+    if (!user || user.length === 0)
+        throw new Error(`User not found with email "${email}"`)
+    
+    const tripInsertData: TripInsert = {
+        userId: user[0].id,
+        name,
+        description,
+        coverImageUrl,
+    }
+    
+    console.log('Creating trip', name)
+    const insertedTrips = await db
+        .insert(schemas.trips)
+        .values(tripInsertData)
+        .returning({
+            id: schemas.trips.id,
+            name: schemas.trips.name,
+        })
+    
+    const trip = insertedTrips[0]
+    
+    console.log('Adding user', email, 'to trip', name)
+    await db.insert(schemas.userTrips).values({
+        userId: user[0].id,
+        tripId: trip.id,
+    })
+    
+    for (const plan of plans || []) {
+        
+        console.log('Creating plan', plan.name)
+        const insertedPlans = await db
+            .insert(schemas.plans)
+            .values({
+                tripId: trip.id,
+                name: plan.name,
+            })
+            .returning({
+                id: schemas.plans.id,
+                tripId: schemas.plans.tripId,
+                name: schemas.plans.name,
+            })
+        
+        console.log('Creating', plan?.segments?.length, 'segments for plan', plan.name)
+        
+        for (const segment of plan?.segments || []) {
+            await importSegment(trip.id, insertedPlans[0], segment)
+        }
+        
+    }
+    
+}
+
+const importTrips = async (data: {
+    type: 'single' | 'multiple'
+    trips: Array<Trip & { owner: string }>
+}) => {
+    
+    for (const trip of data.trips) {
+        
+        const importTripData: ImportTripData = {
+            type: 'single',
+            ...trip,
+        }
+        
+        await importTrip(importTripData)
+        
+    }
+    
+}
+
+const main = async () => {
+    
+    if (!tripsFile?.length)
+        throw new Error('Invalid trips file')
+    
+    if (!fs.existsSync(tripsFile))
+        throw new Error('Trips file doesn\'t exist')
+    
+    try {
+        
+        const data = JSON.parse(fs.readFileSync(tripsFile, 'utf8'))
+        
+        switch (data.type) {
+            case 'single':
+                return await importTrip({ ...data, type: 'single' })
+            case 'multiple':
+                return await importTrips(data)
+            default:
+                throw new Error(`Unknown type "${data.type}"; expected "single" or "multiple"`)
+        }
+        
+    } catch (e) {
+        
+        console.error(e)
+        throw new Error('Failed to read trips file')
+        
+    }
+    
+}
+
+main()
+    .then(() => process.exit(0))
+    .catch(e => {
+        console.log({ args, tripsFile })
+        console.log(usage)
+        console.error(e)
+        process.exit(1)
+    })

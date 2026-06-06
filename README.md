@@ -85,3 +85,83 @@ turso db tokens create sojourn
 - [ ] Enforce RBAC on all API routes
 - [ ] Invite other users to join a trip (UI implementation)
 - [ ] Either make places the source of truth, and autocomplete when adding new segments, or find a way to dedupe them, since currently there are many duplicate places.
+- [ ] Import country/state/city data from a CSV file (`psql -d your_database -c "\COPY geonames_cities FROM 'cities500.txt' DELIMITER E'\t' NULL '' ENCODING 'UTF8';"`)
+
+
+```sql
+SELECT name, country_code, latitude, longitude, population
+FROM geonames_cities
+WHERE feature_class = 'P'  -- Only populated places
+  AND population > 10000    -- Filter out tiny villages
+  AND (
+      name ILIKE 'napoli%' 
+      OR ascii_name ILIKE 'napoli%'
+      OR alternate_names ILIKE '%napoli%'
+  )
+ORDER BY population DESC
+LIMIT 10;
+```
+
+Better full-text search on alternate names:
+
+```sql
+SELECT name, country_code, population
+FROM geonames_cities
+WHERE feature_class = 'P'
+  AND to_tsvector('simple', alternate_names) @@ to_tsquery('simple', 'napoli')
+ORDER BY population DESC
+LIMIT 10;
+```
+
+With a proximity boost:
+
+```sql
+SELECT name, country_code, population,
+       CASE 
+           WHEN name ILIKE 'napoli' THEN 3
+           WHEN name ILIKE 'napoli%' THEN 2
+           WHEN alternate_names ILIKE '%napoli%' THEN 1
+           ELSE 0
+       END AS relevance
+FROM geonames_cities
+WHERE feature_class = 'P'
+  AND (name ILIKE '%napoli%' OR alternate_names ILIKE '%napoli%')
+ORDER BY relevance DESC, population DESC
+LIMIT 10;
+
+```
+
+```ts
+import { like, desc, and, sql } from 'drizzle-orm';
+
+const searchCities = async (searchTerm: string) => {
+  const results = await db
+    .select({
+      name: geonamesCities.name,
+      countryCode: geonamesCities.countryCode,
+      population: geonamesCities.population,
+      latitude: geonamesCities.latitude,
+      longitude: geonamesCities.longitude,
+    })
+    .from(geonamesCities)
+    .where(
+      and(
+        sql`${geonamesCities.featureClass} = 'P'`,
+        sql`${geonamesCities.population} > 10000`,
+        sql`(
+          ${geonamesCities.name} LIKE ${`${searchTerm}%`} OR 
+          ${geonamesCities.alternateNames} LIKE ${`%${searchTerm}%`}
+        )`
+      )
+    )
+    .orderBy(desc(geonamesCities.population))
+    .limit(10);
+  
+  return results;
+};
+
+// Example: Search for "Napoli" will match Naples
+const results = await searchCities('Napoli');
+// Returns Naples with population 909048
+
+```
