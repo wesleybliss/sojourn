@@ -53,7 +53,7 @@ export const authentication = async (
 export const authorization = (options: AuthorizeOptions) => {
     
     return async (req: Request, _res: Response, next: NextFunction) => {
-        
+        console.log('wtf', { params: req.params, query: req.query, path: req.path })
         try {
             
             // Check authentication first
@@ -154,6 +154,12 @@ export const authorization = (options: AuthorizeOptions) => {
             } else {
                 
                 // Invalid combination (e.g., planId without tripId)
+                console.warn('Invalid resource hierarchy', {
+                    params: req.params,
+                    tripId,
+                    planId,
+                    segmentId,
+                })
                 return next(new HttpError(400, 'Invalid resource hierarchy'))
                 
             }

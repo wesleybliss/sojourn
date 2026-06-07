@@ -68,7 +68,7 @@ const useNavbarViewModel = (): TNavbarViewModel => {
     const isDebugPage = pathname?.startsWith('/debug')
     const isTeamsPage = pathname === '/teams'
     const isTripsPage = pathname === '/trips'
-    const isTripWorkspace = /^\/trips\/\d+$/.test(pathname)
+    const isTripWorkspace = /^\/\d+\/trips\/\d+/.test(pathname)
     const isPlacesPage = pathname?.startsWith('/places')
     const isImportPage = pathname?.startsWith('/trips/import')
     const title = isTripWorkspace

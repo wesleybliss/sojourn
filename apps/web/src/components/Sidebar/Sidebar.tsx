@@ -1,43 +1,16 @@
 import { useWireState } from '@forminator/react-wire'
 import { cn } from '@repo/shared/utils'
-import { Compass, Map, Settings2,Users } from 'lucide-react'
 import { memo, useMemo } from 'react'
 import { GoSidebarExpand } from 'react-icons/go'
 
 import AccountMenu from '@/components/AccountMenu'
 import { useAuth } from '@/components/providers/AuthProvider'
 import SidebarNavItem from '@/components/Sidebar/SidebarNavItem'
+import useSidebarNavigationItems from '@/components/Sidebar/useSidebarNavigationItems'
 import TeamsMenu from '@/components/teams/TeamsMenu'
 import { Button } from '@/components/ui/button'
 import { Link } from '@/lib/router'
 import * as store from '@/store'
-
-const navigationItems = [
-    {
-        href: '/',
-        label: 'My Trips',
-        caption: 'My Trips',
-        icon: Map,
-    },
-    {
-        href: '/places',
-        label: 'Places',
-        caption: 'Saved research',
-        icon: Compass,
-    },
-    {
-        href: '/teams',
-        label: 'Teams',
-        caption: 'Teams',
-        icon: Users,
-    },
-    {
-        href: '/debug',
-        label: 'Settings',
-        caption: 'Workspace tools',
-        icon: Settings2,
-    },
-]
 
 interface SidebarProps {
     isChild?: boolean
@@ -56,6 +29,8 @@ const Sidebar = memo(({
     ), [isChild, isSidebarExpandedValue])
     
     const showSignedInState = useMemo(() => Boolean(firebaseUser), [firebaseUser])
+    
+    const navigationItems = useSidebarNavigationItems()
     
     return (
         

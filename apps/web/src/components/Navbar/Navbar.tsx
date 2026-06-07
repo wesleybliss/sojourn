@@ -3,6 +3,7 @@ import { FolderPen, Map as MapIcon, MapPlus, TableProperties } from 'lucide-reac
 
 import AccountMenu from '@/components/AccountMenu'
 import CurrentPlanSelector from '@/components/CurrentPlanSelector'
+import useSegmentActionsViewModel from '@/components/Navbar/SegmentActionsViewModel'
 import TripActionsDropdown from '@/components/Navbar/TripActionsDropdown'
 import useNavbarViewModel from '@/components/Navbar/useNavbarViewModel'
 import ThemeSwitcher from '@/components/ThemeSwitcher/ThemeSwitcher'
@@ -11,6 +12,7 @@ import { Button } from '@/components/ui/button'
 const Navbar = () => {
     
     const vm = useNavbarViewModel()
+    const segmentActions = useSegmentActionsViewModel(vm.currentTrip, vm.currentPlan)
     
     if (vm.loading || !vm.firebaseUser)
         return null
@@ -44,12 +46,21 @@ const Navbar = () => {
                     </div>
                     
                     <div className="flex flex-wrap items-center gap-2">
-                        <Button
-                            disabled={vm.createTripMutation.isPending}
-                            onClick={vm.handleCreateTrip}>
-                            <MapPlus />
-                            {vm.createTripMutation.isPending ? 'Creating...' : 'New Trip'}
-                        </Button>
+                        {vm.isTripWorkspace ? (
+                            <Button
+                                disabled={segmentActions.createSegmentMutation.isPending}
+                                onClick={segmentActions.addSegment}>
+                                <MapPlus />
+                                {segmentActions.createSegmentMutation.isPending ? 'Adding...' : 'Add Segment'}
+                            </Button>
+                        ) : (
+                            <Button
+                                disabled={vm.createTripMutation.isPending}
+                                onClick={vm.handleCreateTrip}>
+                                <MapPlus />
+                                {vm.createTripMutation.isPending ? 'Creating...' : 'New Trip'}
+                            </Button>
+                        )}
                         {vm.currentTrip && vm.isTripWorkspace && (
                             <TripActionsDropdown
                                 trip={vm.currentTrip}

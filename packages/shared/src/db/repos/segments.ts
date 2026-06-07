@@ -25,7 +25,7 @@ export class SegmentsRepository extends Repository<Segment, typeof schemas.segme
         
         const segments = await this.findAllByTripId(data.tripId)
         
-        console.log('@@@@ testing', segments)
+        console.log('createWithNextDate @todo', segments)
         
         throw new Error('Not yet implemented')
         

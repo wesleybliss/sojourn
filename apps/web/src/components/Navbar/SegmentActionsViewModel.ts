@@ -14,12 +14,15 @@ const SegmentActionsViewModel = (
     
     // React Query
     const queryClient = useQueryClient()
-    const addSegmentMutation = useCreateSegment()
+    const createSegmentMutation = useCreateSegment()
     
     const segments = currentPlan?.segments
     
     const addSegment = useCallback(async () => {
-        
+        console.log('wtf', {
+            currentTrip,
+            currentPlan,
+        })
         if (!currentTrip || !currentPlan)
             return console.warn('addSegment no trip or plan selected')
         
@@ -43,14 +46,14 @@ const SegmentActionsViewModel = (
             color: 'bg-blue-500',
         }
         
-        addSegmentMutation.mutate(newSegment, {
+        createSegmentMutation.mutate(newSegment, {
             onSuccess: () => {
                 toast('Segment added')
                 queryClient.invalidateQueries({ queryKey: ['trip', currentTrip.id] })
             },
         })
         
-    }, [currentPlan, segments, addSegmentMutation, currentTrip])
+    }, [currentTrip, currentPlan, segments, createSegmentMutation])
     
     const copySegmentNamesToClipboard = useCallback(async () => {
         
@@ -66,6 +69,7 @@ const SegmentActionsViewModel = (
         
         // Hooks
         queryClient,
+        createSegmentMutation,
         
         // Methods
         addSegment,
