@@ -9,11 +9,24 @@ export type Database = typeof database
 
 export type Insert<T extends SQLiteTable> = InferInsertModel<T>
 export type Select<T extends SQLiteTable> = InferSelectModel<T>
+
 export const userInsertSchema = createInsertSchema(schemas.users)
-export type User = InferSelectModel<typeof schemas.users>
 export const userSelectSchema = createSelectSchema(schemas.users)
+export type User = InferSelectModel<typeof schemas.users>
 export type UserSelect = z.infer<typeof userSelectSchema>
 export type UserInsert = z.infer<typeof userInsertSchema>
+
+export const teamInsertSchema = createInsertSchema(schemas.teams)
+export const teamSelectSchema = createSelectSchema(schemas.teams)
+export type Team = InferSelectModel<typeof schemas.teams>
+export type TeamSelect = z.infer<typeof teamSelectSchema>
+export type TeamInsert = z.infer<typeof teamInsertSchema>
+
+export const userTeamInsertSchema = createInsertSchema(schemas.userTeams)
+export const userTeamSelectSchema = createSelectSchema(schemas.userTeams)
+export type UserTeam = InferSelectModel<typeof schemas.userTeams>
+export type UserTeamSelect = z.infer<typeof userTeamSelectSchema>
+export type UserTeamInsert = z.infer<typeof userTeamInsertSchema>
 
 export const tripSelectSchema = createSelectSchema(schemas.trips)
 export const tripInsertSchema = createInsertSchema(schemas.trips)
@@ -45,6 +58,9 @@ export type CreateTripRequest =
 
 export const userTripSelectSchema = createSelectSchema(schemas.userTrips)
 export const userTripInsertSchema = createInsertSchema(schemas.userTrips)
+export type UserTrip = InferSelectModel<typeof schemas.userTrips>
+export type UserTripSelect = z.infer<typeof userTripSelectSchema>
+export type UserTripInsert = z.infer<typeof userTripInsertSchema>
 
 export const planSelectSchema = createSelectSchema(schemas.plans)
 export const planInsertSchema = createInsertSchema(schemas.plans)

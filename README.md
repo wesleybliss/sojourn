@@ -85,6 +85,7 @@ turso db tokens create sojourn
 - [ ] Enforce RBAC on all API routes
 - [ ] Invite other users to join a trip (UI implementation)
 - [ ] Either make places the source of truth, and autocomplete when adding new segments, or find a way to dedupe them, since currently there are many duplicate places.
+- [ ] Plans handlers still doing some manual db calls
 - [ ] Import country/state/city data from a CSV file (`psql -d your_database -c "\COPY geonames_cities FROM 'cities500.txt' DELIMITER E'\t' NULL '' ENCODING 'UTF8';"`)
 
 

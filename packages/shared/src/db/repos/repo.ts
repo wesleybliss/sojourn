@@ -3,7 +3,9 @@ import type { Database, Insert, Select } from '@repo/shared/types'
 import type { ID } from '@shared/types/data.types'
 import type { AnyColumn } from 'drizzle-orm'
 import { desc, eq, inArray } from 'drizzle-orm'
+import { SQL, SQLWrapper } from 'drizzle-orm/sql/sql'
 import type { SQLiteTable } from 'drizzle-orm/sqlite-core'
+import { SQLiteViewBase } from 'drizzle-orm/sqlite-core/view-base'
 
 /**
  * Generic repository with the specified name, plural form, schema, and database connection.
@@ -58,6 +60,18 @@ class Repository<TModel, TSchema extends SQLiteTable> {
     }
     
     //endregion Helpers
+    
+    async count(source: SQLiteTable | SQLiteViewBase | SQL | SQLWrapper, filters?: SQL<unknown>) {
+        
+        return this.db.$count(source, filters)
+        
+    }
+    
+    select() {
+        
+        return this.db.select().from(this.schema)
+        
+    }
     
     async create(
         data: Insert<TSchema>,

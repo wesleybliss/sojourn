@@ -1,6 +1,6 @@
 import { useWireState } from '@forminator/react-wire'
 import { cn } from '@repo/shared/utils'
-import { Compass, Map, Settings2 } from 'lucide-react'
+import { Compass, Map, Settings2,Users } from 'lucide-react'
 import { memo, useMemo } from 'react'
 import { GoSidebarExpand } from 'react-icons/go'
 
@@ -13,6 +13,12 @@ import * as store from '@/store'
 import { Button } from './ui/button'
 
 const navigationItems = [
+    {
+        href: '/teams',
+        label: 'Teams',
+        caption: 'Teams',
+        icon: Users,
+    },
     {
         href: '/',
         label: 'My Trips',

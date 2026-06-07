@@ -1,3 +1,4 @@
+export * from './teams'
 export * from '@shared/types/data.types'
 export * from '@shared/types/database.types'
 export * from '@shared/types/firebase.types'

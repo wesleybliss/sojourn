@@ -12,7 +12,21 @@ export const users = table('users', {
     uniqueIndex('firebaseUidUniqueIndex').on(table.firebaseUid),
 ])
 
+export const teams = table('teams', {
+    name: text('name').notNull(),
+    description: text('description'),
+})
+
+export const userTeams = table('userTeams', {
+    id: false,
+    userId: integer('userId').notNull().references(() => users.id, optsCascadeAll),
+    teamId: integer('teamId').notNull().references(() => teams.id, optsCascadeAll),
+}, table => [
+    primaryKey({ columns: [table.userId, table.teamId] }),
+])
+
 export const trips = table('trips', {
+    teamId: integer('teamId').references(() => teams.id, optsCascadeAll),
     userId: integer('userId').notNull().references(() => users.id, optsCascadeAll),
     name: text('name').notNull(),
     description: text('description'),

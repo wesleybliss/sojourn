@@ -6,6 +6,7 @@ import * as rwp from 'react-wire-persisted'
 import useDebug from '@/hooks/useDebug'
 import AppLayout from '@/layouts/AppLayout'
 import DebugLayout from '@/layouts/DebugLayout'
+import TeamsLayout from '@/layouts/TeamsLayout'
 import { Navigate } from '@/lib/router'
 import DebugCitySearch from '@/routes/debug/city-search/page'
 import DebugGeocodeTool from '@/routes/debug/geocode-tool/page'
@@ -19,6 +20,9 @@ import LoginPage from '@/routes/login/page'
 import HomePage from '@/routes/page'
 import PlacesPage from '@/routes/places/PlacesPage'
 import SignupPage from '@/routes/signup/page'
+import CreateTeamPage from '@/routes/teams/CreateTeamPage'
+import TeamPage from '@/routes/teams/TeamPage'
+import TeamsPage from '@/routes/teams/TeamsPage'
 import TripPage from '@/routes/trips/[tripId]/page'
 import PlanDetail from '@/routes/trips/[tripId]/plans/[planId]/page'
 import Plans from '@/routes/trips/[tripId]/plans/page'
@@ -35,8 +39,24 @@ const App = () => {
     return (
         
         <Routes>
+            
             <Route element={<AppLayout />}>
+                
                 <Route index element={<HomePage />} />
+                
+                <Route path="teams" element={<TeamsLayout />}>
+                    
+                    <Route index element={<TeamsPage />} />
+                    <Route path="create" element={<CreateTeamPage />} />
+                    
+                    <Route path=":teamId" element={<TeamPage />}>
+                        
+                        <Route index element={<TeamPage />} />
+                    
+                    </Route>
+                
+                </Route>
+                
                 <Route path="trips" element={<TripsRoute />} />
                 <Route path="trips/:tripId" element={<TripPage />} />
                 <Route path="trips/:tripId/plans" element={<Plans />} />

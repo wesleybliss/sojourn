@@ -1,6 +1,6 @@
 import { createSelector,createWire } from '@forminator/react-wire'
 import { keys } from '@repo/shared/constants'
-import { ListViewMode, ListViewModes, ShengenData, Theme } from '@repo/shared/types'
+import { ListViewMode, ListViewModes, ShengenData, Team, Theme } from '@repo/shared/types'
 import { calculateTotalDays } from '@repo/shared/utils'
 import { ID } from '@shared/types/data.types'
 import { Place, Plan, Segment, Trip } from '@shared/types/database.types'
@@ -9,6 +9,12 @@ import { createPersistedWire } from 'react-wire-persisted'
 export const theme = createPersistedWire<Theme>(keys.theme, 'light')
 
 export const isSidebarExpanded = createPersistedWire<boolean>(keys.isSidebarExpanded, false)
+
+export const teams = createWire<Team[]>([])
+export const currentTeamId = createWire<ID | null>(null)
+export const currentTeam = createSelector<Team | null>({
+    get: ({ get }) => get(teams)?.find(it => it.id === get(currentTeamId)) || null,
+})
 
 export const trips = createWire<Trip[]>([])
 export const currentTripId = createWire<ID | null>(null)
