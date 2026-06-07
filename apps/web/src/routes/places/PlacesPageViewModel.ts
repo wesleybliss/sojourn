@@ -40,6 +40,8 @@ export type TPlacesPageViewModel = {
     // Global State
     placesListViewMode: ListViewMode
     setPlacesListViewMode: Dispatch<SetStateAction<ListViewMode>>
+    createPlaceDialogOpen: boolean
+    setCreatePlaceDialogOpen: Dispatch<SetStateAction<boolean>>
     deletePlacesDialogOpen: boolean
     setDeletePlacesDialogOpen: Dispatch<SetStateAction<boolean>>
     
@@ -48,8 +50,6 @@ export type TPlacesPageViewModel = {
     setSearch: Dispatch<SetStateAction<string>>
     activeRegion: string // @todo custom type
     setActiveRegion: Dispatch<SetStateAction<string>>
-    addPlaceDialogOpen: boolean
-    setAddPlaceDialogOpen: Dispatch<SetStateAction<boolean>>
     
     // Memos
     trips: Trip[]
@@ -90,11 +90,11 @@ export type TPlacesPageViewModel = {
 const usePlacesPageViewModel = (): TPlacesPageViewModel => {
     
     const [placesListViewMode, setPlacesListViewMode] = useWireState(store.placesListViewMode)
+    const [createPlaceDialogOpen, setCreatePlaceDialogOpen] = useWireState(store.createPlaceDialogOpen)
     const [deletePlacesDialogOpen, setDeletePlacesDialogOpen] = useWireState(store.deletePlacesDialogOpen)
     
     const [search, setSearch] = useState('')
     const [activeRegion, setActiveRegion] = useState('All')
-    const [addPlaceDialogOpen, setAddPlaceDialogOpen] = useState(false)
     
     const { data: placesData, isLoading } = usePlacesQuery()
     const { data: tripsData } = useTripsQuery({
@@ -236,6 +236,8 @@ const usePlacesPageViewModel = (): TPlacesPageViewModel => {
         // Global State
         placesListViewMode,
         setPlacesListViewMode,
+        createPlaceDialogOpen,
+        setCreatePlaceDialogOpen,
         deletePlacesDialogOpen,
         setDeletePlacesDialogOpen,
         
@@ -244,8 +246,6 @@ const usePlacesPageViewModel = (): TPlacesPageViewModel => {
         setSearch,
         activeRegion,
         setActiveRegion,
-        addPlaceDialogOpen,
-        setAddPlaceDialogOpen,
         
         // Memos
         trips,

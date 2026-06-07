@@ -55,23 +55,9 @@ export const segments = table('segments', {
     isShengenRegion: integer('isShengenRegion', { mode: 'boolean' }).default(false).notNull(),
 })
 
-export const places = table('places', {
-    name: text('name').notNull(),
-    coverImageUrl: text('coverImageUrl'),
-    focus: text('focus'),
-    quickTip: text('quickTip'),
-    personalNotes: text('personalNotes'),
-    region: text('region'),
-    travelWindow: text('travelWindow'),
-    isBookmarked: integer('isBookmarked', { mode: 'boolean' }).default(false).notNull(),
-    coordsLat: real('coordsLat'),
-    coordsLng: real('coordsLng'),
-})
-
-
+// Read-only source of cities data
+// When adding a place, some info is copied to the `places` table
 export const geonamesCities = table('geonamesCities', {
-    /*id: false,
-    geonameId: integer('geonameId').primaryKey(),*/
     name: text('name', { length: 200 }),
     asciiName: text('asciiName', { length: 200 }),
     alternateNames: text('alternateNames'),
@@ -104,6 +90,23 @@ export const geonamesCities = table('geonamesCities', {
     // Composite index for common query patterns
     countryPopulationIdx: index('idx_country_population').on(table.countryCode, table.population),
 }))
+
+// @todo higher level "org" to keep places under
+// When adding a place, some info is copied from the `geonamesCities` table
+// Aside from that, the user can also create arbitrary named places
+export const places = table('places', {
+    geonamesCityId: integer('geonamesCityId').references(() => geonamesCities.id, optsCascadeAll),
+    name: text('name').notNull(),
+    coverImageUrl: text('coverImageUrl'),
+    focus: text('focus'),
+    quickTip: text('quickTip'),
+    personalNotes: text('personalNotes'),
+    region: text('region'),
+    travelWindow: text('travelWindow'),
+    isBookmarked: integer('isBookmarked', { mode: 'boolean' }).default(false).notNull(),
+    coordsLat: real('coordsLat'),
+    coordsLng: real('coordsLng'),
+})
 
 /*
 SQLite Reference:

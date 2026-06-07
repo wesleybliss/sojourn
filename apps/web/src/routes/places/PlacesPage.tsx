@@ -27,7 +27,7 @@ const PlacesPage = () => {
                     allChecked={vm.allChecked}
                     anyChecked={vm.anyChecked}
                     toggleAllChecked={vm.toggleAllChecked}
-                    onAddPlaceClick={() => vm.setAddPlaceDialogOpen(true)} />
+                    onAddPlaceClick={() => vm.setCreatePlaceDialogOpen(true)} />
                 
                 <PlacesPagePlaces
                     isLoading={vm.isLoading}
