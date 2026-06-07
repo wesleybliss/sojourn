@@ -12,12 +12,11 @@ const paramsSchema = z.object({
     teamId: z.coerce.number().optional(),
 })
 
-const paramsSchemaAlt = z.object({
+const paramsSchemaInitial = z.object({
     teamId: z.string().optional(),
 })
 
 export type TUseRequireTeam = {
-    teamId: number | undefined
     currentTeamId: number | null
     setCurrentTeamId: Dispatch<SetStateAction<number | null>>
     teams: Team[] | null | undefined
@@ -27,8 +26,7 @@ export type TUseRequireTeam = {
 
 const useRequireTeam = (): TUseRequireTeam => {
     
-    const { teamId } = useTypedParams(paramsSchema)
-    const { teamId: slug } = useTypedParams(paramsSchemaAlt)
+    const params = useTypedParams(paramsSchemaInitial)
     
     const [currentTeamId, setCurrentTeamId] = useWireState(store.currentTeamId)
     
@@ -37,6 +35,9 @@ const useRequireTeam = (): TUseRequireTeam => {
     useEffect(() => {
         
         if (isPending) return
+        
+        const slug = params.teamId
+        const { teamId } = paramsSchema.parse(params)
         
         console.log('useRequireTeam', { teams, teamId, slug })
         
@@ -57,7 +58,7 @@ const useRequireTeam = (): TUseRequireTeam => {
         if (!teamId && !slug?.length)
             window.location.href = `/${nextTeamId}`
         
-    }, [teamId, slug, teams, isPending])
+    }, [params, teams, isPending])
     
     useEffect(() => {
         if (error)
@@ -68,7 +69,6 @@ const useRequireTeam = (): TUseRequireTeam => {
     
     return {
         
-        teamId,
         currentTeamId,
         setCurrentTeamId,
         teams,
