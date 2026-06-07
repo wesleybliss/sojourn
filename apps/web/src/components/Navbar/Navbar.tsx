@@ -56,7 +56,7 @@ const Navbar = () => {
                                 plan={vm.currentPlan} />
                         )}
                         <ThemeSwitcher />
-                        <AccountMenu />
+                        <AccountMenu isSidebarExpanded={vm.isSidebarExpanded} />
                     </div>
                 </div>
                 

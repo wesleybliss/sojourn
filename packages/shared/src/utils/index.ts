@@ -69,7 +69,7 @@ export const tryCatch = <T, D = undefined>(
     
     try {
         return fn()
-    } catch (e) {
+    } catch (_e) {
         return defaultValue as D
     }
     

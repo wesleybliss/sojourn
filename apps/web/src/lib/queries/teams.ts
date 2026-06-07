@@ -14,6 +14,7 @@ import { updateItemArray } from '@/lib/storeUtils'
 import * as store from '@/store'
 
 type TeamsQueryResultData = Team[] | TeamWithMembers[] | null | undefined
+type TeamQueryResultData = Team | null | undefined
 
 type TeamsQueryOptions = UseQueryOptions<
     TeamsQueryResultData,
@@ -22,14 +23,28 @@ type TeamsQueryOptions = UseQueryOptions<
     (string | Record<string, boolean>)[]
 >
 
+type TeamQueryOptions = UseQueryOptions<
+    TeamQueryResultData,
+    Error,
+    TeamQueryResultData,
+    (string | Record<string, boolean>)[]
+>
+
 type TeamsQueryOverrideOptions = Omit<TeamsQueryOptions, 'queryFn' | 'queryKey'>
+type TeamQueryOverrideOptions = Omit<TeamQueryOptions, 'queryFn' | 'queryKey'>
 
 interface UseTeamsQueryParams {
     withMembers?: boolean
     options?: TeamsQueryOverrideOptions
 }
 
+interface UseTeamQueryParams {
+    withMembers?: boolean
+    options?: TeamQueryOverrideOptions
+}
+
 type TeamsQueryResult = UseQueryResult<TeamsQueryResultData, Error>
+type TeamQueryResult = UseQueryResult<TeamQueryResultData, Error>
 
 export const useTeamsQuery = ({
     withMembers = false,
@@ -76,7 +91,7 @@ export const useTeamsQuery = ({
 
 export const useTeamQuery = (teamId: ID, {
     options,
-}: UseTeamsQueryParams = {}): TeamsQueryResult => {
+}: UseTeamQueryParams = {}): TeamQueryResult => {
     
     const { firebaseUser } = useAuth()
     
@@ -86,7 +101,7 @@ export const useTeamQuery = (teamId: ID, {
             
             try {
                 
-                const result = await fetchJSON<Team[]>(
+                const result = await fetchJSON<Team>(
                     `teams/${teamId}`,
                 )
                 

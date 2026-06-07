@@ -21,6 +21,7 @@ export type TNavbarViewModel = {
     // Global State
     currentTrip: Trip | null
     currentPlan: Plan | null
+    isSidebarExpanded: boolean
     showMap: boolean
     setShowMap: Dispatch<SetStateAction<boolean>>
     isTripEditMode: boolean
@@ -32,6 +33,8 @@ export type TNavbarViewModel = {
     
     // Memos
     isDebugPage: boolean
+    isTeamsPage: boolean
+    isTripsPage: boolean
     isTripWorkspace: boolean
     isPlacesPage: boolean
     isImportPage: boolean
@@ -55,6 +58,7 @@ const useNavbarViewModel = (): TNavbarViewModel => {
     const currentTeamId = useWireValue(store.currentTeamId)
     const currentTrip = useWireValue(store.currentTrip)
     const currentPlan = useWireValue(store.currentPlan)
+    const isSidebarExpanded = useWireValue(store.isSidebarExpanded)
     const [showMap, setShowMap] = useWireState(store.showMap)
     const [isTripEditMode, setIsTripEditMode] = useWireState(store.isTripEditMode)
     
@@ -62,7 +66,9 @@ const useNavbarViewModel = (): TNavbarViewModel => {
     const backupMutation = useBackupTrips()
     
     const isDebugPage = pathname?.startsWith('/debug')
-    const isTripWorkspace = pathname?.startsWith('/trips/')
+    const isTeamsPage = pathname === '/teams'
+    const isTripsPage = pathname === '/trips'
+    const isTripWorkspace = /^\/trips\/\d+$/.test(pathname)
     const isPlacesPage = pathname?.startsWith('/places')
     const isImportPage = pathname?.startsWith('/trips/import')
     const title = isTripWorkspace
@@ -139,6 +145,7 @@ const useNavbarViewModel = (): TNavbarViewModel => {
         // Global State
         currentTrip,
         currentPlan,
+        isSidebarExpanded,
         showMap,
         setShowMap,
         isTripEditMode,
@@ -150,6 +157,8 @@ const useNavbarViewModel = (): TNavbarViewModel => {
         
         // Memos
         isDebugPage,
+        isTeamsPage,
+        isTripsPage,
         isTripWorkspace,
         isPlacesPage,
         isImportPage,
