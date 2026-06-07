@@ -53,7 +53,6 @@ export const authentication = async (
 export const authorization = (options: AuthorizeOptions) => {
     
     return async (req: Request, _res: Response, next: NextFunction) => {
-        console.log('wtf', { params: req.params, query: req.query, path: req.path })
         try {
             
             // Check authentication first

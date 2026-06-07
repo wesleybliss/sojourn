@@ -1,3 +1,4 @@
+import { useWire } from '@forminator/react-wire'
 import { Plan, Segment, Trip } from '@repo/shared/types'
 import { getTripSegmentNames } from '@repo/shared/utils'
 import { useQueryClient } from '@tanstack/react-query'
@@ -6,11 +7,14 @@ import { useCallback } from 'react'
 import { toast } from 'sonner'
 
 import { useCreateSegment } from '@/lib/queries/segments'
+import * as store from '@/store'
 
 const SegmentActionsViewModel = (
     currentTrip: Trip | null,
     currentPlan: Plan | null,
 ) => {
+    
+    const isTripEditMode = useWire(store.isTripEditMode)
     
     // React Query
     const queryClient = useQueryClient()
@@ -18,11 +22,8 @@ const SegmentActionsViewModel = (
     
     const segments = currentPlan?.segments
     
-    const addSegment = useCallback(async () => {
-        console.log('wtf', {
-            currentTrip,
-            currentPlan,
-        })
+    const addSegment = useCallback(async (autoEditTripMode = false) => {
+        
         if (!currentTrip || !currentPlan)
             return console.warn('addSegment no trip or plan selected')
         
@@ -50,10 +51,13 @@ const SegmentActionsViewModel = (
             onSuccess: () => {
                 toast('Segment added')
                 queryClient.invalidateQueries({ queryKey: ['trip', currentTrip.id] })
+                
+                if (autoEditTripMode)
+                    isTripEditMode.setValue(true)
             },
         })
         
-    }, [currentTrip, currentPlan, segments, createSegmentMutation])
+    }, [currentTrip, currentPlan, segments, createSegmentMutation, isTripEditMode])
     
     const copySegmentNamesToClipboard = useCallback(async () => {
         

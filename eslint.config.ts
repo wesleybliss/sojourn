@@ -192,6 +192,8 @@ export default [
                     vars: 'all',
                     args: 'none',          // tsc catches these instead
                     ignoreRestSiblings: true,
+                    argsIgnorePattern: '^_',      // ignore unused arguments starting with _
+                    varsIgnorePattern: '^_',      // ignore unused variables starting with _
                 },
             ],
         },

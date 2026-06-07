@@ -49,7 +49,7 @@ const Navbar = () => {
                         {vm.isTripWorkspace ? (
                             <Button
                                 disabled={segmentActions.createSegmentMutation.isPending}
-                                onClick={segmentActions.addSegment}>
+                                onClick={() => segmentActions.addSegment(true)}>
                                 <MapPlus />
                                 {segmentActions.createSegmentMutation.isPending ? 'Adding...' : 'Add Segment'}
                             </Button>
@@ -112,7 +112,10 @@ const Navbar = () => {
                             </div>
                             <div>
                                 <Button
-                                    className="bg-accent text-accent-foreground hover:bg-accent/90"
+                                    className={cn({
+                                        'bg-accent text-accent-foreground hover:bg-accent/90': !vm.isTripEditMode,
+                                        'bg-warning text-warning-foreground hover:bg-warning/90': vm.isTripEditMode,
+                                    })}
                                     onClick={() => vm.setIsTripEditMode(!vm.isTripEditMode)}>
                                     <FolderPen />
                                     Edit Trip

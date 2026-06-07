@@ -9,7 +9,7 @@ import { getPlans } from '#handlers/plans/getPlans'
 import { updatePlan } from '#handlers/plans/updatePlan'
 import { asyncHandler } from '#handlers/utils/asyncHandler'
 
-const router = express.Router()
+const router = express.Router({ mergeParams: true })
 
 router.use(middleware.authentication)
 router.use(middleware.authorizeTrip)

@@ -8,7 +8,7 @@ import { getSegments } from '#handlers/segments/getSegments'
 import { updateSegment } from '#handlers/segments/updateSegment'
 import { asyncHandler } from '#handlers/utils/asyncHandler'
 
-const router = express.Router()
+const router = express.Router({ mergeParams: true })
 
 router.use(middleware.authentication)
 router.use(middleware.authorizePlan)
@@ -32,7 +32,7 @@ router.put('/:segmentId',
 )
 
 router.delete('/',
-    middleware.authorizeSegment,
+    middleware.authorizePlan,
     asyncHandler(deleteSegments),
 )
 

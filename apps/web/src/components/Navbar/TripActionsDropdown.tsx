@@ -104,7 +104,7 @@ const TripActionsDropdown = ({
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel className="opacity-60">Segments</DropdownMenuLabel>
                 <DropdownMenuGroup>
-                    <DropdownMenuItem onClick={segmentActionsViewModel.addSegment}>
+                    <DropdownMenuItem onClick={() => segmentActionsViewModel.addSegment(true)}>
                         <MapPinPlus className="text-green-500" /> New Segment
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={segmentActionsViewModel.copySegmentNamesToClipboard}>
