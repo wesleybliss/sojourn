@@ -6,7 +6,7 @@ import { FolderUp, MapPlus } from 'lucide-react'
 import CreateTripDialog from '@/components/dialogs/CreateTripDialog'
 import DeleteTripDialog from '@/components/dialogs/DeleteTripDialog'
 import LoadingSpinner from '@/components/LoadingSpinner'
-import TripCard from '@/components/TripCard'
+import TripCard from '@/components/trips/TripCard'
 import { Button } from '@/components/ui/button'
 
 import useTripsPageViewModel from './TripsPageViewModel'
@@ -59,8 +59,6 @@ const TripsPage = () => {
     return (
         
         <div data-testid="TripsPage" className="flex flex-col gap-8 py-3">
-            
-            <h1>@todo {vm.currentTeam?.name}</h1>
             
             {!trips.length && (
                 <div

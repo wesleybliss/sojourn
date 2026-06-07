@@ -1,6 +1,6 @@
 import { useWireState } from '@forminator/react-wire'
 
-import InputDialog from '@/components/InputDialog'
+import InputDialog from '@/components/dialogs/InputDialog'
 import * as store from '@/store'
 
 export interface CreatePlaceDialogProps {

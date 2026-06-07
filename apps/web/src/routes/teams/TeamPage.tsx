@@ -1,5 +1,6 @@
 import { z } from 'zod'
 
+import LoadingSpinner from '@/components/LoadingSpinner'
 import useTypedParams from '@/hooks/useTypedParams'
 import { useTeamQuery } from '@/lib/queries/teams'
 
@@ -13,17 +14,27 @@ const TeamPage = () => {
     
     const {
         data: team,
-        isLoading,
+        isError,
+        isPending,
         error,
     } = useTeamQuery(teamId)
+    
+    if (isError) return (
+        <div>
+            <p>Error loading team</p>
+            <pre><code>{JSON.stringify(error, null, 4)}</code></pre>
+        </div>
+    )
+    
+    if (isPending) return (
+        <LoadingSpinner />
+    )
     
     return (
         
         <div>
             
             <h1>Team</h1>
-            
-            {isLoading && <p>Loading...</p>}
             
             {error && <div><pre><code>{JSON.stringify(error, null, 4)}</code></pre></div>}
             

@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import { useEffect } from 'react'
 
-import InputDialog from '@/components/InputDialog'
+import InputDialog from '@/components/dialogs/InputDialog'
 import usePlanActionsViewModel from '@/components/Navbar/PlanActionsViewModel'
 import useSegmentActionsViewModel from '@/components/Navbar/SegmentActionsViewModel'
 import useTripActionsViewModel from '@/components/Navbar/TripActionsViewModel'

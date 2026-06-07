@@ -4,7 +4,7 @@ import { ChevronUp, LogOut } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-import ConfirmDialog from '@/components/ConfirmDialog'
+import ConfirmDialog from '@/components/dialogs/ConfirmDialog'
 import Gravatar from '@/components/Gravatar'
 import { useAuth } from '@/components/providers/AuthProvider'
 import {
@@ -40,10 +40,12 @@ const debugDumpData = (trips: Trip[] | null) => (e: MouseEvent) => {
 
 type AccountMenuProps = {
     variant?: 'icon' | 'sidebar'
+    isSidebarExpanded: boolean
 }
 
 const AccountMenu = ({
     variant = 'icon',
+    isSidebarExpanded,
 }: AccountMenuProps) => {
     
     const {
@@ -175,7 +177,10 @@ const AccountMenu = ({
                 )}
             </DropdownMenuTrigger>
             
-            <DropdownMenuContent align={variant === 'sidebar' ? 'start' : 'end'}>
+            <DropdownMenuContent
+                align="end"
+                side={isSidebarExpanded ? 'top' : 'right'}
+                sideOffset={10}>
                 <DropdownMenuLabel>{displayEmail || displayName}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 
@@ -198,6 +203,7 @@ const AccountMenu = ({
                         Logout
                     </DropdownMenuItem>
                 </Link>
+            
             </DropdownMenuContent>
         </DropdownMenu>
         

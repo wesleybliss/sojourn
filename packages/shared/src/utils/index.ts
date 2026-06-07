@@ -62,6 +62,19 @@ export const noop = () => {
     // NOOP
 }
 
+export const tryCatch = <T, D = undefined>(
+    fn: () => T,
+    defaultValue?: D | undefined,
+): T | D => {
+    
+    try {
+        return fn()
+    } catch (e) {
+        return defaultValue as D
+    }
+    
+}
+
 export const generateSlug = (title: string) => title
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '') // Remove non-alphanumeric, non-space, non-hyphen chars

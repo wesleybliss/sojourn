@@ -17,6 +17,7 @@ const CurrentPlanSelector = () => {
     
     const router = useRouter()
     
+    const currentTeamId = useWireValue(store.currentTeamId)
     const currentTrip = useWireValue(store.currentTrip)
     const currentPlans = useWireValue(store.currentPlans)
     const currentPlan = useWireValue(store.currentPlan)
@@ -38,7 +39,7 @@ const CurrentPlanSelector = () => {
             value={currentPlan.id.toString()}
             onValueChange={e => {
                 // store.currentPlanId.setValue(e)
-                router.push(`/trips/${currentTrip?.id}/plans/${e}`)
+                router.push(`/${currentTeamId}/trips/${currentTrip?.id}/plans/${e}`)
             }}>
             
             <SelectTrigger className="w-45">

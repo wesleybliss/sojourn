@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useParams } from 'react-router'
 import { z } from 'zod'
 
@@ -9,18 +10,22 @@ export const useTypedParams = <
     
     const params = useParams()
     
-    try {
+    return useMemo(() => {
         
-        return schema.parse(params)
+        try {
+            
+            return schema.parse(params)
+            
+        } catch (e) {
+            
+            if (e instanceof z.ZodError)
+                throw new Error(`Invalid route params: ${e.message}`)
+            
+            throw e
+            
+        }
         
-    } catch (e) {
-        
-        if (e instanceof z.ZodError)
-            throw new Error(`Invalid route params: ${e.message}`)
-        
-        throw e
-        
-    }
+    }, [params])
     
 }
 

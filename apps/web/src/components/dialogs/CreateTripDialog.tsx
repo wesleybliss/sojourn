@@ -1,6 +1,6 @@
 // noinspection ShadcnComponentComposition
 
-import { useWireState } from '@forminator/react-wire'
+import { useWireState, useWireValue } from '@forminator/react-wire'
 import { useCallback, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -26,6 +26,7 @@ const CreateTripDialog = () => {
     
     const router = useRouter()
     
+    const currentTeamId = useWireValue(store.currentTeamId)
     const [createTripDialogOpen, setCreateTripDialogOpen] = useWireState(store.createTripDialogOpen)
     
     const [isCreatingTrip, setIsCreatingTrip] = useState(false)
@@ -42,7 +43,7 @@ const CreateTripDialog = () => {
             const newTrip = result.data
             
             if (newTrip)
-                router.push(`/trips/${newTrip.id}`)
+                router.push(`/${currentTeamId}/trips/${newTrip.id}`)
             
         } catch (e) {
             

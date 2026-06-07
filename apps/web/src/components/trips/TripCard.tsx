@@ -1,10 +1,10 @@
+import { Trip } from '@repo/shared/types/database.types'
 import { cn } from '@repo/shared/utils'
-import { Trip } from '@shared/types/database.types'
 import dayjs from 'dayjs'
 import { ArrowUpRight, CalendarRange, Route } from 'lucide-react'
 import { useMemo } from 'react'
 
-import TripCardMenu from '@/components/TripCardMenu'
+import TripCardMenu from '@/components/trips/TripCardMenu'
 
 type TripCardTrip = Trip & {
     segmentCount?: number

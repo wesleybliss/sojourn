@@ -2,7 +2,7 @@ import { cn, noop } from '@repo/shared/utils'
 import { MapPinX } from 'lucide-react'
 import { ComponentProps, useMemo, useState } from 'react'
 
-import ConfirmDialog from '@/components/ConfirmDialog'
+import ConfirmDialog from '@/components/dialogs/ConfirmDialog'
 import { Button } from '@/components/ui/button'
 
 interface ConfirmDeleteSegmentsDialogProps extends ComponentProps<'button'> {

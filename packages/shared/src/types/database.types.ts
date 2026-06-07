@@ -18,7 +18,9 @@ export type UserInsert = z.infer<typeof userInsertSchema>
 
 export const teamInsertSchema = createInsertSchema(schemas.teams)
 export const teamSelectSchema = createSelectSchema(schemas.teams)
-export type Team = InferSelectModel<typeof schemas.teams>
+export type Team = InferSelectModel<typeof schemas.teams> & {
+    members?: User[]
+}
 export type TeamSelect = z.infer<typeof teamSelectSchema>
 export type TeamInsert = z.infer<typeof teamInsertSchema>
 

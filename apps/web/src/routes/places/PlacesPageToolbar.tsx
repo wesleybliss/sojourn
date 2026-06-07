@@ -3,7 +3,7 @@ import { cn } from '@repo/shared/utils'
 import { Grid2x2, List, Plus, Search } from 'lucide-react'
 import { Dispatch, memo, SetStateAction } from 'react'
 
-import GraphicalCheckbox from '@/components/GraphicalCheckbox'
+import GraphicalCheckbox from '@/components/inputs/GraphicalCheckbox'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {

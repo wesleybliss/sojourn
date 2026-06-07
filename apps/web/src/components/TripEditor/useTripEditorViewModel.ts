@@ -1,4 +1,4 @@
-import { useWireState } from '@forminator/react-wire'
+import { useWireState, useWireValue } from '@forminator/react-wire'
 import { SegmentStatusLabel, ShengenData } from '@repo/shared/types'
 import { calculateTotalDays, sortArrByUpdatedAt } from '@repo/shared/utils'
 import { Coords, ID } from '@shared/types/data.types'
@@ -182,6 +182,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
     const [segmentsListViewMode, setSegmentsListViewMode] = useState<ListViewMode>('list')
     
     // Wire store is only used for UI preferences, not entity data
+    const currentTeamId = useWireValue(store.currentTeamId)
     const [showMap, setShowMap] = useWireState(store.showMap)
     const [isTripEditMode, setIsTripEditMode] = useWireState(store.isTripEditMode)
     const [isGanttChartLocked, setIsGanttChartLocked] = useWireState(store.isGanttChartLocked)
@@ -386,7 +387,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         await deletePlanMutation.mutateAsync({ tripId, planId: planIdToDelete }, {
             onSuccess: () => {
                 toast('Plan deleted')
-                router.push(`/trips/${tripId}`)
+                router.push(`/${currentTeamId}/trips/${tripId}`)
             },
         })
         
@@ -444,7 +445,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
             const latestPlan = sortArrByUpdatedAt<Plan>(plans)?.[0] || plans[0]
             
             setHasRedirectedToPlan(true)
-            router.replace(`/trips/${tripId}/plans/${latestPlan.id}`)
+            router.replace(`/${currentTeamId}/trips/${tripId}/plans/${latestPlan.id}`)
             
         } else {
             

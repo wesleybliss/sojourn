@@ -52,6 +52,7 @@ const useNavbarViewModel = (): TNavbarViewModel => {
     
     const { firebaseUser, loading } = useAuth()
     
+    const currentTeamId = useWireValue(store.currentTeamId)
     const currentTrip = useWireValue(store.currentTrip)
     const currentPlan = useWireValue(store.currentPlan)
     const [showMap, setShowMap] = useWireState(store.showMap)
@@ -91,7 +92,7 @@ const useNavbarViewModel = (): TNavbarViewModel => {
             })
             
             if (result.data)
-                router.push(`/trips/${result.data.id}`)
+                router.push(`/${currentTeamId}/trips/${result.data.id}`)
         } catch (error) {
             console.error('Navbar.handleCreateTrip', error)
             toast.error('Failed to create trip')
@@ -123,7 +124,7 @@ const useNavbarViewModel = (): TNavbarViewModel => {
             
         }
         
-        router.push('/trips/import')
+        router.push(`/${currentTeamId}/trips/import`)
         
     }
     

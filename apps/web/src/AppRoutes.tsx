@@ -3,8 +3,11 @@ import { Outlet, Route, Routes } from 'react-router'
 import AppLayout from '@/layouts/AppLayout'
 import AutoTeamLayout from '@/layouts/AutoTeamLayout'
 import DebugLayout from '@/layouts/DebugLayout'
+import PlansLayout from '@/layouts/PlansLayout'
 import TeamsLayout from '@/layouts/TeamsLayout'
 import TeamsProtectedLayout from '@/layouts/TeamsProtectedLayout'
+import TripLayout from '@/layouts/TripLayout'
+import TripsLayout from '@/layouts/TripsLayout'
 import { Navigate } from '@/lib/router'
 import DebugCitySearch from '@/routes/debug/city-search/page'
 import DebugGeocodeTool from '@/routes/debug/geocode-tool/page'
@@ -48,38 +51,55 @@ const AppRoutes = () => {
                     
                     <Route path="error" element={<ErrorPage />} />
                     
-                    <Route path="teams" element={<TeamsLayout />}>
-                        <Route index element={<TeamsPage />} />
-                        <Route path="create" element={<CreateTeamPage />} />
-                    </Route>
-                    
                     <Route element={<TeamsProtectedLayout />}>
                         
                         <Route index element={<ToDo msg="2" />} />
+                        
+                        <Route path="teams" element={<TeamsLayout />}>
+                            <Route index element={<TeamsPage />} />
+                            <Route path="create" element={<CreateTeamPage />} />
+                        </Route>
                         
                         <Route path=":teamId" element={<TempOutlet />}>
                             
                             {/*<Route index element={<TeamPage />} />*/}
                             <Route index element={<HomePage />} />
                             
-                            <Route path="trips" element={<TripsRoute />} />
-                            <Route path="trips/:tripId" element={<TripPage />} />
-                            <Route path="trips/:tripId/plans" element={<Plans />} />
-                            <Route path="trips/:tripId/plans/:planId" element={<PlanDetail />} />
-                            <Route path="trips/import" element={<ImportTripsPage />} />
-                            <Route path="places" element={<PlacesPage />} />
+                            <Route path="trips" element={<TripsLayout />}>
+                                
+                                <Route index element={<TripsRoute />} />
+                                
+                                <Route path="import" element={<ImportTripsPage />} />
+                                
+                                <Route path=":tripId" element={<TripLayout />}>
+                                    
+                                    <Route index element={<TripPage />} />
+                                    
+                                    <Route path="plans" element={<PlansLayout />}>
+                                        
+                                        <Route index element={<Plans />} />
+                                        
+                                        <Route path=":planId" element={<PlanDetail />} />
+                                    
+                                    </Route>
+                                
+                                </Route>
                             
-                            <Route path="debug" element={<DebugLayout />}>
-                                <Route index element={<DebugPage />} />
-                                <Route path="places" element={<DebugPlacesListPage />} />
-                                <Route path="storage" element={<DebugUploadFileBlobStorage />} />
-                                <Route path="migrate-trips-plans" element={<DebugMigrateTripsToPlans />} />
-                                <Route path="geocode-tool" element={<DebugGeocodeTool />} />
-                                <Route path="city-search" element={<DebugCitySearch />} />
                             </Route>
+                            
+                            <Route path="places" element={<PlacesPage />} />
                         
                         </Route>
                     
+                    </Route>
+                    
+                    <Route path="debug" element={<DebugLayout />}>
+                        <Route index element={<DebugPage />} />
+                        <Route path="places" element={<DebugPlacesListPage />} />
+                        <Route path="storage" element={<DebugUploadFileBlobStorage />} />
+                        <Route path="migrate-trips-plans" element={<DebugMigrateTripsToPlans />} />
+                        <Route path="geocode-tool" element={<DebugGeocodeTool />} />
+                        <Route path="city-search" element={<DebugCitySearch />} />
                     </Route>
                     
                     <Route path="*" element={<Navigate href="/" replace />} />

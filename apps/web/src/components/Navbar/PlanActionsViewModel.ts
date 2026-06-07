@@ -1,3 +1,4 @@
+import { useWireValue } from '@forminator/react-wire'
 import { Plan, Trip } from '@repo/shared/types'
 import { useQueryClient } from '@tanstack/react-query'
 import { ChangeEvent, useState } from 'react'
@@ -6,6 +7,7 @@ import { toast } from 'sonner'
 
 import { useClonePlan, useCreatePlan,useDeletePlan, useUpdatePlan } from '@/lib/queries/plans'
 import { useRouter } from '@/lib/router'
+import * as store from '@/store'
 
 const PlanActionsViewModel = (
     currentTrip: Trip | null,
@@ -13,6 +15,8 @@ const PlanActionsViewModel = (
 ) => {
     
     const router = useRouter()
+    
+    const currentTeamId = useWireValue(store.currentTeamId)
     
     const [createPlanDialogOpen, setCreatePlanDialogOpen] = useState(false)
     const [renamePlanDialogOpen, setRenamePlanDialogOpen] = useState(false)
@@ -35,7 +39,7 @@ const PlanActionsViewModel = (
                 toast('Plan created')
                 // queryClient.invalidateQueries(['trip', currentTrip.id])
                 if (result.data)
-                    router.push(`/trips/${currentTrip.id}/plans/${result.data.id}`)
+                    router.push(`/${currentTeamId}/trips/${currentTrip.id}/plans/${result.data.id}`)
             },
         })
         
@@ -76,7 +80,7 @@ const PlanActionsViewModel = (
             onSuccess: () => {
                 toast('Plan deleted')
                 // queryClient.invalidateQueries(['trip', currentTrip.id])
-                router.push(`/trips/${currentTrip.id}`)
+                router.push(`/${currentTeamId}/trips/${currentTrip.id}`)
             },
         })
         
@@ -91,7 +95,7 @@ const PlanActionsViewModel = (
                 toast('Plan cloned')
                 // queryClient.invalidateQueries(['trip', currentTrip.id])
                 if (result.data)
-                    router.push(`/trips/${currentTrip.id}/plans/${result.data.id}`)
+                    router.push(`/${currentTeamId}/trips/${currentTrip.id}/plans/${result.data.id}`)
             },
         })
         

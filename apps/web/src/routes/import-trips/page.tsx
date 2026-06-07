@@ -1,3 +1,4 @@
+import { useWireValue } from '@forminator/react-wire'
 import { FolderUp } from 'lucide-react'
 import { ChangeEvent, useRef, useState } from 'react'
 import { toast } from 'sonner'
@@ -13,10 +14,13 @@ import {
 import { Progress } from '@/components/ui/progress'
 import { useRestoreTrips } from '@/lib/queries/backups'
 import { useRouter } from '@/lib/router'
+import * as store from '@/store'
 
 export default function ImportTripsPage() {
     const fileInputRef = useRef<HTMLInputElement>(null)
     const router = useRouter()
+    
+    const currentTeamId = useWireValue(store.currentTeamId)
     
     const [isImporting, setIsImporting] = useState(false)
     const [importStatus, setImportStatus] = useState('')
@@ -52,7 +56,7 @@ export default function ImportTripsPage() {
             setProgressPercent(100)
             toast.success('Backup restored successfully')
             
-            setTimeout(() => router.push('/trips'), 1500)
+            setTimeout(() => router.push(`/${currentTeamId}/trips`), 1500)
             
         } catch (error) {
             console.error('Import error:', error)

@@ -8,7 +8,7 @@ import TripDetailMap from '@/components/TripDetail/TripDetailMap'
 import TripDetailOperationalSnapshot from '@/components/TripDetail/TripDetailOperationalSnapshot'
 import TripItineraryCard from '@/components/TripDetail/TripItineraryCard'
 import { TTripEditorViewModel } from '@/components/TripEditor/useTripEditorViewModel'
-import TripMap from '@/components/TripMap'
+import TripMap from '@/components/trips/TripMap'
 import { Progress } from '@/components/ui/progress'
 import { Toggle } from '@/components/ui/toggle'
 

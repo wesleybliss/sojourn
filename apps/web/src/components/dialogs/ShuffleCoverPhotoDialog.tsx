@@ -1,4 +1,4 @@
-import InputDialog from '@/components/InputDialog'
+import InputDialog from '@/components/dialogs/InputDialog'
 
 export interface ShuffleCoverPhotoDialogProps {
     open: boolean

@@ -1,6 +1,6 @@
 import { useWireState } from '@forminator/react-wire'
 
-import ConfirmDialog from '@/components/ConfirmDialog'
+import ConfirmDialog from '@/components/dialogs/ConfirmDialog'
 import * as store from '@/store'
 
 export interface DeletePlacesDialogProps {
