@@ -1,10 +1,15 @@
+import { useWireState } from '@forminator/react-wire'
 import { weatherCodeMap } from '@repo/shared/constants'
 import { Segment, WeatherSummary } from '@repo/shared/types'
 import { useEffect, useState } from 'react'
 
+import * as store from '@/store'
+
 const useCurrentWeather = (segment?: Segment): WeatherSummary | null => {
     
     const [weather, setWeather] = useState<WeatherSummary | null>(null)
+    
+    const [lastCheckedTimestamp, setLastCheckedTimestamp] = useWireState(store.weatherLastCheckedTimestamp)
     
     useEffect(() => {
         

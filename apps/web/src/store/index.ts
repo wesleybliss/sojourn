@@ -61,6 +61,8 @@ export const isGanttChartLocked = createWire<boolean>(true)
 
 export const placesListViewMode = createPersistedWire<ListViewMode>(keys.placesListViewMode, ListViewModes.grid)
 
+export const weatherLastCheckedTimestamp = createPersistedWire<number>(keys.weatherLastCheckedTimestamp, 0)
+
 //
 
 export const shengenData = createSelector<ShengenData | null>({

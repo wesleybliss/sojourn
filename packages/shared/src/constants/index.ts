@@ -19,6 +19,8 @@ key('currentTrip')
 
 key('placesListViewMode')
 
+key('weatherLastCheckedTimestamp')
+
 //
 
 export const themes = ['light', 'dark']
