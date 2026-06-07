@@ -21,6 +21,12 @@ const useCurrentWeather = (segment?: Segment): WeatherSummary | null => {
             return
         }
         
+        const now = Date.now()
+        const twoHoursMs = 2 * 60 * 60 * 1000
+        
+        if (lastCheckedTimestamp && now - lastCheckedTimestamp < twoHoursMs)
+            return
+        
         const controller = new AbortController()
         
         fetch(
@@ -30,6 +36,7 @@ const useCurrentWeather = (segment?: Segment): WeatherSummary | null => {
         )
             .then(async response => response.json())
             .then(data => {
+                
                 const current = data?.current
                 
                 if (!current)
@@ -39,18 +46,25 @@ const useCurrentWeather = (segment?: Segment): WeatherSummary | null => {
                     temperature: Math.round(current.temperature_2m),
                     label: weatherCodeMap[current.weather_code] || 'Conditions',
                 })
+                
+                setLastCheckedTimestamp(Date.now())
+                
             })
             .catch(error => {
+                
                 if (error?.name !== 'AbortError')
                     console.error('TripDetail.useCurrentWeather', error)
                 
                 setWeather(null)
+                
             })
         
         return () => controller.abort()
-    }, [segment?.coordsLat, segment?.coordsLng])
+        
+    }, [segment?.coordsLat, segment?.coordsLng, lastCheckedTimestamp])
     
     return weather
+    
 }
 
 export default useCurrentWeather
