@@ -55,7 +55,7 @@ const SidebarNavItem = memo(({
                 </span>
                 
                 <span className={cn('min-w-0 transition-all duration-200 ease-in-out', {
-                    '-translate-x-20 w-0 overflow-hidden opacity-0': !isSidebarExpanded,
+                    '-translate-x-20 size-0 overflow-hidden opacity-0': !isSidebarExpanded,
                 })}>
                     <span className="block text-sm font-semibold">
                         {item.label}

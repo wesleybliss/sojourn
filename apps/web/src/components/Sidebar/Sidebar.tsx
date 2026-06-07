@@ -108,7 +108,7 @@ const Sidebar = memo(({
                 </div>
             </div>
             
-            <nav className={cn('flex flex-1 flex-col gap-4 overflow-x-auto md:overflow-visible', {
+            <nav className={cn('flex flex-1 flex-col gap-4 mt-6 overflow-x-auto md:overflow-visible', {
                 'p-5': isSidebarExpanded,
                 'pt-5 items-center content-center': !isSidebarExpanded,
             })}>
