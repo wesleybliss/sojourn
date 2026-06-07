@@ -63,7 +63,7 @@ const useNavbarViewModel = (): TNavbarViewModel => {
     const isDebugPage = pathname?.startsWith('/debug')
     const isTripWorkspace = pathname?.startsWith('/trips/')
     const isPlacesPage = pathname?.startsWith('/places')
-    const isImportPage = pathname?.startsWith('/import-trips')
+    const isImportPage = pathname?.startsWith('/trips/import')
     const title = isTripWorkspace
         ? currentTrip?.name || 'Trip Planner'
         : isPlacesPage
@@ -123,7 +123,7 @@ const useNavbarViewModel = (): TNavbarViewModel => {
             
         }
         
-        router.push('/import-trips')
+        router.push('/trips/import')
         
     }
     

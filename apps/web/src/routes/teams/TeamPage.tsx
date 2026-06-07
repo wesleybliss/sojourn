@@ -1,7 +1,6 @@
 import { z } from 'zod'
 
-import ProtectedRoute from '@/components/ProtectedRoute'
-import useTypedParams from '@/lib/hooks/useTypedParams'
+import useTypedParams from '@/hooks/useTypedParams'
 import { useTeamQuery } from '@/lib/queries/teams'
 
 const paramsSchema = z.object({
@@ -20,7 +19,9 @@ const TeamPage = () => {
     
     return (
         
-        <ProtectedRoute>
+        <div>
+            
+            <h1>Team</h1>
             
             {isLoading && <p>Loading...</p>}
             
@@ -28,7 +29,7 @@ const TeamPage = () => {
             
             <div><pre><code>{JSON.stringify(team, null, 4)}</code></pre></div>
         
-        </ProtectedRoute>
+        </div>
         
     )
     

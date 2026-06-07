@@ -1,3 +1,4 @@
+import { fetchJSON } from '@repo/shared/utils/api'
 import { auth, googleProvider } from '@repo/shared/utils/firebase/client'
 import { User } from '@shared/types/database.types'
 import {
@@ -44,23 +45,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Fetch internal user data from our API
     const fetchUserData = async (token: string) => {
         try {
-            const response = await fetch('auth/user', {
+            const res = await fetchJSON<{ user: User, needsInviteCode: boolean }>('auth', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             })
             
-            if (response.ok) {
-                const data = await response.json()
-                
-                setUser(data.user)
-                setNeedsInviteCode(data.needsInviteCode || false)
+            if (res.data) {
+                setUser(res.data.user)
+                setNeedsInviteCode(res.data.needsInviteCode || false)
             } else {
                 setUser(null)
                 setNeedsInviteCode(false)
             }
-        } catch (error) {
-            console.error('Error fetching user data:', error)
+        } catch (e) {
+            console.error('Error fetching user data:', e)
             setUser(null)
             setNeedsInviteCode(false)
         }

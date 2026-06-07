@@ -42,6 +42,9 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     
     const router = useRouter()
     
+    // @todo @debug
+    const currentTeam = useWireValue(store.currentTeam)
+    
     const trips = useWireValue(store.trips)
     const createTripDialogOpen = useWire(store.createTripDialogOpen)
     const [deleteTripDialogId, setDeleteTripDialogId] = useWireState(store.deleteTripDialogId)
@@ -97,7 +100,7 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     }, [deleteTripDialogId])
     
     const navigateToImportTrips = () =>
-        router.push('/import-trips')
+        router.push('/trips/import')
     
     const handleTripClick = (tripId: ID) =>
         router.push(`/trips/${tripId}`)
@@ -135,6 +138,8 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
     }, [isUpdatingCoverImagesRef, shuffleTripCoverPhotoMutation, trips])
     
     return {
+        
+        currentTeam,
         
         // State
         isDeletingTrip,

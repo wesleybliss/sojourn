@@ -12,6 +12,8 @@ export const NS = APP_SLUG
 key('theme')
 key('isSidebarExpanded')
 
+key('currentTeamId')
+
 key('trips')
 key('currentTrip')
 

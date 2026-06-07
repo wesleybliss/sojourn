@@ -1,17 +1,12 @@
-import { ReactNode, useEffect } from 'react'
+import { useEffect } from 'react'
+import { Outlet } from 'react-router'
 
 import InviteCodeForm from '@/components/InviteCodeForm'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { useAuth } from '@/components/providers/AuthProvider'
 import { usePathname, useRouter, useSearchParams } from '@/lib/router'
 
-interface ProtectedRouteProps {
-    children: ReactNode
-}
-
-export default function ProtectedRoute({
-    children,
-}: ProtectedRouteProps) {
+const ProtectedLayout = () => {
     
     const { firebaseUser, loading, needsInviteCode } = useAuth()
     const router = useRouter()
@@ -24,7 +19,7 @@ export default function ProtectedRoute({
             const queryString = searchParams?.toString()
             const returnTo = queryString ? `${pathname}?${queryString}` : pathname
             
-            console.warn('ProtectedRoute#hook redirecting to login')
+            console.warn('ProtectedLayout#hook redirecting to login')
             router.replace(`/login?returnTo=${encodeURIComponent(returnTo || '/')}`)
         }
         
@@ -47,6 +42,8 @@ export default function ProtectedRoute({
             </div>
         )
     
-    return children
+    return <Outlet />
     
 }
+
+export default ProtectedLayout

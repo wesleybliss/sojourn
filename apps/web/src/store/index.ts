@@ -11,7 +11,7 @@ export const theme = createPersistedWire<Theme>(keys.theme, 'light')
 export const isSidebarExpanded = createPersistedWire<boolean>(keys.isSidebarExpanded, false)
 
 export const teams = createWire<Team[]>([])
-export const currentTeamId = createWire<ID | null>(null)
+export const currentTeamId = createPersistedWire<ID | null>(keys.currentTeamId, null)
 export const currentTeam = createSelector<Team | null>({
     get: ({ get }) => get(teams)?.find(it => it.id === get(currentTeamId)) || null,
 })

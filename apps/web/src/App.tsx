@@ -1,32 +1,12 @@
 import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
-import { Route, Routes } from 'react-router'
 import * as rwp from 'react-wire-persisted'
 
+import AppRoutes from '@/AppRoutes'
+import { AuthProvider } from '@/components/providers/AuthProvider'
+import QueryProvider from '@/components/providers/QueryProvider'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import useDebug from '@/hooks/useDebug'
-import AppLayout from '@/layouts/AppLayout'
-import DebugLayout from '@/layouts/DebugLayout'
-import TeamsLayout from '@/layouts/TeamsLayout'
-import { Navigate } from '@/lib/router'
-import DebugCitySearch from '@/routes/debug/city-search/page'
-import DebugGeocodeTool from '@/routes/debug/geocode-tool/page'
-import DebugMigrateTripsToPlans from '@/routes/debug/migrate-trips-plans/page'
-import DebugPage from '@/routes/debug/page'
-import DebugPlacesListPage from '@/routes/debug/places/page'
-import DebugUploadFileBlobStorage from '@/routes/debug/storage/page'
-import ErrorPage from '@/routes/error/page'
-import ImportTripsPage from '@/routes/import-trips/page'
-import LoginPage from '@/routes/login/page'
-import HomePage from '@/routes/page'
-import PlacesPage from '@/routes/places/PlacesPage'
-import SignupPage from '@/routes/signup/page'
-import CreateTeamPage from '@/routes/teams/CreateTeamPage'
-import TeamPage from '@/routes/teams/TeamPage'
-import TeamsPage from '@/routes/teams/TeamsPage'
-import TripPage from '@/routes/trips/[tripId]/page'
-import PlanDetail from '@/routes/trips/[tripId]/plans/[planId]/page'
-import Plans from '@/routes/trips/[tripId]/plans/page'
-import TripsRoute from '@/routes/trips/page'
 
 dayjs.extend(advancedFormat)
 
@@ -38,45 +18,15 @@ const App = () => {
     
     return (
         
-        <Routes>
-            
-            <Route element={<AppLayout />}>
-                
-                <Route index element={<HomePage />} />
-                
-                <Route path="teams" element={<TeamsLayout />}>
+        <AuthProvider>
+            <QueryProvider>
+                <TooltipProvider>
                     
-                    <Route index element={<TeamsPage />} />
-                    <Route path="create" element={<CreateTeamPage />} />
-                    
-                    <Route path=":teamId" element={<TeamPage />}>
-                        
-                        <Route index element={<TeamPage />} />
-                    
-                    </Route>
+                    <AppRoutes />
                 
-                </Route>
-                
-                <Route path="trips" element={<TripsRoute />} />
-                <Route path="trips/:tripId" element={<TripPage />} />
-                <Route path="trips/:tripId/plans" element={<Plans />} />
-                <Route path="trips/:tripId/plans/:planId" element={<PlanDetail />} />
-                <Route path="places" element={<PlacesPage />} />
-                <Route path="import-trips" element={<ImportTripsPage />} />
-                <Route path="login" element={<LoginPage />} />
-                <Route path="signup" element={<SignupPage />} />
-                <Route path="error" element={<ErrorPage />} />
-                <Route path="debug" element={<DebugLayout />}>
-                    <Route index element={<DebugPage />} />
-                    <Route path="places" element={<DebugPlacesListPage />} />
-                    <Route path="storage" element={<DebugUploadFileBlobStorage />} />
-                    <Route path="migrate-trips-plans" element={<DebugMigrateTripsToPlans />} />
-                    <Route path="geocode-tool" element={<DebugGeocodeTool />} />
-                    <Route path="city-search" element={<DebugCitySearch />} />
-                </Route>
-                <Route path="*" element={<Navigate href="/" replace />} />
-            </Route>
-        </Routes>
+                </TooltipProvider>
+            </QueryProvider>
+        </AuthProvider>
         
     )
     

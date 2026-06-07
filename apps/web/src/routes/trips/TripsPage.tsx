@@ -60,6 +60,8 @@ const TripsPage = () => {
         
         <div data-testid="TripsPage" className="flex flex-col gap-8 py-3">
             
+            <h1>@todo {vm.currentTeam?.name}</h1>
+            
             {!trips.length && (
                 <div
                     className="section-card flex flex-col items-center justify-center gap-4
