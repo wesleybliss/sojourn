@@ -25,6 +25,8 @@ html[data-theme='dark'] {
     --accent: #183842;
     --accent-foreground: #bce9e1;
 
+    --warning: #f2d58c;
+    --warning-foreground: #21072f;
     --destructive: #ff7096;
 
     /* Borders / inputs */

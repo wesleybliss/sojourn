@@ -54,6 +54,8 @@
     --accent: #c8ece5;
     --accent-foreground: #10364a;
 
+    --warning: #f2d58c;
+    --warning-foreground: #2b2350;
     --destructive: #d84c6f;
 
     --border: #ead9dd;

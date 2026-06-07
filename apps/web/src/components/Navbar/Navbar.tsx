@@ -1,5 +1,5 @@
 import { cn } from '@repo/shared/utils'
-import { FolderPen, Map as MapIcon, MapPlus, TableProperties } from 'lucide-react'
+import { FolderPen, FolderX, Map as MapIcon, MapPlus, TableProperties } from 'lucide-react'
 
 import AccountMenu from '@/components/AccountMenu'
 import CurrentPlanSelector from '@/components/CurrentPlanSelector'
@@ -117,7 +117,7 @@ const Navbar = () => {
                                         'bg-warning text-warning-foreground hover:bg-warning/90': vm.isTripEditMode,
                                     })}
                                     onClick={() => vm.setIsTripEditMode(!vm.isTripEditMode)}>
-                                    <FolderPen />
+                                    {vm.isTripEditMode ? <FolderX /> : <FolderPen />}
                                     Edit Trip
                                 </Button>
                             </div>

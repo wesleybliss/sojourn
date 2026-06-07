@@ -16,7 +16,7 @@ const useAbortableFetch = (
         
         setAbortableTimeout(fnAsync, delayMillis, refAbortController.current)
         
-    }, [delayMillis, fnAsync, ...dependencies])
+    }, [...dependencies])
     
 }
 

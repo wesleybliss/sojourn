@@ -271,7 +271,7 @@ const SegmentsTable = ({
                     <td className="px-4 py-3 w-5" colSpan={12}>
                         <Button
                             variant="outline"
-                            onClick={segmentActionsViewModel.addSegment}>
+                            onClick={() => segmentActionsViewModel.addSegment(true)}>
                             <MapPinPlus className="text-green-500" />
                             Add a new segment
                         </Button>

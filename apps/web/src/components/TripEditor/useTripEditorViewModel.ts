@@ -318,12 +318,15 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         if (!currentPlan) return
         
         // Mutation hook handles invalidation
-        deleteSegmentsMutation.mutate({
+        await deleteSegmentsMutation.mutateAsync({
             tripId,
             planId: currentPlan.id,
             segmentIds: ids,
         }, {
-            onSuccess: () => toast(`Segment${ids.length > 1 ? 's' : ''} deleted`),
+            onSuccess: () => {
+                toast(`Segment${ids.length > 1 ? 's' : ''} deleted`)
+                
+            },
         })
         
     }, [deleteSegmentsMutation, tripId, currentPlan])

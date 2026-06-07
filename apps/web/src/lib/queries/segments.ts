@@ -142,8 +142,8 @@ export const useDeleteSegments = () => {
                 body: JSON.stringify({ segmentIds }),
             })
         },
-        onSuccess: data => {
-            queryClient.invalidateQueries({ queryKey: ['trip', data?.data?.tripId] })
+        onSuccess: (_data, variables) => {
+            queryClient.invalidateQueries({ queryKey: ['trip', variables.tripId] })
         },
     })
     

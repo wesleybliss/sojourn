@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 interface ConfirmDeleteSegmentsDialogProps extends ComponentProps<'button'> {
     className?: string
     isMultiple?: boolean
-    onConfirm: () => void
+    onConfirm: () => Promise<void>
 }
 
 const ConfirmDeleteSegmentsDialog = ({
@@ -57,7 +57,7 @@ const ConfirmDeleteSegmentsDialog = ({
             cancelLabel="Cancel"
             onCancel={noop}
             confirmLabel="Delete"
-            onConfirm={onConfirm} />
+            onConfirm={() => onConfirm().finally(() => setOpen(false))} />
         
     )
     
