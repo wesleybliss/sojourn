@@ -18,7 +18,7 @@ export const getTrips = async (
     req: Request,
     res: Response,
 ): Promise<void> => {
-    console.log('wtf', req.path, req.params)
+    
     const { teamId } = paramsSchema.parse(req.params)
     const { withCounts, withDetails } = querySchema.parse(req.query)
     
