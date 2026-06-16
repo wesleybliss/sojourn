@@ -6,6 +6,7 @@ import { Dispatch, SetStateAction, useEffect, useMemo } from 'react'
 import { matchPath, useLocation } from 'react-router'
 import { z } from 'zod'
 
+import { useAuth } from '@/components/providers/AuthProvider'
 import { useTeamsQuery } from '@/lib/queries/teams'
 import * as store from '@/store'
 
@@ -39,13 +40,24 @@ const useRequireTeam = (): TUseRequireTeam => {
     
     const [currentTeamId, setCurrentTeamId] = useWireState(store.currentTeamId)
     
+    const { loading, firebaseUser } = useAuth()
+    
     const { data: teams, isError, error, isPending  } = useTeamsQuery()
     
     useEffect(() => {
         
+        if (loading) return
+        
+        if (!firebaseUser) {
+            console.warn('useRequireTeam: user not signed in')
+            window.location.href = '/login'
+            return
+        }
+        
         if (isPending) return
         
         if (isError) {
+            console.error('useRequireTeam', error)
             window.location.href = '/login'
             return
         }
@@ -82,7 +94,7 @@ const useRequireTeam = (): TUseRequireTeam => {
         // Redirect the user to the new default team
         window.location.href = `/${latestTeam.id}`
         
-    }, [params, isPending, isError, teams])
+    }, [loading, firebaseUser, params, isPending, isError, error, teams])
     
     return {
         

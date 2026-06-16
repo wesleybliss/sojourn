@@ -71,27 +71,32 @@ const useNavbarViewModel = (): TNavbarViewModel => {
     const isTripWorkspace = /^\/\d+\/trips\/\d+/.test(pathname)
     const isPlacesPage = pathname?.startsWith('/places')
     const isImportPage = pathname?.startsWith('/trips/import')
-    const title = isTripWorkspace
-        ? currentTrip?.name || 'Trip Planner'
-        : isPlacesPage
-            ? 'My Places'
-            : isImportPage
-                ? 'Import & Restore'
-                : 'Ongoing Journeys'
+    const title = isTeamsPage
+        ? 'Teams'
+        : isTripWorkspace
+            ? currentTrip?.name || 'Trip Planner'
+            : isPlacesPage
+                ? 'My Places'
+                : isImportPage
+                    ? 'Import & Restore'
+                    : 'Ongoing Journeys'
     
-    const subtitle = isTripWorkspace
-        ? currentTrip?.description || 'Operational view across segments, timing, and route context.'
-        : isPlacesPage
-            ? 'Research saved destinations, notes, and travel windows in one workspace.'
-            : isImportPage
-                ? 'Bring in prior backups or stage new itineraries.'
-                : 'Track active itineraries, their latest changes, and next planning steps.'
+    const subtitle = isTeamsPage
+        ? 'Teams and Members'
+        : isTripWorkspace
+            ? currentTrip?.description || 'Operational view across segments, timing, and route context.'
+            : isPlacesPage
+                ? 'Research saved destinations, notes, and travel windows in one workspace.'
+                : isImportPage
+                    ? 'Bring in prior backups or stage new itineraries.'
+                    : 'Track active itineraries, their latest changes, and next planning steps.'
     
     const importButtonLabel = isTripWorkspace ? 'Backup Trip' : 'Import / Backup'
     
     const handleCreateTrip = async () => {
         
         try {
+            
             const result = await createTripMutation.mutateAsync({
                 name: 'New Trip',
                 description: '',
@@ -99,9 +104,12 @@ const useNavbarViewModel = (): TNavbarViewModel => {
             
             if (result.data)
                 router.push(`/${currentTeamId}/trips/${result.data.id}`)
-        } catch (error) {
-            console.error('Navbar.handleCreateTrip', error)
+            
+        } catch (e) {
+            
+            console.error('Navbar.handleCreateTrip', e)
             toast.error('Failed to create trip')
+            
         }
         
     }

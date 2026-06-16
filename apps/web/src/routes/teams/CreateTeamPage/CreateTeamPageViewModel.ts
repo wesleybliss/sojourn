@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, useCallback, useState } from 'react'
+import { useNavigate } from 'react-router'
 import { toast } from 'sonner'
 
 import useCreateTeamForm, { CreateTeamForm, UseCreateTeamFormReturn } from '@/hooks/forms/useCreateTeamForm'
@@ -20,6 +21,8 @@ const CreateTeamPageViewModel = (): TCreateTeamPageViewModel => {
     
     const [isCreatingTeam, setIsCreatingTeam] = useState(false)
     
+    const navigate = useNavigate()
+    
     const createTeamMutation = useCreateTeam()
     
     const handleCreateTeam = useCallback(async (value: CreateTeamForm) => {
@@ -28,7 +31,9 @@ const CreateTeamPageViewModel = (): TCreateTeamPageViewModel => {
             
             const res = await createTeamMutation.mutateAsync(value)
             
-            console.log('@handlecreateteam', res)
+            console.log('handleCreateTeam res', res)
+            
+            navigate('/', { replace: true })
             
         } catch (e) {
             

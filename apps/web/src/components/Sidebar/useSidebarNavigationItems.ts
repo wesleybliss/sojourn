@@ -9,6 +9,7 @@ export type SidebarNavigationItem = {
     label: string
     caption: string
     icon: React.ComponentType<{ className?: string }>
+    noPrefix?: boolean
 }
 
 const useSidebarNavigationItems = (): SidebarNavigationItem[] => {
@@ -16,6 +17,11 @@ const useSidebarNavigationItems = (): SidebarNavigationItem[] => {
     const currentTeamId = useWireValue(store.currentTeamId)
     
     const withTeamId = useCallback((item: SidebarNavigationItem): SidebarNavigationItem => {
+        
+        if (item.noPrefix) return {
+            ...item,
+            href: item.href,
+        }
         
         const prefix = currentTeamId ? `/${currentTeamId}` : ''
         
@@ -46,6 +52,7 @@ const useSidebarNavigationItems = (): SidebarNavigationItem[] => {
                 label: 'Teams',
                 caption: 'Teams',
                 icon: Users,
+                noPrefix: true,
             },
             {
                 href: '/debug',

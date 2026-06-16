@@ -23,7 +23,7 @@ const TeamsProtectedLayout = () => {
     }, [currentTeamId])
     
     if (!currentTeamId) return (
-        <div>Loading2...</div>
+        <div>Loading3...</div>
     )
     
     return (

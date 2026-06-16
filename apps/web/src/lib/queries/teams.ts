@@ -1,4 +1,4 @@
-import { ApiResult, ID, Team, type TeamInsert, TeamWithMembers } from '@repo/shared/types'
+import { ApiResult, ID, Team, type TeamInsert, TeamWithMembers, UpdateTeamBody } from '@repo/shared/types'
 import { fetchJSON } from '@repo/shared/utils/api'
 import {
     keepPreviousData, useMutation,
@@ -12,6 +12,7 @@ import {
 import { useAuth } from '@/components/providers/AuthProvider'
 import { updateItemArray } from '@/lib/storeUtils'
 import * as store from '@/store'
+import { omit } from '@repo/shared/utils'
 
 type TeamsQueryResultData = Team[] | TeamWithMembers[] | null | undefined
 type TeamQueryResultData = Team | null | undefined
@@ -139,6 +140,25 @@ export const useCreateTeam = (): UseMutationResult<ApiResult<Team | null>, Error
         },
         onSuccess: (_data: ApiResult<Team | null>, _variables) => {
             queryClient.invalidateQueries({ queryKey: ['teams'] })
+        },
+    })
+    
+}
+
+export const useUpdateTeam = (): UseMutationResult<ApiResult<Team | null>, Error, UpdateTeamBody, unknown> => {
+    
+    const queryClient = useQueryClient()
+    
+    return useMutation({
+        mutationFn: async (teamData: UpdateTeamBody) => {
+            return fetchJSON<Team>(`teams/${teamData.id}`, {
+                method: 'PUT',
+                body: JSON.stringify(omit(teamData, ['id'])),
+            })
+        },
+        onSuccess: (_data: ApiResult<Team | null>, variables) => {
+            queryClient.invalidateQueries({ queryKey: ['teams'] })
+            queryClient.invalidateQueries({ queryKey: ['team', variables.id.toString()] })
         },
     })
     

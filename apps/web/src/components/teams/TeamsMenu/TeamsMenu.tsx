@@ -73,8 +73,9 @@ const TeamsMenu = ({
                 ) : (
                     <button className="outline-none" type="button">
                         <div
-                            className="flex size-9 items-center justify-center rounded-full
-                                bg-primary text-xs font-semibold text-primary-foreground">
+                            className="flex size-7 items-center justify-center rounded-full
+                                bg-primary/70 hover:bg-primary text-xs font-semibold text-primary-foreground
+                                transition-opacity ease-in-out duration-300">
                             {currentTeam?.name?.substring(0, 1)?.toUpperCase() ?? '?'}
                         </div>
                     </button>

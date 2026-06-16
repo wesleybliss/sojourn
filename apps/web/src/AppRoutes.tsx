@@ -1,5 +1,6 @@
 import { Outlet, Route, Routes } from 'react-router'
 
+import ProtectedLayout from '@/components/ProtectedLayout'
 import AppLayout from '@/layouts/AppLayout'
 import AutoTeamLayout from '@/layouts/AutoTeamLayout'
 import DebugLayout from '@/layouts/DebugLayout'
@@ -40,25 +41,36 @@ const AppRoutes = () => {
         
         <Routes>
             
+            <Route path="login" element={<LoginPage />} />
+            <Route path="signup" element={<SignupPage />} />
+            
+            <Route path="error" element={<ErrorPage />} />
+            
+            <Route element={<ProtectedLayout />}>
+                <Route path="teams/create" element={<CreateTeamPage />} />
+            </Route>
+            
+            <Route element={<AppLayout />}>
+                <Route path="teams" element={<TeamsLayout />}>
+                    <Route index element={<TeamsPage />} />
+                    {/*<Route path="create" element={<CreateTeamPage />} />*/}
+                </Route>
+            </Route>
+            
             <Route element={<AutoTeamLayout />}>
                 
                 <Route element={<AppLayout />}>
                     
                     <Route index element={<ToDo msg="1" />} />
                     
-                    <Route path="login" element={<LoginPage />} />
-                    <Route path="signup" element={<SignupPage />} />
-                    
-                    <Route path="error" element={<ErrorPage />} />
-                    
                     <Route element={<TeamsProtectedLayout />}>
                         
                         <Route index element={<ToDo msg="2" />} />
                         
-                        <Route path="teams" element={<TeamsLayout />}>
-                            <Route index element={<TeamsPage />} />
-                            <Route path="create" element={<CreateTeamPage />} />
-                        </Route>
+                        {/*<Route path="teams" element={<TeamsLayout />}>*/}
+                        {/*    <Route index element={<TeamsPage />} />*/}
+                        {/*    /!*<Route path="create" element={<CreateTeamPage />} />*!/*/}
+                        {/*</Route>*/}
                         
                         <Route path=":teamId" element={<TempOutlet />}>
                             

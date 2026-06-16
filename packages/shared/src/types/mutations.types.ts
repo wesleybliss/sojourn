@@ -1,6 +1,12 @@
 import type { ID } from '@shared/types/data.types'
-import type { Place, TripInsert } from '@shared/types/database.types'
+import type { Place, Team, TripInsert } from '@shared/types/database.types'
 import type { Plan, PlanInsert, Segment,Trip } from '@shared/types/database.types'
+
+export type UpdateTeamBody = Partial<Omit<Team, 'createdAt' | 'updatedAt'>> & {
+    id: ID
+    name: string
+    description?: string
+}
 
 export type CreateTripBody = Omit<TripInsert, 'userId'>
 
