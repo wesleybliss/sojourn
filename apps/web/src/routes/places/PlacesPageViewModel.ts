@@ -1,4 +1,4 @@
-import { useWireState } from '@forminator/react-wire'
+import { useWireState, useWireValue } from '@forminator/react-wire'
 import { ApiResult, DeletePlacesBody, ID, ListViewMode } from '@repo/shared/types'
 import { Place, Trip } from '@shared/types/database.types'
 import { UseMutationResult } from '@tanstack/react-query'
@@ -14,7 +14,6 @@ import {
     usePlacesQuery,
     useUpdatePlace,
 } from '@/lib/queries/places'
-import { useTripsQuery } from '@/lib/queries/trips'
 import * as store from '@/store'
 
 export type PlaceRecord = Place & {
@@ -60,7 +59,6 @@ export type TPlacesPageViewModel = {
     // Queries
     isLoading: boolean
     placesData: Place[] | null | undefined
-    tripsData: Trip[] | null | undefined
     
     // @todo
     /*tripsError: Error | null
@@ -89,6 +87,7 @@ export type TPlacesPageViewModel = {
 
 const usePlacesPageViewModel = (): TPlacesPageViewModel => {
     
+    const trips = useWireValue(store.trips)
     const [placesListViewMode, setPlacesListViewMode] = useWireState(store.placesListViewMode)
     const [createPlaceDialogOpen, setCreatePlaceDialogOpen] = useWireState(store.createPlaceDialogOpen)
     const [deletePlacesDialogOpen, setDeletePlacesDialogOpen] = useWireState(store.deletePlacesDialogOpen)
@@ -97,15 +96,11 @@ const usePlacesPageViewModel = (): TPlacesPageViewModel => {
     const [activeRegion, setActiveRegion] = useState('All')
     
     const { data: placesData, isLoading } = usePlacesQuery()
-    const { data: tripsData } = useTripsQuery({
-        withDetails: true,
-    })
     
     const updatePlace = useUpdatePlace()
     const createPlace = useCreatePlace()
     const deletePlacesMutation = useDeletePlaces()
     
-    const trips = useMemo(() => (tripsData || []) as Trip[], [tripsData])
     const places = useMemo(() => (placesData || []) as PlaceRecord[], [placesData])
     
     const recentSegments: RecentSegment[] = useMemo(() => {
@@ -256,7 +251,6 @@ const usePlacesPageViewModel = (): TPlacesPageViewModel => {
         // Queries
         isLoading,
         placesData,
-        tripsData,
         
         // @todo
         /*tripsError,

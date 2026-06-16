@@ -1,3 +1,4 @@
+import { useWireValue } from '@forminator/react-wire'
 import { fetchJSON } from '@repo/shared/utils/api'
 import { Trip, User } from '@shared/types/database.types'
 import { ChevronUp, LogOut } from 'lucide-react'
@@ -17,8 +18,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import useNavbarLinks, { NavbarLink } from '@/hooks/useNavbarLinks'
 import { useBackupTrips } from '@/lib/queries/backups'
-import { useTripsQuery } from '@/lib/queries/trips'
 import { Link } from '@/lib/router'
+import * as store from '@/store'
 
 const debugDumpData = (trips: Trip[] | null) => (e: MouseEvent) => {
     
@@ -55,6 +56,8 @@ const AccountMenu = ({
         signOut: firebaseSignOut,
     } = useAuth()
     
+    const trips = useWireValue(store.trips)
+    
     const menuUser = user || (
         firebaseUser
             ? {
@@ -65,12 +68,6 @@ const AccountMenu = ({
             } as User
             : null
     )
-    
-    const { data: trips } = useTripsQuery({
-        options: {
-            enabled: !!firebaseUser,
-        },
-    })
     
     const [deleteDatabaseDialogOpen, setDeleteDatabaseDialogOpen] = useState(false)
     

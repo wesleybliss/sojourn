@@ -2,20 +2,20 @@ import PlansRepository from '@repo/shared/db/repos/plans'
 import Repository from '@repo/shared/db/repos/repo'
 import SegmentsRepository from '@repo/shared/db/repos/segments'
 import * as schemas from '@repo/shared/db/schema'
-import type { TripWithSegmentCount } from '@repo/shared/types'
+import type { Transaction, TripWithSegmentCount } from '@repo/shared/types'
 import type { ID } from '@shared/types/data.types'
 import type { Database, Trip, TripSelect } from '@shared/types/database.types'
 import { and, desc, eq } from 'drizzle-orm'
 
 export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
     
-    constructor(db?: Database) {
+    constructor(db?: Database | Transaction) {
         
         super('trip', 'trips', schemas.trips, db)
         
     }
     
-    tx(transaction: Database): TripsRepository {
+    tx(transaction: Transaction): TripsRepository {
         
         return new TripsRepository(transaction)
         

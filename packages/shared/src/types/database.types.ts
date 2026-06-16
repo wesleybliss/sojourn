@@ -6,6 +6,7 @@ import { createInsertSchema,createSelectSchema } from 'drizzle-orm/zod'
 import { z } from 'zod'
 
 export type Database = typeof database
+export type Transaction = Parameters<Parameters<Database['transaction']>[0]>[0]
 
 export type Insert<T extends SQLiteTable> = InferInsertModel<T>
 export type Select<T extends SQLiteTable> = InferSelectModel<T>

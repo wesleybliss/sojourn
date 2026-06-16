@@ -25,7 +25,7 @@ const Navbar = () => {
                 <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                     <div className="min-w-0">
                         <div className="eyebrow mb-2">
-                            {vm.isDebugPage
+                            {vm.currentTeam?.name} / {vm.isDebugPage
                                 ? 'Debug'
                                 : vm.isTripWorkspace
                                     ? 'Trip Workspace'

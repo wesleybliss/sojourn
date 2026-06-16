@@ -8,6 +8,11 @@ export type UpdateTeamBody = Partial<Omit<Team, 'createdAt' | 'updatedAt'>> & {
     description?: string
 }
 
+export type InviteTeamMembersBody = {
+    teamId: ID
+    inviteeEmails: string[]
+}
+
 export type CreateTripBody = Omit<TripInsert, 'userId'>
 
 export type UpdateTripBody = Partial<Trip> & {

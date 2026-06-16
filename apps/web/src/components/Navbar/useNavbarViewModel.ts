@@ -1,5 +1,6 @@
 import { useWireState, useWireValue } from '@forminator/react-wire'
 import { ApiResult, BackupTripsBody, CreateTripBody, Plan, Trip } from '@repo/shared/types'
+import { Team } from '@repo/shared/types/database.types'
 import { UseMutationResult } from '@tanstack/react-query'
 import { User as FirebaseUser } from 'firebase/auth'
 import { Dispatch, SetStateAction } from 'react'
@@ -19,6 +20,7 @@ export type TNavbarViewModel = {
     firebaseUser: FirebaseUser | null
     
     // Global State
+    currentTeam: Team | null
     currentTrip: Trip | null
     currentPlan: Plan | null
     isSidebarExpanded: boolean
@@ -55,7 +57,7 @@ const useNavbarViewModel = (): TNavbarViewModel => {
     
     const { firebaseUser, loading } = useAuth()
     
-    const currentTeamId = useWireValue(store.currentTeamId)
+    const currentTeam = useWireValue(store.currentTeam)
     const currentTrip = useWireValue(store.currentTrip)
     const currentPlan = useWireValue(store.currentPlan)
     const isSidebarExpanded = useWireValue(store.isSidebarExpanded)
@@ -97,17 +99,17 @@ const useNavbarViewModel = (): TNavbarViewModel => {
         
         try {
             
-            if (!currentTeamId)
+            if (!currentTeam?.id)
                 throw new Error('No current team')
             
             const result = await createTripMutation.mutateAsync({
-                teamId: currentTeamId,
+                teamId: currentTeam.id,
                 name: 'New Trip',
                 description: '',
             })
             
             if (result.data)
-                router.push(`/${currentTeamId}/trips/${result.data.id}`)
+                router.push(`/${currentTeam.id}/trips/${result.data.id}`)
             
         } catch (e) {
             
@@ -142,7 +144,7 @@ const useNavbarViewModel = (): TNavbarViewModel => {
             
         }
         
-        router.push(`/${currentTeamId}/trips/import`)
+        router.push(`/${currentTeam?.id}/trips/import`)
         
     }
     
@@ -155,6 +157,7 @@ const useNavbarViewModel = (): TNavbarViewModel => {
         firebaseUser,
         
         // Global State
+        currentTeam,
         currentTrip,
         currentPlan,
         isSidebarExpanded,

@@ -1,17 +1,17 @@
 import Repository from '@repo/shared/db/repos/repo'
 import * as schemas from '@repo/shared/db/schema'
-import type { Database, GeonamesCity } from '@shared/types/database.types'
+import type { Database, GeonamesCity, Transaction } from '@shared/types/database.types'
 import { and, desc,eq, gt, like, or } from 'drizzle-orm'
 
 export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof schemas.geonamesCities> {
     
-    constructor(db?: Database) {
+    constructor(db?: Database | Transaction) {
         
         super('geonameCity', 'geonameCities', schemas.geonamesCities, db)
         
     }
     
-    tx(transaction: Database): GeonamesCitiesRepository {
+    tx(transaction: Transaction): GeonamesCitiesRepository {
         
         return new GeonamesCitiesRepository(transaction)
         

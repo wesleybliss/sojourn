@@ -1,18 +1,18 @@
 import Repository from '@repo/shared/db/repos/repo'
 import * as schemas from '@repo/shared/db/schema'
 import type { ID } from '@shared/types/data.types'
-import type { Database, Plan, PlanSelect } from '@shared/types/database.types'
+import type { Database, Plan, PlanSelect, Transaction } from '@shared/types/database.types'
 import { asc,eq } from 'drizzle-orm'
 
 export class PlansRepository extends Repository<Plan, typeof schemas.plans> {
     
-    constructor(db?: Database) {
+    constructor(db?: Database | Transaction) {
         
         super('plan', 'plans', schemas.plans, db)
         
     }
     
-    tx(transaction: Database): PlansRepository {
+    tx(transaction: Transaction): PlansRepository {
         
         return new PlansRepository(transaction)
         

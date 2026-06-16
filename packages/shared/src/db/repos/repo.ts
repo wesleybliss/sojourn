@@ -1,10 +1,10 @@
 import database from '@repo/shared/db'
-import type { Database, Insert, Select } from '@repo/shared/types'
+import type { Database, Insert, Select, Transaction } from '@repo/shared/types'
 import type { ID } from '@shared/types/data.types'
 import type { AnyColumn } from 'drizzle-orm'
 import { desc, eq, inArray } from 'drizzle-orm'
 import { SQL, SQLWrapper } from 'drizzle-orm/sql/sql'
-import type { SQLiteTable } from 'drizzle-orm/sqlite-core'
+import { SQLiteTable } from 'drizzle-orm/sqlite-core'
 import { SQLiteViewBase } from 'drizzle-orm/sqlite-core/view-base'
 
 /**
@@ -15,9 +15,9 @@ class Repository<TModel, TSchema extends SQLiteTable> {
     public name: string
     public plural: string
     public schema: TSchema
-    public db: Database
+    public db: Database | Transaction
     
-    constructor(name: string, plural: string, schema: TSchema, db?: Database) {
+    constructor(name: string, plural: string, schema: TSchema, db?: Database | Transaction) {
         
         this.name = name
         this.plural = plural
@@ -40,7 +40,7 @@ class Repository<TModel, TSchema extends SQLiteTable> {
         
     }
     
-    tx(_transaction: Database): Repository<TModel, TSchema> {
+    tx(_transaction: Transaction): Repository<TModel, TSchema> {
         
         throw new Error('Method not implemented.')
         

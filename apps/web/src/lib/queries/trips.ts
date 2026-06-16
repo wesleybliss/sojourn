@@ -1,8 +1,7 @@
-import { useWireValue } from '@forminator/react-wire'
 import { Trip, TripWithSegmentCount } from '@repo/shared/types'
+import { ID } from '@repo/shared/types/data.types'
 import { fetchJSON } from '@repo/shared/utils/api'
-import { keepPreviousData, useQuery, useQueryClient, UseQueryOptions, UseQueryResult } from '@tanstack/react-query'
-import { useEffect } from 'react'
+import { useQuery, UseQueryOptions, UseQueryResult } from '@tanstack/react-query'
 
 import { useAuth } from '@/components/providers/AuthProvider'
 import * as store from '@/store'
@@ -26,27 +25,16 @@ interface UseTripsQueryParams {
 
 type TripsQueryResult = UseQueryResult<TripsQueryResultData, Error>
 
-export const useTripsQuery = ({
+export const useTripsQuery = (teamId: ID | null, {
     withCounts = false,
     withDetails = false,
     options,
 }: UseTripsQueryParams = {}): TripsQueryResult => {
     
     const { firebaseUser } = useAuth()
-    const currentTeamId = useWireValue(store.currentTeamId)
-    const queryClient = useQueryClient()
-    
-    useEffect(() => {
-        if (!currentTeamId) return
-        
-        /*queryClient.invalidateQueries({
-            queryKey: ['trips'],
-            refetchType: 'active',
-        })*/
-    }, [currentTeamId, queryClient])
     
     return useQuery({
-        queryKey: ['trips', currentTeamId, { withCounts, withDetails }],
+        queryKey: ['trips', teamId, { withCounts, withDetails }],
         queryFn: async () => {
             
             try {
@@ -61,7 +49,7 @@ export const useTripsQuery = ({
                 
                 const queryString = searchParams.toString()
                 const result = await fetchJSON<Array<Trip | TripWithSegmentCount>>(
-                    `${currentTeamId}/trips${queryString ? `?${queryString}` : ''}`,
+                    `${teamId}/trips${queryString ? `?${queryString}` : ''}`,
                 )
                 console.log('trips query result', result)
                 store.trips.setValue((result.data as Trip[]) || [])
@@ -76,8 +64,7 @@ export const useTripsQuery = ({
             }
             
         },
-        enabled: !!firebaseUser && !!currentTeamId,
-        placeholderData: keepPreviousData,
+        enabled: !!firebaseUser && !!teamId,
         retry: 3,
         ...options,
     })

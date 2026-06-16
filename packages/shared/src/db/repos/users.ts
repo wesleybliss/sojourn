@@ -1,5 +1,6 @@
 import Repository from '@repo/shared/db/repos/repo'
 import * as schemas from '@repo/shared/db/schema'
+import type { Transaction } from '@shared/types'
 import type { Database, User, UserSelect } from '@shared/types/database.types'
 
 export abstract class AUsersRepository extends Repository<User, typeof schemas.users> {
@@ -8,13 +9,13 @@ export abstract class AUsersRepository extends Repository<User, typeof schemas.u
 
 export class UsersRepository extends AUsersRepository {
     
-    constructor(db?: Database) {
+    constructor(db?: Database | Transaction) {
         
         super('user', 'users', schemas.users, db)
         
     }
     
-    tx(transaction: Database) {
+    tx(transaction: Transaction) {
         
         return new UsersRepository(transaction)
         

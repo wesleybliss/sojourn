@@ -1,4 +1,11 @@
-import { ApiResult, ID, Team, type TeamInsert, TeamWithMembers, UpdateTeamBody } from '@repo/shared/types'
+import {
+    ApiResult,
+    ID, InviteTeamMembersBody,
+    Team,
+    type TeamInsert,
+    TeamWithMembers,
+    UpdateTeamBody,
+} from '@repo/shared/types'
 import { omit } from '@repo/shared/utils'
 import { fetchJSON } from '@repo/shared/utils/api'
 import {
@@ -159,6 +166,29 @@ export const useUpdateTeam = (): UseMutationResult<ApiResult<Team | null>, Error
         onSuccess: (_data: ApiResult<Team | null>, variables) => {
             queryClient.invalidateQueries({ queryKey: ['teams'] })
             queryClient.invalidateQueries({ queryKey: ['team', variables.id.toString()] })
+        },
+    })
+    
+}
+
+export const useInviteTeamMembersMutation = (): UseMutationResult<
+    ApiResult<InviteTeamMembersBody | null>,
+    Error,
+    InviteTeamMembersBody,
+    unknown
+> => {
+    
+    const queryClient = useQueryClient()
+    
+    return useMutation({
+        mutationFn: async (inviteData: InviteTeamMembersBody) => {
+            return await fetchJSON<InviteTeamMembersBody | null>(`teams/${inviteData.teamId}/invite`, {
+                method: 'POST',
+                body: JSON.stringify(inviteData),
+            })
+        },
+        onSuccess: (result: ApiResult<InviteTeamMembersBody | null>) => {
+            queryClient.invalidateQueries({ queryKey: ['team', result.data?.teamId?.toString()] })
         },
     })
     

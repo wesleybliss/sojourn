@@ -8,6 +8,7 @@ import * as store from '@/store'
 export type TTeamsPageViewModel = {
     // Global State
     updateTeamDialogId: Wire<number | null>
+    inviteTeamMemberDialogTeamId: Wire<number | null>
     
     // Queries
     teams: Team[] | null | undefined
@@ -22,6 +23,7 @@ export type TTeamsPageViewModel = {
 const TeamsPageViewModel = (): TTeamsPageViewModel => {
     
     const updateTeamDialogId = useWire(store.updateTeamDialogId)
+    const inviteTeamMemberDialogTeamId = useWire(store.inviteTeamMemberDialogTeamId)
     
     const {
         data: teams,
@@ -36,6 +38,7 @@ const TeamsPageViewModel = (): TTeamsPageViewModel => {
         
         // Global State
         updateTeamDialogId,
+        inviteTeamMemberDialogTeamId,
         
         // Queries
         teams,

@@ -59,7 +59,7 @@ const TripsPageViewModel = (): TTripsPageViewModel => {
         error: tripsError,
         isLoading: tripsLoading,
         refetch: tripsRefetch,
-    } = useTripsQuery({
+    } = useTripsQuery(currentTeamId, {
         withCounts: true,
         withDetails: true,
     })

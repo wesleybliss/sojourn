@@ -3,7 +3,7 @@ import { Team } from '@repo/shared/types'
 import { tryCatch } from '@repo/shared/utils'
 import { useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef } from 'react'
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo } from 'react'
 import { matchPath, useLocation } from 'react-router'
 import { z } from 'zod'
 
@@ -28,8 +28,6 @@ const useRequireTeam = (): TUseRequireTeam => {
     const { pathname } = useLocation()
     const queryClient = useQueryClient()
     
-    const previousTeamIdRef = useRef<number | null>(null)
-    
     const [currentTeamId, setCurrentTeamId] = useWireState(store.currentTeamId)
     
     const params = useMemo(() => {
@@ -45,13 +43,7 @@ const useRequireTeam = (): TUseRequireTeam => {
     }, [pathname])
     
     const { loading, firebaseUser } = useAuth()
-    const { data: teams, isError, error, isPending  } = useTeamsQuery()
-    
-    const resetTripState = useCallback(() => {
-        store.trips.setValue([])
-        store.currentTripId.setValue(null)
-        store.currentPlanId.setValue(null)
-    }, [])
+    const { data: teams, isError, error, isPending } = useTeamsQuery()
     
     const invalidateTrips = useCallback(() => {
         queryClient.invalidateQueries({
@@ -59,6 +51,10 @@ const useRequireTeam = (): TUseRequireTeam => {
             refetchType: 'active',
         })
     }, [queryClient])
+    
+    // Important to let the query client
+    // know to refresh it's data when switching teams
+    useEffect(() => invalidateTrips(), [currentTeamId])
     
     useEffect(() => {
         
@@ -90,8 +86,6 @@ const useRequireTeam = (): TUseRequireTeam => {
         }
         
         const { slug, teamId } = params
-        const previousTeamId = previousTeamIdRef.current
-        const teamIdChanged = teamId !== previousTeamId
         
         // This slug is not a team ID, so bail
         if ((slug && !teamId) || (slug && parseInt(slug, 10) !== teamId))
@@ -99,12 +93,8 @@ const useRequireTeam = (): TUseRequireTeam => {
         
         // User is already in a team they're a member of
         if (teamId && teams.find(it => it.id === teamId)) {
-            /*if (teamIdChanged) {
-                resetTripState()
-                invalidateTrips()
-            }*/
             setCurrentTeamId(teamId)
-            previousTeamIdRef.current = teamId
+            // previousTeamIdRef.current = teamId
             return
         }
         
@@ -116,15 +106,11 @@ const useRequireTeam = (): TUseRequireTeam => {
         
         // Update the saved team ID to match the URL
         setCurrentTeamId(latestTeam.id)
-        previousTeamIdRef.current = latestTeam.id
-        if (teamIdChanged) {
-            resetTripState()
-            invalidateTrips()
-        }
+        
         // Redirect the user to the new default team
         window.location.href = `/${latestTeam.id}`
         
-    }, [loading, firebaseUser, params, isPending, isError, error, teams, queryClient, previousTeamIdRef])
+    }, [loading, firebaseUser, params, isPending, isError, error, teams])
     
     return {
         
