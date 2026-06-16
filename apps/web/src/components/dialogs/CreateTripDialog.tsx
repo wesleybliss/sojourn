@@ -39,7 +39,10 @@ const CreateTripDialog = () => {
         
         try {
             
-            const result = await createTripMutation.mutateAsync(value)
+            const result = await createTripMutation.mutateAsync({
+                ...value,
+                teamId: currentTeamId,
+            })
             const newTrip = result.data
             
             if (newTrip)

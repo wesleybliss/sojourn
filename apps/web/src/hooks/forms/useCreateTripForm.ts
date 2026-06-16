@@ -2,6 +2,7 @@ import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
 
 export const createTripFormSchema = z.object({
+    teamId: z.number().optional(),
     name: z.string()
         .min(3, 'Name must be at least 3 characters')
         .max(20, 'Name must be at most 32 characters'),

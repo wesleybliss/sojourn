@@ -7,6 +7,7 @@ import type { Request, Response } from 'express'
 import { z } from 'zod'
 
 const bodySchema = z.object({
+    teamId: z.coerce.number(),
     name: z.coerce.string(),
     description: z.coerce.string().optional(),
     coverImageUrl: z.coerce.string().optional(),
@@ -20,6 +21,7 @@ export const createTrip = async (
     try {
         
         const {
+            teamId,
             name,
             description,
             coverImageUrl: manualCoverImageUrl,
@@ -34,6 +36,7 @@ export const createTrip = async (
                 .insert(schemas.trips)
                 .values({
                     userId: req.auth?.user?.id,
+                    teamId: teamId,
                     name,
                     description,
                     coverImageUrl,

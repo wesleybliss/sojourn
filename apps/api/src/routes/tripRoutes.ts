@@ -11,7 +11,7 @@ import { restoreTrips } from '#handlers/trips/restoreTrips'
 import { updateTrip } from '#handlers/trips/updateTrip'
 import { asyncHandler } from '#handlers/utils/asyncHandler'
 
-const router = express.Router()
+const router = express.Router({ mergeParams: true })
 
 router.use(middleware.authentication)
 

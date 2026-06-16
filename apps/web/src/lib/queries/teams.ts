@@ -1,4 +1,5 @@
 import { ApiResult, ID, Team, type TeamInsert, TeamWithMembers, UpdateTeamBody } from '@repo/shared/types'
+import { omit } from '@repo/shared/utils'
 import { fetchJSON } from '@repo/shared/utils/api'
 import {
     keepPreviousData, useMutation,
@@ -12,7 +13,6 @@ import {
 import { useAuth } from '@/components/providers/AuthProvider'
 import { updateItemArray } from '@/lib/storeUtils'
 import * as store from '@/store'
-import { omit } from '@repo/shared/utils'
 
 type TeamsQueryResultData = Team[] | TeamWithMembers[] | null | undefined
 type TeamQueryResultData = Team | null | undefined

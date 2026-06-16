@@ -66,8 +66,12 @@ type ApiResponseHelper = {
     internalServerError: (res: Response, message?: string) => void
 }
 
+const apiResponseDebug = false
+
 const apiResponseBase = {
     ok: <T>(res: Response, data: T, status: number = 200): void => {
+        if (apiResponseDebug)
+            console.log('apiResponse/ok', new ApiResponse(data))
         res.status(status).json(new ApiResponse(data))
     },
     fail: <T>(res: Response, error: string, status: number, data?: T): void => {

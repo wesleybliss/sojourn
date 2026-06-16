@@ -26,7 +26,7 @@ export const userTeams = table('userTeams', {
 ])
 
 export const trips = table('trips', {
-    teamId: integer('teamId').references(() => teams.id, optsCascadeAll),
+    teamId: integer('teamId').notNull().references(() => teams.id, optsCascadeAll),
     userId: integer('userId').notNull().references(() => users.id, optsCascadeAll),
     name: text('name').notNull(),
     description: text('description'),

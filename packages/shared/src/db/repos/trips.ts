@@ -5,7 +5,7 @@ import * as schemas from '@repo/shared/db/schema'
 import type { TripWithSegmentCount } from '@repo/shared/types'
 import type { ID } from '@shared/types/data.types'
 import type { Database, Trip, TripSelect } from '@shared/types/database.types'
-import { desc, eq } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 
 export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
     
@@ -21,7 +21,7 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
         
     }
     
-    async findAllByUserId(userId: ID): Promise<TripSelect[]> {
+    async findAllByUserId(userId: ID, teamId: ID): Promise<TripSelect[]> {
         
         try {
             
@@ -32,7 +32,10 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
                     schemas.userTrips,
                     eq(schemas.userTrips.tripId, this.schema.id),
                 )
-                .where(eq(schemas.userTrips.userId, userId))
+                .where(and(
+                    eq(schemas.userTrips.userId, userId),
+                    eq(schemas.trips.teamId, teamId),
+                ))
                 .orderBy(desc(this.schema.id))
             
             return trips.map(result => ({
@@ -50,11 +53,15 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
         
     }
     
-    async findAllByUserIdWithDetails(userId: ID, plansRepo: typeof PlansRepository): Promise<Trip[]> {
+    async findAllByUserIdWithDetails(
+        userId: ID,
+        teamId: ID,
+        plansRepo: typeof PlansRepository,
+    ): Promise<Trip[]> {
         
         try {
             
-            const trips = await this.findAllByUserId(userId)
+            const trips = await this.findAllByUserId(userId, teamId)
             
             return await Promise.all(trips.map(async trip => ({
                 ...trip,
@@ -97,12 +104,13 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
     
     async findAllByUserIdWithSegmentCount(
         userId: ID,
+        teamId: ID,
         segmentsRepo = SegmentsRepository,
     ): Promise<TripWithSegmentCount[] | null> {
         
         try {
             
-            const trips = await this.findAllByUserId(userId)
+            const trips = await this.findAllByUserId(userId, teamId)
             
             return await Promise.all(trips.map(async trip => {
                 
@@ -126,10 +134,11 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
     
     async findAllByUserIdWithDetailsAndSegmentCount(
         userId: ID,
+        teamId: ID,
         plansRepo: typeof PlansRepository,
     ): Promise<TripWithSegmentCount[]> {
         
-        const trips = await this.findAllByUserIdWithDetails(userId, plansRepo)
+        const trips = await this.findAllByUserIdWithDetails(userId, teamId, plansRepo)
         
         return trips.map(trip => ({
             ...trip,

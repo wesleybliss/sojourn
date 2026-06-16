@@ -44,6 +44,7 @@ export type TripSelect = z.infer<typeof tripSelectSchema> & {
 }
 export type TripInsert = {
     userId: number
+    teamId?: number | null
     name: string
     description?: string | null
     coverImageUrl?: string | null
