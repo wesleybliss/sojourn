@@ -3,12 +3,52 @@ import { defineRelations } from 'drizzle-orm'
 
 export const relations = defineRelations(schema, r => ({
     
+    users: {
+        
+        teams: r.many.userTeams({
+            from: r.users.id,
+            to: r.userTeams.userId,
+            alias: 'userTeams',
+        }),
+        
+    },
+    
+    teams: {
+        
+        members: r.many.userTeams({
+            from: r.teams.id,
+            to: r.userTeams.teamId,
+            alias: 'userTeams',
+        }),
+        
+        trips: r.many.trips({
+            from: r.teams.id,
+            to: r.trips.teamId,
+        }),
+        
+    },
+    
+    userTeams: {
+        
+        user: r.one.users({
+            from: r.userTeams.userId,
+            to: r.users.id,
+            alias: 'userTeams',
+        }),
+        
+        team: r.one.teams({
+            from: r.userTeams.teamId,
+            to: r.teams.id,
+            alias: 'userTeams',
+        }),
+        
+    },
+    
     trips: {
         
-        members: r.many.userTrips({
-            from: r.trips.id,
-            to: r.userTrips.tripId,
-            alias: 'userTrips',
+        team: r.one.teams({
+            from: r.trips.teamId,
+            to: r.teams.id,
         }),
         
         plans: r.many.plans({
@@ -19,22 +59,6 @@ export const relations = defineRelations(schema, r => ({
         segments: r.many.segments({
             from: r.trips.id,
             to: r.segments.tripId,
-        }),
-        
-    },
-    
-    userTrips: {
-        
-        user: r.one.users({
-            from: r.userTrips.userId,
-            to: r.users.id,
-            alias: 'userTrips',
-        }),
-        
-        trip: r.one.trips({
-            from: r.userTrips.tripId,
-            to: r.trips.id,
-            alias: 'userTrips',
         }),
         
     },

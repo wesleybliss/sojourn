@@ -29,12 +29,12 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
                 .select({ trip: this.schema })
                 .from(this.schema)
                 .innerJoin(
-                    schemas.userTrips,
-                    eq(schemas.userTrips.tripId, this.schema.id),
+                    schemas.userTeams,
+                    eq(schemas.userTeams.teamId, this.schema.teamId),
                 )
                 .where(and(
-                    eq(schemas.userTrips.userId, userId),
-                    eq(schemas.trips.teamId, teamId),
+                    eq(schemas.userTeams.userId, userId),
+                    eq(this.schema.teamId, teamId),
                 ))
                 .orderBy(desc(this.schema.id))
             
@@ -147,11 +147,18 @@ export class TripsRepository extends Repository<Trip, typeof schemas.trips> {
         
     }
     
-    async findOneWithDetails(id: ID, plansRepo: typeof PlansRepository): Promise<Trip | null> {
+    async findOneWithDetails(id: ID, teamId: ID, plansRepo: typeof PlansRepository): Promise<Trip | null> {
         
         try {
             
-            const trip = await this.findOneById(id)
+            const [trip] = await this.db
+                .select()
+                .from(this.schema)
+                .where(and(
+                    eq(this.schema.teamId, teamId),
+                    eq(this.schema.id, id),
+                ))
+                .limit(1)
             
             if (!trip) return null
             

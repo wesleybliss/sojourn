@@ -2,11 +2,12 @@ import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import { geocode } from '@repo/shared/utils'
 import { apiResponse } from '@repo/shared/utils/api'
-import { isUserTripMember } from '@repo/shared/utils/auth'
+import { and, eq } from 'drizzle-orm'
 import type { Request, Response } from 'express'
 import { z } from 'zod'
 
 const paramsSchema = z.object({
+    teamId: z.coerce.number(),
     tripId: z.coerce.number(),
     planId: z.coerce.number(),
 })
@@ -18,7 +19,7 @@ export const createSegment = async (
     
     try {
         
-        const { tripId, planId } = paramsSchema.parse(req.params)
+        const { teamId, tripId, planId } = paramsSchema.parse(req.params)
         
         const {
             startDate,
@@ -38,10 +39,15 @@ export const createSegment = async (
         if (!endDate?.length)
             return apiResponse.invalidParams(res, 'Param endDate is required')
         
-        const isMember = await isUserTripMember(req.auth, tripId)
+        const [trip] = await db.select()
+            .from(schemas.plans)
+            .where(and(
+                eq(schemas.trips.teamId, teamId),
+                eq(schemas.trips.id, tripId),
+            ))
         
-        if (!isMember)
-            return apiResponse.forbidden(res)
+        if (!trip)
+            return apiResponse.notFound(res, 'Trip')
         
         let latitude: number | null = null
         let longitude: number | null = null

@@ -36,14 +36,14 @@ export const useTripsQuery = ({
     const currentTeamId = useWireValue(store.currentTeamId)
     const queryClient = useQueryClient()
     
-    /*useEffect(() => {
+    useEffect(() => {
         if (!currentTeamId) return
         
-        queryClient.invalidateQueries({
+        /*queryClient.invalidateQueries({
             queryKey: ['trips'],
             refetchType: 'active',
-        })
-    }, [currentTeamId, queryClient])*/
+        })*/
+    }, [currentTeamId, queryClient])
     
     return useQuery({
         queryKey: ['trips', currentTeamId, { withCounts, withDetails }],

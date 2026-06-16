@@ -43,27 +43,21 @@ export type TripSelect = z.infer<typeof tripSelectSchema> & {
     createdAt: Date
 }
 export type TripInsert = {
+    id?: number
     userId: number
-    teamId?: number | null
+    teamId: number
     name: string
     description?: string | null
     coverImageUrl?: string | null
-    id?: number
 }
 export const createTripRequestSchema = tripInsertSchema.omit({
     id: true,
-    userId: true,
+    teamId: true,
     createdAt: true,
     updatedAt: true,
 })
 export type CreateTripRequest =
     z.infer<typeof createTripRequestSchema>
-
-export const userTripSelectSchema = createSelectSchema(schemas.userTrips)
-export const userTripInsertSchema = createInsertSchema(schemas.userTrips)
-export type UserTrip = InferSelectModel<typeof schemas.userTrips>
-export type UserTripSelect = z.infer<typeof userTripSelectSchema>
-export type UserTripInsert = z.infer<typeof userTripInsertSchema>
 
 export const planSelectSchema = createSelectSchema(schemas.plans)
 export const planInsertSchema = createInsertSchema(schemas.plans)

@@ -1,4 +1,4 @@
-import { lower, optsCascadeAll, table, timestamps, timestampSeconds } from '@repo/shared/db/dbUtils'
+import { lower, optsCascadeAll, table, timestampSeconds } from '@repo/shared/db/dbUtils'
 import { index, integer, primaryKey, real, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
 
 export const users = table('users', {
@@ -27,14 +27,14 @@ export const userTeams = table('userTeams', {
 
 export const trips = table('trips', {
     teamId: integer('teamId').notNull().references(() => teams.id, optsCascadeAll),
-    userId: integer('userId').notNull().references(() => users.id, optsCascadeAll),
     name: text('name').notNull(),
     description: text('description'),
     coverImageUrl: text('coverImageUrl'),
 })
 
+// @deprecated
 // Junction table for many-to-many relationship between users and trips
-export const userTrips = table('userTrips', {
+/*export const userTrips = table('userTrips', {
     id: false,
     userId: integer('userId').notNull().references(() => users.id, optsCascadeAll),
     tripId: integer('tripId').notNull().references(() => trips.id, optsCascadeAll),
@@ -46,7 +46,7 @@ export const userTrips = table('userTrips', {
             table.tripId,
         ],
     }),
-}))
+}))*/
 
 export const plans = table('plans', {
     tripId: integer('tripId').notNull().references(() => trips.id, optsCascadeAll),

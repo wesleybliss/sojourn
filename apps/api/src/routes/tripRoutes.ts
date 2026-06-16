@@ -6,7 +6,6 @@ import { createTrip } from '#handlers/trips/createTrip'
 import { deleteTrip } from '#handlers/trips/deleteTrip'
 import { getTrip } from '#handlers/trips/getTrip'
 import { getTrips } from '#handlers/trips/getTrips'
-import { inviteTripMember } from '#handlers/trips/inviteTripMember'
 import { restoreTrips } from '#handlers/trips/restoreTrips'
 import { updateTrip } from '#handlers/trips/updateTrip'
 import { asyncHandler } from '#handlers/utils/asyncHandler'
@@ -44,11 +43,6 @@ router.put('/:tripId',
 router.delete('/:tripId',
     middleware.authorizeTrip,
     asyncHandler(deleteTrip),
-)
-
-router.post('/:tripId/invite',
-    middleware.authorizeTrip,
-    asyncHandler(inviteTripMember),
 )
 
 export default router

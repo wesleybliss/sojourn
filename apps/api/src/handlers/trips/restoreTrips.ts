@@ -6,6 +6,11 @@ import { apiResponse } from '@repo/shared/utils/api'
 import type { Dayjs } from 'dayjs'
 import dayjs from 'dayjs'
 import type { Request, Response } from 'express'
+import { z } from 'zod'
+
+const paramsSchema = z.object({
+    teamId: z.coerce.number(),
+})
 
 const toDate = (v: string | number | Date | Dayjs | null | undefined) => {
     const value = dayjs(v).toDate()
@@ -27,6 +32,8 @@ export const restoreTrips = async (
     try {
         
         const userId = req.auth?.user?.id
+        
+        const { teamId } = paramsSchema.parse(req.params)
         
         const body = req.body
         
@@ -50,6 +57,7 @@ export const restoreTrips = async (
             
             const tripInsertData: TripInsert = {
                 userId,
+                teamId,
                 name: tripName,
                 description: trip.description || null,
                 /*startDate: trip.startDate || null,
@@ -63,9 +71,6 @@ export const restoreTrips = async (
                 .returning({ id: schemas.trips.id })
             
             const newTrip = insertedTrips[0]
-            
-            // link user to trip via userTrips
-            await db.insert(schemas.userTrips).values({ userId, tripId: newTrip.id })
             
             const planIdMap = new Map()
             

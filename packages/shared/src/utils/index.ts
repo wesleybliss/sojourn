@@ -69,7 +69,7 @@ export const tryCatch = <T, D = undefined>(
     
     try {
         return fn()
-    } catch (_) {
+    } catch (_e) { // oxlint-disable-line no-unused-vars
         return defaultValue as D
     }
     

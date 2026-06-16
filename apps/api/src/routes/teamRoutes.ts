@@ -5,6 +5,7 @@ import { createTeam } from '#handlers/teams/createTeam'
 import { deleteTeam } from '#handlers/teams/deleteTeam'
 import { getTeam } from '#handlers/teams/getTeam'
 import { getTeams } from '#handlers/teams/getTeams'
+import { inviteTeamMember } from '#handlers/teams/inviteTeamMember'
 import { updateTeam } from '#handlers/teams/updateTeam'
 import { asyncHandler } from '#handlers/utils/asyncHandler'
 
@@ -17,5 +18,7 @@ router.post('/', asyncHandler(createTeam))
 router.get('/:teamId', asyncHandler(getTeam))
 router.put('/:teamId', asyncHandler(updateTeam))
 router.delete('/:teamId', asyncHandler(deleteTeam))
+
+router.post('/:teamId/invite', asyncHandler(inviteTeamMember))
 
 export default router

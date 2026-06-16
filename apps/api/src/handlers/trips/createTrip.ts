@@ -35,20 +35,12 @@ export const createTrip = async (
             const [createdTrip] = await tx
                 .insert(schemas.trips)
                 .values({
-                    userId: req.auth?.user?.id,
                     teamId: teamId,
                     name,
                     description,
                     coverImageUrl,
                 })
                 .returning()
-            
-            await tx
-                .insert(schemas.userTrips)
-                .values({
-                    userId: req.auth?.user?.id,
-                    tripId: createdTrip.id,
-                })
             
             const [createdPlan] = await tx
                 .insert(schemas.plans)

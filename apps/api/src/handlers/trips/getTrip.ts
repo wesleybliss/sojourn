@@ -5,6 +5,7 @@ import type { Request, Response } from 'express'
 import { z } from 'zod'
 
 const paramsSchema = z.object({
+    teamId: z.coerce.number(),
     tripId: z.coerce.number(),
 })
 
@@ -17,13 +18,13 @@ export const getTrip = async (
     res: Response,
 ): Promise<void> => {
     
-    const { tripId } = paramsSchema.parse(req.params)
+    const { teamId, tripId } = paramsSchema.parse(req.params)
     const { withDetails } = querySchema.parse(req.query)
     
     // @todo auth via context.userId
     
     const trip = withDetails
-        ? await tripsRepo.findOneWithDetails(tripId, plansRepo)
+        ? await tripsRepo.findOneWithDetails(tripId, teamId, plansRepo)
         : await tripsRepo.findOneById(tripId)
     
     return apiResponse.ok(res, trip)

@@ -4,8 +4,7 @@ import HttpError from '@repo/shared/errors/HttpError'
 import { adminAuth } from '@repo/shared/utils/firebase/admin'
 import type { ID } from '@shared/types/data.types'
 import type { UserSelect } from '@shared/types/database.types'
-import { AuthContext } from '@shared/types/express'
-import { and, eq, sql } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import type { Request } from 'express'
 import type { DecodedIdToken } from 'firebase-admin/auth'
 
@@ -124,28 +123,4 @@ export const authenticate = async (
     
     return { user, firebaseToken, userId: user.id }
     
-}
-
-/** @deprecated Use `authorize` instead */
-export const isUserTripMember = async ({ userId }: AuthContext, tripId: ID): Promise<boolean> => {
-    try {
-        if (!userId || !tripId)
-            return false
-        
-        const rows = await db
-            .select()
-            .from(schemas.userTrips)
-            .where(and(
-                eq(schemas.userTrips.userId, userId),
-                eq(schemas.userTrips.tripId, tripId),
-            ))
-        
-        return Array.isArray(rows) &&
-            rows.length > 0 &&
-            rows[0].tripId === tripId
-        
-    } catch (e) {
-        console.error('isUserTripMember', e)
-        return false
-    }
 }

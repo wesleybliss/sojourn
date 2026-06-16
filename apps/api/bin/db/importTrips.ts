@@ -10,10 +10,10 @@ import { geocode } from '@repo/shared/utils'
 import { eq } from 'drizzle-orm'
 
 const args = process.argv.slice(2)
-const [tripsFile] = args
+const [teamId, tripsFile] = args
 
 const script = path.basename(process.argv[0])
-const usage = `USAGE: ${script} <tripsFileon>`
+const usage = `USAGE: ${script} <teamId> <tripsFile>`
 
 export type ImportTripData = {
     type: 'single' | 'multiple'
@@ -75,6 +75,9 @@ const importSegment = async (
 
 const importTrip = async (data: ImportTripData) => {
     
+    if (!teamId)
+        throw new Error('Invalid team ID')
+    
     if (data.type !== 'single')
         throw new Error('Invalid trip type (not "single") ' + JSON.stringify(data, null, 4))
     
@@ -113,6 +116,7 @@ const importTrip = async (data: ImportTripData) => {
     
     const tripInsertData: TripInsert = {
         userId: user[0].id,
+        teamId: parseInt(teamId, 10),
         name,
         description,
         coverImageUrl,
@@ -128,12 +132,6 @@ const importTrip = async (data: ImportTripData) => {
         })
     
     const trip = insertedTrips[0]
-    
-    console.log('Adding user', email, 'to trip', name)
-    await db.insert(schemas.userTrips).values({
-        userId: user[0].id,
-        tripId: trip.id,
-    })
     
     for (const plan of plans || []) {
         

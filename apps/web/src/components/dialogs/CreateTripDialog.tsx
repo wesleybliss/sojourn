@@ -39,6 +39,9 @@ const CreateTripDialog = () => {
         
         try {
             
+            if (!currentTeamId)
+                throw new Error('No team selected')
+            
             const result = await createTripMutation.mutateAsync({
                 ...value,
                 teamId: currentTeamId,

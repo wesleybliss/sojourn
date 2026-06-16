@@ -97,7 +97,11 @@ const useNavbarViewModel = (): TNavbarViewModel => {
         
         try {
             
+            if (!currentTeamId)
+                throw new Error('No current team')
+            
             const result = await createTripMutation.mutateAsync({
+                teamId: currentTeamId,
                 name: 'New Trip',
                 description: '',
             })

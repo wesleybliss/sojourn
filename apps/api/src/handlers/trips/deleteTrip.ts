@@ -1,12 +1,12 @@
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import { apiResponse } from '@repo/shared/utils/api'
-import { isUserTripMember } from '@repo/shared/utils/auth'
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import type { Request, Response } from 'express'
 import { z } from 'zod'
 
 const paramsSchema = z.object({
+    teamId: z.coerce.number(),
     tripId: z.coerce.number(),
 })
 
@@ -17,22 +17,20 @@ export const deleteTrip = async (
     
     try {
         
-        const { tripId } = paramsSchema.parse(req.params)
+        const { teamId, tripId } = paramsSchema.parse(req.params)
         
         if (!tripId)
             return apiResponse.badRequest(res, 'Invalid trip ID')
         
         const [trip] = await db.select()
             .from(schemas.trips)
-            .where(eq(schemas.trips.id, tripId))
+            .where(and(
+                eq(schemas.teams.id, teamId),
+                eq(schemas.trips.id, tripId),
+            ))
         
         if (!trip)
             return apiResponse.notFound(res, 'Trip')
-        
-        const isMember = await isUserTripMember(req.auth, tripId)
-        
-        if (!isMember)
-            return apiResponse.forbidden(res)
         
         const [deletedTrip] = await db
             .delete(schemas.trips)

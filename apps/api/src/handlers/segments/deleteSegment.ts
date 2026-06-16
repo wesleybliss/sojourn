@@ -1,12 +1,12 @@
 import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import { apiResponse } from '@repo/shared/utils/api'
-import { isUserTripMember } from '@repo/shared/utils/auth'
 import { and, eq } from 'drizzle-orm'
 import type { Request, Response } from 'express'
 import { z } from 'zod'
 
 const paramsSchema = z.object({
+    teamId: z.coerce.number(),
     tripId: z.coerce.number(),
     planId: z.coerce.number(),
     segmentId: z.coerce.number(),
@@ -19,12 +19,17 @@ export const deleteSegment = async (
     
     try {
         
-        const { tripId, planId, segmentId } = paramsSchema.parse(req.params)
+        const { teamId, tripId, planId, segmentId } = paramsSchema.parse(req.params)
         
-        const isMember = await isUserTripMember(req.auth, tripId)
+        const [trip] = await db.select()
+            .from(schemas.plans)
+            .where(and(
+                eq(schemas.trips.teamId, teamId),
+                eq(schemas.trips.id, tripId),
+            ))
         
-        if (!isMember)
-            return apiResponse.forbidden(res)
+        if (!trip)
+            return apiResponse.notFound(res, 'Trip')
         
         await db.transaction(async tx => {
             await tx.delete(schemas.segments)

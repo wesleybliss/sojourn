@@ -1,12 +1,17 @@
 import plansRepo from '@repo/shared/db/repos/plans'
+import teamsRepo from '@repo/shared/db/repos/teams'
 import tripsRepo from '@repo/shared/db/repos/trips'
 import type { Plan, Segment, Trip } from '@repo/shared/types'
 import { apiResponse } from '@repo/shared/utils/api'
-import { isUserTripMember } from '@repo/shared/utils/auth'
 import tripsWithPlansSchema from '@repo/shared/utils/json-schemas/trip-backup.jsonschema'
 import Ajv from 'ajv'
 import dayjs from 'dayjs'
 import type { Request, Response } from 'express'
+import { z } from 'zod'
+
+const paramsSchema = z.object({
+    teamId: z.coerce.number(),
+})
 
 const ajvDebug = true
 
@@ -47,6 +52,7 @@ const transformPlan = (plan: Plan) => ({
 
 const transformTrip = (trip: Trip) => ({
     id: String(trip.id),
+    teamId: String(trip.teamId),
     createdAt: dateToString(trip.createdAt as Date, 'trip/createdAt'),
     updatedAt: dateToString(trip.updatedAt as Date, 'trip/updatedAt'),
     name: trip.name,
@@ -65,6 +71,8 @@ export const backupTrips = async (
         
         const userId = req.auth?.user?.id
         
+        const { teamId } = paramsSchema.parse(req.params)
+        
         const body = req.body
         const ajvProps = ajvDebug ? { allErrors: true, verbose: true } : {}
         
@@ -80,12 +88,7 @@ export const backupTrips = async (
             if (!tripId)
                 return apiResponse.invalidParams(res, 'tripId required for single backup')
             
-            const isMember = await isUserTripMember(req.auth, tripId)
-            
-            if (!isMember)
-                return apiResponse.forbidden(res )
-            
-            const trip = await tripsRepo.findOneWithDetails(Number(tripId), plansRepo)
+            const trip = await tripsRepo.findOneWithDetails(Number(tripId), teamId, plansRepo)
             
             if (!trip)
                 return apiResponse.notFound(res, 'Trip not found')
@@ -94,19 +97,27 @@ export const backupTrips = async (
             
         } else {
             
+            const teamId = parseInt(body.teamId as string, 10)
+            
             // multiple
             const requestedIds = Array.isArray(body?.tripIds)
                 ? body.tripIds.map((id: string) => Number(id))
                 : null
             
-            const userTrips = await tripsRepo.findAllByUserId(userId)
+            const teams = await teamsRepo.findAllByUserId(userId)
+            
+            const userTripsRes = await Promise.all(teams.map(team => (
+                tripsRepo.findAllByUserId(userId, team.id)
+            )))
+            
+            const userTrips = userTripsRes.flat()
             
             const filtered = requestedIds
                 ? userTrips.filter(t => requestedIds.includes(Number(t.id)))
                 : userTrips
             
             const detailsPromises: Promise<Trip | null>[] = filtered.map(t => (
-                tripsRepo.findOneWithDetails(Number(t.id), plansRepo)
+                tripsRepo.findOneWithDetails(Number(t.id), Number(teamId), plansRepo)
             ))
             const details = await Promise.all(detailsPromises)
             

@@ -10,6 +10,7 @@ import type { NextFunction, Request, Response } from 'express'
 import { z } from 'zod'
 
 const paramsSchema = z.object({
+    teamId: z.coerce.number().optional(),
     tripId: z.coerce.number().optional(),
     planId: z.coerce.number().optional(),
     segmentId: z.coerce.number().optional(),
@@ -60,7 +61,7 @@ export const authorization = (options: AuthorizeOptions) => {
                 return next(new HttpError(401, 'Unauthorized'))
             
             const userId = req.auth.user.id
-            const { tripId, planId, segmentId } = paramsSchema.parse(req.params)
+            const { teamId, tripId, planId, segmentId } = paramsSchema.parse(req.params)
             
             // Determine what level of authorization is needed
             const needsTripAuth = options.requireTrip ?? (tripId !== null && tripId !== undefined)
@@ -76,17 +77,24 @@ export const authorization = (options: AuthorizeOptions) => {
             
             if (needsSegmentAuth && segmentId && planId && tripId) {
                 
+                if (!teamId)
+                    return next(new HttpError(400, 'Missing teamId'))
+                
                 // Full chain: validate segment belongs to plan/trip AND user has trip access
                 const result = await db
                     .select()
                     .from(schemas.segments)
-                    .innerJoin(schemas.userTrips, eq(schemas.userTrips.tripId, schemas.segments.tripId))
+                    .innerJoin(schemas.trips, eq(schemas.trips.id, schemas.segments.tripId))
+                    .innerJoin(schemas.teams, eq(schemas.teams.id, schemas.trips.teamId))
+                    .innerJoin(schemas.userTeams, eq(schemas.userTeams.teamId, schemas.teams.id))
                     .where(
                         and(
                             eq(schemas.segments.id, segmentId),
                             eq(schemas.segments.tripId, tripId),
                             eq(schemas.segments.planId, planId),
-                            eq(schemas.userTrips.userId, userId),
+                            eq(schemas.trips.id, tripId),
+                            eq(schemas.teams.id, teamId),
+                            eq(schemas.userTeams.userId, userId),
                         ),
                     )
                     .limit(1)
@@ -104,16 +112,23 @@ export const authorization = (options: AuthorizeOptions) => {
                 
             } else if (needsPlanAuth && planId && tripId) {
                 
+                if (!teamId)
+                    return next(new HttpError(400, 'Missing teamId'))
+                
                 // Plan + trip: validate plan belongs to trip AND user has trip access
                 const result = await db
                     .select()
                     .from(schemas.plans)
-                    .innerJoin(schemas.userTrips, eq(schemas.userTrips.tripId, schemas.plans.tripId))
+                    .innerJoin(schemas.trips, eq(schemas.trips.id, schemas.plans.tripId))
+                    .innerJoin(schemas.teams, eq(schemas.teams.id, schemas.trips.teamId))
+                    .innerJoin(schemas.userTeams, eq(schemas.userTeams.teamId, schemas.teams.id))
                     .where(
                         and(
                             eq(schemas.plans.id, planId),
                             eq(schemas.plans.tripId, tripId),
-                            eq(schemas.userTrips.userId, userId),
+                            eq(schemas.trips.id, tripId),
+                            eq(schemas.teams.id, teamId),
+                            eq(schemas.userTeams.userId, userId),
                         ),
                     )
                     .limit(1)
@@ -129,15 +144,21 @@ export const authorization = (options: AuthorizeOptions) => {
                 
             } else if (needsTripAuth && tripId) {
                 
+                if (!teamId)
+                    return next(new HttpError(400, 'Missing teamId'))
+                
                 // Just trip: validate user has access to trip
                 const result = await db
                     .select()
-                    .from(schemas.userTrips)
-                    .innerJoin(schemas.trips, eq(schemas.userTrips.tripId, schemas.trips.id))
+                    .from(schemas.userTeams)
+                    .innerJoin(schemas.trips, eq(schemas.trips.id, tripId))
+                    .innerJoin(schemas.teams, eq(schemas.teams.id, schemas.trips.teamId))
+                    .innerJoin(schemas.userTeams, eq(schemas.userTeams.teamId, schemas.teams.id))
                     .where(
                         and(
-                            eq(schemas.userTrips.tripId, tripId),
-                            eq(schemas.userTrips.userId, userId),
+                            eq(schemas.trips.id, tripId),
+                            eq(schemas.teams.id, teamId),
+                            eq(schemas.userTeams.userId, userId),
                         ),
                     )
                     .limit(1)
