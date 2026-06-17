@@ -16,6 +16,8 @@ export const useCitiesQuery = ({
     opts = {},
 }: CitiesQueryArgs = {}) => {
     
+    const { firebaseUser } = useAuth()
+    
     return useQuery({
         queryKey: ['cities'],
         queryFn: async () => {
@@ -45,6 +47,7 @@ export const useCitiesQuery = ({
             }
             
         },
+        enabled: !!firebaseUser,
         placeholderData: keepPreviousData,
         retry: 0,
         ...opts,

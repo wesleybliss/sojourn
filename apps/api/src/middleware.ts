@@ -39,9 +39,12 @@ export const authentication = async (
     next: NextFunction,
 ): Promise<void> => {
     
-    req.auth = await authenticate(req)
-    
-    next()
+    try {
+        req.auth = await authenticate(req)
+        next()
+    } catch (e) {
+        next(e)
+    }
     
 }
 
