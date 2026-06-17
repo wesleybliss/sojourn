@@ -166,3 +166,8 @@ const results = await searchCities('Napoli');
 // Returns Naples with population 909048
 
 ```
+
+## TODO
+
+- [ ] Migrate manual places to match geonames
+- 

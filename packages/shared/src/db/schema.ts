@@ -32,22 +32,6 @@ export const trips = table('trips', {
     coverImageUrl: text('coverImageUrl'),
 })
 
-// @deprecated
-// Junction table for many-to-many relationship between users and trips
-/*export const userTrips = table('userTrips', {
-    id: false,
-    userId: integer('userId').notNull().references(() => users.id, optsCascadeAll),
-    tripId: integer('tripId').notNull().references(() => trips.id, optsCascadeAll),
-    ...timestamps,
-}, table => ({
-    pk: primaryKey({
-        columns: [
-            table.userId,
-            table.tripId,
-        ],
-    }),
-}))*/
-
 export const plans = table('plans', {
     tripId: integer('tripId').notNull().references(() => trips.id, optsCascadeAll),
     name: text('name').notNull(),
@@ -80,11 +64,6 @@ export const geonamesCities = table('geonamesCities', {
     featureClass: text('featureClass', { length: 1 }),
     featureCode: text('featureCode', { length: 10 }),
     countryCode: text('countryCode', { length: 2 }),
-    cc2: text('cc2', { length: 200 }),
-    admin1Code: text('admin1Code', { length: 20 }),
-    admin2Code: text('admin2Code', { length: 80 }),
-    admin3Code: text('admin3Code', { length: 20 }),
-    admin4Code: text('admin4Code', { length: 20 }),
     population: integer('population', { mode: 'number' }),
     elevation: integer('elevation'),
     dem: integer('dem'),

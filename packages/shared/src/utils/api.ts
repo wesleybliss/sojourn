@@ -173,3 +173,30 @@ export async function fetchJSON<T>(url: string, options: RequestInit = {}): Prom
     return response.json()
     
 }
+
+/**
+ * Makes an unauthenticated/public API request and returns JSON
+ */
+export async function fetchJSONPublic<T>(url: string, options: RequestInit = {}): Promise<ApiResult<T | null>> {
+    
+    const fullUrl = url.startsWith('http')
+        ? url
+        : withBaseUrl(`/api/${url}`)
+    
+    const response = await fetch(fullUrl, {
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers,
+        },
+    })
+    
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({ error: 'Request failed' }))
+        
+        throw new Error(error.error || `HTTP ${response.status}`)
+    }
+    
+    return response.json()
+    
+}

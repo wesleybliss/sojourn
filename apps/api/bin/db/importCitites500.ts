@@ -10,7 +10,7 @@ import { promisify } from 'node:util'
 import db from '@repo/shared/db'
 import { geonamesCities } from '@repo/shared/db/schema'
 import { sql } from 'drizzle-orm'
-import yauzl from 'yauzl'
+import yauzl, { Entry } from 'yauzl'
 
 const fromBuffer = promisify(yauzl.fromBuffer)
 
@@ -38,15 +38,15 @@ const downloadCities500 = async (): Promise<NodeJS.ReadableStream> => {
         const zipFile = await fromBuffer(zipBuffer)
         
         // Find cities500.txt entry
-        const entries = await new Promise<any[]>((resolve, reject) => {
-            const entries: unknown[] = []
-            zipFile.on('entry', (entry: unknown) => entries.push(entry))
+        const entries = await new Promise<Entry[]>((resolve, reject) => {
+            const entries: Entry[] = []
+            zipFile.on('entry', (entry: Entry) => entries.push(entry))
             zipFile.on('end', () => resolve(entries))
             zipFile.on('error', reject)
             zipFile.readEntry()
         })
         
-        const txtEntry = entries.find(e => e.fileName === 'cities500.txt')
+        const txtEntry = entries.find((e: Entry) => e.fileName === 'cities500.txt')
         
         if (!txtEntry)
             throw new Error('cities500.txt not found in zip')
@@ -86,7 +86,7 @@ const importGeonamesData = async (fileStream: NodeJS.ReadableStream) => {
         
         const fields = line.split('\t')
         const city = {
-            geonameId: parseInt(fields[0]),
+            geonameId: parseInt(fields[0], 10),
             name: fields[1] || null,
             asciiName: fields[2] || null,
             alternateNames: fields[3] || null,
@@ -100,9 +100,9 @@ const importGeonamesData = async (fileStream: NodeJS.ReadableStream) => {
             admin2Code: fields[11] || null,
             admin3Code: fields[12] || null,
             admin4Code: fields[13] || null,
-            population: fields[14] ? parseInt(fields[14]) : null,
-            elevation: fields[15] ? parseInt(fields[15]) : null,
-            dem: fields[16] ? parseInt(fields[16]) : null,
+            population: fields[14] ? parseInt(fields[14], 10) : null,
+            elevation: fields[15] ? parseInt(fields[15], 10) : null,
+            dem: fields[16] ? parseInt(fields[16], 10) : null,
             timezone: fields[17] || null,
             modificationDate: fields[18] || null,
         }

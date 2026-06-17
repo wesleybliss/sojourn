@@ -3,7 +3,7 @@ import type { Database, Insert, Select, Transaction } from '@repo/shared/types'
 import type { ID } from '@shared/types/data.types'
 import type { AnyColumn } from 'drizzle-orm'
 import { desc, eq, inArray } from 'drizzle-orm'
-import { SQL, SQLWrapper } from 'drizzle-orm/sql/sql'
+import { SQL, type SQLWrapper } from 'drizzle-orm/sql/sql'
 import { SQLiteTable } from 'drizzle-orm/sqlite-core'
 import { SQLiteViewBase } from 'drizzle-orm/sqlite-core/view-base'
 
@@ -95,14 +95,29 @@ class Repository<TModel, TSchema extends SQLiteTable> {
         
     }
     
-    async findAll(): Promise<Select<TSchema>[]> {
+    async findAll({
+        offset,
+        limit,
+    }: {
+        offset?: number
+        limit?: number
+    } = {}): Promise<Select<TSchema>[]> {
         
         try {
             
-            return await this.db
+            const query = this.db
                 .select()
                 .from(this.schema)
-                .orderBy(desc(this.idColumn)) as Select<TSchema>[]
+            
+            if (offset !== undefined)
+                query.offset(offset)
+            
+            if (limit)
+                query.limit(limit)
+            
+            query.orderBy(desc(this.idColumn))
+            
+            return await query as Select<TSchema>[]
             
         } catch (e) {
             

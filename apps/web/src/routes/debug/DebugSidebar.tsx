@@ -5,6 +5,7 @@ const debugSidebarLinks = [
     ['Migrate Trips to Plans', '/debug/migrate-trips-plans'],
     ['Storage', '/debug/storage'],
     ['Geocode Tool', '/debug/geocode-tool'],
+    ['Cities Browser', '/debug/cities-browser'],
     ['City Search', '/debug/city-search'],
 ]
 
@@ -19,7 +20,7 @@ const DebugSidebar = ({
     return (
         
         <aside className={`DebugSidebar h-screen section-card
-            p-8 flex flex-col gap-2 text-sm ${className || ''}`}>
+            p-4 flex flex-col gap-2 shrink-0 text-sm ${className || ''}`}>
             
             <header className="flex items-center justify-between mb-8">
                 <h1 className="font-bold opacity-50">Debug</h1>

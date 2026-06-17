@@ -10,6 +10,7 @@ import TeamsProtectedLayout from '@/layouts/TeamsProtectedLayout'
 import TripLayout from '@/layouts/TripLayout'
 import TripsLayout from '@/layouts/TripsLayout'
 import { Navigate } from '@/lib/router'
+import CitiesBrowserPage from '@/routes/debug/cities-browser/CitiesBrowserPage'
 import DebugCitySearch from '@/routes/debug/city-search/page'
 import DebugGeocodeTool from '@/routes/debug/geocode-tool/page'
 import DebugMigrateTripsToPlans from '@/routes/debug/migrate-trips-plans/page'
@@ -111,6 +112,7 @@ const AppRoutes = () => {
                         <Route path="storage" element={<DebugUploadFileBlobStorage />} />
                         <Route path="migrate-trips-plans" element={<DebugMigrateTripsToPlans />} />
                         <Route path="geocode-tool" element={<DebugGeocodeTool />} />
+                        <Route path="cities-browser" element={<CitiesBrowserPage />} />
                         <Route path="city-search" element={<DebugCitySearch />} />
                     </Route>
                     
