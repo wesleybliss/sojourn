@@ -1,4 +1,4 @@
-import { createTableSQLite, lower, sqliteOptsCascadeAll, timestampSeconds } from '@shared/db/utils'
+import { createTableSQLite, lower, sqliteOptsCascadeAll, timestampSeconds } from '@repo/shared/db/utils'
 import { index, integer, primaryKey, real, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
 
 export const users = createTableSQLite('users', {

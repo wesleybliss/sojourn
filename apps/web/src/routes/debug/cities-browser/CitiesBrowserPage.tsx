@@ -3,9 +3,8 @@ import { useMemo, useState } from 'react'
 
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { useCitiesQuery } from '@/lib/queries/cities'
+import CitiesBrowserPagination from '@/routes/debug/cities-browser/CitiesBrowserPagination'
 import { cn } from '@/utils'
-
-const ITEMS_PER_PAGE = 10
 
 const OMIT_FIELDS = ['id', 'createdAt', 'updatedAt']
 const ELLIPSE_FIELDS = ['alternateNames']
@@ -27,23 +26,24 @@ const getTextValue = (city: GeonamesCity, field: keyof GeonamesCity) => {
 const CitiesBrowserPage = () => {
     
     const [pageIndex, setPageIndex] = useState(0)
+    const [rowsPerPage, setRowsPerPage] = useState(10)
     
     const { offset, limit } = useMemo(() => ({
-        offset: pageIndex * ITEMS_PER_PAGE,
-        limit: ITEMS_PER_PAGE,
-    }), [pageIndex])
+        offset: pageIndex * rowsPerPage,
+        limit: rowsPerPage,
+    }), [pageIndex, rowsPerPage])
     
     const {
-        data: cities,
+        data,
         isPending,
         isError,
         error,
     } = useCitiesQuery({ offset, limit })
     
     const headers = useMemo(() => (
-        Object.keys(cities?.[0] || {})
+        Object.keys(data?.cities?.[0] || {})
             .filter(it => !OMIT_FIELDS.includes(it))
-    ), [cities])
+    ), [data])
     
     if (isError) return (
         <div>
@@ -83,7 +83,7 @@ const CitiesBrowserPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {cities?.map((it, i) => (
+                        {data?.cities?.map((it, i) => (
                             <tr key={it.id}>
                                 {headers.map(h => {
                                     
@@ -107,6 +107,14 @@ const CitiesBrowserPage = () => {
                         ))}
                     </tbody>
                 </table>
+                
+                <CitiesBrowserPagination
+                    total={data?.total || 0}
+                    pageIndex={pageIndex}
+                    setPageIndex={setPageIndex}
+                    rowsPerPage={rowsPerPage}
+                    setRowsPerPage={setRowsPerPage} />
+            
             </div>
         
         </div>

@@ -17,12 +17,19 @@ export const getGeonamesCities = async (
         
         const { offset, limit } = querySchema.parse(_req.query)
         
+        const total = await geonamesCitiesRepo.count()
+        
         const cities = await geonamesCitiesRepo.findAll({
             offset,
             limit,
+            orderBy: geonamesCitiesRepo.schema.asciiName,
+            orderDirection: 'asc',
         })
         
-        return apiResponse.ok(res, cities)
+        return apiResponse.ok(res, {
+            total,
+            cities,
+        })
         
     } catch (e) {
         

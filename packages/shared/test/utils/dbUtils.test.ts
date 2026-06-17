@@ -2,9 +2,9 @@ import {
     createTableSQLite,
     lower,
     sqliteOptsCascadeAll,
+    sqliteTimestamp,
     sqliteTimestamps,
     timestampSeconds,
-    ts,
     updateSqliteTimestampTrigger,
 } from '@shared/db/utils'
 import { describe, expect, test } from 'vitest'
@@ -25,14 +25,14 @@ describe('timestampSeconds', () => {
     
 })
 
-describe('ts', () => {
+describe('sqliteTimestamp', () => {
     
     test('should be a function', () => {
-        expect(typeof ts).toBe('function')
+        expect(typeof sqliteTimestamp).toBe('function')
     })
     
     test('should return a timestamp field object when called', () => {
-        const result = ts('test_ts')
+        const result = sqliteTimestamp('test_ts')
         expect(result).toBeDefined()
         expect(typeof result).toBe('object')
         expect(result).not.toBeNull()

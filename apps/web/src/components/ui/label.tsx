@@ -1,7 +1,9 @@
+"use client"
+
 import * as React from "react"
 import { Label as LabelPrimitive } from "radix-ui"
 
-import { cn } from "@repo/shared/utils"
+import { cn } from "@/utils/index"
 
 function Label({
   className,

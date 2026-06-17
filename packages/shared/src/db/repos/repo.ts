@@ -2,7 +2,7 @@ import database from '@repo/shared/db'
 import type { Database, Insert, Select, Transaction } from '@repo/shared/types'
 import type { ID } from '@shared/types/data.types'
 import type { AnyColumn } from 'drizzle-orm'
-import { desc, eq, inArray } from 'drizzle-orm'
+import { asc, desc, eq, inArray } from 'drizzle-orm'
 import { SQL, type SQLWrapper } from 'drizzle-orm/sql/sql'
 import { SQLiteTable } from 'drizzle-orm/sqlite-core'
 import { SQLiteViewBase } from 'drizzle-orm/sqlite-core/view-base'
@@ -61,9 +61,9 @@ class Repository<TModel, TSchema extends SQLiteTable> {
     
     //endregion Helpers
     
-    async count(source: SQLiteTable | SQLiteViewBase | SQL | SQLWrapper, filters?: SQL<unknown>) {
+    async count(source?: SQLiteTable | SQLiteViewBase | SQL | SQLWrapper | undefined, filters?: SQL<unknown>) {
         
-        return this.db.$count(source, filters)
+        return this.db.$count(source || this.schema, filters)
         
     }
     
@@ -98,10 +98,16 @@ class Repository<TModel, TSchema extends SQLiteTable> {
     async findAll({
         offset,
         limit,
+        orderBy,
+        orderDirection,
     }: {
         offset?: number
         limit?: number
-    } = {}): Promise<Select<TSchema>[]> {
+        orderBy?: AnyColumn | SQLWrapper
+        orderDirection?: 'asc' | 'desc'
+    } = {
+        orderDirection: 'desc',
+    }): Promise<Select<TSchema>[]> {
         
         try {
             
@@ -115,7 +121,11 @@ class Repository<TModel, TSchema extends SQLiteTable> {
             if (limit)
                 query.limit(limit)
             
-            query.orderBy(desc(this.idColumn))
+            const order = orderDirection === 'asc'
+                ? asc(orderBy || this.createdAtColumn)
+                : desc(orderBy || this.createdAtColumn)
+            
+            query.orderBy(order)
             
             return await query as Select<TSchema>[]
             

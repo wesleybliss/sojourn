@@ -11,24 +11,24 @@ import { timestampSeconds, ValidColumns } from './shared'
 
 export const sqliteIdColumn = () => integer('id').primaryKey({ autoIncrement: true })
 
-export type IdColumn = ReturnType<typeof sqliteIdColumn>
+export type SqliteIdColumn = ReturnType<typeof sqliteIdColumn>
 
-export type WithId<
+export type WithSqliteId<
     T extends Record<string, ColumnBuilderBase>,
     THasId extends boolean,
 > = THasId extends true
-    ? T & { id: IdColumn }
+    ? T & { id: SqliteIdColumn }
     : T
 
-const ts = (name: string) => timestampSeconds(name)
+export const sqliteTimestamp = (name: string) => timestampSeconds(name)
     .default(sql.raw('(unixepoch())')).notNull()
 
 export const sqliteTimestamps = {
-    updatedAt: ts('updatedAt'),
-    createdAt: ts('createdAt'),
+    updatedAt: sqliteTimestamp('updatedAt'),
+    createdAt: sqliteTimestamp('createdAt'),
 } as {
-    updatedAt: ReturnType<typeof ts> & { $type: Date }
-    createdAt: ReturnType<typeof ts> & { $type: Date }
+    updatedAt: ReturnType<typeof sqliteTimestamp> & { $type: Date }
+    createdAt: ReturnType<typeof sqliteTimestamp> & { $type: Date }
 }
 
 export const sqliteOptsCascadeAll: {
@@ -73,7 +73,7 @@ export const createTableSQLite = <
     extraConfig?: (
         _self: BuildColumns<
             TTableName,
-            WithId<
+            WithSqliteId<
                 Omit<TColumnsMap, 'id'> & typeof sqliteTimestamps,
                 THasId
             >,
@@ -98,7 +98,7 @@ export const createTableSQLite = <
     
     return sqliteTableObject(
         name,
-        finalColumns as WithId<
+        finalColumns as WithSqliteId<
             Omit<TColumnsMap, 'id'> & typeof sqliteTimestamps,
             THasId
         >,

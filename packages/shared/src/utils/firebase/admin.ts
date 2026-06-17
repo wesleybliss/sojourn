@@ -1,10 +1,11 @@
-import { cert,getApps, initializeApp } from 'firebase-admin/app'
+import { cert, getApps, initializeApp } from 'firebase-admin/app'
 import { getAuth } from 'firebase-admin/auth'
 
 // Initialize Firebase Admin
 let app
 
 if (getApps().length === 0) {
+    
     // Initialize with service account credentials from environment variables
     const privateKey = process.env.FIREBASE_PRIVATE_KEY
         ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
@@ -22,8 +23,11 @@ if (getApps().length === 0) {
         credential,
         projectId: process.env.FIREBASE_PROJECT_ID,
     })
+    
 } else {
+    
     app = getApps()[0]
+    
 }
 
 const adminAuth = getAuth(app)

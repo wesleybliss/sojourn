@@ -1,24 +1,26 @@
-import { BuildColumns, ColumnBuilderBase } from 'drizzle-orm'
+import { ColumnBuilderBase } from 'drizzle-orm'
 import {
-    pgTable,
-    PgTableExtraConfig,
     PgTableExtraConfigValue,
     timestamp,
     UpdateDeleteAction,
 } from 'drizzle-orm/pg-core'
-import { integer } from 'drizzle-orm/pg-core'
+import { integer, pgTable } from 'drizzle-orm/pg-core'
+import {
+    AnyPgColumnBuilder,
+    PgBuildExtraConfigColumns,
+} from 'drizzle-orm/pg-core/columns/common'
 
 import { ValidColumns } from './shared'
 
 export const postgresIdColumn = () => integer('id').generatedAlwaysAsIdentity().primaryKey()
 
-export type IdColumn = ReturnType<typeof postgresIdColumn>
+export type PostgresIdColumn = ReturnType<typeof postgresIdColumn>
 
-export type WithId<
+export type WithPostgresId<
     T extends Record<string, ColumnBuilderBase>,
     THasId extends boolean,
 > = THasId extends true
-    ? T & { id: IdColumn }
+    ? T & { id: PostgresIdColumn }
     : T
 
 export const postgresTimestamps = {
@@ -45,22 +47,14 @@ export const createTablePostgres = <
     TColumnsMap extends ValidColumns<TColumnsMap> & {
         id?: ColumnBuilderBase | false
     },
-    THasId extends boolean = TColumnsMap extends { id: false }
-        ? false
-        : true,
 >(
     name: TTableName,
     columns: TColumnsMap,
     extraConfig?: (
-        _self: BuildColumns<
-            TTableName,
-            WithId<
-                Omit<TColumnsMap, 'id'> & typeof postgresTimestamps,
-                THasId
-            >,
-            'pg'
+        _self: PgBuildExtraConfigColumns<
+            Record<string, AnyPgColumnBuilder>
         >,
-    ) => PgTableExtraConfig | PgTableExtraConfigValue[],
+    ) => PgTableExtraConfigValue[],
 ) => {
     
     if (!name?.length)
@@ -79,10 +73,7 @@ export const createTablePostgres = <
     
     return pgTable(
         name,
-        finalColumns as WithId<
-            Omit<TColumnsMap, 'id'> & typeof postgresTimestamps,
-            THasId
-        >,
+        finalColumns as Record<string, AnyPgColumnBuilder>,
         extraConfig,
     )
     

@@ -10,6 +10,11 @@ export type CitiesQueryArgs = {
     opts?: Record<string, unknown>
 }
 
+export type CitiesWrap = {
+    total: number
+    cities: GeonamesCity[]
+}
+
 export const useCitiesQuery = ({
     offset,
     limit,
@@ -19,7 +24,7 @@ export const useCitiesQuery = ({
     const { firebaseUser } = useAuth()
     
     return useQuery({
-        queryKey: ['cities'],
+        queryKey: ['cities', offset, limit],
         queryFn: async () => {
             
             try {
@@ -34,7 +39,7 @@ export const useCitiesQuery = ({
                 
                 const queryString = searchParams.toString()
                 
-                const result = await fetchJSON<GeonamesCity[]>(
+                const result = await fetchJSON<CitiesWrap>(
                     `cities${queryString ? `?${queryString}` : ''}`)
                 
                 return result.data
