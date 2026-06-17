@@ -9,16 +9,34 @@ import { promisify } from 'node:util'
 
 import db from '@repo/shared/db'
 import { geonamesCities } from '@repo/shared/db/schema'
+import cliProgress from 'cli-progress'
 import { sql } from 'drizzle-orm'
 import yauzl, { Entry } from 'yauzl'
+
+const args = process.argv.slice(2)
+
+const validSources = ['all', '500']
+const [source] = args
+
+if (!validSources.includes(source))
+    throw new Error(`Invalid source: ${source}. Valid sources: ${validSources.join(', ')}`)
 
 const fromBuffer = promisify(yauzl.fromBuffer)
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const DATA_FILE = path.resolve(__dirname, '../data/cities500.txt')
+const FILE_NAME = source === 'all' ? 'populatedCountries.txt' : 'cities500.txt'
+const DATA_FILE = path.resolve(__dirname, `../data/${FILE_NAME}`)
 const BATCH_SIZE = 1000
 
+const formatter = new Intl.NumberFormat('en-US')
+
+const sleep = (delayMillis: number = 100) =>
+    new Promise(resolve => setTimeout(resolve, delayMillis))
+
 const downloadCities500 = async (): Promise<NodeJS.ReadableStream> => {
+    
+    if (source === 'all')
+        throw new Error('Download of all countries not implemented yet')
     
     try {
         
@@ -67,18 +85,44 @@ const downloadCities500 = async (): Promise<NodeJS.ReadableStream> => {
     
 }
 
-const importGeonamesData = async (fileStream: NodeJS.ReadableStream) => {
+const countLines = (fileStream: NodeJS.ReadableStream): Promise<number> => {
     
-    console.log('Importing data...')
+    return new Promise((resolve, reject) => {
+        
+        let lines = 0
+        
+        fileStream.on('data', (chunk: Buffer) => {
+            for (let i = 0; i < chunk.length; i++) {
+                if (chunk[i] === 10) lines++ // newline byte
+            }
+        })
+        
+        fileStream.on('end', () => resolve(lines))
+        fileStream.on('error', reject)
+        
+    })
     
-    const rl = readline.createInterface({
-        input: fileStream,
-        crlfDelay: Infinity,
+}
+
+const importGeonamesData = async (fileStream: NodeJS.ReadableStream, totalLines?: number) => {
+    
+    const bar = new cliProgress.SingleBar({
+        format: '  Importing |{bar}| {percentage}% | {value}/{total} records | {rate} | {city}',
+        barCompleteChar: '\u2588',
+        barIncompleteChar: '\u2591',
+        hideCursor: true,
     })
     
     let batch = []
     let count = 0
     const startTime = Date.now()
+    
+    bar.start(formatter.format(totalLines ?? 0), 0, { rate: '0 rec/sec', city: '(initializing)' })
+    
+    const rl = readline.createInterface({
+        input: fileStream,
+        crlfDelay: Infinity,
+    })
     
     for await (const line of rl) {
         
@@ -95,16 +139,16 @@ const importGeonamesData = async (fileStream: NodeJS.ReadableStream) => {
             featureClass: fields[6] || null,
             featureCode: fields[7] || null,
             countryCode: fields[8] || null,
-            cc2: fields[9] || null,
+            /*cc2: fields[9] || null,
             admin1Code: fields[10] || null,
             admin2Code: fields[11] || null,
             admin3Code: fields[12] || null,
-            admin4Code: fields[13] || null,
+            admin4Code: fields[13] || null,*/
             population: fields[14] ? parseInt(fields[14], 10) : null,
-            elevation: fields[15] ? parseInt(fields[15], 10) : null,
-            dem: fields[16] ? parseInt(fields[16], 10) : null,
+            /*elevation: fields[15] ? parseInt(fields[15], 10) : null,
+            dem: fields[16] ? parseInt(fields[16], 10) : null,*/
             timezone: fields[17] || null,
-            modificationDate: fields[18] || null,
+            /*modificationDate: fields[18] || null,*/
         }
         
         batch.push(city)
@@ -112,20 +156,25 @@ const importGeonamesData = async (fileStream: NodeJS.ReadableStream) => {
         
         if (batch.length === BATCH_SIZE) {
             await db.insert(geonamesCities).values(batch).onConflictDoNothing()
-            const elapsed = (Date.now() - startTime) / 1000
-            const rate = Math.round(count / elapsed)
-            console.log(`Imported ${count.toLocaleString()} records... (${rate.toLocaleString()}/sec)`)
             batch = []
         }
+        
+        const elapsed = (Date.now() - startTime) / 1000
+        const rate = `${formatter.format(Math.round(count / elapsed)).toLocaleString()} rec/sec`
+        bar.update(formatter.format(count), { rate, city: city.name })
+        
+        // await sleep()
         
     }
     
     if (batch.length > 0)
         await db.insert(geonamesCities).values(batch).onConflictDoNothing()
     
+    bar.update(formatter.format(count), { rate: '', city: '' })
+    bar.stop()
+    
     const totalTime = (Date.now() - startTime) / 1000
-    console.log('\n✓ Import complete!')
-    console.log(`  Records imported: ${count.toLocaleString()}`)
+    console.log(`\n  Records imported: ${count.toLocaleString()}`)
     console.log(`  Time taken: ${totalTime.toFixed(2)} seconds`)
     
 }
@@ -135,17 +184,22 @@ const main = async () => {
     try {
         
         let fileStream: NodeJS.ReadableStream
+        let totalLines: number | undefined
         
         // If a local cities500.txt exists, use it; otherwise download it
         if (fs.existsSync(DATA_FILE)) {
             console.log(`Using local file: ${DATA_FILE}`)
+            console.log('Counting lines...')
+            const countStream = fs.createReadStream(DATA_FILE)
+            totalLines = await countLines(countStream)
+            console.log(`> ${totalLines.toLocaleString()} lines found`)
             fileStream = fs.createReadStream(DATA_FILE)
         } else {
             console.log('Downloading cities500.zip...')
             fileStream = await downloadCities500()
         }
         
-        await importGeonamesData(fileStream)
+        await importGeonamesData(fileStream, totalLines)
         
         const result = await db.select({ count: sql < number > `count(*)` }).from(geonamesCities)
         console.log(`\n✓ Verification: ${result[0].count.toLocaleString()} total records`)

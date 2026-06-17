@@ -39,3 +39,4 @@ backups/
 .env*.local
 
 apps/api/src/data
+apps/api/bin/data
