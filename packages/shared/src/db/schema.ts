@@ -1,7 +1,7 @@
-import { lower, optsCascadeAll, table, timestampSeconds } from '@repo/shared/db/dbUtils'
+import { createTableSQLite, lower, sqliteOptsCascadeAll, timestampSeconds } from '@shared/db/utils'
 import { index, integer, primaryKey, real, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
 
-export const users = table('users', {
+export const users = createTableSQLite('users', {
     email: text('email').notNull(),
     firebaseUid: text('firebaseUid'), // Firebase UID for Google authentication
     enabled: integer('enabled', { mode: 'boolean' }).default(false), // Beta access control
@@ -12,35 +12,35 @@ export const users = table('users', {
     uniqueIndex('firebaseUidUniqueIndex').on(table.firebaseUid),
 ])
 
-export const teams = table('teams', {
+export const teams = createTableSQLite('teams', {
     name: text('name').notNull(),
     description: text('description'),
 })
 
-export const userTeams = table('userTeams', {
+export const userTeams = createTableSQLite('userTeams', {
     id: false,
-    userId: integer('userId').notNull().references(() => users.id, optsCascadeAll),
-    teamId: integer('teamId').notNull().references(() => teams.id, optsCascadeAll),
+    userId: integer('userId').notNull().references(() => users.id, sqliteOptsCascadeAll),
+    teamId: integer('teamId').notNull().references(() => teams.id, sqliteOptsCascadeAll),
 }, table => [
     primaryKey({ columns: [table.userId, table.teamId] }),
 ])
 
-export const trips = table('trips', {
-    teamId: integer('teamId').notNull().references(() => teams.id, optsCascadeAll),
+export const trips = createTableSQLite('trips', {
+    teamId: integer('teamId').notNull().references(() => teams.id, sqliteOptsCascadeAll),
     name: text('name').notNull(),
     description: text('description'),
     coverImageUrl: text('coverImageUrl'),
 })
 
-export const plans = table('plans', {
-    tripId: integer('tripId').notNull().references(() => trips.id, optsCascadeAll),
+export const plans = createTableSQLite('plans', {
+    tripId: integer('tripId').notNull().references(() => trips.id, sqliteOptsCascadeAll),
     name: text('name').notNull(),
     description: text('description'),
 })
 
-export const segments = table('segments', {
-    tripId: integer('tripId').notNull().references(() => trips.id, optsCascadeAll),
-    planId: integer('planId').notNull().references(() => plans.id, optsCascadeAll),
+export const segments = createTableSQLite('segments', {
+    tripId: integer('tripId').notNull().references(() => trips.id, sqliteOptsCascadeAll),
+    planId: integer('planId').notNull().references(() => plans.id, sqliteOptsCascadeAll),
     name: text('name').notNull(),
     description: text('description'),
     startDate: timestampSeconds('startDate').notNull(),
@@ -55,7 +55,7 @@ export const segments = table('segments', {
 
 // Read-only source of cities data
 // When adding a place, some info is copied to the `places` table
-export const geonamesCities = table('geonamesCities', {
+export const geonamesCities = createTableSQLite('geonamesCities', {
     name: text('name', { length: 200 }),
     asciiName: text('asciiName', { length: 200 }),
     alternateNames: text('alternateNames'),
@@ -92,8 +92,8 @@ export const geonamesCities = table('geonamesCities', {
 // @todo higher level "org" to keep places under
 // When adding a place, some info is copied from the `geonamesCities` table
 // Aside from that, the user can also create arbitrary named places
-export const places = table('places', {
-    geonamesCityId: integer('geonamesCityId').references(() => geonamesCities.id, optsCascadeAll),
+export const places = createTableSQLite('places', {
+    geonamesCityId: integer('geonamesCityId').references(() => geonamesCities.id, sqliteOptsCascadeAll),
     name: text('name').notNull(),
     coverImageUrl: text('coverImageUrl'),
     focus: text('focus'),

@@ -1,12 +1,12 @@
 import {
+    createTableSQLite,
     lower,
-    optsCascadeAll,
-    table,
-    timestamps,
+    sqliteOptsCascadeAll,
+    sqliteTimestamps,
     timestampSeconds,
     ts,
-    updateTimestampTrigger,
-} from '@repo/shared/db/dbUtils'
+    updateSqliteTimestampTrigger,
+} from '@shared/db/utils'
 import { describe, expect, test } from 'vitest'
 
 describe('timestampSeconds', () => {
@@ -43,14 +43,14 @@ describe('ts', () => {
 describe('timestamps', () => {
     
     test('should be an object with updatedAt and createdAt properties', () => {
-        expect(timestamps).toBeDefined()
-        expect(typeof timestamps).toBe('object')
-        expect(timestamps).not.toBeNull()
-        expect(timestamps).toHaveProperty('updatedAt')
-        expect(timestamps).toHaveProperty('createdAt')
+        expect(sqliteTimestamps).toBeDefined()
+        expect(typeof sqliteTimestamps).toBe('object')
+        expect(sqliteTimestamps).not.toBeNull()
+        expect(sqliteTimestamps).toHaveProperty('updatedAt')
+        expect(sqliteTimestamps).toHaveProperty('createdAt')
         // Each should be an object (the column config)
-        expect(typeof timestamps.updatedAt).toBe('object')
-        expect(typeof timestamps.createdAt).toBe('object')
+        expect(typeof sqliteTimestamps.updatedAt).toBe('object')
+        expect(typeof sqliteTimestamps.createdAt).toBe('object')
     })
     
 })
@@ -74,7 +74,7 @@ describe('lower', () => {
 describe('optsCascadeAll', () => {
     
     test('should have onUpdate and onDelete set to cascade', () => {
-        expect(optsCascadeAll).toEqual({
+        expect(sqliteOptsCascadeAll).toEqual({
             onUpdate: 'cascade',
             onDelete: 'cascade',
         })
@@ -85,7 +85,7 @@ describe('optsCascadeAll', () => {
 describe('updateTimestampTrigger', () => {
     
     test('should return SQL trigger statement', () => {
-        const result = updateTimestampTrigger('test_table')
+        const result = updateSqliteTimestampTrigger('test_table')
         expect(result).toBeDefined()
         // The actual value is a SQL.raw object, we can verify it's not null
     })
@@ -95,15 +95,15 @@ describe('updateTimestampTrigger', () => {
 describe('table', () => {
     
     test('should be a function', () => {
-        expect(typeof table).toBe('function')
+        expect(typeof createTableSQLite).toBe('function')
     })
     
     test('should throw error when name is empty', () => {
-        expect(() => table('', {})).toThrow('Table name required')
+        expect(() => createTableSQLite('', {})).toThrow('Table name required')
     })
     
     test('should throw error when columns are empty', () => {
-        expect(() => table('test', {})).toThrow('Table properties required')
+        expect(() => createTableSQLite('test', {})).toThrow('Table properties required')
     })
     
 })
