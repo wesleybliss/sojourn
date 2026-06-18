@@ -10,9 +10,6 @@ import {
     PgBuildExtraConfigColumns,
 } from 'drizzle-orm/pg-core/columns/common'
 
-export const timestampPostgres = (name: string) =>
-    timestamp(name, { withTimezone: true })
-
 export const postgresIdColumn = () => integer('id').generatedAlwaysAsIdentity().primaryKey()
 
 export type PostgresIdColumn = ReturnType<typeof postgresIdColumn>
