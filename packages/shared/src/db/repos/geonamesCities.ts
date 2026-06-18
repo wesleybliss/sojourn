@@ -1,7 +1,7 @@
 import Repository from '@repo/shared/db/repos/repo'
 import * as schemas from '@repo/shared/db/schema'
 import type { Database, GeonamesCity, Transaction } from '@shared/types/database.types'
-import { and, desc,eq, gt, like, or, sql } from 'drizzle-orm'
+import { and, desc, eq, gte, ilike, like, or, sql } from 'drizzle-orm'
 
 export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof schemas.geonamesCities> {
     
@@ -17,6 +17,7 @@ export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof sc
         
     }
     
+    /** @deprecated Use fuzzy or GIN search for faster queries */
     async searchCities(
         searchTerm: string,
         minimumPopulation: number = 5_000,
@@ -36,12 +37,16 @@ export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof sc
                 population: this.schema.population,
                 latitude: this.schema.latitude,
                 longitude: this.schema.longitude,
+                timezone: this.schema.timezone,
             })
             .from(this.schema)
             .where(
                 and(
-                    eq(this.schema.featureClass, 'P'),
-                    gt(this.schema.population, minimumPopulation),
+                    or(
+                        eq(this.schema.featureClass, 'A'),
+                        eq(this.schema.featureClass, 'P'),
+                    ),
+                    gte(this.schema.population, minimumPopulation),
                     or(
                         like(this.schema.name, `%${query}%`), 
                         like(this.schema.alternateNames, `%${query}%`),
@@ -51,18 +56,19 @@ export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof sc
             .orderBy(
                 sql`
                     CASE
-                        WHEN lower(${this.schema.name}) = lower(${searchTerm}) THEN 0
-                        WHEN lower(${this.schema.name}) LIKE lower(${searchTerm + '%'}) THEN 1
-                        WHEN lower(${this.schema.alternateNames}) LIKE lower(${'%,' + searchTerm + ',%'}) THEN 2
+                        WHEN LOWER(${this.schema.name}) = LOWER(${query}) THEN 0
+                        WHEN LOWER(${this.schema.name}) LIKE LOWER(${query || '%'}) THEN 1
+                        WHEN LOWER(${this.schema.alternateNames}) LIKE LOWER(${'%,' + query + ',%'}) THEN 2
                         ELSE 3
-                    END
+                    END,
+                    ${this.schema.population} DESC
                 `,
                 desc(this.schema.population),
             )
             .limit(10)
         
         const hasExactMatch = results.find((it: Partial<GeonamesCity>) => {
-            return it?.name?.toLowerCase() === query.toLowerCase()
+            return it.name.toLowerCase() === query.toLowerCase()
         })
         
         if (hasExactMatch)
@@ -85,6 +91,67 @@ export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof sc
         
         if (exactAltNameMatch)
             results.unshift(exactAltNameMatch)
+        
+        return results
+        
+    }
+    
+    async searchCitiesFuzzy(
+        searchTerm: string,
+        minimumPopulation: number = 5_000,
+        interpolateQuery: boolean = true,
+    ): Promise<Partial<GeonamesCity>[]> {
+        
+        const query = interpolateQuery
+            ? searchTerm.replace(/\s+/g, '%')
+            : searchTerm
+        
+        const results: Partial<GeonamesCity>[] = await this.db
+            .select()
+            .from(this.schema)
+            .where(and(
+                or(
+                    eq(this.schema.featureClass, 'A'),
+                    eq(this.schema.featureClass, 'P'),
+                ),
+                gte(this.schema.population, minimumPopulation),
+                sql`${this.schema.name} % ${sql.param(query)}`,
+            ))  // % = similarity operator
+            .orderBy(sql`${this.schema.name} <-> ${sql.param(query)}`)  // <-> = distance operator
+            .limit(10)
+        
+        return results
+        
+    }
+    
+    async searchCitiesGIN(
+        searchTerm: string,
+        minimumPopulation: number = 5_000,
+        interpolateQuery: boolean = true,
+    ): Promise<Partial<GeonamesCity>[]> {
+        
+        const query = (
+            interpolateQuery
+                ? searchTerm.replace(/\s+/g, '%')
+                : searchTerm
+        )
+        
+        const pattern = `%${query}%`
+        
+        const results: Partial<GeonamesCity>[] = await this.db
+            .select()
+            .from(this.schema)
+            .where(and(
+                or(
+                    eq(this.schema.featureClass, 'A'),
+                    eq(this.schema.featureClass, 'P'),
+                ),
+                gte(this.schema.population, minimumPopulation),
+                // sql<string>`${this.schema.name} ILIKE '%${sql.param(query)}%'`,
+                ilike(this.schema.name, pattern),
+            ))  // % = similarity operator
+            .orderBy(sql`${this.schema.name} <-> ${sql.param(query)}`)  // <-> = distance operator
+            .limit(10)
         
         return results
         

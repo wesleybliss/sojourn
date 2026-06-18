@@ -8,6 +8,8 @@ import db from '@repo/shared/db/db-postgres'
 import geonamesCitiesRepo from '@repo/shared/db/repos/geonamesCities'
 import * as schemas from '@repo/shared/db/schema-postgres'
 import type { GeonamesCity, Place } from '@repo/shared/types'
+import cliProgress from 'cli-progress'
+import { desc } from 'drizzle-orm'
 
 type PlaceMatch = {
     place: string
@@ -20,6 +22,7 @@ const TEMP_PLACES_FILE = path.resolve(__dirname, '../../../../backups/sojourn-pl
 const DEBUG_LIMIT: number | null = null
 const DEBUG_SAVE_TEMP = false
 const DEBUG_SHOW_FULL_MATCH = false
+const DEBUG_SHOW_PROGRESS = true
 
 const minimumPopulation = 50
 
@@ -28,6 +31,7 @@ const findExistingPlaces = async (): Promise<Place[]> => {
     const query = db
         .select()
         .from(schemas.places)
+        .orderBy(desc(schemas.places.name))
     
     if (DEBUG_LIMIT)
         query.limit(DEBUG_LIMIT)
@@ -46,7 +50,11 @@ const savePlacesTemp = async (places: Place[]) => {
 
 const findPlaceMatch = async (name: string) => {
     
-    return geonamesCitiesRepo.searchCities(name, minimumPopulation)
+    // return geonamesCitiesRepo.searchCities(name, minimumPopulation)
+    
+    // return geonamesCitiesRepo.searchCitiesFuzzy(name, minimumPopulation)
+    return geonamesCitiesRepo.searchCitiesGIN(name, minimumPopulation)
+    
 }
 
 const matchPlace = async (
@@ -54,8 +62,10 @@ const matchPlace = async (
     overrideName?: string,
 ): Promise<PlaceMatch> => {
     
-    const name = place.name as string
-    const res = await findPlaceMatch(overrideName ?? name)
+    const name = overrideName ?? place.name as string
+    const res = await findPlaceMatch(name)
+    
+    // console.log('matchPlace', { place: name /*match: res*/ })
     
     return { place: name, match: res }
     
@@ -65,21 +75,24 @@ const matchPlaceTokens = async (place: Place) => {
     
     const name = place.name as string
     const tokens = name.split(' ')
-        .map((it: string) => it.replace(/[^A-Za-z]/g, ''))
+        .map((it: string) => it.replace(/[^A-Za-z]/g, '').trim())
+        .filter(Boolean)
     
     // console.log('matchPlaceTokens: search', tokens[0])
     
-    if (tokens.length > 1 && tokens[1].length <= 2)
+    return [await matchPlace(place, tokens[0])]
+    
+    /*if (tokens.length > 1 && tokens[1].length <= 2)
         return [await matchPlace(place, tokens[0])]
     
-    return Promise.all(tokens.map((it: string) => matchPlace(place, it)))
+    return Promise.all(tokens.map((it: string) => matchPlace(place, it)))*/
     
 }
 
 const cleanMatches = (name: string, matches: Partial<GeonamesCity>[]) => {
     
     if (!matches?.length) {
-        console.warn('No matches for:', name)
+        console.warn('No matches for:', name, matches)
         return []
     }
     
@@ -110,6 +123,10 @@ const main = async () => {
     
     try {
         
+        const temp = await geonamesCitiesRepo.searchCities('Sardinia', minimumPopulation)
+        console.log(temp)
+        return process.exit(0)
+        
         const existingPlaces = await findExistingPlaces()
         
         if (DEBUG_SAVE_TEMP)
@@ -117,12 +134,29 @@ const main = async () => {
         
         // console.log('Existing places:', existingPlaces)
         
+        const bar = DEBUG_SHOW_PROGRESS
+            ? new cliProgress.SingleBar({
+                format: '  Matching |{bar}| {percentage}% | {value}/{total} places | {place}',
+                barCompleteChar: '\u2588',
+                barIncompleteChar: '\u2591',
+                hideCursor: true,
+            })
+            : null
+        
+        bar?.start(existingPlaces.length, 0, { place: '(initializing)' })
+        
+        let completed = 0
         const matchesRes = await Promise.all(
             existingPlaces.map(async it => {
-                return matchPlaceTokens(it)
+                const result = await matchPlaceTokens(it)
+                completed++
+                bar?.update(completed, { place: it.name })
+                return result
             }),
         )
         
+        bar?.stop()
+        console.log('RAW MATCHES', matchesRes.flat())
         const matches = matchesRes
             .flat()
             .map((it: PlaceMatch) => ({
@@ -145,6 +179,6 @@ const main = async () => {
 main()
     .then(() => process.exit(0))
     .catch(e => {
-        console.error(e)
+        console.error('\n', e)
         process.exit(1)
     })

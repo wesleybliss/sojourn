@@ -167,7 +167,19 @@ const results = await searchCities('Napoli');
 
 ```
 
+## Data Processing
+
+`awk -F '\t' '$7 == "P"' allCountries.txt > populatedCountries.txt`
+
+`awk -F '\t' '$7 ~ /^[AP]$/' allCountries.txt > populatedCountries.txt`
+
+Or using a logical OR:
+
+`awk -F '\t' '$7 == "A" || $7 == "P"' allCountries.txt > populatedCountries.txt`
+
 ## TODO
 
+- [ ] Postgres gin or trigram index - replace default ones
+- [ ] figure out why sciacca doesn't appear when it exists
 - [ ] Migrate manual places to match geonames
 - 

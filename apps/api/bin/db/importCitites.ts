@@ -12,14 +12,18 @@ import { geonamesCities } from '@repo/shared/db/schema'
 import cliProgress from 'cli-progress'
 import { sql } from 'drizzle-orm'
 import yauzl, { Entry } from 'yauzl'
+import { z } from 'zod'
 
-// last run made it to 1090999 - turso
-// last run made it to 779998 - aiven
+const validSources = ['all', 'administrative', '500']
+
+const argsSchema = z.tuple([
+    z.enum(validSources),
+    z.coerce.number().default(5_000),
+]) // .rest(z.string()) // Allow other args
 
 const args = process.argv.slice(2)
 
-const validSources = ['all', '500']
-const [source] = args
+const [source, batchSize] = argsSchema.parse(args) // ???
 
 if (!validSources.includes(source))
     throw new Error(`Invalid source: ${source}. Valid sources: ${validSources.join(', ')}`)
@@ -27,9 +31,12 @@ if (!validSources.includes(source))
 const fromBuffer = promisify(yauzl.fromBuffer)
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const FILE_NAME = source === 'all' ? 'populatedCountries.txt' : 'cities500.txt'
+const FILE_NAME = source === 'all'
+    ? 'populatedCountries.txt'
+    : source === 'administrative'
+        ? 'administrativeDivisions.txt'            
+        : 'cities500.txt'
 const DATA_FILE = path.resolve(__dirname, `../data/${FILE_NAME}`)
-const BATCH_SIZE = 5_000
 const OFFSET: number | null = null
 
 const downloadCities500 = async (): Promise<NodeJS.ReadableStream> => {
@@ -158,12 +165,12 @@ const importGeonamesData = async (fileStream: NodeJS.ReadableStream, totalLines?
         batch.push(city)
         count++
         
-        if (batch.length === BATCH_SIZE) {
+        if (batch.length === batchSize) {
             await db.insert(geonamesCities).values(batch).onConflictDoNothing()
             batch = []
         }
         
-        const elapsed = (Date.now() - startTime) / BATCH_SIZE
+        const elapsed = (Date.now() - startTime) / batchSize
         const rate = `${Math.round(count / elapsed).toLocaleString()} rec/sec`
         bar.update(count, { rate, city: city.name })
         
@@ -175,7 +182,7 @@ const importGeonamesData = async (fileStream: NodeJS.ReadableStream, totalLines?
     bar.update(count, { rate: '', city: '' })
     bar.stop()
     
-    const totalTime = (Date.now() - startTime) / BATCH_SIZE
+    const totalTime = (Date.now() - startTime) / batchSize
     console.log(`\n  Records imported: ${count.toLocaleString()}`)
     console.log(`  Time taken: ${totalTime.toFixed(2)} seconds`)
     
