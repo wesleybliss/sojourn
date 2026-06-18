@@ -2,6 +2,7 @@ import Repository from '@repo/shared/db/repos/repo'
 import * as schemas from '@repo/shared/db/schema'
 import type { Database, GeonamesCity, Transaction } from '@shared/types/database.types'
 import { and, desc, eq, gte, ilike, like, or, sql } from 'drizzle-orm'
+import { SQL } from 'drizzle-orm/sql/sql'
 
 export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof schemas.geonamesCities> {
     
@@ -22,23 +23,14 @@ export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof sc
         searchTerm: string,
         minimumPopulation: number = 5_000,
         interpolateQuery: boolean = true,
-    ): Promise<Partial<GeonamesCity>[]> {
+    ): Promise<GeonamesCity[]> {
         
         const query = interpolateQuery
             ? searchTerm.replace(/\s+/g, '%')
             : searchTerm
         
         const results: Partial<GeonamesCity>[] = await this.db
-            .select({
-                id: this.schema.id,
-                name: this.schema.name,
-                alternateNames: this.schema.alternateNames,
-                countryCode: this.schema.countryCode,
-                population: this.schema.population,
-                latitude: this.schema.latitude,
-                longitude: this.schema.longitude,
-                timezone: this.schema.timezone,
-            })
+            .select()
             .from(this.schema)
             .where(
                 and(
@@ -100,7 +92,7 @@ export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof sc
         searchTerm: string,
         minimumPopulation: number = 5_000,
         interpolateQuery: boolean = true,
-    ): Promise<Partial<GeonamesCity>[]> {
+    ): Promise<GeonamesCity[]> {
         
         const query = interpolateQuery
             ? searchTerm.replace(/\s+/g, '%')
@@ -127,8 +119,9 @@ export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof sc
     async searchCitiesGIN(
         searchTerm: string,
         minimumPopulation: number = 5_000,
+        countryCode?: string | null,
         interpolateQuery: boolean = true,
-    ): Promise<Partial<GeonamesCity>[]> {
+    ): Promise<GeonamesCity[]> {
         
         const query = (
             interpolateQuery
@@ -138,22 +131,29 @@ export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof sc
         
         const pattern = `%${query}%`
         
-        const results: Partial<GeonamesCity>[] = await this.db
+        const conditions: (SQL<unknown> | undefined)[] = [
+            or(
+                eq(this.schema.featureClass, 'A'),
+                eq(this.schema.featureClass, 'P'),
+            ),
+            gte(this.schema.population, minimumPopulation),
+            or(
+                ilike(this.schema.name, pattern),
+                ilike(this.schema.asciiName, pattern),
+            ),
+        ]
+        
+        if (countryCode?.length) {
+            const countryCodePattern = `%${countryCode}%`
+            conditions.push(ilike(this.schema.countryCode, countryCodePattern))
+        }
+        
+        return this.db
             .select()
             .from(this.schema)
-            .where(and(
-                or(
-                    eq(this.schema.featureClass, 'A'),
-                    eq(this.schema.featureClass, 'P'),
-                ),
-                gte(this.schema.population, minimumPopulation),
-                // sql<string>`${this.schema.name} ILIKE '%${sql.param(query)}%'`,
-                ilike(this.schema.name, pattern),
-            ))  // % = similarity operator
+            .where(and(...conditions)) // % = similarity operator
             .orderBy(sql`${this.schema.name} <-> ${sql.param(query)}`)  // <-> = distance operator
             .limit(10)
-        
-        return results
         
     }
     

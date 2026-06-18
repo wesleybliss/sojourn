@@ -4,16 +4,25 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import db from '@repo/shared/db/db-postgres'
+import db from '@repo/shared/db'
 import geonamesCitiesRepo from '@repo/shared/db/repos/geonamesCities'
-import * as schemas from '@repo/shared/db/schema-postgres'
+import placesRepo from '@repo/shared/db/repos/places'
+import * as schemas from '@repo/shared/db/schema'
 import type { GeonamesCity, Place } from '@repo/shared/types'
-import cliProgress from 'cli-progress'
-import { desc } from 'drizzle-orm'
+import { omit } from '@repo/shared/utils'
+import cliProgress, { SingleBar } from 'cli-progress'
+import { asc } from 'drizzle-orm'
+
+type PlaceMatches = {
+    name: string
+    place: Place
+    match: GeonamesCity[] | undefined
+}
 
 type PlaceMatch = {
-    place: string
-    match: Partial<GeonamesCity>[] | undefined
+    name: string
+    place: Place
+    match: GeonamesCity
 }
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -23,15 +32,21 @@ const DEBUG_LIMIT: number | null = null
 const DEBUG_SAVE_TEMP = false
 const DEBUG_SHOW_FULL_MATCH = false
 const DEBUG_SHOW_PROGRESS = true
+const DEBUG_PRINT_RESULTS = true
 
 const minimumPopulation = 50
+
+const substitutions = [
+    ['NYCBGA', 'New York City'],
+    ['Cyprus', 'Republic of Cyprus'],
+]
 
 const findExistingPlaces = async (): Promise<Place[]> => {
     
     const query = db
         .select()
         .from(schemas.places)
-        .orderBy(desc(schemas.places.name))
+        .orderBy(asc(schemas.places.name))
     
     if (DEBUG_LIMIT)
         query.limit(DEBUG_LIMIT)
@@ -48,26 +63,39 @@ const savePlacesTemp = async (places: Place[]) => {
     
 }
 
-const findPlaceMatch = async (name: string) => {
+const findPlaceMatch = async (
+    name: string,
+    countryCode?: string | null,
+) => {
+    
+    // console.log('findPlaceMatch', name, countryCode)
     
     // return geonamesCitiesRepo.searchCities(name, minimumPopulation)
-    
     // return geonamesCitiesRepo.searchCitiesFuzzy(name, minimumPopulation)
-    return geonamesCitiesRepo.searchCitiesGIN(name, minimumPopulation)
+    return geonamesCitiesRepo.searchCitiesGIN(name, minimumPopulation, countryCode)
+    
+}
+
+const substituteName = (name: string) => {
+    
+    const substitute = substitutions.find(([src]) => src === name)
+    
+    return substitute?.[1] ?? name
     
 }
 
 const matchPlace = async (
     place: Place,
     overrideName?: string,
-): Promise<PlaceMatch> => {
+    countryCode?: string | null,
+): Promise<PlaceMatches> => {
     
-    const name = overrideName ?? place.name as string
-    const res = await findPlaceMatch(name)
+    const name = substituteName(overrideName ?? place.name as string)
+    const res = await findPlaceMatch(name, countryCode)
     
     // console.log('matchPlace', { place: name /*match: res*/ })
     
-    return { place: name, match: res }
+    return { place, name, match: res } as PlaceMatches
     
 }
 
@@ -78,18 +106,18 @@ const matchPlaceTokens = async (place: Place) => {
         .map((it: string) => it.replace(/[^A-Za-z]/g, '').trim())
         .filter(Boolean)
     
-    // console.log('matchPlaceTokens: search', tokens[0])
+    const query = tokens[0]
+    const countryCode = tokens.length === 2 && tokens[1].length === 2
+        ? tokens[1]
+        : null
     
-    return [await matchPlace(place, tokens[0])]
+    // console.log('matchPlaceTokens: search', query, countryCode, tokens)
     
-    /*if (tokens.length > 1 && tokens[1].length <= 2)
-        return [await matchPlace(place, tokens[0])]
-    
-    return Promise.all(tokens.map((it: string) => matchPlace(place, it)))*/
+    return [await matchPlace(place, query, countryCode)]
     
 }
 
-const cleanMatches = (name: string, matches: Partial<GeonamesCity>[]) => {
+const cleanMatches = (name: string, matches: GeonamesCity[]) => {
     
     if (!matches?.length) {
         console.warn('No matches for:', name, matches)
@@ -103,29 +131,76 @@ const cleanMatches = (name: string, matches: Partial<GeonamesCity>[]) => {
         id: it.id,
         name: it.name,
         countryCode: it.countryCode,
+        timezone: it.timezone,
     }))
     
 }
 
 const prettyPrintMatches = (
-    matches: { place: string; match: Partial<GeonamesCity> | undefined }[],
+    matches: PlaceMatch[],
 ) => {
     
-    const items = matches.map(it => (
-        `${it.place} -> ${it.match?.name}, ${it.match?.countryCode}`
+    /*const items = matches.map(it => (
+        `${it.place} -> ${it.match?.name}, ${it.match?.countryCode} (${it.match?.id})`
     ))
     
-    items.forEach(it => console.log(it))
+    items.forEach(it => console.log(it))*/
+    
+    const items = matches.map(it => ({
+        'Query': it.name,
+        'Match': it.match?.name as string ?? '',
+        'Country Code': it.match?.countryCode as string ?? '',
+        'Timezone': it.match?.timezone as string ?? '',
+        'Geonames ID': it.match?.id as string ?? '',
+    }))
+    
+    console.table(items)
+    
+}
+
+const createPlacesWithGeoname = async (matches: PlaceMatch[]) => {
+    
+    try {
+        
+        const data: Omit<Place, 'id'>[] = matches.map(it => omit({
+            ...it.place,
+            teamId: 1,
+            geonamesCityId: it.match.id,
+        }, ['id']))
+        
+        // return console.log(data)
+        
+        let completed = 0
+        const bar = DEBUG_SHOW_PROGRESS
+            ? new cliProgress.SingleBar({
+                format: '  Creating |{bar}| {percentage}% | {value}/{total} places | {place}',
+                barCompleteChar: '\u2588',
+                barIncompleteChar: '\u2591',
+                hideCursor: true,
+            })
+            : null
+        
+        bar?.start(data.length, 0, { place: '(initializing)' })
+        
+        for (const payload of data) {
+            await placesRepo.create(payload)
+            bar?.update(++completed, { place: payload.name })
+        }
+        
+        bar?.stop()
+        
+    } catch (e) {
+        
+        console.error('createPlaceWithGeoname', e)
+        throw new Error('createPlaceWithGeoname failed', { cause: e })
+        
+    }
     
 }
 
 const main = async () => {
     
     try {
-        
-        const temp = await geonamesCitiesRepo.searchCities('Sardinia', minimumPopulation)
-        console.log(temp)
-        return process.exit(0)
         
         const existingPlaces = await findExistingPlaces()
         
@@ -156,16 +231,34 @@ const main = async () => {
         )
         
         bar?.stop()
-        console.log('RAW MATCHES', matchesRes.flat())
-        const matches = matchesRes
+        
+        const matchesRaw: PlaceMatch[] = matchesRes
             .flat()
-            .map((it: PlaceMatch) => ({
-                place: it.place,
-                match: cleanMatches(it.place, it.match || [])?.[0],
-            }))
+            .map((it: PlaceMatches) => {
+                return {
+                    name: it.name,
+                    place: it.place,
+                    match: cleanMatches(it.name, it.match || [])?.[0],
+                } as PlaceMatch
+            })
+        
+        const matchesCache = matchesRaw.reduce(
+            (acc: Record<string, PlaceMatch>, it: PlaceMatch) => {
+                if (!acc[it.name])
+                    acc[it.name] = it
+                return acc
+            },
+            {} as Record<string, PlaceMatch>,
+        )
+        
+        const matches: PlaceMatch[] = Object.values(matchesCache)
         
         // console.log(JSON.stringify(matches, null, 4))
-        prettyPrintMatches(matches)
+        if (DEBUG_PRINT_RESULTS)
+            prettyPrintMatches(matches)
+        
+        console.log('\nCreating new places with geonames IDs')
+        await createPlacesWithGeoname(matches)
         
     } catch (e) {
         

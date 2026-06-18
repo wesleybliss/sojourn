@@ -56,22 +56,6 @@ export const timestampPostgres = (name: string) =>
 export const lower = (value: string | AnyColumn | SQL) =>
     sql`lower(${value})`
 
-export const updateSqliteTimestampTrigger = (tableName: string) => {
-    
-    const table = sql.raw(tableName)
-    const trigger = sql.raw(`update_${tableName}_timestamp`)
-    
-    return sql.raw(`
-        CREATE TRIGGER ${trigger}
-        AFTER UPDATE ON ${table}
-        FOR EACH ROW
-        BEGIN
-            UPDATE ${table}
-            SET updatedAt = CURRENT_TIMESTAMP
-            WHERE id = OLD.id;
-        END;
-    `)
-    
-}
+// @todo postgres timestamps trigger
 
 //endregion Helpers

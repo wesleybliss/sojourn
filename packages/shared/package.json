@@ -51,7 +51,6 @@
     },
     "dependencies": {
         "@forminator/react-wire": "^0.7.0",
-        "@libsql/client": "^0.17.3",
         "@vercel/blob": "^2.4.0",
         "@vercel/node": "^5.8.5",
         "ansi-styles": "^6.2.3",

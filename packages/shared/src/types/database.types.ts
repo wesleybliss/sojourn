@@ -1,11 +1,16 @@
-import database from '@repo/shared/db/db-postgres'
-import * as schemas from '@repo/shared/db/schema-postgres'
-import type { InferSelectModel } from 'drizzle-orm'
+import database, { drizzle } from '@shared/db'
+import * as schemas from '@shared/db/schema'
+import type { InferInsertModel, InferSelectModel } from 'drizzle-orm'
+import { PgTable } from 'drizzle-orm/pg-core'
 import { createInsertSchema, createSelectSchema } from 'drizzle-orm/zod'
 import { z } from 'zod'
 
+export type BareDatabase = ReturnType<typeof drizzle>
 export type Database = typeof database
 export type Transaction = Parameters<Parameters<Database['transaction']>[0]>[0]
+
+export type Insert<T extends PgTable> = InferInsertModel<T>
+export type Select<T extends PgTable> = InferSelectModel<T>
 
 export const userInsertSchema = createInsertSchema(schemas.users)
 export const userSelectSchema = createSelectSchema(schemas.users)

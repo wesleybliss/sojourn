@@ -177,6 +177,10 @@ Or using a logical OR:
 
 `awk -F '\t' '$7 == "A" || $7 == "P"' allCountries.txt > populatedCountries.txt`
 
+Run Scripts:
+
+`pn tsx --tsconfig ./apps/api/tsconfig.json ./apps/api/bin/db/migratePlacesGeonames.ts`
+
 ## TODO
 
 - [ ] Postgres gin or trigram index - replace default ones

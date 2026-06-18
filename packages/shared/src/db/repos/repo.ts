@@ -1,23 +1,25 @@
 import database from '@repo/shared/db'
-import type { Database, Insert, Select, Transaction } from '@repo/shared/types'
+import type { Insert, Select, Transaction } from '@repo/shared/types'
 import type { ID } from '@shared/types/data.types'
-import type { AnyColumn } from 'drizzle-orm'
+import { BareDatabase } from '@shared/types/database.types'
+import type { AnyColumn, ColumnsSelection } from 'drizzle-orm'
 import { asc, desc, eq, inArray } from 'drizzle-orm'
+import type { TableConfig } from 'drizzle-orm/pg-core'
+import { PgTable, PgTableWithColumns } from 'drizzle-orm/pg-core'
+import { PgViewBase } from 'drizzle-orm/pg-core/view-base'
 import { SQL, type SQLWrapper } from 'drizzle-orm/sql/sql'
-import { SQLiteTable } from 'drizzle-orm/sqlite-core'
-import { SQLiteViewBase } from 'drizzle-orm/sqlite-core/view-base'
 
 /**
  * Generic repository with the specified name, plural form, schema, and database connection.
  */
-class Repository<TModel, TSchema extends SQLiteTable> {
+class Repository<TModel, TSchema extends PgTableWithColumns<TableConfig>> {
     
     public name: string
     public plural: string
     public schema: TSchema
-    public db: Database | Transaction
+    public db: BareDatabase | Transaction
     
-    constructor(name: string, plural: string, schema: TSchema, db?: Database | Transaction) {
+    constructor(name: string, plural: string, schema: TSchema, db?: BareDatabase | Transaction) {
         
         this.name = name
         this.plural = plural
@@ -61,7 +63,15 @@ class Repository<TModel, TSchema extends SQLiteTable> {
     
     //endregion Helpers
     
-    async count(source?: SQLiteTable | SQLiteViewBase | SQL | SQLWrapper | undefined, filters?: SQL<unknown>) {
+    async count(
+        source?:
+            | PgTable<typeof this.schema._>
+            | SQL<unknown>
+            | SQLWrapper<unknown>
+            | PgViewBase<string, boolean, ColumnsSelection>
+            | undefined,
+        filters?: SQL<unknown>,
+    ) {
         
         return this.db.$count(source || this.schema, filters)
         

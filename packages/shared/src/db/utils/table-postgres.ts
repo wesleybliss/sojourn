@@ -1,16 +1,10 @@
 import { ColumnBuilderBase } from 'drizzle-orm'
-import {
-    PgTableExtraConfigValue,
-    timestamp,
-    UpdateDeleteAction,
-} from 'drizzle-orm/pg-core'
+import { PgTableExtraConfigValue, timestamp, UpdateDeleteAction } from 'drizzle-orm/pg-core'
 import { integer, pgTable } from 'drizzle-orm/pg-core'
-import {
-    AnyPgColumnBuilder,
-    PgBuildExtraConfigColumns,
-} from 'drizzle-orm/pg-core/columns/common'
+import { AnyPgColumnBuilder, PgBuildExtraConfigColumns } from 'drizzle-orm/pg-core/columns/common'
 
-export const postgresIdColumn = () => integer('id').generatedAlwaysAsIdentity().primaryKey()
+export const postgresIdColumn = () =>
+    integer('id').generatedAlwaysAsIdentity().primaryKey()
 
 export type PostgresIdColumn = ReturnType<typeof postgresIdColumn>
 
@@ -20,6 +14,9 @@ export type WithPostgresId<
 > = THasId extends true
     ? T & { id: PostgresIdColumn }
     : T
+
+export const postgresTimestamp = (name: string) =>
+    timestamp(name, { withTimezone: true })
 
 export const postgresTimestamps = {
     createdAt: timestamp('createdAt', { withTimezone: true })
