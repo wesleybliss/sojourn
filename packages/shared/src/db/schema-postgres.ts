@@ -1,4 +1,4 @@
-import { createTablePostgres, lower, sqliteOptsCascadeAll, timestampPostgres } from '@repo/shared/db/utils'
+import { createTablePostgres, lower, postgresOptsCascadeAll, timestampPostgres } from '@repo/shared/db/utils'
 import { boolean, index, integer, primaryKey, real, text, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
 
 export const users = createTablePostgres('users', {
@@ -19,28 +19,28 @@ export const teams = createTablePostgres('teams', {
 
 export const userTeams = createTablePostgres('userTeams', {
     id: false,
-    userId: integer('userId').notNull().references(() => users.id, sqliteOptsCascadeAll),
-    teamId: integer('teamId').notNull().references(() => teams.id, sqliteOptsCascadeAll),
+    userId: integer('userId').notNull().references(() => users.id, postgresOptsCascadeAll),
+    teamId: integer('teamId').notNull().references(() => teams.id, postgresOptsCascadeAll),
 }, table => [
     primaryKey({ columns: [table.userId, table.teamId] }),
 ])
 
 export const trips = createTablePostgres('trips', {
-    teamId: integer('teamId').notNull().references(() => teams.id, sqliteOptsCascadeAll),
+    teamId: integer('teamId').notNull().references(() => teams.id, postgresOptsCascadeAll),
     name: text('name').notNull(),
     description: text('description'),
     coverImageUrl: text('coverImageUrl'),
 })
 
 export const plans = createTablePostgres('plans', {
-    tripId: integer('tripId').notNull().references(() => trips.id, sqliteOptsCascadeAll),
+    tripId: integer('tripId').notNull().references(() => trips.id, postgresOptsCascadeAll),
     name: text('name').notNull(),
     description: text('description'),
 })
 
 export const segments = createTablePostgres('segments', {
-    tripId: integer('tripId').notNull().references(() => trips.id, sqliteOptsCascadeAll),
-    planId: integer('planId').notNull().references(() => plans.id, sqliteOptsCascadeAll),
+    tripId: integer('tripId').notNull().references(() => trips.id, postgresOptsCascadeAll),
+    planId: integer('planId').notNull().references(() => plans.id, postgresOptsCascadeAll),
     name: text('name').notNull(),
     description: text('description'),
     startDate: timestampPostgres('startDate').notNull(),
@@ -93,8 +93,8 @@ export const geonamesCities = createTablePostgres('geonamesCities', {
 // When adding a place, some info is copied from the `geonamesCities` table
 // Aside from that, the user can also create arbitrary named places
 export const places = createTablePostgres('places', {
-    teamId: integer('teamId').references(() => teams.id, sqliteOptsCascadeAll),
-    geonamesCityId: integer('geonamesCityId').references(() => geonamesCities.id, sqliteOptsCascadeAll),
+    teamId: integer('teamId').references(() => teams.id, postgresOptsCascadeAll),
+    geonamesCityId: integer('geonamesCityId').references(() => geonamesCities.id, postgresOptsCascadeAll),
     name: text('name').notNull(),
     coverImageUrl: text('coverImageUrl'),
     focus: text('focus'),

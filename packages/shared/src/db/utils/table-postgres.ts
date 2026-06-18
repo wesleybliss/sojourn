@@ -10,7 +10,8 @@ import {
     PgBuildExtraConfigColumns,
 } from 'drizzle-orm/pg-core/columns/common'
 
-import { ValidColumns } from './shared'
+export const timestampPostgres = (name: string) =>
+    timestamp(name, { withTimezone: true })
 
 export const postgresIdColumn = () => integer('id').generatedAlwaysAsIdentity().primaryKey()
 
@@ -44,8 +45,8 @@ export const postgresOptsCascadeAll: {
 
 export const createTablePostgres = <
     TTableName extends string,
-    TColumnsMap extends ValidColumns<TColumnsMap> & {
-        id?: ColumnBuilderBase | false
+    TColumnsMap extends Record<string, AnyPgColumnBuilder | false | undefined> & {
+        id?: AnyPgColumnBuilder | false
     },
 >(
     name: TTableName,

@@ -1,15 +1,11 @@
 import database from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
-import type { InferInsertModel, InferSelectModel } from 'drizzle-orm'
-import type { SQLiteTable } from 'drizzle-orm/sqlite-core'
+import type { InferSelectModel } from 'drizzle-orm'
 import { createInsertSchema,createSelectSchema } from 'drizzle-orm/zod'
 import { z } from 'zod'
 
 export type Database = typeof database
 export type Transaction = Parameters<Parameters<Database['transaction']>[0]>[0]
-
-export type Insert<T extends SQLiteTable> = InferInsertModel<T>
-export type Select<T extends SQLiteTable> = InferSelectModel<T>
 
 export const userInsertSchema = createInsertSchema(schemas.users)
 export const userSelectSchema = createSelectSchema(schemas.users)
