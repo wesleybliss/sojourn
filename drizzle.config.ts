@@ -10,10 +10,11 @@ dotenv.config({
 
 export default defineConfig({
     out: './drizzle',
-    schema: './packages/shared/src/db/schema.ts',
-    dialect: 'turso',
+    schema: './packages/shared/src/db/schema-postgres.ts',
+    dialect: 'postgresql',
     dbCredentials: {
-        url: process.env.TURSO_DATABASE_URL!,
-        authToken: process.env.TURSO_AUTH_TOKEN!,
+        /*url: process.env.TURSO_DATABASE_URL!,
+        authToken: process.env.TURSO_AUTH_TOKEN!,*/
+        url: process.env.DATABASE_URL!,
     },
 })

@@ -47,6 +47,18 @@ const AppRoutes = () => {
             
             <Route path="error" element={<ErrorPage />} />
             
+            <Route element={<AppLayout />}>
+                <Route path="debug" element={<DebugLayout />}>
+                    <Route index element={<DebugPage />} />
+                    <Route path="places" element={<DebugPlacesListPage />} />
+                    <Route path="storage" element={<DebugUploadFileBlobStorage />} />
+                    <Route path="migrate-trips-plans" element={<DebugMigrateTripsToPlans />} />
+                    <Route path="geocode-tool" element={<DebugGeocodeTool />} />
+                    <Route path="cities-browser" element={<CitiesBrowserPage />} />
+                    <Route path="city-search" element={<DebugCitySearch />} />
+                </Route>
+            </Route>
+            
             <Route element={<ProtectedLayout />}>
                 <Route path="teams/create" element={<CreateTeamPage />} />
             </Route>
@@ -105,22 +117,12 @@ const AppRoutes = () => {
                         </Route>
                     
                     </Route>
-                    
-                    <Route path="debug" element={<DebugLayout />}>
-                        <Route index element={<DebugPage />} />
-                        <Route path="places" element={<DebugPlacesListPage />} />
-                        <Route path="storage" element={<DebugUploadFileBlobStorage />} />
-                        <Route path="migrate-trips-plans" element={<DebugMigrateTripsToPlans />} />
-                        <Route path="geocode-tool" element={<DebugGeocodeTool />} />
-                        <Route path="cities-browser" element={<CitiesBrowserPage />} />
-                        <Route path="city-search" element={<DebugCitySearch />} />
-                    </Route>
-                    
-                    <Route path="*" element={<Navigate href="/" replace />} />
                 
                 </Route>
             
             </Route>
+            
+            <Route path="*" element={<Navigate href="/" replace />} />
         
         </Routes>
         

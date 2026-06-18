@@ -59,6 +59,7 @@ const useSidebarNavigationItems = (): SidebarNavigationItem[] => {
                 label: 'Settings',
                 caption: 'Workspace tools',
                 icon: Settings2,
+                noPrefix: true,
             },
         ].map(it => withTeamId(it))
         

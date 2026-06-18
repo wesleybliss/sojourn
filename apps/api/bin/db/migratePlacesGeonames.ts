@@ -4,7 +4,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import db from '@repo/shared/db'
+import db from '@repo/shared/db/db-postgres'
 import geonamesCitiesRepo from '@repo/shared/db/repos/geonamesCities'
 import * as schemas from '@repo/shared/db/schema'
 import type { GeonamesCity, Place } from '@repo/shared/types'

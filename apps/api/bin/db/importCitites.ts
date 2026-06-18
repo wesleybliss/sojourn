@@ -13,7 +13,8 @@ import cliProgress from 'cli-progress'
 import { sql } from 'drizzle-orm'
 import yauzl, { Entry } from 'yauzl'
 
-// last run made it to 1090999
+// last run made it to 1090999 - turso
+// last run made it to 779998 - aiven
 
 const args = process.argv.slice(2)
 
@@ -28,7 +29,8 @@ const fromBuffer = promisify(yauzl.fromBuffer)
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const FILE_NAME = source === 'all' ? 'populatedCountries.txt' : 'cities500.txt'
 const DATA_FILE = path.resolve(__dirname, `../data/${FILE_NAME}`)
-const BATCH_SIZE = 1_000
+const BATCH_SIZE = 5_000
+const OFFSET: number | null = null
 
 const downloadCities500 = async (): Promise<NodeJS.ReadableStream> => {
     
@@ -125,6 +127,11 @@ const importGeonamesData = async (fileStream: NodeJS.ReadableStream, totalLines?
         
         if (!line.trim()) continue
         
+        if (OFFSET && count < OFFSET) {
+            count++
+            continue
+        }
+        
         const fields = line.split('\t')
         const city = {
             geonameId: parseInt(fields[0], 10),
@@ -180,6 +187,9 @@ const main = async () => {
         
         let fileStream: NodeJS.ReadableStream
         let totalLines: number | undefined
+        
+        if (OFFSET)
+            console.log('Using offset', OFFSET)
         
         // If a local cities500.txt exists, use it; otherwise download it
         if (fs.existsSync(DATA_FILE)) {
