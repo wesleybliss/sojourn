@@ -11,7 +11,7 @@ import type { GeonamesCity, Place } from '@repo/shared/types'
 
 type PlaceMatch = {
     place: string
-    match: Partial<GeonamesCity> | undefined
+    match: Partial<GeonamesCity>[] | undefined
 }
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -21,9 +21,9 @@ const DEBUG_LIMIT: number | null = null
 const DEBUG_SAVE_TEMP = false
 const DEBUG_SHOW_FULL_MATCH = false
 
-const minimumPopulation = 500
+const minimumPopulation = 50
 
-const findExistingPlaces = async () => {
+const findExistingPlaces = async (): Promise<Place[]> => {
     
     const query = db
         .select()
@@ -32,7 +32,7 @@ const findExistingPlaces = async () => {
     if (DEBUG_LIMIT)
         query.limit(DEBUG_LIMIT)
     
-    return query
+    return query as unknown as Promise<Place[]>
     
 }
 
@@ -49,26 +49,30 @@ const findPlaceMatch = async (name: string) => {
     return geonamesCitiesRepo.searchCities(name, minimumPopulation)
 }
 
-const matchPlace = async (place: Place, overrideName?: string) => {
-    const foo = place.name
-    const res = await findPlaceMatch(overrideName ?? place.name)
+const matchPlace = async (
+    place: Place,
+    overrideName?: string,
+): Promise<PlaceMatch> => {
     
-    return { place: place.name, match: res }
+    const name = place.name as string
+    const res = await findPlaceMatch(overrideName ?? name)
+    
+    return { place: name, match: res }
     
 }
 
 const matchPlaceTokens = async (place: Place) => {
     
-    const tokens = place.name.split(' ')
-        .map(it => it.replace(/[^A-Za-z]/g, ''))
+    const name = place.name as string
+    const tokens = name.split(' ')
+        .map((it: string) => it.replace(/[^A-Za-z]/g, ''))
     
     // console.log('matchPlaceTokens: search', tokens[0])
     
-    if (tokens.length > 1 && tokens[1].length <= 2) {
+    if (tokens.length > 1 && tokens[1].length <= 2)
         return [await matchPlace(place, tokens[0])]
-    }
     
-    return Promise.all(tokens.map(it => matchPlace(place, it)))
+    return Promise.all(tokens.map((it: string) => matchPlace(place, it)))
     
 }
 
@@ -90,7 +94,9 @@ const cleanMatches = (name: string, matches: Partial<GeonamesCity>[]) => {
     
 }
 
-const prettyPrintMatches = (matches: PlaceMatch[]) => {
+const prettyPrintMatches = (
+    matches: { place: string; match: Partial<GeonamesCity> | undefined }[],
+) => {
     
     const items = matches.map(it => (
         `${it.place} -> ${it.match?.name}, ${it.match?.countryCode}`
@@ -119,9 +125,9 @@ const main = async () => {
         
         const matches = matchesRes
             .flat()
-            .map(it => ({
+            .map((it: PlaceMatch) => ({
                 place: it.place,
-                match: cleanMatches(it.place, it.match)?.[0],
+                match: cleanMatches(it.place, it.match || [])?.[0],
             }))
         
         // console.log(JSON.stringify(matches, null, 4))
