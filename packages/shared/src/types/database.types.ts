@@ -1,7 +1,7 @@
-import database from '@repo/shared/db'
-import * as schemas from '@repo/shared/db/schema'
+import database from '@repo/shared/db/db-postgres'
+import * as schemas from '@repo/shared/db/schema-postgres'
 import type { InferSelectModel } from 'drizzle-orm'
-import { createInsertSchema,createSelectSchema } from 'drizzle-orm/zod'
+import { createInsertSchema, createSelectSchema } from 'drizzle-orm/zod'
 import { z } from 'zod'
 
 export type Database = typeof database

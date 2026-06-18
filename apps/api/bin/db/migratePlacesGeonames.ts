@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 
 import db from '@repo/shared/db/db-postgres'
 import geonamesCitiesRepo from '@repo/shared/db/repos/geonamesCities'
-import * as schemas from '@repo/shared/db/schema'
+import * as schemas from '@repo/shared/db/schema-postgres'
 import type { GeonamesCity, Place } from '@repo/shared/types'
 
 type PlaceMatch = {
@@ -50,7 +50,7 @@ const findPlaceMatch = async (name: string) => {
 }
 
 const matchPlace = async (place: Place, overrideName?: string) => {
-    
+    const foo = place.name
     const res = await findPlaceMatch(overrideName ?? place.name)
     
     return { place: place.name, match: res }
