@@ -13,6 +13,8 @@ import cliProgress from 'cli-progress'
 import { sql } from 'drizzle-orm'
 import yauzl, { Entry } from 'yauzl'
 
+// last run made it to 1090999
+
 const args = process.argv.slice(2)
 
 const validSources = ['all', '500']
@@ -26,12 +28,7 @@ const fromBuffer = promisify(yauzl.fromBuffer)
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const FILE_NAME = source === 'all' ? 'populatedCountries.txt' : 'cities500.txt'
 const DATA_FILE = path.resolve(__dirname, `../data/${FILE_NAME}`)
-const BATCH_SIZE = 1000
-
-const formatter = new Intl.NumberFormat('en-US')
-
-const sleep = (delayMillis: number = 100) =>
-    new Promise(resolve => setTimeout(resolve, delayMillis))
+const BATCH_SIZE = 1_000
 
 const downloadCities500 = async (): Promise<NodeJS.ReadableStream> => {
     
@@ -117,7 +114,7 @@ const importGeonamesData = async (fileStream: NodeJS.ReadableStream, totalLines?
     let count = 0
     const startTime = Date.now()
     
-    bar.start(formatter.format(totalLines ?? 0), 0, { rate: '0 rec/sec', city: '(initializing)' })
+    bar.start(totalLines ?? 0, 0, { rate: '0 rec/sec', city: '(initializing)' })
     
     const rl = readline.createInterface({
         input: fileStream,
@@ -159,21 +156,19 @@ const importGeonamesData = async (fileStream: NodeJS.ReadableStream, totalLines?
             batch = []
         }
         
-        const elapsed = (Date.now() - startTime) / 1000
-        const rate = `${formatter.format(Math.round(count / elapsed)).toLocaleString()} rec/sec`
-        bar.update(formatter.format(count), { rate, city: city.name })
-        
-        // await sleep()
+        const elapsed = (Date.now() - startTime) / BATCH_SIZE
+        const rate = `${Math.round(count / elapsed).toLocaleString()} rec/sec`
+        bar.update(count, { rate, city: city.name })
         
     }
     
     if (batch.length > 0)
         await db.insert(geonamesCities).values(batch).onConflictDoNothing()
     
-    bar.update(formatter.format(count), { rate: '', city: '' })
+    bar.update(count, { rate: '', city: '' })
     bar.stop()
     
-    const totalTime = (Date.now() - startTime) / 1000
+    const totalTime = (Date.now() - startTime) / BATCH_SIZE
     console.log(`\n  Records imported: ${count.toLocaleString()}`)
     console.log(`  Time taken: ${totalTime.toFixed(2)} seconds`)
     

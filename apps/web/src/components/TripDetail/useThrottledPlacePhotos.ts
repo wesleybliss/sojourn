@@ -1,3 +1,4 @@
+import { useWireValue } from '@forminator/react-wire'
 import { PendingFetchRequest, Place, Segment } from '@repo/shared/types'
 import { abortableFetch } from '@repo/shared/utils'
 import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query'
@@ -5,6 +6,7 @@ import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
 import { seconds, throttledQueue } from 'throttled-queue'
 
 import { usePlacesQuery } from '@/lib/queries/places'
+import * as store from '@/store'
 
 const throttle = throttledQueue({
     maxPerInterval: 3,
@@ -33,6 +35,8 @@ const useThrottledPlacePhotos = (
     segments: Segment[],
 ): TThrottledPlacePhotos => {
     
+    const currentTeamId = useWireValue(store.currentTeamId)
+    
     const [progressMax, setProgressMax] = useState<number>(0)
     const [progressValue, setProgressValue] = useState(0)
     
@@ -41,7 +45,7 @@ const useThrottledPlacePhotos = (
         error: placesError,
         isLoading: placesLoading,
         refetch: placesRefetch,
-    } = usePlacesQuery()
+    } = usePlacesQuery(currentTeamId)
     
     const progressPercent = useMemo(() => (
         progressMax > 0 ? (progressValue / progressMax) * 100 : 0

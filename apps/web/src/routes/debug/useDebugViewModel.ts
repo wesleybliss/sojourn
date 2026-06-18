@@ -1,3 +1,4 @@
+import { useWireValue } from '@forminator/react-wire'
 import { Place, Segment } from '@repo/shared/types'
 import { parseFormData } from '@repo/shared/utils'
 import { geocode } from '@repo/shared/utils'
@@ -7,6 +8,7 @@ import { QueryObserverResult, RefetchOptions, useQueryClient } from '@tanstack/r
 import { Dispatch, SetStateAction, SyntheticEvent, useState } from 'react'
 
 import { usePlacesQuery } from '@/lib/queries/places'
+import * as store from '@/store'
 
 export type TDebugViewModel = {
     // State
@@ -38,6 +40,8 @@ export type TDebugViewModel = {
 
 const useDebugViewModel = (): TDebugViewModel => {
     
+    const currentTeamId = useWireValue(store.currentTeamId)
+    
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [result, setResult] = useState<Record<string, unknown> | null>(null)
     const [sampleImageBlobUrl, setSampleImageBlobUrl] = useState<string | null>(null)
@@ -51,7 +55,7 @@ const useDebugViewModel = (): TDebugViewModel => {
         error: placesError,
         isLoading: placesLoading,
         refetch: placesRefetch,
-    } = usePlacesQuery()
+    } = usePlacesQuery(currentTeamId)
     
     //region Places
     

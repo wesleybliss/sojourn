@@ -161,6 +161,12 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
         
     }, [segments])
     
+    // Wire store is only used for UI preferences, not entity data
+    const currentTeamId = useWireValue(store.currentTeamId)
+    const [showMap, setShowMap] = useWireState(store.showMap)
+    const [isTripEditMode, setIsTripEditMode] = useWireState(store.isTripEditMode)
+    const [isGanttChartLocked, setIsGanttChartLocked] = useWireState(store.isGanttChartLocked)
+    
     // Mutations
     const updateTripMutation = useUpdateTrip()
     const backupMutation = useBackupTrips()
@@ -169,7 +175,7 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
     const deleteSegmentsMutation = useDeleteSegments()
     const deletePlanMutation = useDeletePlan()
     const updatePlanMutation = useUpdatePlan()
-    const updatePlace = useUpdatePlace()
+    const updatePlace = useUpdatePlace(currentTeamId)
     const shufflePlaceCoverPhotoMutation = useShufflePlaceCoverPhoto()
     
     const [isLoadingInitial, setIsLoadingInitial] = useState<boolean>(true)
@@ -180,12 +186,6 @@ const useTripEditorViewModel = (): TTripEditorViewModel => {
     const [segmentsFilterQuery, setSegmentsFilterQuery] = useState<string>('')
     const [segmentsListShowCompleted, setSegmentsListShowCompleted] = useState<boolean>(false)
     const [segmentsListViewMode, setSegmentsListViewMode] = useState<ListViewMode>('list')
-    
-    // Wire store is only used for UI preferences, not entity data
-    const currentTeamId = useWireValue(store.currentTeamId)
-    const [showMap, setShowMap] = useWireState(store.showMap)
-    const [isTripEditMode, setIsTripEditMode] = useWireState(store.isTripEditMode)
-    const [isGanttChartLocked, setIsGanttChartLocked] = useWireState(store.isGanttChartLocked)
     
     const isLoading = useMemo(() => (
         isLoadingInitial || tripIsLoading

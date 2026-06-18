@@ -1,4 +1,3 @@
-import db from './db-postgres'
+import postgresDatabase from './db-postgres'
 
-export * from './db-postgres'
-export default db
+export default postgresDatabase

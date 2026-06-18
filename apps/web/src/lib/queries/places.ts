@@ -1,4 +1,5 @@
 import { ApiResult, DeletePlacesBody, Place } from '@repo/shared/types'
+import { ID } from '@repo/shared/types/data.types'
 import { fetchJSON } from '@repo/shared/utils/api'
 import { UpdatePlaceBody } from '@shared/types/mutations.types'
 import { keepPreviousData, useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -31,14 +32,16 @@ export type CreatePlaceBody = {
     isBookmarked?: boolean
 }
 
-export const usePlacesQuery = (opts = {}) => {
+export const usePlacesQuery = (teamId: ID | null, opts = {}) => {
+    
     const { firebaseUser } = useAuth()
     
     return useQuery({
         queryKey: ['places'],
         queryFn: async () => {
+            
             try {
-                const result = await fetchJSON<Place[]>('places')
+                const result = await fetchJSON<Place[]>(`${teamId}/places`)
                 
                 if (result?.data?.length)
                     placesWithCoverImages.setValue(result.data)
@@ -58,9 +61,10 @@ export const usePlacesQuery = (opts = {}) => {
         retry: 0,
         ...opts,
     })
+    
 }
 
-export const useUpdatePlace = (): UseMutationResult<
+export const useUpdatePlace = (teamId: ID | null): UseMutationResult<
     ApiResult<Place | null>,
     Error,
     ExtendedUpdatePlaceBody,
@@ -71,10 +75,11 @@ export const useUpdatePlace = (): UseMutationResult<
     
     return useMutation({
         mutationFn: async ({ id, ...placeData }: ExtendedUpdatePlaceBody) => {
+            
             if (!id)
                 throw new Error('useUpdatePlace: id is required')
             
-            return fetchJSON(`places/${id}`, {
+            return fetchJSON(`${teamId}/places/${id}`, {
                 method: 'PUT',
                 body: JSON.stringify(placeData),
             })
@@ -86,7 +91,7 @@ export const useUpdatePlace = (): UseMutationResult<
     
 }
 
-export const useCreatePlace = (): UseMutationResult<
+export const useCreatePlace = (teamId: ID | null): UseMutationResult<
     ApiResult<Place | null>,
     Error,
     CreatePlaceBody,
@@ -97,7 +102,7 @@ export const useCreatePlace = (): UseMutationResult<
     
     return useMutation({
         mutationFn: async (placeData: CreatePlaceBody) => {
-            return fetchJSON('places', {
+            return fetchJSON(`${teamId}/places`, {
                 method: 'POST',
                 body: JSON.stringify(placeData),
             })
@@ -109,13 +114,13 @@ export const useCreatePlace = (): UseMutationResult<
     
 }
 
-export const useDeletePlaces = () => {
+export const useDeletePlaces = (teamId: ID | null) => {
     
     const queryClient = useQueryClient()
     
     return useMutation({
         mutationFn: async ({ placeIds }: DeletePlacesBody) => {
-            return fetchJSON<Place>('places', {
+            return fetchJSON<Place>(`${teamId}/places`, {
                 method: 'DELETE',
                 body: JSON.stringify({ placeIds }),
             })

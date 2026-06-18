@@ -1,11 +1,24 @@
 import dayjs from 'dayjs'
 import type { AnyColumn, ColumnBuilderBase, SQL } from 'drizzle-orm'
 import { sql } from 'drizzle-orm'
+import { timestamp } from 'drizzle-orm/pg-core'
+import { AnyPgColumnBuilder } from 'drizzle-orm/pg-core/columns/common'
 import { customType } from 'drizzle-orm/sqlite-core'
 
 //region Types
 
-export type ValidColumns<T> = {
+export type PostgresValidColumns<T> = {
+    [K in keyof T]:
+    K extends 'id'
+        ? T[K] extends AnyPgColumnBuilder | false | undefined
+            ? T[K]
+            : never
+        : T[K] extends AnyPgColumnBuilder
+            ? T[K]
+            : never
+}
+
+export type SqliteValidColumns<T> = {
     [K in keyof T]:
     K extends 'id'
         ? T[K] extends ColumnBuilderBase | false | undefined
@@ -36,6 +49,9 @@ export const timestampSeconds = (name: string) =>
             return dayjs.unix(value).toDate()
         },
     })(name)
+
+export const timestampPostgres = (name: string) =>
+    timestamp(name, { withTimezone: true })
 
 export const lower = (value: string | AnyColumn | SQL) =>
     sql`lower(${value})`

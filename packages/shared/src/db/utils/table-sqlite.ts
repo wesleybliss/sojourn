@@ -4,16 +4,18 @@ import {
     sqliteTable,
     SQLiteTableExtraConfig,
     SQLiteTableExtraConfigValue,
-    SQLiteTableWithColumns, type UpdateDeleteAction,
+    SQLiteTableWithColumns,
+    type UpdateDeleteAction,
 } from 'drizzle-orm/sqlite-core'
 
-import { timestampSeconds, ValidColumns } from './shared'
+import { SqliteValidColumns, timestampSeconds } from './shared'
 
-export const sqliteIdColumn = () => integer('id').primaryKey({ autoIncrement: true })
+export const sqliteIdColumn = () =>
+    integer('id').primaryKey({ autoIncrement: true })
 
 export type SqliteIdColumn = ReturnType<typeof sqliteIdColumn>
 
-export type WithSqliteId<
+type WithSqliteId<
     T extends Record<string, ColumnBuilderBase>,
     THasId extends boolean,
 > = THasId extends true
@@ -61,7 +63,7 @@ const sqliteTableObject = sqliteTable as <
 
 export const createTableSQLite = <
     TTableName extends string,
-    TColumnsMap extends ValidColumns<TColumnsMap> & {
+    TColumnsMap extends SqliteValidColumns<TColumnsMap> & {
         id?: ColumnBuilderBase | false
     },
     THasId extends boolean = TColumnsMap extends { id: false }
@@ -74,7 +76,7 @@ export const createTableSQLite = <
         _self: BuildColumns<
             TTableName,
             WithSqliteId<
-                Omit<TColumnsMap, 'id'> & typeof sqliteTimestamps,
+                Omit<TColumnsMap, 'id'> & typeof sqliteTimestamp,
                 THasId
             >,
             'sqlite'
@@ -92,14 +94,14 @@ export const createTableSQLite = <
     
     const finalColumns = {
         ...(id === false ? {} : { id: sqliteIdColumn() }),
-        ...sqliteTimestamps,
+        ...sqliteTimestamp,
         ...rest,
     }
     
     return sqliteTableObject(
         name,
         finalColumns as WithSqliteId<
-            Omit<TColumnsMap, 'id'> & typeof sqliteTimestamps,
+            Omit<TColumnsMap, 'id'> & typeof sqliteTimestamp,
             THasId
         >,
         extraConfig,

@@ -1,4 +1,4 @@
-import { db } from '@repo/shared/db'
+import db from '@repo/shared/db'
 import * as schemas from '@repo/shared/db/schema'
 import type { ID, TeamWithMembers } from '@repo/shared/types'
 import { apiResponse } from '@repo/shared/utils/api'
@@ -21,7 +21,7 @@ export const getTeams = async (
         
         if (withMembers) {
             
-            const teams = await db
+            const teams: TeamWithMembers[] = await db
                 .select({
                     id: schemas.teams.id,
                     createdAt: schemas.teams.createdAt,
