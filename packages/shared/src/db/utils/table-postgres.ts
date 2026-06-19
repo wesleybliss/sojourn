@@ -1,5 +1,11 @@
 import { ColumnBuilderBase } from 'drizzle-orm'
-import { PgTableExtraConfigValue, timestamp, UpdateDeleteAction } from 'drizzle-orm/pg-core'
+import {
+    PgBuildColumns,
+    PgTableExtraConfigValue,
+    PgTableWithColumns,
+    timestamp,
+    UpdateDeleteAction,
+} from 'drizzle-orm/pg-core'
 import { integer, pgTable } from 'drizzle-orm/pg-core'
 import { AnyPgColumnBuilder, PgBuildExtraConfigColumns } from 'drizzle-orm/pg-core/columns/common'
 
@@ -37,20 +43,69 @@ export const postgresOptsCascadeAll: {
     onDelete: 'cascade',
 }
 
-export const createTablePostgres = <
+/**
+ * Creates a Postgres table with automatic `id`, `createdAt`, and `updatedAt` columns.
+ *
+ * Overload 1 — default: adds `id: PostgresIdColumn`, `createdAt`, `updatedAt`.
+ * Overload 2 — `id: false`: adds only `createdAt`, `updatedAt` (no auto id).
+ */
+
+export function createTablePostgres<
     TTableName extends string,
-    TColumnsMap extends Record<string, AnyPgColumnBuilder | false | undefined> & {
-        id?: AnyPgColumnBuilder | false
-    },
+    TColumnsMap extends Record<string, AnyPgColumnBuilder>,
 >(
     name: TTableName,
     columns: TColumnsMap,
     extraConfig?: (
         _self: PgBuildExtraConfigColumns<
+            TColumnsMap & { id: PostgresIdColumn } & typeof postgresTimestamps
+        >,
+    ) => PgTableExtraConfigValue[],
+): PgTableWithColumns<{
+    name: TTableName
+    schema: undefined
+    columns: PgBuildColumns<
+        TTableName,
+        TColumnsMap & { id: PostgresIdColumn } & typeof postgresTimestamps
+    >
+    dialect: 'pg'
+}>
+
+// @ts-expect-error TS2394 — generic overload compatibility
+// eslint-disable-next-line no-redeclare
+export function createTablePostgres<
+    TTableName extends string,
+    TColumnsMap extends Record<string, AnyPgColumnBuilder | false>,
+>(
+    name: TTableName,
+    columns: TColumnsMap & { id: false },
+    extraConfig?: (
+        _self: PgBuildExtraConfigColumns<Record<string, AnyPgColumnBuilder>>,
+    ) => PgTableExtraConfigValue[],
+): PgTableWithColumns<{
+    name: TTableName
+    schema: undefined
+    columns: PgBuildColumns<
+        TTableName,
+        {
+            [K in keyof TColumnsMap as
+            TColumnsMap[K] extends AnyPgColumnBuilder ? K : never
+            ]: TColumnsMap[K] & AnyPgColumnBuilder
+        } & typeof postgresTimestamps
+    >
+    dialect: 'pg'
+}>
+
+// eslint-disable-next-line no-redeclare
+export function createTablePostgres(
+    name: string,
+    columns: Record<string, AnyPgColumnBuilder | false>,
+    extraConfig?: (
+        _self: PgBuildExtraConfigColumns<
             Record<string, AnyPgColumnBuilder>
         >,
     ) => PgTableExtraConfigValue[],
-) => {
+) {
     
     if (!name?.length)
         throw new Error('Table name required')

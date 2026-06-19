@@ -4,15 +4,14 @@ import type { ID } from '@shared/types/data.types'
 import { BareDatabase } from '@shared/types/database.types'
 import type { AnyColumn, ColumnsSelection } from 'drizzle-orm'
 import { asc, desc, eq, inArray } from 'drizzle-orm'
-import type { TableConfig } from 'drizzle-orm/pg-core'
-import { PgTable, PgTableWithColumns } from 'drizzle-orm/pg-core'
+import { PgTable } from 'drizzle-orm/pg-core'
 import { PgViewBase } from 'drizzle-orm/pg-core/view-base'
 import { SQL, type SQLWrapper } from 'drizzle-orm/sql/sql'
 
 /**
  * Generic repository with the specified name, plural form, schema, and database connection.
  */
-class Repository<TModel, TSchema extends PgTableWithColumns<TableConfig>> {
+class Repository<TModel, TSchema extends PgTable> {
     
     public name: string
     public plural: string
@@ -65,7 +64,7 @@ class Repository<TModel, TSchema extends PgTableWithColumns<TableConfig>> {
     
     async count(
         source?:
-            | PgTable<typeof this.schema._>
+            | PgTable
             | SQL<unknown>
             | SQLWrapper<unknown>
             | PgViewBase<string, boolean, ColumnsSelection>
@@ -79,6 +78,7 @@ class Repository<TModel, TSchema extends PgTableWithColumns<TableConfig>> {
     
     select() {
         
+        // @ts-expect-error drizzle-orm beta generic PgTable issue
         return this.db.select().from(this.schema)
         
     }
@@ -123,6 +123,7 @@ class Repository<TModel, TSchema extends PgTableWithColumns<TableConfig>> {
             
             const query = this.db
                 .select()
+                // @ts-expect-error drizzle-orm beta generic PgTable issue
                 .from(this.schema)
             
             if (offset !== undefined)
@@ -161,6 +162,7 @@ class Repository<TModel, TSchema extends PgTableWithColumns<TableConfig>> {
             
             return await this.db
                 .select()
+                // @ts-expect-error drizzle-orm beta generic PgTable issue
                 .from(this.schema)
                 .where(eq(field, value))
                 .orderBy(desc(this.createdAtColumn)) as Select<TSchema>[]
@@ -187,6 +189,7 @@ class Repository<TModel, TSchema extends PgTableWithColumns<TableConfig>> {
             
             const [item] = await this.db
                 .select()
+                // @ts-expect-error drizzle-orm beta generic PgTable issue
                 .from(this.schema)
                 .where(eq(field, value))
                 .limit(1)

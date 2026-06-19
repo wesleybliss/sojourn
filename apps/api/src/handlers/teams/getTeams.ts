@@ -21,7 +21,7 @@ export const getTeams = async (
         
         if (withMembers) {
             
-            const teams: TeamWithMembers[] = await db
+            const teams = await db
                 .select({
                     id: schemas.teams.id,
                     createdAt: schemas.teams.createdAt,

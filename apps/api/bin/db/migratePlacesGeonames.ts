@@ -10,7 +10,7 @@ import placesRepo from '@repo/shared/db/repos/places'
 import * as schemas from '@repo/shared/db/schema'
 import type { GeonamesCity, Place } from '@repo/shared/types'
 import { omit } from '@repo/shared/utils'
-import cliProgress, { SingleBar } from 'cli-progress'
+import cliProgress from 'cli-progress'
 import { asc } from 'drizzle-orm'
 
 type PlaceMatches = {
@@ -140,18 +140,12 @@ const prettyPrintMatches = (
     matches: PlaceMatch[],
 ) => {
     
-    /*const items = matches.map(it => (
-        `${it.place} -> ${it.match?.name}, ${it.match?.countryCode} (${it.match?.id})`
-    ))
-    
-    items.forEach(it => console.log(it))*/
-    
     const items = matches.map(it => ({
         'Query': it.name,
-        'Match': it.match?.name as string ?? '',
-        'Country Code': it.match?.countryCode as string ?? '',
-        'Timezone': it.match?.timezone as string ?? '',
-        'Geonames ID': it.match?.id as string ?? '',
+        'Match': it.match?.name ?? '',
+        'Country Code': it.match?.countryCode ?? '',
+        'Timezone': it.match?.timezone ?? '',
+        'Geonames ID': it.match?.id?.toString() ?? '',
     }))
     
     console.table(items)

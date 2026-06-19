@@ -87,6 +87,7 @@ export type TPlacesPageViewModel = {
 
 const usePlacesPageViewModel = (): TPlacesPageViewModel => {
     
+    const currentTeamId = useWireValue(store.currentTeamId)
     const trips = useWireValue(store.trips)
     const [placesListViewMode, setPlacesListViewMode] = useWireState(store.placesListViewMode)
     const [createPlaceDialogOpen, setCreatePlaceDialogOpen] = useWireState(store.createPlaceDialogOpen)
@@ -95,11 +96,11 @@ const usePlacesPageViewModel = (): TPlacesPageViewModel => {
     const [search, setSearch] = useState('')
     const [activeRegion, setActiveRegion] = useState('All')
     
-    const { data: placesData, isLoading } = usePlacesQuery()
+    const { data: placesData, isLoading } = usePlacesQuery(currentTeamId)
     
-    const updatePlace = useUpdatePlace()
-    const createPlace = useCreatePlace()
-    const deletePlacesMutation = useDeletePlaces()
+    const updatePlace = useUpdatePlace(currentTeamId)
+    const createPlace = useCreatePlace(currentTeamId)
+    const deletePlacesMutation = useDeletePlaces(currentTeamId)
     
     const places = useMemo(() => (placesData || []) as PlaceRecord[], [placesData])
     

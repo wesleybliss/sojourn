@@ -53,7 +53,6 @@ export type TripInsert = {
     coverImageUrl?: string | null
 }
 export const createTripRequestSchema = tripInsertSchema.omit({
-    id: true,
     teamId: true,
     createdAt: true,
     updatedAt: true,
@@ -133,7 +132,7 @@ export type PlaceInsert = z.infer<typeof placeInsertSchema> & {
 
 export const geonamesCitySelectSchema = createSelectSchema(schemas.geonamesCities)
 export const geonamesCityInsertSchema = createInsertSchema(schemas.geonamesCities)
-export type GeonamesCity = InferSelectModel<typeof schemas.geonamesCities> & {
+export type GeonamesCity = InferSelectModel<typeof schemas.geonamesCities>/* & {
     focus: string | null
     quickTip: string | null
     personalNotes: string | null
@@ -142,9 +141,9 @@ export type GeonamesCity = InferSelectModel<typeof schemas.geonamesCities> & {
     isBookmarked: boolean
     coordsLat?: number | null
     coordsLng?: number | null
-}
+}*/
 export type GeonamesCitySelect = z.infer<typeof geonamesCitySelectSchema>
-export type GeonamesCityInsert = z.infer<typeof geonamesCityInsertSchema> & {
+export type GeonamesCityInsert = z.infer<typeof geonamesCityInsertSchema>/* & {
     focus?: string | null
     quickTip?: string | null
     personalNotes?: string | null
@@ -153,7 +152,7 @@ export type GeonamesCityInsert = z.infer<typeof geonamesCityInsertSchema> & {
     isBookmarked?: boolean
     coordsLat?: number | null
     coordsLng?: number | null
-}
+}*/
 
 // Helper types
 export type RequiredPartialTrip = Partial<Trip> & {

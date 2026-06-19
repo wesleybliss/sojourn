@@ -1,6 +1,7 @@
 import Repository from '@repo/shared/db/repos/repo'
 import * as schemas from '@repo/shared/db/schema'
-import type { Database, GeonamesCity, Transaction } from '@shared/types/database.types'
+import type { GeonamesCity } from '@shared/types'
+import type { Database, Transaction } from '@shared/types/database.types'
 import { and, desc, eq, gte, ilike, like, or, sql } from 'drizzle-orm'
 import { SQL } from 'drizzle-orm/sql/sql'
 
@@ -29,7 +30,7 @@ export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof sc
             ? searchTerm.replace(/\s+/g, '%')
             : searchTerm
         
-        const results: Partial<GeonamesCity>[] = await this.db
+        const results = await this.db
             .select()
             .from(this.schema)
             .where(
@@ -40,7 +41,7 @@ export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof sc
                     ),
                     gte(this.schema.population, minimumPopulation),
                     or(
-                        like(this.schema.name, `%${query}%`), 
+                        like(this.schema.name, `%${query}%`),
                         like(this.schema.alternateNames, `%${query}%`),
                     ),
                 ),
@@ -59,16 +60,16 @@ export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof sc
             )
             .limit(10)
         
-        const hasExactMatch = results.find((it: Partial<GeonamesCity>) => {
-            return it.name.toLowerCase() === query.toLowerCase()
+        const hasExactMatch = results.find(it => {
+            return it.name?.toLowerCase() === query.toLowerCase()
         })
         
         if (hasExactMatch)
             return results
         
-        const exactAltNameMatch = results.reduce((acc: Partial<GeonamesCity> | null, it: Partial<GeonamesCity>) => {
+        const exactAltNameMatch = results.reduce<GeonamesCity | null>((acc, it) => {
             
-            const match = it?.alternateNames?.split(',')
+            const match = it.alternateNames?.split(',')
                 ?.find(altName => altName.toLowerCase() === query.toLowerCase())
             
             if (!match?.length) return acc
@@ -77,9 +78,9 @@ export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof sc
                 ...it,
                 name: match,
                 alternateNames: `${it.name},${it.alternateNames}`,
-            } as Partial<GeonamesCity>
+            }
             
-        }, null as Partial<GeonamesCity> | null)
+        }, null)
         
         if (exactAltNameMatch)
             results.unshift(exactAltNameMatch)
@@ -98,7 +99,7 @@ export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof sc
             ? searchTerm.replace(/\s+/g, '%')
             : searchTerm
         
-        const results: Partial<GeonamesCity>[] = await this.db
+        const results = await this.db
             .select()
             .from(this.schema)
             .where(and(
