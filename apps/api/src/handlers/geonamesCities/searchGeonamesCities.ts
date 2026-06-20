@@ -1,11 +1,7 @@
 import geonamesCitiesRepo from '@repo/shared/db/repos/geonamesCities'
+import { citySchemas } from '@repo/shared/schemas/zod'
 import { apiResponse } from '@repo/shared/utils/api'
 import type { Request, Response } from 'express'
-import { z } from 'zod'
-
-const querySchema = z.object({
-    query: z.coerce.string(),
-})
 
 export const searchGeonamesCities = async (
     req: Request,
@@ -14,9 +10,17 @@ export const searchGeonamesCities = async (
     
     try {
         
-        const { query } = querySchema.parse(req.query)
+        const {
+            query,
+            minimumPopulation,
+            countryCode,
+        } = citySchemas.searchQuerySchema.parse(req.query)
         
-        const results = await geonamesCitiesRepo.searchCities(query)
+        const results = await geonamesCitiesRepo.searchCitiesGIN(
+            query,
+            minimumPopulation,
+            countryCode,
+        )
         
         return apiResponse.ok(res, results)
         

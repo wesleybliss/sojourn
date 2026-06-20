@@ -1,5 +1,5 @@
 import { useWireState, useWireValue } from '@forminator/react-wire'
-import { ApiResult, DeletePlacesBody, ID, ListViewMode } from '@repo/shared/types'
+import { ApiResult, DeletePlacesBody, GeonamesCity, ID, ListViewMode, PlaceInsert } from '@repo/shared/types'
 import { Place, Trip } from '@shared/types/database.types'
 import { UseMutationResult } from '@tanstack/react-query'
 import dayjs from 'dayjs'
@@ -8,7 +8,6 @@ import { toast } from 'sonner'
 
 import useCheckItems from '@/hooks/useCheckItems'
 import {
-    CreatePlaceBody,
     ExtendedUpdatePlaceBody,
     useCreatePlace, useDeletePlaces,
     usePlacesQuery,
@@ -67,7 +66,7 @@ export type TPlacesPageViewModel = {
     
     // Mutations
     updatePlace: UseMutationResult<ApiResult<Place | null>, Error, ExtendedUpdatePlaceBody, unknown>
-    createPlace: UseMutationResult<ApiResult<Place | null>, Error, CreatePlaceBody, unknown>
+    createPlace: UseMutationResult<ApiResult<Place | null>, Error, PlaceInsert, unknown>
     deletePlacesMutation: UseMutationResult<ApiResult<Place | null>, Error, DeletePlacesBody, unknown>
     
     // Hooks
@@ -80,7 +79,7 @@ export type TPlacesPageViewModel = {
     // Methods
     getSegmentCountForPlace: (place: PlaceRecord) => number
     filteredPlaces: PlaceRecord[]
-    handleCreatePlace: (name: string) => Promise<void>
+    handleCreatePlace: (item: GeonamesCity) => Promise<void>
     handleDeletePlaces: () => Promise<void>
     toggleBookmark: (place: PlaceRecord) => Promise<void>
 }
@@ -166,12 +165,17 @@ const usePlacesPageViewModel = (): TPlacesPageViewModel => {
         toggleAllChecked,
     } = useCheckItems(filteredPlaces)
     
-    const handleCreatePlace = async (name: string) => {
+    const handleCreatePlace = async (item: GeonamesCity) => {
         
         try {
             
+            if (!currentTeamId)
+                throw new Error('No current team selected')
+            
             await createPlace.mutateAsync({
-                name,
+                teamId: currentTeamId,
+                geonamesCityId: item.id,
+                name: item.name,
                 region: activeRegion === 'All' ? 'Unassigned' : activeRegion,
                 focus: 'Add a destination focus',
                 quickTip: 'Capture the one thing future-you should remember.',

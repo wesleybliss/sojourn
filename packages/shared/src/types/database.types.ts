@@ -108,51 +108,15 @@ export type SegmentInsert = {
 
 export const placeSelectSchema = createSelectSchema(schemas.places)
 export const placeInsertSchema = createInsertSchema(schemas.places)
-export type Place = InferSelectModel<typeof schemas.places> & {
-    focus: string | null
-    quickTip: string | null
-    personalNotes: string | null
-    region: string | null
-    travelWindow: string | null
-    isBookmarked: boolean
-    coordsLat?: number | null
-    coordsLng?: number | null
-}
+export type Place = InferSelectModel<typeof schemas.places>
 export type PlaceSelect = z.infer<typeof placeSelectSchema>
-export type PlaceInsert = z.infer<typeof placeInsertSchema> & {
-    focus?: string | null
-    quickTip?: string | null
-    personalNotes?: string | null
-    region?: string | null
-    travelWindow?: string | null
-    isBookmarked?: boolean
-    coordsLat?: number | null
-    coordsLng?: number | null
-}
+export type PlaceInsert = z.infer<typeof placeInsertSchema>
 
 export const geonamesCitySelectSchema = createSelectSchema(schemas.geonamesCities)
 export const geonamesCityInsertSchema = createInsertSchema(schemas.geonamesCities)
-export type GeonamesCity = InferSelectModel<typeof schemas.geonamesCities>/* & {
-    focus: string | null
-    quickTip: string | null
-    personalNotes: string | null
-    region: string | null
-    travelWindow: string | null
-    isBookmarked: boolean
-    coordsLat?: number | null
-    coordsLng?: number | null
-}*/
+export type GeonamesCity = InferSelectModel<typeof schemas.geonamesCities>
 export type GeonamesCitySelect = z.infer<typeof geonamesCitySelectSchema>
-export type GeonamesCityInsert = z.infer<typeof geonamesCityInsertSchema>/* & {
-    focus?: string | null
-    quickTip?: string | null
-    personalNotes?: string | null
-    region?: string | null
-    travelWindow?: string | null
-    isBookmarked?: boolean
-    coordsLat?: number | null
-    coordsLng?: number | null
-}*/
+export type GeonamesCityInsert = z.infer<typeof geonamesCityInsertSchema>
 
 // Helper types
 export type RequiredPartialTrip = Partial<Trip> & {

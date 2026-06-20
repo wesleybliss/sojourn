@@ -66,6 +66,9 @@ export const authorization = (options: AuthorizeOptions) => {
             const userId = req.auth.user.id
             const { teamId, tripId, planId, segmentId } = paramsSchema.parse(req.params)
             
+            if (teamId)
+                req.auth.teamId = teamId
+            
             // Determine what level of authorization is needed
             const needsTripAuth = options.requireTrip ?? (tripId !== null && tripId !== undefined)
             const needsPlanAuth = options.requirePlan ?? (planId !== null && planId !== undefined)

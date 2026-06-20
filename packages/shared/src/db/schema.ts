@@ -56,12 +56,13 @@ export const segments = createTablePostgres('segments', {
 // Read-only source of cities data
 // When adding a place, some info is copied to the `places` table
 export const geonamesCities = createTablePostgres('geonamesCities', {
-    name: varchar('name', { length: 200 }),
-    asciiName: varchar('asciiName', { length: 200 }),
+    geonameId: integer('geonameId').notNull(),
+    name: varchar('name', { length: 200 }).notNull(),
+    asciiName: varchar('asciiName', { length: 200 }).notNull(),
     alternateNames: text('alternateNames'),
-    latitude: real('latitude'),
-    longitude: real('longitude'),
-    featureClass: varchar('featureClass', { length: 1 }),
+    latitude: real('latitude').notNull(),
+    longitude: real('longitude').notNull(),
+    featureClass: varchar('featureClass', { length: 1 }).notNull(),
     featureCode: varchar('featureCode', { length: 10 }),
     countryCode: varchar('countryCode', { length: 2 }),
     /*cc2: text('cc2', { length: 200 }),
@@ -69,7 +70,7 @@ export const geonamesCities = createTablePostgres('geonamesCities', {
     admin2Code: text('admin2Code', { length: 80 }),
     admin3Code: text('admin3Code', { length: 20 }),
     admin4Code: text('admin4Code', { length: 20 }),*/
-    population: bigint('population', { mode: 'number' }),
+    population: bigint('population', { mode: 'number' }).notNull(),
     /*elevation: integer('elevation'),
     dem: integer('dem'),*/
     timezone: varchar('timezone', { length: 40 }),
@@ -92,8 +93,8 @@ export const geonamesCities = createTablePostgres('geonamesCities', {
 // When adding a place, some info is copied from the `geonamesCities` table
 // Aside from that, the user can also create arbitrary named places
 export const places = createTablePostgres('places', {
-    teamId: integer('teamId').references(() => teams.id, postgresOptsCascadeAll),
-    geonamesCityId: integer('geonamesCityId').references(() => geonamesCities.id, postgresOptsCascadeAll),
+    teamId: integer('teamId').notNull().references(() => teams.id, postgresOptsCascadeAll),
+    geonamesCityId: integer('geonamesCityId').notNull().references(() => geonamesCities.id, postgresOptsCascadeAll),
     name: text('name').notNull(),
     coverImageUrl: text('coverImageUrl'),
     focus: text('focus'),
@@ -102,8 +103,6 @@ export const places = createTablePostgres('places', {
     region: text('region'),
     travelWindow: text('travelWindow'),
     isBookmarked: boolean('isBookmarked').default(false).notNull(),
-    coordsLat: real('coordsLat'),
-    coordsLng: real('coordsLng'),
 }, table => [
     uniqueIndex('places_teamId_geonamesCityId_idx').on(table.teamId, table.geonamesCityId),
 ])

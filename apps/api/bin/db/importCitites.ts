@@ -142,12 +142,12 @@ const importGeonamesData = async (fileStream: NodeJS.ReadableStream, totalLines?
         const fields = line.split('\t')
         const city = {
             geonameId: parseInt(fields[0], 10),
-            name: fields[1] || null,
-            asciiName: fields[2] || null,
+            name: fields[1],
+            asciiName: fields[2],
             alternateNames: fields[3] || null,
             latitude: parseFloat(fields[4]),
             longitude: parseFloat(fields[5]),
-            featureClass: fields[6] || null,
+            featureClass: fields[6],
             featureCode: fields[7] || null,
             countryCode: fields[8] || null,
             /*cc2: fields[9] || null,
@@ -155,10 +155,10 @@ const importGeonamesData = async (fileStream: NodeJS.ReadableStream, totalLines?
             admin2Code: fields[11] || null,
             admin3Code: fields[12] || null,
             admin4Code: fields[13] || null,*/
-            population: fields[14] ? parseInt(fields[14], 10) : null,
+            population: parseInt(fields[14], 10),
             /*elevation: fields[15] ? parseInt(fields[15], 10) : null,
             dem: fields[16] ? parseInt(fields[16], 10) : null,*/
-            timezone: fields[17] || null,
+            timezone: fields[17],
             /*modificationDate: fields[18] || null,*/
         }
         

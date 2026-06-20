@@ -1,3 +1,4 @@
+import { citySchemas } from '@repo/shared/schemas/zod'
 import { GeonamesCity } from '@repo/shared/types'
 import { fetchJSON } from '@repo/shared/utils/api'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
@@ -60,31 +61,57 @@ export const useCitiesQuery = ({
     
 }
 
-export const useCitiesSearchQuery = (opts = {}) => {
+export type CitiesSearchQueryArgs = {
+    query: string
+    minimumPopulation?: number | undefined
+    countryCode?: string | undefined
+    opts?: Record<string, unknown>
+}
+
+export const useCitiesSearchQuery = (args: CitiesSearchQueryArgs) => {
     
     const { firebaseUser } = useAuth()
     
+    const {
+        query,
+        minimumPopulation,
+        countryCode,
+    } = citySchemas.searchQuerySchema.parse(args)
+    
     return useQuery({
-        queryKey: ['cities'],
+        queryKey: ['cities', query, minimumPopulation, countryCode],
         queryFn: async () => {
             
             try {
                 
-                const result = await fetchJSON<Partial<GeonamesCity>[]>('cities/search')
+                const searchParams = new URLSearchParams()
+                
+                searchParams.set('query', query)
+                
+                if (minimumPopulation)
+                    searchParams.set('minimumPopulation', minimumPopulation.toString())
+                
+                if (countryCode)
+                    searchParams.set('countryCode', countryCode)
+                
+                const queryString = searchParams.toString()
+                
+                const result = await fetchJSON<GeonamesCity[]>(
+                    `cities/search${queryString ? `?${queryString}` : ''}`)
                 
                 return result.data
                 
             } catch (e) {
                 
-                console.error('queries/places', e)
+                console.error('queries/citiesSearch', e)
                 throw e
                 
             }
             
         },
-        enabled: !!firebaseUser,
-        placeholderData: keepPreviousData,
+        enabled: !!firebaseUser && query.length > 0,
+        placeholderData: [],
         retry: 0,
-        ...opts,
+        ...args.opts,
     })
 }

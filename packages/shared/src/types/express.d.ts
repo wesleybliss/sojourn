@@ -4,8 +4,9 @@ import type { DecodedIdToken } from 'firebase-admin/auth'
 
 export type AuthContext = {
     user: UserSelect
-    firebaseToken: DecodedIdToken
     userId: ID
+    firebaseToken: DecodedIdToken
+    teamId?: ID | undefined
 }
 
 type AuthorizeOptions = {

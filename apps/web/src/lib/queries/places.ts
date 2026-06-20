@@ -1,4 +1,4 @@
-import { ApiResult, DeletePlacesBody, Place } from '@repo/shared/types'
+import { ApiResult, DeletePlacesBody, Place, PlaceInsert } from '@repo/shared/types'
 import { ID } from '@repo/shared/types/data.types'
 import { fetchJSON } from '@repo/shared/utils/api'
 import { UpdatePlaceBody } from '@shared/types/mutations.types'
@@ -19,16 +19,6 @@ export type ExtendedUpdatePlaceBody = UpdatePlaceBody & {
     personalNotes?: string | null
     region?: string | null
     travelWindow?: string | null
-    isBookmarked?: boolean
-}
-
-export type CreatePlaceBody = {
-    name: string
-    focus?: string
-    quickTip?: string
-    personalNotes?: string
-    region?: string
-    travelWindow?: string
     isBookmarked?: boolean
 }
 
@@ -94,14 +84,14 @@ export const useUpdatePlace = (teamId: ID | null): UseMutationResult<
 export const useCreatePlace = (teamId: ID | null): UseMutationResult<
     ApiResult<Place | null>,
     Error,
-    CreatePlaceBody,
+    PlaceInsert,
     unknown
 > => {
     
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async (placeData: CreatePlaceBody) => {
+        mutationFn: async (placeData: PlaceInsert) => {
             return fetchJSON(`${teamId}/places`, {
                 method: 'POST',
                 body: JSON.stringify(placeData),

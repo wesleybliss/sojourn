@@ -28,9 +28,21 @@
             "types": "./src/constants/index.ts",
             "default": "./src/constants/index.ts"
         },
+        "./schemas": {
+            "types": "./src/schemas/index.ts",
+            "default": "./src/schemas/index.ts"
+        },
+        "./schemas/zod": {
+            "types": "./src/schemas/zod/index.ts",
+            "default": "./src/schemas/zod/index.ts"
+        },
         "./utils": {
             "types": "./src/utils/index.ts",
             "default": "./src/utils/index.ts"
+        },
+        "./utils/api": {
+            "types": "./src/utils/api/index.ts",
+            "default": "./src/utils/api/index.ts"
         },
         "./utils/storage/vercel-blob": {
             "types": "./src/utils/storage/vercel-blob/index.ts",

@@ -5,6 +5,7 @@ import type { Request, Response } from 'express'
 import { z } from 'zod'
 
 const bodySchema = z.object({
+    geonamesCityId: z.coerce.number(),
     name: z.coerce.string(),
     focus: z.coerce.string(),
     quickTip: z.coerce.string(),
@@ -21,7 +22,11 @@ export const createPlace = async (
     
     try {
         
+        if (!req.auth.teamId)
+            throw new Error('No current team selected')
+        
         const {
+            geonamesCityId,
             name,
             focus,
             quickTip,
@@ -37,6 +42,8 @@ export const createPlace = async (
         const coverImageUrl = await getRandomUnsplashImageUrl(name)
         
         const newPlace = await placesRepo.create({
+            teamId: req.auth.teamId,
+            geonamesCityId,
             name,
             coverImageUrl,
             focus,
