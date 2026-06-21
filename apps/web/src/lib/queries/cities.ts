@@ -110,7 +110,7 @@ export const useCitiesSearchQuery = (args: CitiesSearchQueryArgs) => {
     
     return useQuery({
         queryKey: ['cities', query, minimumPopulation, countryCode],
-        queryFn: async () => {
+        queryFn: async ({ signal }) => {
             
             try {
                 
@@ -126,12 +126,21 @@ export const useCitiesSearchQuery = (args: CitiesSearchQueryArgs) => {
                 
                 const queryString = searchParams.toString()
                 
+                // React Query aborts this signal whenever the queryKey changes
+                // (e.g. as the user types) or the consumer unmounts, so in-flight
+                // requests for stale queries are cancelled instead of racing.
                 const result = await fetchJSON<GeonamesCity[]>(
-                    `cities/search${queryString ? `?${queryString}` : ''}`)
+                    `cities/search${queryString ? `?${queryString}` : ''}`,
+                    { signal })
                 
                 return result.data
                 
             } catch (e) {
+                
+                if ((e as Error)?.name === 'AbortError')
+                    // Let React Query recognize the cancellation so the cache
+                    // keeps its previous value instead of being overwritten with null.
+                    throw e
                 
                 console.error('queries/citiesSearch', e)
                 throw e

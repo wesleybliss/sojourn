@@ -1,5 +1,5 @@
 import { useWireState } from '@forminator/react-wire'
-import { GeonamesCity, ToNumber } from '@repo/shared/types'
+import type { GeonamesCity, ToNumber } from '@repo/shared/types'
 import { getCountryNameFromCode } from '@shared/utils/i18n'
 import { ReactElement, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -112,7 +112,7 @@ const CreatePlaceDialog = ({
         <SearchItemsDialog
             open={createPlaceDialogOpen}
             setOpen={setCreatePlaceDialogOpen}
-            title={t('places.components.CreatePlaceDialog.title')}
+            title={t($ => $.places.components.CreatePlaceDialog.title)}
             description={t('places.components.CreatePlaceDialog.description')}
             queryFn={queryFn}
             placeholder={t('places.components.CreatePlaceDialog.inputPlaceholder')}

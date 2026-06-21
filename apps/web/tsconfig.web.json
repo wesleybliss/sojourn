@@ -31,6 +31,8 @@
         "./**/*.d.ts",
         "./**/*.ts",
         "./**/*.tsx",
+        "vitest.config.ts",
+        "../../packages/shared/types/**/*.d.ts"
     ],
     "exclude": [
         "node_modules",
