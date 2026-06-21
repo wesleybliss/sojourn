@@ -1,6 +1,6 @@
 import { ListViewMode, ListViewModes } from '@repo/shared/types'
 import { cn } from '@repo/shared/utils'
-import { Grid2x2, List, Plus, Search } from 'lucide-react'
+import { Grid2x2, List, ListChevronsDownUp, Plus, Search } from 'lucide-react'
 import { Dispatch, memo, SetStateAction } from 'react'
 
 import GraphicalCheckbox from '@/components/inputs/GraphicalCheckbox'
@@ -75,6 +75,16 @@ const PlacesPageToolbar = memo(({
                         variant="outline"
                         value={placesListViewMode}
                         onValueChange={setPlacesListViewMode}>
+                        <Tooltip>
+                            <ToggleGroupItem asChild value={ListViewModes.listCompact} aria-label="Toggle compact list">
+                                <TooltipTrigger>
+                                    <ListChevronsDownUp />
+                                </TooltipTrigger>
+                            </ToggleGroupItem>
+                            <TooltipContent side="bottom">
+                                Toggle Compact List View
+                            </TooltipContent>
+                        </Tooltip>
                         <Tooltip>
                             <ToggleGroupItem asChild value={ListViewModes.list} aria-label="Toggle list">
                                 <TooltipTrigger>

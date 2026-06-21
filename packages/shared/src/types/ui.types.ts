@@ -1,5 +1,6 @@
 
 export const ListViewModes = {
+    listCompact: 'listCompact',
     list: 'list',
     grid: 'grid',
 }

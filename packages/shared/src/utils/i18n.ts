@@ -14,7 +14,7 @@ export const getLanguageCode = (locale: string) => {
     
     try {
         return i18n.services.languageUtils.getLanguagePartFromCode(locale)
-    } catch (e) {
+    } catch (e) { // oxlint-disable-line no-unused-vars
         console.warn('getLanguageCode: i18n.services failed; falling back to Intl.Locale')
         try {
             return new Intl.Locale(locale).language

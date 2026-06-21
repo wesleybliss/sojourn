@@ -61,51 +61,55 @@ const PlacesPagePlacesGridItemContent = ({
                 </div>
             </div>
             
-            <div className={cn('space-y-3 text-sm', {
-                'flex flex-col lg:flex-row justify-between items-start gap-4': listViewMode === ListViewModes.list,
-            })}>
-                <div className="rounded-2xl bg-surface-container-low/50 py-3 px-4">
-                    <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                        Focus
+            {listViewMode !== ListViewModes.listCompact && (
+                <div className={cn('space-y-3 text-sm', {
+                    'flex flex-col lg:flex-row justify-between items-start gap-4': listViewMode === ListViewModes.list,
+                })}>
+                    <div className="rounded-2xl bg-surface-container-low/50 py-3 px-4">
+                        <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                            Focus
+                        </div>
+                        <p className="mt-1 text-foreground/90">
+                            {place.focus || 'Add a destination focus to clarify '
+                                + 'why this place is on the shortlist.'}
+                        </p>
                     </div>
-                    <p className="mt-1 text-foreground/90">
-                        {place.focus || 'Add a destination focus to clarify '
-                            + 'why this place is on the shortlist.'}
-                    </p>
-                </div>
-                <div className="rounded-2xl bg-surface-container-low/50 py-3 px-4">
-                    <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                        Quick tip
+                    <div className="rounded-2xl bg-surface-container-low/50 py-3 px-4">
+                        <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                            Quick tip
+                        </div>
+                        <p className="mt-1 text-foreground/90">
+                            {place.quickTip || 'Capture internet, transit, '
+                                + 'or neighborhood notes here.'}
+                        </p>
                     </div>
-                    <p className="mt-1 text-foreground/90">
-                        {place.quickTip || 'Capture internet, transit, '
-                            + 'or neighborhood notes here.'}
-                    </p>
-                </div>
-                <div className="rounded-2xl bg-surface-container-low/50 py-3 px-4">
-                    <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                        Personal notes
+                    <div className="rounded-2xl bg-surface-container-low/50 py-3 px-4">
+                        <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                            Personal notes
+                        </div>
+                        <p className="mt-1 text-foreground/90">
+                            {place.personalNotes || 'Add the reasons this place '
+                                + 'is worth revisiting later.'}
+                        </p>
                     </div>
-                    <p className="mt-1 text-foreground/90">
-                        {place.personalNotes || 'Add the reasons this place '
-                            + 'is worth revisiting later.'}
-                    </p>
                 </div>
-            </div>
+            )}
             
-            <div className="flex flex-wrap items-center justify-between gap-3
-                border-t border-border/60 pt-4 text-sm">
-                <span className="inline-flex items-center gap-2 rounded-full
-                    bg-surface-container-low px-3 py-1.5 text-muted-foreground">
-                    <MapPinned className="size-4" />
-                    {segmentCount} linked segment{segmentCount === 1 ? '' : 's'}
-                </span>
-                <span className="inline-flex items-center gap-2 rounded-full
-                    border border-border/70 px-3 py-1.5 text-muted-foreground">
-                    <CalendarRange className="size-4" />
-                    {place.travelWindow || 'Window TBD'}
-                </span>
-            </div>
+            {listViewMode !== ListViewModes.listCompact && (
+                <div className="flex flex-wrap items-center justify-between gap-3
+                    border-t border-border/60 pt-4 text-sm">
+                    <span className="inline-flex items-center gap-2 rounded-full
+                        bg-surface-container-low px-3 py-1.5 text-muted-foreground">
+                        <MapPinned className="size-4" />
+                        {segmentCount} linked segment{segmentCount === 1 ? '' : 's'}
+                    </span>
+                    <span className="inline-flex items-center gap-2 rounded-full
+                        border border-border/70 px-3 py-1.5 text-muted-foreground">
+                        <CalendarRange className="size-4" />
+                        {place.travelWindow || 'Window TBD'}
+                    </span>
+                </div>
+            )}
         
         </div>
         
