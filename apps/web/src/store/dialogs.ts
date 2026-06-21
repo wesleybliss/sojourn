@@ -9,3 +9,5 @@ export const deleteTripDialogId = createWire<ID | null>(null)
 
 export const createPlaceDialogOpen = createWire<boolean>(false)
 export const deletePlacesDialogOpen = createWire<boolean>(false)
+
+export const cityDetailsDialogCityId = createWire<ID | null>(null)

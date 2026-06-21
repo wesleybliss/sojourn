@@ -1,6 +1,9 @@
+import { useWire } from '@forminator/react-wire'
 import { ListViewMode, ListViewModes, Place } from '@repo/shared/types'
-import { Bookmark, BookmarkCheck, CalendarRange, MapPinned } from 'lucide-react'
+import { Bookmark, BookmarkCheck, Building2, CalendarRange, MapPinned } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
+import * as store from '@/store'
 import { cn } from '@/utils'
 
 export interface PlacesPagePlacesGridItemContentProps {
@@ -16,6 +19,8 @@ const PlacesPagePlacesGridItemContent = ({
     listViewMode,
     toggleBookmark,
 }: PlacesPagePlacesGridItemContentProps) => {
+    
+    const cityDetailsDialogCityId = useWire(store.cityDetailsDialogCityId)
     
     return (
         
@@ -36,15 +41,24 @@ const PlacesPagePlacesGridItemContent = ({
                         {place.name}
                     </h2>
                 </div>
-                <button
-                    className="rounded-full border border-border/70 p-2
-                        transition-colors hover:bg-accent"
-                    onClick={() => toggleBookmark(place)}
-                    type="button">
-                    {place.isBookmarked
-                        ? <BookmarkCheck className="size-5 text-primary" />
-                        : <Bookmark className="size-5 text-muted-foreground" />}
-                </button>
+                <div className="flex items-center justify-end gap-2">
+                    <Button
+                        className="rounded-full"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => cityDetailsDialogCityId.setValue(place.geonamesCityId)}>
+                        <Building2 />
+                    </Button>
+                    <Button
+                        className="rounded-full"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => toggleBookmark(place)}>
+                        {place.isBookmarked
+                            ? <BookmarkCheck className="size-5 text-primary" />
+                            : <Bookmark className="size-5 text-muted-foreground" />}
+                    </Button>
+                </div>
             </div>
             
             <div className={cn('space-y-3 text-sm', {

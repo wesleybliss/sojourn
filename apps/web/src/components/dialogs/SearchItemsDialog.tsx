@@ -23,6 +23,7 @@ interface SearchItemsDialogProps<T extends ItemWithId> {
     title: string
     description?: string
     queryFn: (query: string) => UseQueryResult<T[] | null | undefined>
+    placeholder?: string
     submitLabel?: string
     onSubmit?: (value: T) => Promise<void>
     getItemKey?: (item: T) => string | number
@@ -36,6 +37,7 @@ const SearchItemsDialog = <T extends ItemWithId,>({
     title = '',
     description = '',
     queryFn,
+    placeholder = '',
     submitLabel = 'submit',
     onSubmit = async (_value: T) => {},
     getItemKey = (item: T) => item.id,
@@ -87,6 +89,7 @@ const SearchItemsDialog = <T extends ItemWithId,>({
                             id="searchItemsDialogQueryInput"
                             name="searchItemsDialogQueryInput"
                             type="text"
+                            placeholder={placeholder}
                             value={query}
                             autoComplete="off"
                             onChange={e => setQuery(e.target.value)} />

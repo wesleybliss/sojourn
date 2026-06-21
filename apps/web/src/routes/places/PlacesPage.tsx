@@ -1,3 +1,4 @@
+import CityDetailsDialog from '@/components/dialogs/CityDetailsDialog'
 import CreatePlaceDialog from '@/components/dialogs/CreatePlaceDialog'
 import DeletePlacesDialog from '@/components/dialogs/DeletePlacesDialog'
 import ProtectedRoute from '@/components/ProtectedRoute'
@@ -42,6 +43,7 @@ const PlacesPage = () => {
             
             </div>
             
+            <CityDetailsDialog />
             <CreatePlaceDialog onConfirm={vm.handleCreatePlace} />
             <DeletePlacesDialog onConfirm={vm.handleDeletePlaces} />
         

@@ -17,28 +17,33 @@ interface ConfirmDialogProps {
     open: boolean | null | undefined
     trigger?: ReactNode | JSX.Element | null
     title: string
-    message: string
-    cancelLabel: string
+    message?: string
+    cancelLabel?: string
     onCancel?: (() => void) | MouseEventHandler<HTMLButtonElement> | null
     confirmLabel: string
     confirmProps?: Record<string, unknown>
     onConfirm: MouseEventHandler<HTMLButtonElement>
     isLoading?: boolean
+    children?: ReactNode
 }
 
 const ConfirmDialog = ({
     open = false,
     trigger = null,
     title,
-    message,
+    message = undefined,
     cancelLabel = 'Close',
     onCancel = null,
     confirmLabel,
     confirmProps = {},
     onConfirm,
     isLoading = false,
+    children,
     ...props
 }: ConfirmDialogProps) => {
+    
+    if (message?.length && children)
+        console.warn('ConfirmDialog: providing both message and children is an antipattern')
     
     return (
         
@@ -58,12 +63,20 @@ const ConfirmDialog = ({
                 
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
-                    <DialogDescription>
-                        {message}
-                    </DialogDescription>
+                    {message && (
+                        <DialogDescription>
+                            {message}
+                        </DialogDescription>
+                    )}
                 </DialogHeader>
                 
-                <DialogFooter className="sm:justify-start">
+                {children && (
+                    <DialogContent>
+                        {children}
+                    </DialogContent>
+                )}
+                
+                <DialogFooter className="justify-end">
                     {onCancel && (
                         <DialogClose asChild>
                             <Button type="button" variant="secondary" onClick={onCancel}>

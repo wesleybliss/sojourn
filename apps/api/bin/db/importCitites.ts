@@ -10,9 +10,18 @@ import { promisify } from 'node:util'
 import db from '@repo/shared/db'
 import { geonamesCities } from '@repo/shared/db/schema'
 import cliProgress from 'cli-progress'
-import { sql } from 'drizzle-orm'
+import { and, eq, sql } from 'drizzle-orm'
 import yauzl, { Entry } from 'yauzl'
 import { z } from 'zod'
+
+const InsertModes = {
+    create: 'create',
+    update: 'update',
+}
+
+type InsertMode = typeof InsertModes[keyof typeof InsertModes]
+
+const INSERT_MODE: InsertMode = InsertModes.update
 
 const validSources = ['all', 'administrative', '500']
 
@@ -166,8 +175,36 @@ const importGeonamesData = async (fileStream: NodeJS.ReadableStream, totalLines?
         count++
         
         if (batch.length === batchSize) {
-            await db.insert(geonamesCities).values(batch).onConflictDoNothing()
+            
+            switch (INSERT_MODE) {
+                case InsertModes.create: {
+                    await db.insert(geonamesCities).values(batch).onConflictDoNothing()
+                    break
+                }
+                case InsertModes.update: {
+                    await Promise.all(batch.map(it => {
+                        return db.update(geonamesCities)
+                            .set({
+                                geonameId: it.geonameId,
+                            })
+                            .where(and(
+                                eq(geonamesCities.name, it.name),
+                                eq(geonamesCities.asciiName, it.asciiName),
+                                eq(geonamesCities.latitude, it.latitude),
+                                eq(geonamesCities.longitude, it.longitude),
+                                eq(geonamesCities.featureClass, it.featureClass),
+                                eq(geonamesCities.population, it.population),
+                                eq(geonamesCities.timezone, it.timezone),
+                            ))
+                    }))
+                    break
+                }
+                default:
+                    throw new Error('Invalid INSERT_MODE: ' + INSERT_MODE)
+            }
+            
             batch = []
+            
         }
         
         const elapsed = (Date.now() - startTime) / batchSize

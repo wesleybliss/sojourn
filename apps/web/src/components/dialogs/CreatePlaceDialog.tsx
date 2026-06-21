@@ -45,6 +45,7 @@ const CreatePlaceDialog = ({
             title="Create Place"
             description="Create a saved place card with a generated cover image and planning notes scaffold."
             queryFn={queryFn}
+            placeholder="Search for a city, country, or region..."
             submitLabel="Create Place"
             onSubmit={async (item: GeonamesCity) => {
                 if (DEBUG) console.log('@todo handle create place', item)

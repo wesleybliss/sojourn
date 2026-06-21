@@ -56,7 +56,7 @@ export const segments = createTablePostgres('segments', {
 // Read-only source of cities data
 // When adding a place, some info is copied to the `places` table
 export const geonamesCities = createTablePostgres('geonamesCities', {
-    geonameId: integer('geonameId').notNull(),
+    geonameId: integer('geonameId'),
     name: varchar('name', { length: 200 }).notNull(),
     asciiName: varchar('asciiName', { length: 200 }).notNull(),
     alternateNames: text('alternateNames'),

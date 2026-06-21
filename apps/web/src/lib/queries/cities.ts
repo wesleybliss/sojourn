@@ -1,5 +1,5 @@
 import { citySchemas } from '@repo/shared/schemas/zod'
-import { GeonamesCity } from '@repo/shared/types'
+import { GeonamesCity, ID } from '@repo/shared/types'
 import { fetchJSON } from '@repo/shared/utils/api'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 
@@ -14,6 +14,13 @@ export type CitiesQueryArgs = {
 export type CitiesWrap = {
     total: number
     cities: GeonamesCity[]
+}
+
+export type CitiesSearchQueryArgs = {
+    query: string
+    minimumPopulation?: number | undefined
+    countryCode?: string | undefined
+    opts?: Record<string, unknown>
 }
 
 export const useCitiesQuery = ({
@@ -61,11 +68,34 @@ export const useCitiesQuery = ({
     
 }
 
-export type CitiesSearchQueryArgs = {
-    query: string
-    minimumPopulation?: number | undefined
-    countryCode?: string | undefined
-    opts?: Record<string, unknown>
+export const useCityQuery = (cityId: ID | null | undefined, opts = {}) => {
+    
+    const { firebaseUser } = useAuth()
+    
+    return useQuery({
+        queryKey: ['cities', cityId],
+        queryFn: async () => {
+            
+            try {
+                
+                const result = await fetchJSON<CitiesWrap>(
+                    `cities/${cityId}`)
+                
+                return result.data
+                
+            } catch (e) {
+                
+                console.error('queries/city', e)
+                throw e
+                
+            }
+            
+        },
+        enabled: !!firebaseUser && !!cityId,
+        retry: 0,
+        ...opts,
+    })
+    
 }
 
 export const useCitiesSearchQuery = (args: CitiesSearchQueryArgs) => {

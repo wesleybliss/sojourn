@@ -9,13 +9,13 @@ const querySchema = z.object({
 })
 
 export const getGeonamesCities = async (
-    _req: Request,
+    req: Request,
     res: Response,
 ): Promise<void> => {
     
     try {
         
-        const { offset, limit } = querySchema.parse(_req.query)
+        const { offset, limit } = querySchema.parse(req.query)
         
         const total = await geonamesCitiesRepo.count()
         

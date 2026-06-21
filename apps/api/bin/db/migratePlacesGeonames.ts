@@ -25,6 +25,15 @@ type PlaceMatch = {
     match: GeonamesCity
 }
 
+const InsertModes = {
+    create: 'create',
+    update: 'update',
+}
+
+type InsertMode = typeof InsertModes[keyof typeof InsertModes]
+
+const INSERT_MODE: InsertMode = InsertModes.update
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const TEMP_PLACES_FILE = path.resolve(__dirname, '../../../../backups/sojourn-places-temp.json')
 
@@ -156,11 +165,11 @@ const createPlacesWithGeoname = async (matches: PlaceMatch[]) => {
     
     try {
         
-        const data: Omit<Place, 'id'>[] = matches.map(it => omit({
+        const data: Place[] = matches.map(it => ({
             ...it.place,
             teamId: 1,
             geonamesCityId: it.match.id,
-        }, ['id']))
+        }))
         
         // return console.log(data)
         
@@ -177,8 +186,25 @@ const createPlacesWithGeoname = async (matches: PlaceMatch[]) => {
         bar?.start(data.length, 0, { place: '(initializing)' })
         
         for (const payload of data) {
-            await placesRepo.create(payload)
+            
+            const { id } = payload
+            const payloadData: Omit<Place, 'id'> = omit(payload, ['id'])
+            
+            switch (INSERT_MODE) {
+                case InsertModes.create: {
+                    await placesRepo.create(payloadData)
+                    break
+                }
+                case InsertModes.update: {
+                    await placesRepo.updateById(id, payloadData)
+                    break
+                }
+                default:
+                    throw new Error(`Invalid INSERT_MODE: ${INSERT_MODE}`)
+            }
+            
             bar?.update(++completed, { place: payload.name })
+            
         }
         
         bar?.stop()
