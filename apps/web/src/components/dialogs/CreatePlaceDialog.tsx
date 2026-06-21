@@ -61,7 +61,7 @@ const CreatePlaceDialog = ({
         
         const parts = query.split(' ')
         
-        if (parts.length === 2 && parts[1].length === 2)
+        if (parts.length === 2 && parts[1].length === 2 && filters.countryCode !== parts[1])
             setFilters(prev => ({
                 ...prev,
                 countryCode: parts[1],
@@ -104,11 +104,11 @@ const CreatePlaceDialog = ({
         <SearchItemsDialog
             open={createPlaceDialogOpen}
             setOpen={setCreatePlaceDialogOpen}
-            title="Create Place"
-            description="Create a saved place card with a generated cover image and planning notes scaffold."
+            title={t('places.components.CreatePlaceDialog.title')}
+            description={t('places.components.CreatePlaceDialog.description')}
             queryFn={queryFn}
-            placeholder="Search city/country/region (e.g. Cartagena, CO)..."
-            submitLabel="Create Place"
+            placeholder={t('places.components.CreatePlaceDialog.inputPlaceholder')}
+            submitLabel={t('places.components.CreatePlaceDialog.submitLabel')}
             onSubmit={async (item: GeonamesCity) => {
                 if (DEBUG) console.log('@todo handle create place', item)
                 else await onConfirm(item)

@@ -9,9 +9,11 @@ import QueryProvider from '@/components/providers/QueryProvider'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import useDebug from '@/hooks/useDebug'
 
-dayjs.extend(advancedFormat)
-
+// Locale support for converting things like country codes to names
 registerLocales()
+
+// Extra DayJS formatting options
+dayjs.extend(advancedFormat)
 
 const App = () => {
     

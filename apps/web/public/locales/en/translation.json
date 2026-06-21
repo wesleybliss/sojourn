@@ -1,3 +1,15 @@
 {
-    "hello": "Hello"
+    "app": {
+        "title": "Sojourn"
+    },
+    "places": {
+        "components": {
+            "CreatePlaceDialog": {
+                "title": "Create Place",
+                "description": "Create a saved place card with a generated cover image and planning notes scaffold.",
+                "inputPlaceholder": "Search city/country/region (e.g. Cartagena, CO)...",
+                "submitLabel": "Create Place"
+            }
+        }
+    }
 }

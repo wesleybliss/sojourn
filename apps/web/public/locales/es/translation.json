@@ -1,3 +1,15 @@
 {
-    "hello": "Hola"
+    "app": {
+        "title": "Sojourn"
+    },
+    "places": {
+        "components": {
+            "CreatePlaceDialog": {
+                "title": "Crear Lugar",
+                "description": "Crea una tarjeta de lugar guardada con una imagen de portada generada y una estructura de notas de planificación.",
+                "inputPlaceholder": "Buscar ciudad/país/región (p. ej., Cartagena, CO)...",
+                "submitLabel": "Crear Lugar"
+            }
+        }
+    }
 }
