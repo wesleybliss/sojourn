@@ -6,6 +6,7 @@ import { ID } from '@shared/types/data.types'
 import { Place, Plan, Segment, Trip } from '@shared/types/database.types'
 import { createPersistedWire } from 'react-wire-persisted'
 
+export const locale = createPersistedWire<string>(keys.locale, 'en')
 export const theme = createPersistedWire<Theme>(keys.theme, 'light')
 
 export const isSidebarExpanded = createPersistedWire<boolean>(keys.isSidebarExpanded, false)

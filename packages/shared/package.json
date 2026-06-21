@@ -40,6 +40,10 @@
             "types": "./src/utils/index.ts",
             "default": "./src/utils/index.ts"
         },
+        "./utils/i18n": {
+            "types": "./src/utils/i18n/index.ts",
+            "default": "./src/utils/i18n/index.ts"
+        },
         "./utils/api": {
             "types": "./src/utils/api/index.ts",
             "default": "./src/utils/api/index.ts"
@@ -71,6 +75,8 @@
         "dayjs": "^1.11.20",
         "firebase": "^12.13.0",
         "firebase-admin": "^13.10.0",
+        "i18n-iso-countries": "^7.14.0",
+        "i18next": "^26.3.1",
         "nanoid": "^5.1.11",
         "pg": "^8.21.0",
         "react-wire-persisted": "^3.1.0",

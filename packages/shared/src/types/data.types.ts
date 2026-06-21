@@ -5,6 +5,8 @@ export type ItemWithId = Record<string, unknown> & { id: ID }
 
 export type ItemWithName = ItemWithId & { name: string }
 
+export type ToNumber<T extends string> = T extends `${infer N extends number}` ? N : never
+
 export type GanttChartItemPrimitive = ItemWithName & { color?: string }
 
 export type SegmentGanttChart = GanttChartItemPrimitive & {

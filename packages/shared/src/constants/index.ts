@@ -9,6 +9,7 @@ export const NS = APP_SLUG
 
 //
 
+key('locale')
 key('theme')
 key('isSidebarExpanded')
 

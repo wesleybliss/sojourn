@@ -1,7 +1,8 @@
 import { ItemWithId } from '@repo/shared/types/data.types'
 import { UseQueryResult } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { ReactElement, ReactNode, useEffect, useState } from 'react'
 
+import LoadingSpinner from '@/components/LoadingSpinner'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -27,7 +28,9 @@ interface SearchItemsDialogProps<T extends ItemWithId> {
     submitLabel?: string
     onSubmit?: (value: T) => Promise<void>
     getItemKey?: (item: T) => string | number
-    renderItem: (item: T) => React.ReactNode
+    formatQuery?: (query: string) => string
+    renderInput?: (inputField: ReactElement) => ReactNode
+    renderItem: (item: T) => ReactNode
 }
 
 const SearchItemsDialog = <T extends ItemWithId,>({
@@ -41,6 +44,8 @@ const SearchItemsDialog = <T extends ItemWithId,>({
     submitLabel = 'submit',
     onSubmit = async (_value: T) => {},
     getItemKey = (item: T) => item.id,
+    formatQuery,
+    renderInput,
     renderItem,
 }: SearchItemsDialogProps<T>) => {
     
@@ -51,11 +56,10 @@ const SearchItemsDialog = <T extends ItemWithId,>({
     
     const {
         data,
-        isPending,
-        isLoading,
+        isFetching,
         isError,
         error,
-    } = queryFn(debouncedQuery)
+    } = queryFn(formatQuery?.(debouncedQuery) ?? debouncedQuery)
     
     useEffect(() => {
         
@@ -65,6 +69,17 @@ const SearchItemsDialog = <T extends ItemWithId,>({
         setValue(null)
         
     }, [open])
+    
+    const inputField = (
+        <Input
+            id="searchItemsDialogQueryInput"
+            name="searchItemsDialogQueryInput"
+            type="text"
+            placeholder={placeholder}
+            value={query}
+            autoComplete="off"
+            onChange={e => setQuery(e.target.value)} />
+    )
     
     return (
         
@@ -85,21 +100,12 @@ const SearchItemsDialog = <T extends ItemWithId,>({
                 
                 <div className="space-y-3">
                     
-                    <div className="">
-                        <Input
-                            id="searchItemsDialogQueryInput"
-                            name="searchItemsDialogQueryInput"
-                            type="text"
-                            placeholder={placeholder}
-                            value={query}
-                            autoComplete="off"
-                            onChange={e => setQuery(e.target.value)} />
-                    </div>
+                    {renderInput?.(inputField) || inputField}
                     
                     <div className="max-h-64 overflow-y-auto border rounded-md">
-                        {(isPending || isLoading) && (
+                        {isFetching && (
                             <div className="p-4 text-center text-muted-foreground">
-                                Loading...
+                                <LoadingSpinner className="mx-auto" centered={false} />
                             </div>
                         )}
                         
@@ -109,7 +115,7 @@ const SearchItemsDialog = <T extends ItemWithId,>({
                             </div>
                         )}
                         
-                        {data && data.length === 0 && query && (
+                        {!isFetching && data && data.length === 0 && query && (
                             <div className="p-4 text-center text-muted-foreground">
                                 No results found
                             </div>

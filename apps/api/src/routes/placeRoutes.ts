@@ -9,7 +9,7 @@ import { getPlaces } from '#handlers/places/getPlaces'
 import { updatePlace } from '#handlers/places/updatePlace'
 import { asyncHandler } from '#handlers/utils/asyncHandler'
 
-const router = express.Router()
+const router = express.Router({ mergeParams: true })
 
 router.use(middleware.authentication)
 

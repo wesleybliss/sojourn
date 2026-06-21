@@ -1,3 +1,4 @@
+import { registerLocales } from '@shared/utils/i18n'
 import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 import * as rwp from 'react-wire-persisted'
@@ -9,6 +10,8 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import useDebug from '@/hooks/useDebug'
 
 dayjs.extend(advancedFormat)
+
+registerLocales()
 
 const App = () => {
     

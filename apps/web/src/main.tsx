@@ -1,5 +1,6 @@
 import '@/routes/globals.css'
 import '@/lib/styles/gantt.css'
+import '@/lib/i18n'
 
 import { NS } from '@repo/shared/constants'
 import { StrictMode } from 'react'
