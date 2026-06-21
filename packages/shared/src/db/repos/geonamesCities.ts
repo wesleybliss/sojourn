@@ -151,7 +151,7 @@ export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof sc
             // countryCode is varchar(2); use eq so the BTree / partial composite
             // index on (countryCode, population) can be used. Wrapping in
             // ILIKE '%US%' would defeat the index and force a seq scan.
-            conditions.push(eq(this.schema.countryCode, countryCode))
+            conditions.push(eq(this.schema.countryCode, countryCode.toUpperCase()))
         }
         
         return this.db

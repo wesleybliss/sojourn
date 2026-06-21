@@ -1,7 +1,7 @@
 import { useWireState } from '@forminator/react-wire'
 import { GeonamesCity, ToNumber } from '@repo/shared/types'
 import { getCountryNameFromCode } from '@shared/utils/i18n'
-import { ReactElement, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import SearchItemsDialog from '@/components/dialogs/SearchItemsDialog'
@@ -57,19 +57,28 @@ const CreatePlaceDialog = ({
     
     const queryFn = useCitiesSearch(filters)
     
+    const [debouncedQuerySnapshot, setDebouncedQuerySnapshot] = useState<string>('')
+    
     const formatQuery = (query: string) => {
         
         const parts = query.split(' ')
         
-        if (parts.length === 2 && parts[1].length === 2 && filters.countryCode !== parts[1])
-            setFilters(prev => ({
-                ...prev,
-                countryCode: parts[1],
-            }))
+        if (parts.length === 2 && parts[1].length === 2)
+            return parts[0]
         
         return query
         
     }
+    
+    useEffect(() => {
+        
+        const parts = debouncedQuerySnapshot.split(' ')
+        
+        if (parts.length === 2 && parts[1].length === 2)
+            setFilters(prev => prev.countryCode === parts[1]
+                ? prev : { ...prev, countryCode: parts[1] })
+        
+    }, [debouncedQuerySnapshot])
     
     const renderInput = (inputField: ReactElement) => (
         <div className="flex items-center gap-2">
@@ -114,19 +123,13 @@ const CreatePlaceDialog = ({
                 else await onConfirm(item)
             }}
             formatQuery={formatQuery}
+            onQueryChange={setDebouncedQuerySnapshot}
             renderInput={renderInput}
             renderItem={(item: GeonamesCity) => (
                 <div className="flex items-center justify-between gap-2 w-full px-2 py-1">
                     <div className="">
                         {item.name}
                     </div>
-                    {/*<div className="text-xs text-end">
-                        {item.countryCode && (<>
-                            {getCountryNameFromCode(item.countryCode, i18n.language)}
-                            <br />
-                        </>)}
-                        {item.timezone}
-                    </div>*/}
                     <div className="flex flex-col gap-1 text-end">
                         {item.countryCode && (
                             <span className="text-sm">

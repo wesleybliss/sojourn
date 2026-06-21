@@ -29,6 +29,8 @@ interface SearchItemsDialogProps<T extends ItemWithId> {
     onSubmit?: (value: T) => Promise<void>
     getItemKey?: (item: T) => string | number
     formatQuery?: (query: string) => string
+    onQueryChange?: (debouncedQuery: string) => void
+    debounceDelayMillis?: number
     renderInput?: (inputField: ReactElement) => ReactNode
     renderItem: (item: T) => ReactNode
 }
@@ -45,6 +47,8 @@ const SearchItemsDialog = <T extends ItemWithId,>({
     onSubmit = async (_value: T) => {},
     getItemKey = (item: T) => item.id,
     formatQuery,
+    onQueryChange,
+    debounceDelayMillis = 500,
     renderInput,
     renderItem,
 }: SearchItemsDialogProps<T>) => {
@@ -52,7 +56,7 @@ const SearchItemsDialog = <T extends ItemWithId,>({
     const [query, setQuery] = useState<string>('')
     const [value, setValue] = useState<T | null>(null)
     
-    const debouncedQuery = useDebounce(query, 300)
+    const debouncedQuery = useDebounce(query, debounceDelayMillis)
     
     const {
         data,
@@ -60,6 +64,10 @@ const SearchItemsDialog = <T extends ItemWithId,>({
         isError,
         error,
     } = queryFn(formatQuery?.(debouncedQuery) ?? debouncedQuery)
+    
+    useEffect(() => {
+        onQueryChange?.(debouncedQuery)
+    }, [debouncedQuery, onQueryChange])
     
     useEffect(() => {
         
