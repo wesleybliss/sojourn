@@ -52,6 +52,7 @@ const SearchItemsDialog = <T extends ItemWithId,>({
     const {
         data,
         isPending,
+        isLoading,
         isError,
         error,
     } = queryFn(debouncedQuery)
@@ -96,7 +97,7 @@ const SearchItemsDialog = <T extends ItemWithId,>({
                     </div>
                     
                     <div className="max-h-64 overflow-y-auto border rounded-md">
-                        {isPending && (
+                        {(isPending || isLoading) && (
                             <div className="p-4 text-center text-muted-foreground">
                                 Loading...
                             </div>

@@ -11,7 +11,7 @@ const router = express.Router()
 router.use(middleware.authentication)
 
 router.get('/', asyncHandler(getGeonamesCities))
-router.get('/:id', asyncHandler(getGeonamesCity))
 router.get('/search', asyncHandler(searchGeonamesCities))
+router.get('/:id', asyncHandler(getGeonamesCity))
 
 export default router
