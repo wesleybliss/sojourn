@@ -141,12 +141,17 @@ export class GeonamesCitiesRepository extends Repository<GeonamesCity, typeof sc
             or(
                 ilike(this.schema.name, pattern),
                 ilike(this.schema.asciiName, pattern),
+                // Match against alternate names so e.g. searching "Venice" finds
+                // "Venezia". Backed by idx_geonames_alternate_names_gin.
+                ilike(this.schema.alternateNames, pattern),
             ),
         ]
         
         if (countryCode?.length) {
-            const countryCodePattern = `%${countryCode}%`
-            conditions.push(ilike(this.schema.countryCode, countryCodePattern))
+            // countryCode is varchar(2); use eq so the BTree / partial composite
+            // index on (countryCode, population) can be used. Wrapping in
+            // ILIKE '%US%' would defeat the index and force a seq scan.
+            conditions.push(eq(this.schema.countryCode, countryCode))
         }
         
         return this.db

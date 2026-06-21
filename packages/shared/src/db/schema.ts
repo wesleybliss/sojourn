@@ -1,4 +1,5 @@
 import { createTablePostgres, lower, postgresOptsCascadeAll, timestampPostgres } from '@repo/shared/db/utils'
+import { sql } from 'drizzle-orm'
 import { bigint, boolean, index, integer, primaryKey, real, text, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
 
 export const users = createTablePostgres('users', {
@@ -76,17 +77,27 @@ export const geonamesCities = createTablePostgres('geonamesCities', {
     timezone: varchar('timezone', { length: 40 }),
     /*modificationDate: text('modificationDate'),*/
 }, table => [
-    // Regular indexes for SQLite
-    index('idx_geonames_name').on(table.name),
-    index('idx_geonames_ascii_name').on(table.asciiName),
+    // Note: idx_geonames_name / idx_geonames_ascii_name (BTree) were dropped because
+    // BTree indexes cannot speed up ILIKE '%term%' searches. The GIN trigram indexes
+    // (idx_geonames_name_gin, idx_geonames_ascii_name_gin) created in the
+    // postgres-init migration handle that case.
+    // Note: idx_geonames_alternate_names (BTree) was dropped for the same reason;
+    // the GIN trigram index idx_geonames_alternate_names_gin handles ILIKE.
     index('idx_geonames_country_code').on(table.countryCode),
     index('idx_geonames_population').on(table.population),
     
-    // Keep for reference: alternate names exceed btree size, so don't use this
-    // index('idx_geonames_alternate_names').on(table.alternateNames),
-    
     // Composite index for common query patterns
     index('idx_country_population').on(table.countryCode, table.population),
+    
+    // Partial composite index optimized for the searchCitiesGIN query:
+    //   WHERE featureClass IN ('A','P') AND countryCode = $1 AND population >= $2
+    // Partial because the vast majority of useful cities have featureClass A or P,
+    // so this shrinks the index and lets Postgres skip the featureClass filter
+    // at runtime. Dropped in favor of BTree with DESC if ORDER BY population DESC
+    // becomes a bottleneck at scale.
+    index('idx_geonames_search_partial')
+        .on(table.countryCode, table.population)
+        .where(sql`${table.featureClass} IN ('A', 'P')`),
 ])
 
 // @todo higher level "org" to keep places under
