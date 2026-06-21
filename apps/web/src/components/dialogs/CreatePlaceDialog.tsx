@@ -48,6 +48,7 @@ const CreatePlaceDialog = ({
     
     const [createPlaceDialogOpen, setCreatePlaceDialogOpen] = useWireState(store.createPlaceDialogOpen)
     
+    const [debouncedQuerySnapshot, setDebouncedQuerySnapshot] = useState<string>('')
     const [filters, setFilters] = useState<CreatePlaceDialogFilters>({
         countryCode: undefined,
         minimumPopulation: 5000,
@@ -56,8 +57,6 @@ const CreatePlaceDialog = ({
     const { t, i18n } = useTranslation()
     
     const queryFn = useCitiesSearch(filters)
-    
-    const [debouncedQuerySnapshot, setDebouncedQuerySnapshot] = useState<string>('')
     
     const formatQuery = (query: string) => {
         
