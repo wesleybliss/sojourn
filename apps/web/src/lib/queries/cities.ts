@@ -78,7 +78,7 @@ export const useCityQuery = (cityId: ID | null | undefined, opts = {}) => {
             
             try {
                 
-                const result = await fetchJSON<CitiesWrap>(
+                const result = await fetchJSON<GeonamesCity>(
                     `cities/${cityId}`)
                 
                 return result.data

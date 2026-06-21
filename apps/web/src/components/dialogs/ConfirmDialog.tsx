@@ -18,7 +18,7 @@ interface ConfirmDialogProps {
     trigger?: ReactNode | JSX.Element | null
     title: string
     message?: string
-    cancelLabel?: string
+    cancelLabel?: string | null
     onCancel?: (() => void) | MouseEventHandler<HTMLButtonElement> | null
     confirmLabel: string
     confirmProps?: Record<string, unknown>
@@ -77,7 +77,7 @@ const ConfirmDialog = ({
                 )}
                 
                 <DialogFooter className="justify-end">
-                    {onCancel && (
+                    {cancelLabel !== null && onCancel && (
                         <DialogClose asChild>
                             <Button type="button" variant="secondary" onClick={onCancel}>
                                 {cancelLabel || 'Cancel'}
