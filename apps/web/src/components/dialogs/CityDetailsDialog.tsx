@@ -8,9 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { useCityQuery } from '@/lib/queries/cities'
 import * as store from '@/store'
 
-const CityDetailsDialog = ({
-    
-}) => {
+const CityDetailsDialog = () => {
     
     const [cityDetailsDialogCityId, setCityDetailsDialogCityId] = useWireState(store.cityDetailsDialogCityId)
     
