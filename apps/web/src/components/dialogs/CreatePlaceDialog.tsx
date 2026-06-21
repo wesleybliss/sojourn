@@ -2,6 +2,7 @@ import { useWireState } from '@forminator/react-wire'
 import type { GeonamesCity, ToNumber } from '@repo/shared/types'
 import { getCountryNameFromCode } from '@shared/utils/i18n'
 import { ReactElement, useEffect, useState } from 'react'
+import ReactCountryFlag from 'react-country-flag'
 import { useTranslation } from 'react-i18next'
 
 import SearchItemsDialog from '@/components/dialogs/SearchItemsDialog'
@@ -113,10 +114,10 @@ const CreatePlaceDialog = ({
             open={createPlaceDialogOpen}
             setOpen={setCreatePlaceDialogOpen}
             title={t($ => $.places.components.CreatePlaceDialog.title)}
-            description={t('places.components.CreatePlaceDialog.description')}
+            description={t($ => $.places.components.CreatePlaceDialog.description)}
             queryFn={queryFn}
-            placeholder={t('places.components.CreatePlaceDialog.inputPlaceholder')}
-            submitLabel={t('places.components.CreatePlaceDialog.submitLabel')}
+            placeholder={t($ => $.places.components.CreatePlaceDialog.inputPlaceholder)}
+            submitLabel={t($ => $.places.components.CreatePlaceDialog.submitLabel)}
             onSubmit={async (item: GeonamesCity) => {
                 if (DEBUG) console.log('@todo handle create place', item)
                 else await onConfirm(item)
@@ -125,8 +126,8 @@ const CreatePlaceDialog = ({
             onQueryChange={setDebouncedQuerySnapshot}
             renderInput={renderInput}
             renderItem={(item: GeonamesCity) => (
-                <div className="flex items-center justify-between gap-2 w-full px-2 py-1">
-                    <div className="">
+                <div className="flex items-center justify-between gap-3 w-full px-2 py-1">
+                    <div className="grow">
                         {item.name}
                     </div>
                     <div className="flex flex-col gap-1 text-end">
@@ -138,6 +139,18 @@ const CreatePlaceDialog = ({
                         )}
                         <span className="text-xs">{item.timezone}</span>
                     </div>
+                    {item.countryCode && (
+                        <div className="flex flex-col justify-center
+                            border border-primary/10 rounded-full size-12 text-center">
+                            <ReactCountryFlag
+                                className="text-center"
+                                countryCode={item.countryCode}
+                                style={{
+                                    fontSize: '1.5em',
+                                    lineHeight: '2em',
+                                }} />
+                        </div>
+                    )}
                 </div>
             )} />
         
