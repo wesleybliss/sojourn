@@ -3,6 +3,7 @@ import { CirclePlus } from 'lucide-react'
 import { useCallback, useState } from 'react'
 import { toast } from 'sonner'
 
+import PlaceDetailsFields from '@/components/dialogs/EditPlaceDialog/PlaceDetailsFields'
 import PlaceNoteField from '@/components/dialogs/EditPlaceDialog/PlaceNoteField'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,12 +15,10 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Spinner } from '@/components/ui/spinner'
-import { Textarea } from '@/components/ui/textarea'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import useUpdatePlaceForm, { UpdatePlaceForm, updatePlaceFormSchema } from '@/hooks/forms/useUpdatePlaceForm'
+import useUpdatePlaceForm, { UpdatePlaceForm } from '@/hooks/forms/useUpdatePlaceForm'
 import { useUpdatePlace } from '@/lib/queries/places'
 import * as store from '@/store'
 
@@ -89,73 +88,7 @@ const EditPlaceDialog = () => {
                     }}>
                     
                     <div className="col-span-5 space-y-6">
-                        
-                        <div className="space-y-0">
-                            <form.Field
-                                name="name"
-                                validators={{
-                                    onChange: updatePlaceFormSchema.shape.name,
-                                }}>
-                                {field => (
-                                    <div className="space-y-2">
-                                        <Label htmlFor="name">
-                                            Name
-                                        </Label>
-                                        <Input
-                                            type="text"
-                                            name="name"
-                                            value={field.state.value}
-                                            onChange={e => field.handleChange(e.target.value)}
-                                            onBlur={field.handleBlur} />
-                                    </div>
-                                )}
-                            </form.Field>
-                            <p className="p-2 text-muted-foreground text-sm">
-                                <i>Note: changing the default place name is not recommended.</i>
-                            </p>
-                        </div>
-                        
-                        <form.Field
-                            name="coverImageUrl"
-                            validators={{
-                                onChange: updatePlaceFormSchema.shape.coverImageUrl,
-                            }}>
-                            {field => (
-                                <div className="space-y-2">
-                                    <Label htmlFor="coverImageUrl">
-                                        Cover Image
-                                    </Label>
-                                    <Input
-                                        type="text"
-                                        name="coverImageUrl"
-                                        value={field.state.value}
-                                        onChange={e => field.handleChange(e.target.value)}
-                                        onBlur={field.handleBlur}
-                                        disabled />
-                                </div>
-                            )}
-                        </form.Field>
-                        
-                        <form.Field
-                            name="focus"
-                            validators={{
-                                onChange: updatePlaceFormSchema.shape.focus,
-                            }}>
-                            {field => (
-                                <div className="space-y-2">
-                                    <Label htmlFor="focus">
-                                        Focus
-                                    </Label>
-                                    <Textarea
-                                        className="h-40"
-                                        name="focus"
-                                        value={field.state.value}
-                                        onChange={e => field.handleChange(e.target.value)}
-                                        onBlur={field.handleBlur} />
-                                </div>
-                            )}
-                        </form.Field>
-                    
+                        <PlaceDetailsFields form={form} />
                     </div>
                     
                     <div className="col-span-1 flex justify-center">
