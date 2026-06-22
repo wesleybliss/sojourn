@@ -2,7 +2,7 @@ import { Place, placeNoteInsertSchema } from '@repo/shared/types'
 import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
 
-const placeNoteFormSchema = placeNoteInsertSchema.extend({
+export const placeNoteFormSchema = placeNoteInsertSchema.extend({
     placeId: placeNoteInsertSchema.shape.placeId.optional(),
 })
 
