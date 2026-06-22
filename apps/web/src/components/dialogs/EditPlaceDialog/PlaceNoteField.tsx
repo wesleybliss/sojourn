@@ -4,7 +4,6 @@ import { memo } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import useUpdatePlaceForm, { placeNoteFormSchema } from '@/hooks/forms/useUpdatePlaceForm'
@@ -22,11 +21,14 @@ const PlaceNoteField = memo(({
     return (
         
         <div className="space-y-3">
+            
             {(field.state.value ?? []).map((_: unknown, index: number) => (
+                
                 <div
                     key={`notes[${index}]`}
                     className="space-y-2 rounded-md border bg-muted/30 p-3">
                     <div className="flex items-end gap-2">
+                        
                         <form.Field
                             name={`notes[${index}].name`}
                             validators={{
@@ -34,9 +36,6 @@ const PlaceNoteField = memo(({
                             }}>
                             {subfield => (
                                 <div className="flex-1 space-y-1">
-                                    <Label htmlFor={`notes[${index}].name`}>
-                                        Name
-                                    </Label>
                                     <Input
                                         id={`notes[${index}].name`}
                                         type="text"
@@ -47,6 +46,7 @@ const PlaceNoteField = memo(({
                                 </div>
                             )}
                         </form.Field>
+                        
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <Button
@@ -61,7 +61,9 @@ const PlaceNoteField = memo(({
                                 Remove note
                             </TooltipContent>
                         </Tooltip>
+                    
                     </div>
+                    
                     <form.Field
                         name={`notes[${index}].content`}
                         validators={{
@@ -69,11 +71,9 @@ const PlaceNoteField = memo(({
                         }}>
                         {subfield => (
                             <div className="space-y-1">
-                                <Label htmlFor={`notes[${index}].content`}>
-                                    Content
-                                </Label>
                                 <Textarea
                                     id={`notes[${index}].content`}
+                                    className="h-40"
                                     placeholder="Note details..."
                                     value={subfield.state.value ?? ''}
                                     onChange={e => subfield.handleChange(e.target.value)}
@@ -81,8 +81,11 @@ const PlaceNoteField = memo(({
                             </div>
                         )}
                     </form.Field>
+                
                 </div>
+                
             ))}
+        
         </div>
         
     )

@@ -69,7 +69,7 @@ const EditPlaceDialog = () => {
             open={updatePlaceDialogPlace !== null}
             onOpenChange={(open: boolean) => !open && onCancel()}>
             
-            <DialogContent className="sm:max-w-8/12 max-h-[80vh] overflow-hidden">
+            <DialogContent className="sm:max-w-9/12 max-h-[80vh] overflow-hidden">
                 
                 <DialogHeader>
                     <DialogTitle>
@@ -81,7 +81,7 @@ const EditPlaceDialog = () => {
                 </DialogHeader>
                 
                 <form
-                    className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-h-full overflow-y-auto mt-4"
+                    className="grid grid-cols-1 lg:grid-cols-12 max-h-full overflow-y-auto mt-4"
                     onSubmit={e => {
                         e.preventDefault()
                         e.stopPropagation()
@@ -158,27 +158,16 @@ const EditPlaceDialog = () => {
                     
                     </div>
                     
-                    <div className="col-span-7 max-h-[50vh] overflow-y-auto pr-2">
+                    <div className="col-span-1 flex justify-center">
+                        <div className="w-px bg-muted h-full" />
+                    </div>
+                    
+                    <div className="col-span-6 max-h-[45vh] overflow-y-auto pr-4 pb-4">
                         <form.Field name="notes" mode="array">
-                            {field => (
+                            {field => (<>
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between gap-2">
                                         <Label>Notes</Label>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <Button
-                                                    type="button"
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => field.pushValue({ name: '', content: '' })}>
-                                                    <CirclePlus data-icon="inline-start" />
-                                                    Add Note
-                                                </Button>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                Add a new note
-                                            </TooltipContent>
-                                        </Tooltip>
                                     </div>
                                     {(field.state.value ?? []).length > 0 && (
                                         <PlaceNoteField
@@ -186,7 +175,24 @@ const EditPlaceDialog = () => {
                                             field={field} />
                                     )}
                                 </div>
-                            )}
+                                <div className="flex justify-end mt-4">
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => field.pushValue({ name: '', content: '' })}>
+                                                <CirclePlus data-icon="inline-start" />
+                                                Add Note
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            Add a new note
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </div>
+                            </>)}
                         </form.Field>
                     </div>
                 
