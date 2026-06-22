@@ -1,8 +1,9 @@
 import { useWire } from '@forminator/react-wire'
 import { ListViewMode, ListViewModes, Place } from '@repo/shared/types'
-import { Bookmark, BookmarkCheck, Building2, CalendarRange, MapPinned } from 'lucide-react'
+import { Bookmark, BookmarkCheck, Building2, CalendarRange, MapPinned, NotebookPen } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import * as store from '@/store'
 import { cn } from '@/utils'
 
@@ -21,6 +22,7 @@ const PlacesPagePlacesGridItemContent = ({
 }: PlacesPagePlacesGridItemContentProps) => {
     
     const cityDetailsDialogCityId = useWire(store.cityDetailsDialogCityId)
+    const updatePlaceDialogPlace = useWire(store.updatePlaceDialogPlace)
     
     return (
         
@@ -42,22 +44,50 @@ const PlacesPagePlacesGridItemContent = ({
                     </h2>
                 </div>
                 <div className="flex items-center justify-end gap-2">
-                    <Button
-                        className="rounded-full"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => cityDetailsDialogCityId.setValue(place.geonamesCityId)}>
-                        <Building2 />
-                    </Button>
-                    <Button
-                        className="rounded-full"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => toggleBookmark(place)}>
-                        {place.isBookmarked
-                            ? <BookmarkCheck className="size-5 text-primary" />
-                            : <Bookmark className="size-5 text-muted-foreground" />}
-                    </Button>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                className="rounded-full"
+                                variant="outline"
+                                size="icon"
+                                onClick={() => cityDetailsDialogCityId.setValue(place.geonamesCityId)}>
+                                <Building2 />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom">
+                            Region Details
+                        </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                className="rounded-full"
+                                variant="outline"
+                                size="icon"
+                                onClick={() => updatePlaceDialogPlace.setValue(place)}>
+                                <NotebookPen />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom">
+                            Edit Place
+                        </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                className="rounded-full"
+                                variant="outline"
+                                size="icon"
+                                onClick={() => toggleBookmark(place)}>
+                                {place.isBookmarked
+                                    ? <BookmarkCheck className="size-5 text-primary" />
+                                    : <Bookmark className="size-5 text-muted-foreground" />}
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom">
+                            Bookmark Place
+                        </TooltipContent>
+                    </Tooltip>
                 </div>
             </div>
             

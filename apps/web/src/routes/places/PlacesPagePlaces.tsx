@@ -1,6 +1,7 @@
 import { ID, ListViewMode, ListViewModes, Place } from '@repo/shared/types'
 import { memo } from 'react'
 
+import EditPlaceDialog from '@/components/dialogs/EditPlaceDialog'
 import { Checkbox } from '@/components/ui/checkbox'
 import PlacesPagePlacesGridItemContent from '@/routes/places/PlacesPagePlacesGridItemContent'
 import PlacesPagePlacesGridItemCoverImage from '@/routes/places/PlacesPagePlacesGridItemCoverImage'
@@ -37,8 +38,11 @@ const PlacesPagePlaces = memo(({
         </div>
     )
     
-    if (placesListViewMode === ListViewModes.listCompact) return (
+    if (placesListViewMode === ListViewModes.listCompact ||
+        placesListViewMode === ListViewModes.list) return (
+        
         <section className="section-card space-y-3">
+            
             {filteredPlaces.map(place => {
                 
                 const segmentCount = getSegmentCountForPlace(place)
@@ -69,42 +73,11 @@ const PlacesPagePlaces = memo(({
                 )
                 
             })}
+            
+            <EditPlaceDialog />
+        
         </section>
-    )
-    
-    if (placesListViewMode === ListViewModes.list) return (
-        <section className="section-card space-y-3">
-            {filteredPlaces.map(place => {
-                
-                const segmentCount = getSegmentCountForPlace(place)
-                
-                return (
-                    
-                    <article key={place.id} className="flex items-start gap-4 p-4 border rounded-md">
-                        
-                        <Checkbox
-                            checked={hasChecked(place.id)}
-                            onCheckedChange={() => toggleChecked(place.id)} />
-                        
-                        <div className="flex-1 flex items-start gap-2">
-                            
-                            <PlacesPagePlacesGridItemCoverImage
-                                place={place}
-                                listViewMode={placesListViewMode} />
-                            
-                            <PlacesPagePlacesGridItemContent
-                                place={place}
-                                segmentCount={segmentCount}
-                                listViewMode={placesListViewMode}
-                                toggleBookmark={toggleBookmark}/>
-                        
-                        </div>
-                    
-                    </article>
-                )
-                
-            })}
-        </section>
+        
     )
     
     return (
@@ -136,6 +109,8 @@ const PlacesPagePlaces = memo(({
                     
                 )
             })}
+            
+            <EditPlaceDialog />
         
         </section>
         
