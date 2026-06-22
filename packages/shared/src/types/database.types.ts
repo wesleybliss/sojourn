@@ -108,9 +108,19 @@ export type SegmentInsert = {
 
 export const placeSelectSchema = createSelectSchema(schemas.places)
 export const placeInsertSchema = createInsertSchema(schemas.places)
-export type Place = InferSelectModel<typeof schemas.places>
-export type PlaceSelect = z.infer<typeof placeSelectSchema>
+export type Place = InferSelectModel<typeof schemas.places> & {
+    notes?: InferSelectModel<typeof schemas.placeNotes>[]
+}
 export type PlaceInsert = z.infer<typeof placeInsertSchema>
+export type PlaceSelect = z.infer<typeof placeSelectSchema> & {
+    notes?: PlaceNote[]
+}
+
+export const placeNoteSelectSchema = createSelectSchema(schemas.placeNotes)
+export const placeNoteInsertSchema = createInsertSchema(schemas.placeNotes)
+export type PlaceNote = InferSelectModel<typeof schemas.placeNotes>
+export type PlaceNoteInsert = z.infer<typeof placeNoteInsertSchema>
+export type PlaceNoteSelect = z.infer<typeof placeNoteSelectSchema>
 
 export const geonamesCitySelectSchema = createSelectSchema(schemas.geonamesCities)
 export const geonamesCityInsertSchema = createInsertSchema(schemas.geonamesCities)

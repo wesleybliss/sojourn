@@ -1,6 +1,10 @@
-import { Place } from '@repo/shared/types'
+import { Place, placeNoteInsertSchema } from '@repo/shared/types'
 import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
+
+const placeNoteFormSchema = placeNoteInsertSchema.extend({
+    placeId: placeNoteInsertSchema.shape.placeId.optional(),
+})
 
 export const updatePlaceFormSchema = z.object({
     name: z.string()
@@ -8,10 +12,7 @@ export const updatePlaceFormSchema = z.object({
         .max(20, 'Name must be at most 32 characters'),
     coverImageUrl: z.string().optional(),
     focus: z.string().optional(),
-    quickTip: z.string().optional(),
-    personalNotes: z.string().optional(),
-    region: z.string().optional(),
-    travelWindow: z.string().optional(),
+    notes: z.array(placeNoteFormSchema).optional(),
 })
 
 export type UpdatePlaceForm = z.infer<typeof updatePlaceFormSchema>
@@ -24,12 +25,9 @@ const useUpdatePlaceForm = (
     return useForm({
         defaultValues: {
             name: currentPlace?.name,
-            coverImageUrl: currentPlace?.coverImageUrl,
-            focus: currentPlace?.focus,
-            quickTip: currentPlace?.quickTip,
-            personalNotes: currentPlace?.personalNotes,
-            region: currentPlace?.region,
-            travelWindow: currentPlace?.travelWindow,
+            coverImageUrl: currentPlace?.coverImageUrl ?? '',
+            focus: currentPlace?.focus ?? '',
+            notes: currentPlace?.notes ?? [],
         } as UpdatePlaceForm,
         validators: {
             onChange: updatePlaceFormSchema,

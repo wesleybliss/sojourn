@@ -16,7 +16,7 @@ export const getPlaces = async (
         
         const { teamId } = paramsSchema.parse(req.params)
         
-        const places = await placesRepo.findAllBy('teamId', teamId)
+        const places = await placesRepo.findAllByTeamId(teamId)
         
         return apiResponse.ok(res, places)
         

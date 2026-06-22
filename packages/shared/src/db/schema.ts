@@ -100,7 +100,6 @@ export const geonamesCities = createTablePostgres('geonamesCities', {
         .where(sql`${table.featureClass} IN ('A', 'P')`),
 ])
 
-// @todo higher level "org" to keep places under
 // When adding a place, some info is copied from the `geonamesCities` table
 // Aside from that, the user can also create arbitrary named places
 export const places = createTablePostgres('places', {
@@ -114,6 +113,14 @@ export const places = createTablePostgres('places', {
     isBookmarked: boolean('isBookmarked').default(false).notNull(),
 }, table => [
     uniqueIndex('places_teamId_geonamesCityId_idx').on(table.teamId, table.geonamesCityId),
+])
+
+export const placeNotes = createTablePostgres('placeNotes', {
+    placeId: integer('placeId').notNull().references(() => places.id, postgresOptsCascadeAll),
+    name: text('name').notNull(),
+    content: text('content').notNull(),
+}, table => [
+    index('placeNotes_placeId_updatedAt_idx').on(table.placeId, table.updatedAt.desc()),
 ])
 
 /*
