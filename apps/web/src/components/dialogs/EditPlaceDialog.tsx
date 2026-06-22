@@ -151,7 +151,8 @@ const EditPlaceDialog = () => {
                         )}
                     </form.Field>
                     
-                    {/* TODO: fields for `updatePlaceFormSchema.shape.notes` array with option to add or delete them. */}
+                    {/* TODO: fields for `updatePlaceFormSchema.shape.notes` 
+                    array with option to add or delete them. */}
                 
                 </form>
                 

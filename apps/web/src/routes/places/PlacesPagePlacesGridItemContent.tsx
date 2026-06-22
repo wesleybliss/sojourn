@@ -136,7 +136,7 @@ const PlacesPagePlacesGridItemContent = ({
                     <span className="inline-flex items-center gap-2 rounded-full
                         border border-border/70 px-3 py-1.5 text-muted-foreground">
                         <CalendarRange className="size-4" />
-                        {place.travelWindow || 'Window TBD'}
+                        {'Window TBD'}
                     </span>
                 </div>
             )}

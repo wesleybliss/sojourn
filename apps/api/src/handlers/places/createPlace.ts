@@ -8,10 +8,6 @@ const bodySchema = z.object({
     geonamesCityId: z.coerce.number(),
     name: z.coerce.string(),
     focus: z.coerce.string(),
-    quickTip: z.coerce.string(),
-    personalNotes: z.coerce.string(),
-    region: z.coerce.string(),
-    travelWindow: z.coerce.string(),
     isBookmarked: z.coerce.boolean(),
 })
 
@@ -29,10 +25,6 @@ export const createPlace = async (
             geonamesCityId,
             name,
             focus,
-            quickTip,
-            personalNotes,
-            region,
-            travelWindow,
             isBookmarked = false,
         } = bodySchema.parse(req.body)
         
@@ -47,10 +39,6 @@ export const createPlace = async (
             name,
             coverImageUrl,
             focus,
-            quickTip,
-            personalNotes,
-            region,
-            travelWindow,
             isBookmarked,
         })
         

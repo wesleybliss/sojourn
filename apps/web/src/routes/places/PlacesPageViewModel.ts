@@ -176,11 +176,7 @@ const usePlacesPageViewModel = (): TPlacesPageViewModel => {
                 teamId: currentTeamId,
                 geonamesCityId: item.id,
                 name: item.name,
-                region: activeRegion === 'All' ? 'Unassigned' : activeRegion,
                 focus: 'Add a destination focus',
-                quickTip: 'Capture the one thing future-you should remember.',
-                personalNotes: 'Use this card as a planning scratchpad.',
-                travelWindow: dayjs().add(3, 'month').format('MMM YYYY'),
                 isBookmarked: true,
             })
             

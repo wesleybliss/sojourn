@@ -40,7 +40,7 @@ const PlacesPagePlacesGridItemCoverImage = ({
                 <div className="absolute left-4 top-4 rounded-full
                     bg-surface-container-lowest/92 text-[11px] px-3 py-1
                     'font-semibold uppercase tracking-[0.18em] text-foreground">
-                    {place.region || 'Unassigned'}
+                    {'@todo Unassigned'}
                 </div>
             )}
         
