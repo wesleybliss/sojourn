@@ -1,5 +1,5 @@
 import type { ID } from '@shared/types/data.types'
-import type { Place, Team, TripInsert } from '@shared/types/database.types'
+import type { Team, TripInsert } from '@shared/types/database.types'
 import type { Plan, PlanInsert, Segment,Trip } from '@shared/types/database.types'
 
 export type UpdateTeamBody = Partial<Omit<Team, 'createdAt' | 'updatedAt'>> & {
@@ -23,18 +23,6 @@ export type BackupTripsBody = {
     type: 'single' | 'multiple'
     tripId?: number | null
     tripIds?: (number | null)[] | null
-}
-
-export type UpdatePlaceBody = Partial<Place> & {
-    id: ID
-    name?: string | null
-    coverImageUrl?: string | null
-    focus?: string | null
-    quickTip?: string | null
-    personalNotes?: string | null
-    region?: string | null
-    travelWindow?: string | null
-    isBookmarked?: boolean
 }
 
 export type CreatePlanBody = PlanInsert & {

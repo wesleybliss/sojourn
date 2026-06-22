@@ -306,7 +306,7 @@ export const keep = <T extends Record<string, unknown>>(
 
 export const getUpdatePayload = <T extends Record<string, unknown>>(
     control: T,
-    data: T,
+    data: Partial<T>,
     omitKeys: Array<keyof T> = [],
 ) => {
     

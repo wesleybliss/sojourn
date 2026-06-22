@@ -108,8 +108,6 @@ export const places = createTablePostgres('places', {
     name: text('name').notNull(),
     coverImageUrl: text('coverImageUrl'),
     focus: text('focus'),
-    quickTip: text('quickTip'),
-    personalNotes: text('personalNotes'),
     isBookmarked: boolean('isBookmarked').default(false).notNull(),
 }, table => [
     uniqueIndex('places_teamId_geonamesCityId_idx').on(table.teamId, table.geonamesCityId),

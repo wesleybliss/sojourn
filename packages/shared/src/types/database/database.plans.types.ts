@@ -1,5 +1,5 @@
-import * as schemas from '@shared/db/schema'
-import { Segment } from '@shared/types/database/database.segments.types'
+import * as schemas from '@repo/shared/db/schema'
+import { Segment } from '@repo/shared/types/database/database.segments.types'
 import type { InferSelectModel } from 'drizzle-orm'
 import { createInsertSchema, createSelectSchema } from 'drizzle-orm/zod'
 import { z } from 'zod'

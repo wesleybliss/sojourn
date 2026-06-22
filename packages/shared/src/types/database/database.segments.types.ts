@@ -1,4 +1,4 @@
-import * as schemas from '@shared/db/schema'
+import * as schemas from '@repo/shared/db/schema'
 import type { InferSelectModel } from 'drizzle-orm'
 import { createInsertSchema, createSelectSchema } from 'drizzle-orm/zod'
 import { z } from 'zod'

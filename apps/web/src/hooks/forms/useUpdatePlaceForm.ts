@@ -3,7 +3,7 @@ import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
 
 export const placeNoteFormSchema = placeNoteInsertSchema.extend({
-    placeId: placeNoteInsertSchema.shape.placeId.optional(),
+    placeId: placeNoteInsertSchema.shape.placeId,
 })
 
 export const updatePlaceFormSchema = z.object({
@@ -12,7 +12,7 @@ export const updatePlaceFormSchema = z.object({
         .max(20, 'Name must be at most 32 characters'),
     coverImageUrl: z.string().optional(),
     focus: z.string().optional(),
-    notes: z.array(placeNoteFormSchema).optional(),
+    notes: z.array(placeNoteFormSchema),
 })
 
 export type UpdatePlaceForm = z.infer<typeof updatePlaceFormSchema>

@@ -8,21 +8,13 @@ import { toast } from 'sonner'
 
 import useCheckItems from '@/hooks/useCheckItems'
 import {
-    ExtendedUpdatePlaceBody,
-    useCreatePlace, useDeletePlaces,
+    UpdatePlaceMutationBody,
+    useCreatePlace,
+    useDeletePlaces,
     usePlacesQuery,
     useUpdatePlace,
 } from '@/lib/queries/places'
 import * as store from '@/store'
-
-export type PlaceRecord = Place & {
-    focus?: string | null
-    quickTip?: string | null
-    personalNotes?: string | null
-    region?: string | null
-    travelWindow?: string | null
-    isBookmarked?: boolean
-}
 
 export type RecentSegment = {
     id: string
@@ -51,7 +43,7 @@ export type TPlacesPageViewModel = {
     
     // Memos
     trips: Trip[]
-    places: PlaceRecord[]
+    places: Place[]
     recentSegments: RecentSegment[]
     regionFilters: string[]
     
@@ -65,7 +57,7 @@ export type TPlacesPageViewModel = {
     tripsRefetch: () => Promise<void>*/
     
     // Mutations
-    updatePlace: UseMutationResult<ApiResult<Place | null>, Error, ExtendedUpdatePlaceBody, unknown>
+    updatePlace: UseMutationResult<ApiResult<Place | null>, Error, UpdatePlaceMutationBody, unknown>
     createPlace: UseMutationResult<ApiResult<Place | null>, Error, PlaceInsert, unknown>
     deletePlacesMutation: UseMutationResult<ApiResult<Place | null>, Error, DeletePlacesBody, unknown>
     
@@ -77,11 +69,11 @@ export type TPlacesPageViewModel = {
     toggleAllChecked: (forceAll?: boolean) => void
     
     // Methods
-    getSegmentCountForPlace: (place: PlaceRecord) => number
-    filteredPlaces: PlaceRecord[]
+    getSegmentCountForPlace: (place: Place) => number
+    filteredPlaces: Place[]
     handleCreatePlace: (item: GeonamesCity) => Promise<void>
     handleDeletePlaces: () => Promise<void>
-    toggleBookmark: (place: PlaceRecord) => Promise<void>
+    toggleBookmark: (place: Place) => Promise<void>
 }
 
 const usePlacesPageViewModel = (): TPlacesPageViewModel => {
@@ -97,11 +89,11 @@ const usePlacesPageViewModel = (): TPlacesPageViewModel => {
     
     const { data: placesData, isLoading } = usePlacesQuery(currentTeamId)
     
-    const updatePlace = useUpdatePlace(currentTeamId)
+    const updatePlace = useUpdatePlace()
     const createPlace = useCreatePlace(currentTeamId)
     const deletePlacesMutation = useDeletePlaces(currentTeamId)
     
-    const places = useMemo(() => (placesData || []) as PlaceRecord[], [placesData])
+    const places = useMemo(() => (placesData || []) as Place[], [placesData])
     
     const recentSegments: RecentSegment[] = useMemo(() => {
         
@@ -120,16 +112,17 @@ const usePlacesPageViewModel = (): TPlacesPageViewModel => {
     
     const regionFilters: string[] = useMemo(() => {
         
-        const dynamicRegions = places
+        /*const dynamicRegions = places
             .map(place => place.region)
             .filter((region): region is string => Boolean(region?.length))
-            .filter((region, index, arr) => arr.indexOf(region) === index)
+            .filter((region, index, arr) => arr.indexOf(region) === index)*/
+        const dynamicRegions: string[] = []
         
         return Array.from(new Set([...defaultRegions, ...dynamicRegions]))
         
     }, [places])
     
-    const getSegmentCountForPlace = (place: PlaceRecord) => recentSegments.filter(segment => {
+    const getSegmentCountForPlace = (place: Place) => recentSegments.filter(segment => {
         
         const query = place.name.toLowerCase()
         
@@ -145,12 +138,10 @@ const usePlacesPageViewModel = (): TPlacesPageViewModel => {
         const matchesSearch = !query || [
             place.name,
             place.focus,
-            place.quickTip,
-            place.personalNotes,
-            place.region,
+            // place.region,
         ].some(value => value?.toLowerCase().includes(query))
         
-        const matchesRegion = activeRegion === 'All' || place.region === activeRegion
+        const matchesRegion = activeRegion === 'All' /*|| place.region === activeRegion*/
         
         return matchesSearch && matchesRegion
         
@@ -209,7 +200,7 @@ const usePlacesPageViewModel = (): TPlacesPageViewModel => {
         
     }, [deletePlacesMutation, checked])
     
-    const toggleBookmark = async (place: PlaceRecord) => {
+    const toggleBookmark = async (place: Place) => {
         
         try {
             

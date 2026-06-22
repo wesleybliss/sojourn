@@ -1,25 +1,15 @@
-import { ApiResult, DeletePlacesBody, Place, PlaceInsert } from '@repo/shared/types'
+import { ApiResult, DeletePlacesBody, Place, PlaceInsert, PlaceUpdate } from '@repo/shared/types'
 import { ID } from '@repo/shared/types/data.types'
 import { fetchJSON } from '@repo/shared/utils/api'
-import { UpdatePlaceBody } from '@shared/types/mutations.types'
 import { keepPreviousData, useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { useAuth } from '@/components/providers/AuthProvider'
 import { placesWithCoverImages } from '@/store'
 
+export type UpdatePlaceMutationBody = PlaceUpdate & { id: ID }
+
 export type ShufflePlaceCoverPhotoBody = {
     topic: string
-}
-
-export type ExtendedUpdatePlaceBody = UpdatePlaceBody & {
-    name?: string | null
-    coverImageUrl?: string | null
-    focus?: string | null
-    quickTip?: string | null
-    personalNotes?: string | null
-    region?: string | null
-    travelWindow?: string | null
-    isBookmarked?: boolean
 }
 
 export const usePlacesQuery = (teamId: ID | null, opts = {}) => {
@@ -54,25 +44,29 @@ export const usePlacesQuery = (teamId: ID | null, opts = {}) => {
     
 }
 
-export const useUpdatePlace = (teamId: ID | null): UseMutationResult<
+export const useUpdatePlace = (): UseMutationResult<
     ApiResult<Place | null>,
     Error,
-    ExtendedUpdatePlaceBody,
+    UpdatePlaceMutationBody,
     unknown
 > => {
     
     const queryClient = useQueryClient()
     
     return useMutation({
-        mutationFn: async ({ id, ...placeData }: ExtendedUpdatePlaceBody) => {
+        mutationFn: async ({ id, teamId, ...placeData }: UpdatePlaceMutationBody) => {
             
             if (!id)
                 throw new Error('useUpdatePlace: id is required')
+            
+            if (!teamId)
+                throw new Error('useUpdatePlace: teamId is required')
             
             return fetchJSON(`${teamId}/places/${id}`, {
                 method: 'PUT',
                 body: JSON.stringify(placeData),
             })
+            
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['places'] })
