@@ -3,8 +3,8 @@ import { memo } from 'react'
 
 import EditPlaceDialog from '@/components/dialogs/EditPlaceDialog'
 import { Checkbox } from '@/components/ui/checkbox'
-import PlacesPagePlacesGridItemContent from '@/routes/places/PlacesPagePlacesGridItemContent'
-import PlacesPagePlacesGridItemCoverImage from '@/routes/places/PlacesPagePlacesGridItemCoverImage'
+import PlacesPagePlacesItemContent from '@/routes/places/PlacesPagePlacesItemContent'
+import PlacesPagePlacesItemCoverImage from '@/routes/places/PlacesPagePlacesItemCoverImage'
 import { cn } from '@/utils'
 
 export interface PlacesPagePlacesProps {
@@ -57,11 +57,11 @@ const PlacesPagePlaces = memo(({
                         
                         <div className="flex-1 flex items-start gap-2">
                             
-                            <PlacesPagePlacesGridItemCoverImage
+                            <PlacesPagePlacesItemCoverImage
                                 place={place}
                                 listViewMode={placesListViewMode} />
                             
-                            <PlacesPagePlacesGridItemContent
+                            <PlacesPagePlacesItemContent
                                 place={place}
                                 segmentCount={segmentCount}
                                 listViewMode={placesListViewMode}
@@ -95,11 +95,11 @@ const PlacesPagePlaces = memo(({
                         className="overflow-hidden rounded-[28px] border border-border/70
                             bg-surface-container-lowest shadow-sm space-y-2">
                         
-                        <PlacesPagePlacesGridItemCoverImage
+                        <PlacesPagePlacesItemCoverImage
                             place={place}
                             listViewMode={placesListViewMode} />
                         
-                        <PlacesPagePlacesGridItemContent
+                        <PlacesPagePlacesItemContent
                             place={place}
                             segmentCount={segmentCount}
                             listViewMode={placesListViewMode}

@@ -95,9 +95,12 @@ const EditPlaceDialog = () => {
                         </Button>
                     </DialogClose>
                     <Button
-                        className={vm.isUpdatingPlace ? 'opacity-50 cursor-not-allowed' : ''}
+                        className={vm.isUpdatingPlace ? 'bg-red-500! opacity-50 cursor-not-allowed' : ''}
                         disabled={vm.isUpdatingPlace}
-                        onClick={vm.form.handleSubmit}>
+                        onClick={(...args) => {
+                            console.log('wtffffff', args)
+                            return vm.form.handleSubmit(...args)
+                        }}>
                         {vm.isUpdatingPlace && <Spinner data-icon="inline-start" />}
                         Update Place
                     </Button>

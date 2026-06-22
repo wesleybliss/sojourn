@@ -3,15 +3,15 @@ import { ListViewMode, ListViewModes, Place } from '@repo/shared/types'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/utils'
 
-export interface PlacesPagePlacesGridItemCoverImageProps {
+export interface PlacesPagePlacesItemCoverImageProps {
     place: Place
     listViewMode: ListViewMode
 }
 
-const PlacesPagePlacesGridItemCoverImage = ({
+const PlacesPagePlacesItemCoverImage = ({
     place,
     listViewMode,
-}: PlacesPagePlacesGridItemCoverImageProps) => {
+}: PlacesPagePlacesItemCoverImageProps) => {
     
     return (
         
@@ -50,4 +50,4 @@ const PlacesPagePlacesGridItemCoverImage = ({
     
 }
 
-export default PlacesPagePlacesGridItemCoverImage
+export default PlacesPagePlacesItemCoverImage

@@ -7,19 +7,22 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import * as store from '@/store'
 import { cn } from '@/utils'
 
-export interface PlacesPagePlacesGridItemContentProps {
+// Max notes to show inline before showing the "show more" option
+const MAX_NOTES = 2
+
+export interface PlacesPagePlacesItemContentProps {
     place: Place
     segmentCount: number
     listViewMode: ListViewMode
     toggleBookmark: (place: Place) => void
 }
 
-const PlacesPagePlacesGridItemContent = ({
+const PlacesPagePlacesItemContent = ({
     place,
     segmentCount,
     listViewMode,
     toggleBookmark,
-}: PlacesPagePlacesGridItemContentProps) => {
+}: PlacesPagePlacesItemContentProps) => {
     
     const cityDetailsDialogCityId = useWire(store.cityDetailsDialogCityId)
     const updatePlaceDialogPlace = useWire(store.updatePlaceDialogPlace)
@@ -104,15 +107,43 @@ const PlacesPagePlacesGridItemContent = ({
                                 + 'why this place is on the shortlist.'}
                         </p>
                     </div>
-                    <div className="rounded-2xl bg-surface-container-low/50 py-3 px-4">
-                        <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                            Notes
+                    
+                    {!place?.notes?.length && (
+                        <div className="rounded-2xl bg-surface-container-low/50 py-3 px-4">
+                            <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                                Notes
+                            </div>
+                            <div className="mt-1 text-foreground/90">
+                                <p>Add notes about this place.</p>
+                            </div>
                         </div>
-                        <p className="mt-1 text-foreground/90">
-                            {place.notes?.join(', @todo') || 'Add the reasons this place '
-                                + 'is worth revisiting later.'}
-                        </p>
-                    </div>
+                    )}
+                    
+                    {place?.notes && place?.notes?.length > 0 && (
+                        place?.notes?.slice(0, MAX_NOTES)?.map(it => (
+                            <div className="rounded-2xl bg-surface-container-low/50 py-3 px-4">
+                                <div
+                                    key={`place-${place.id}-notes-${it.id}`}
+                                    className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                                    {it.name}
+                                </div>
+                                <div className="mt-1 text-foreground/90">
+                                    {it.content}
+                                </div>
+                            </div>
+                        ))
+                    )}
+                    
+                    {place?.notes && place?.notes?.length > MAX_NOTES && (
+                        <div className="rounded-2xl bg-surface-container py-3 px-4">
+                            <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                                More Notes
+                            </div>
+                            <div className="mt-1 text-foreground/90">
+                                See all notes
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
             
@@ -138,4 +169,4 @@ const PlacesPagePlacesGridItemContent = ({
     
 }
 
-export default PlacesPagePlacesGridItemContent
+export default PlacesPagePlacesItemContent

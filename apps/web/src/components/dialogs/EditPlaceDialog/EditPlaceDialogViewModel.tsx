@@ -1,5 +1,5 @@
 import { useWireState, useWireValue } from '@forminator/react-wire'
-import { ApiResult, Place } from '@repo/shared/types'
+import { ApiResult, Place, PlaceNoteSelect } from '@repo/shared/types'
 import { UseMutationResult } from '@tanstack/react-query'
 import { Dispatch, SetStateAction, useCallback, useState } from 'react'
 import { toast } from 'sonner'
@@ -41,9 +41,6 @@ const EditPlaceDialogViewModel = (): TEditPlaceDialogViewModel => {
     const onCancel = () => setUpdatePlaceDialogPlace(null)
     
     const updatePlace = useCallback(async (value: UpdatePlaceForm) => {
-        console.log('updatePlace wtf')
-        if (!currentTeamId) console.warn('fuck no team id')
-        if (!updatePlaceDialogPlace?.id) console.warn('fuck no updatePlaceDialogPlace')
         
         if (!currentTeamId || !updatePlaceDialogPlace?.id) return
         
@@ -55,10 +52,17 @@ const EditPlaceDialogViewModel = (): TEditPlaceDialogViewModel => {
                 ...value,
                 id: updatePlaceDialogPlace.id,
                 teamId: currentTeamId,
+                // `placeNoteFormSchema` omits auto-managed `createdAt` / `updatedAt`
+                // (Postgres applies them via `defaultNow()` per row, and the API
+                // handler lets Drizzle fill them in). The form value carries `id`
+                // for existing notes (the API uses it to branch insert vs update)
+                // and `placeId` is injected here. The cast below matches because
+                // the schema's inferred type is a subset of `PlaceNoteSelect` —
+                // missing date fields are the only delta.
                 notes: value.notes.map(it => ({
                     ...it,
-                    placeId: it.placeId || updatePlaceDialogPlace.id,
-                })),
+                    placeId: it.placeId ?? updatePlaceDialogPlace.id,
+                })) as PlaceNoteSelect[],
             }
             console.log('@todo update place value', value)
             console.log('@todo update place payload', payload)
